@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{book}
+\documentclass[12pt,a4paper]{report}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -10,7 +10,7 @@
 \usepackage{color}
 \usepackage{listings}
 \usepackage{enumitem}
-\usepackage[pdftex,unicode]{hyperref}
+\usepackage[pdftex,unicode]{hyperref}	
 \hypersetup{
 	breaklinks=true,
   	colorlinks   = true, %Colours links instead of ugly boxes
@@ -35,20 +35,20 @@
 \restylefloat{figure}
 %\restylefloat{table}
 
+%\includeonly{Kapitel/Kapitel_3}
+
 \begin{document}
 \input{Kapitel/Titelseite}
 \setcounter{tocdepth}{3}
 \setcounter{secnumdepth}{3}
 \tableofcontents
 \addcontentsline{toc}{chapter}{\contentsname}
-\chapter{Vorwort}
-\part{Pflicht}
-\chapter{Test2}
-\part{Optional}
-\chapter{Test2}
+\include{Kapitel/Kapitel_1}
+\include{Kapitel/Kapitel_2}
+\include{Kapitel/Kapitel_3}
 
-\listoffigures
-\addcontentsline{toc}{chapter}{\listfigurename}
-\listoftables
-\addcontentsline{toc}{chapter}{\listtablename}
+%\listoffigures
+%\addcontentsline{toc}{chapter}{\listfigurename}
+%\listoftables
+%\addcontentsline{toc}{chapter}{\listtablename}
 \end{document}
