@@ -494,5 +494,34 @@ Die folgenden Abbildungen (Abb. \ref{Aktivitätsdiagramm Use Case Anfangsbedingu
 	\label{Aktivitätsdiagramm Use Case Zustand anzeigen}
 \end{figure}
 
+\subsubsection{Systemanforderungen}
+\subsubsection*{Funktionale Anforderungen}
+
+\begin{enumerate}
+	\item Der Benutzer kann mit linken Mausklicks Gebiete der Wärmeleitkoeffizienten eingeben und deren Werte per Tastatur festlegen.
+	\item Der Benutzer kann mit linken Mausklicks Wärmequellen eingeben und deren Werte per Tastatur festlegen.
+	\item Der Benutzer kann um das Problem zu spezifizieren Funktionen für die Anfangs- und Randbedingungen vorgeben.
+	\item Die Diskretisierungsparameter (Stützstellenzahlen der Orts- beziehungsweise Zeitdiskretisierungen sowie den Endzeitpunkt der Simulation) \& Simulationsparameter (Integrationsverfahren) können durch den Benutzer festgelegt werden.
+	\item Die Simulation kann per Knopfdruck durch den Benutzer gestartet werden.
+	\item Der Benutzer kann sich die zeitliche Entwicklung der Temperaturverteilung als Video oder einen Zustand als Standbild anzeigen lassen.
+	\item Die Software kann durch den Benutzer per Knopfdruck auf den Ausgangszustand zurückgesetzt werden.
+	\item Der Benutzer kann sich eine Hilfe zur Benutzung der Software anzeigen lassen.
+\end{enumerate}
+
+\subsubsection*{Nicht-funktionale Anforderungen}
+
+\begin{enumerate}
+	\item Dokumentation der Implementierung mittels Doxygen
+	\item Grafische Oberfläche mit Qt
+	\item Einfache Erweiterbarkeit um weitere Simulationsmethoden
+	\item Modularität
+	\item Datenkapselung
+	\item Lauffähig unter Windows und Linux (insbesondere auf dem RWTH Aachen Cluster)
+	\item Fehlerbehandlung/Robustheit
+	\item Grafische Oberfläche skaliert korrekt bei Veränderung der Fenstergröße
+	\item Die Berechnung im Laufe der Simulation soll innerhalb von maximal 15 Sekunden abgeschlossen sein.
+\end{enumerate}
+
+
 \section{Begriffsanalyse}
 
