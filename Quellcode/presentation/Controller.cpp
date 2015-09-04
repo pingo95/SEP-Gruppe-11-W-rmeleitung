@@ -1,6 +1,6 @@
 #include "Controller.h"
 
-Controller::Controller()
+presentation::Controller::Controller()
 {
 
 }
