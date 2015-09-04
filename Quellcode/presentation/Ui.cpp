@@ -1,11 +1,11 @@
 #include "ui.h"
 
-UI::UI(QWidget *parent)
-    : QMainWindow(parent)
+presentation::UI::UI(QWidget *parent) : QMainWindow(parent)
 {
+
 }
 
-UI::~UI()
+presentation::UI::~UI()
 {
 
 }

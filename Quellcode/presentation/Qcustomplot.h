@@ -54,8 +54,6 @@
 #  include <QtPrintSupport>
 #endif
 
-namespace presentation {
-
 class QCPPainter;
 class QCustomPlot;
 class QCPLayerable;
@@ -3775,6 +3773,5 @@ protected:
   QPen mainPen() const;
 };
 
-}
 #endif // QCUSTOMPLOT_H
 
