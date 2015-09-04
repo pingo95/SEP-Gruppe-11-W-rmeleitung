@@ -1,0 +1,17 @@
+INPUT(
+./release\Crs.o
+./release\Iterativesolver.o
+./release\Jacobi.o
+./release\Gaussseidel.o
+./release\Intmethod.o
+./release\Impeuler.o
+./release\Cranknicolson.o
+./release\Area.o
+./release\Qcustomplot.o
+./release\Model.o
+./release\Ui.o
+./release\Controller.o
+./release\main.o
+./release\moc_Qcustomplot.o
+./release\moc_Ui.o
+);

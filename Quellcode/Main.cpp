@@ -1,10 +1,10 @@
-#include "ui.h"
+#include "./presentation/Ui.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    UI w;
+    presentation::UI w;
     w.show();
 
     return a.exec();
