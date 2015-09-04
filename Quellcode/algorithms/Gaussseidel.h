@@ -2,12 +2,14 @@
 #define GAUSSSEIDEL_H
 #include "Iterativesolver.h"
 
-namespace algortihms {
+namespace algorithms {
 
     class GaussSeidel : public IterativeSolver
     {
     public:
         GaussSeidel();
+
+        void solve(QVector<double>& result, CRS& matrix, Qvector<double>& rhs);
     };
 
 }

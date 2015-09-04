@@ -2,12 +2,14 @@
 #define CRANKNICOLSON_H
 #include "Intmethod.h"
 
-namespace algortihms {
+namespace algorithms {
 
     class CrankNicolson : public IntMethod
     {
     public:
         CrankNicolson();
+
+        void setUpItMatrix();
     };
 
 }

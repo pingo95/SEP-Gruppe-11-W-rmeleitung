@@ -2,12 +2,14 @@
 #define JACOBI_H
 #include "Iterativesolver.h"
 
-namespace algortihms {
+namespace algorithms {
 
     class Jacobi : public IterativeSolver
     {
     public:
         Jacobi();
+
+        void solve(QVector<double>& result, CRS& matrix, Qvector<double>& rhs);
     };
 
 }

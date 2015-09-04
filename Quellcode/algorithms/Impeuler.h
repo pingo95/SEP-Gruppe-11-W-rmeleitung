@@ -2,12 +2,14 @@
 #define IMPEULER_H
 #include "Intmethod.h"
 
-namespace algortihms {
+namespace algorithms {
 
     class ImpEuler : public IntMethod
     {
     public:
         ImpEuler();
+
+        void setUpItMatrix();
     };
 
 }

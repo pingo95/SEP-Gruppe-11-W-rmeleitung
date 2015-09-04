@@ -1,4 +1,5 @@
 #include "Area.h"
+<<<<<<< HEAD
 
 model::Area::Area(QVector<double> xKoords, QVector<double> yKoords, double value):
     xKoords(xKoords), yKoords(yKoords), value(value)
@@ -67,3 +68,5 @@ bool model::Area::segIntersect(double const pX, double const pY,
 {
 
 }
+=======
+>>>>>>> origin/master
