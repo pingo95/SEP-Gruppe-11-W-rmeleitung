@@ -9,7 +9,7 @@ namespace algorithms {
     public:
         Jacobi();
 
-        void solve(QVector<double>& result, CRS& matrix, Qvector<double>& rhs);
+        void solve(QVector<double>& result, CRS& matrix, QVector<double>& rhs);
     };
 
 }

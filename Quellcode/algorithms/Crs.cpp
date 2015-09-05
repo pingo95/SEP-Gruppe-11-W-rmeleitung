@@ -1,12 +1,12 @@
 #include "Crs.h"
 
-algorithms::CRS::A1(int const n)
+void algorithms::CRS::A1(int const n)
 {
     int numRows = n*n;
     int nnz = 5 * numRows - 24 * n +28; // non-zero elements
     ptr = new int[numRows];
     index = new int[nnz];
-    value = new int[nnz];
+    value = new double[nnz];
 
     for(int i=0; i<n; i++) {
         ptr[i] = 0;
@@ -20,6 +20,6 @@ algorithms::CRS::A1(int const n)
         }
         ptr[(i+1)*n-2] = ptr[(i+1)*n-3] + 3;
         ptr[(i+1)*n-1] = ptr[(i+1)*n-2];
-
+    }
 
 }

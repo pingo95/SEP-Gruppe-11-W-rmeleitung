@@ -9,7 +9,7 @@ namespace algorithms {
     public:
         GaussSeidel();
 
-        void solve(QVector<double>& result, CRS& matrix, Qvector<double>& rhs);
+        void solve(QVector<double>& result, CRS& matrix, QVector<double>& rhs);
     };
 
 }

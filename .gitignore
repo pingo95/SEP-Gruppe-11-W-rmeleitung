@@ -10,7 +10,9 @@ Dokumentation/SEP_Gruppe_11_Analyse-_und_Entwurfsdokument.pdf
 *.vpp~*
 *.user
 *.autosave
-Quellcode/build-SEP_Gruppe11_Waermeleitung-Desktop_Qt_5_4_2_MinGW_32bit-Debug/
-build-SEP_Gruppe11_Waermeleitung-Desktop_Qt_5_4_1_MinGW_32bit-Debug/
+Quellcode/build-*/
+build-*/
 *.o
 *.Release
+*.exe
+*.Debug

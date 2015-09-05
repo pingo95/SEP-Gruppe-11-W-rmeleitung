@@ -1,5 +1,7 @@
 #ifndef ITERATIVESOLVER_H
 #define ITERATIVESOLVER_H
+#include <QVector>
+class CRS;
 
 namespace algorithms {
 
@@ -8,7 +10,7 @@ namespace algorithms {
     public:
         IterativeSolver();
 
-        virtual void solve(QVector<double>& result, CRS& matrix, Qvector<double>& rhs)=0;
+        virtual void solve(QVector<double>& result, CRS& matrix, QVector<double>& rhs)=0;
     };
 
 }

@@ -1,9 +1,10 @@
 #ifndef INTMETHOD_H
 #define INTMETHOD_H
-
+#include <QVector>
+#include "Crs.h"
 namespace algorithms {
 
-    class CRS;
+
     class IterativeSolver;
 
     class IntMethod
