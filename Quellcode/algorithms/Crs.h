@@ -5,15 +5,18 @@ namespace algorithms {
 
     class CRS
     {
-        int* index;
-        int* ptr;
-        double* value;
+    //Funktionen:
     public:
         CRS();
 
         void A1(int const n); // 2D-Diskretisierungsmatrix Laplace-Operator
-    };
 
+    //Attribute:
+    private:
+        int* index;
+        int* ptr;
+        double* value;
+    };
 }
 
 #endif // CRS_H

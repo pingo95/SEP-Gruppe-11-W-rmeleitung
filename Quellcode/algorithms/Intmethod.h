@@ -1,20 +1,14 @@
 #ifndef INTMETHOD_H
 #define INTMETHOD_H
-#include <QVector>
-#include "Crs.h"
-namespace algorithms {
+#include "Iterativesolver.h"
 
+namespace algorithms {
 
     class IterativeSolver;
 
     class IntMethod
     {
-        IterativeSolver* activeIterativeSolver;
-        double deltaX;
-        double deltaT;
-        CRS itMatrix;
-        int n;
-
+    //Funktionen:
     public:
         IntMethod();
 
@@ -22,6 +16,14 @@ namespace algorithms {
         void selectIterativeSolver(IterativeSolver* iterativeSolver);
         void setUp(int const n, int const m, double const T, QVector<double> const &ThermalConductivities);
         virtual void setUpItMatrix()=0;
+
+    //Attribute:
+    private:
+        IterativeSolver* activeIterativeSolver;
+        double deltaX;
+        double deltaT;
+        CRS itMatrix;
+        int n;
     };
 
 }

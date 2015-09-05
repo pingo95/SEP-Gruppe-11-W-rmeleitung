@@ -1,7 +1,7 @@
 #ifndef ITERATIVESOLVER_H
 #define ITERATIVESOLVER_H
 #include <QVector>
-class CRS;
+#include "Crs.h"
 
 namespace algorithms {
 

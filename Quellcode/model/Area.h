@@ -6,39 +6,44 @@ namespace model {
 
     class Area
     {
-        QVector<double> const xKoords;
-        QVector<double> const yKoords;
-        double value;
-
+    //Funktionen:
     public:
-        Area(QVector<double> xKoords, QVector<double> yKoords, double value);
+        Area(QVector<double> const & xKoords,
+             QVector<double> const & yKoords, double value);
         static bool validateArea(QVector<double> const & xKoords,
                                  QVector<double> const & yKoords);
 
-        void getConvexRectangle(double & xMin,double & xMax,
+        void getConvexRectangle(double & xMin, double & xMax,
                                 double & yMin, double & yMax) const;
-        void getPoints(QVector<double> const & xKoords,
-                       QVector<double> const & yKoords) const;
+        void getPoints(QVector<double> & xKoords,
+                       QVector<double> & yKoords) const;
         double getValue() const;
         bool insidePoint(double const xKoord, double const yKoord) const;
         void setValue(double const value);
 
     private:
         Area();
+        static double det(double const pX, double const pY,
+                          double const qX, double const qY);
+        static double direction(double const pX, double const pY,
+                                double const qX, double const qY,
+                                double const rX, double const rY);
+        static bool onLine(double const pX, double const pY,
+                           double const qX, double const qY,
+                           double const xX, double const xY);
+        static bool onSegment(double const pX, double const pY,
+                              double const qX, double const qY,
+                              double const xX, double const xY);
+        static bool segIntersect(double const pX, double const pY,
+                                 double const qX, double const qY,
+                                 double const rX, double const rY,
+                                 double const sX, double const sY);
 
-        double det(double const pX, double const pY,
-                   double const qX, double const qY) const;
-        double direction(double const pX, double const pY,
-                         double const qX, double const qY,
-                         double const xX, double const xY) const;
-        bool onSegment(double const pX, double const pY,
-                       double const qX, double const qY,
-                       double const xX, double const xY) const;
-        bool segIntersect(double const pX, double const pY,
-                          double const qX, double const qY,
-                          double const rX, double const rY,
-                          double const sX, double const sY) const;
-
+    //Attribute:
+    private:
+        QVector<double> const xKoords;
+        QVector<double> const yKoords;
+        double value;
     };
 
 }
