@@ -74,68 +74,97 @@ class Controller;
 
         //Qt Elemente:
         //Widgets
-        QWidget * widgetCentral;
-        QWidget * widgetHelp;
-        QWidget * widgetVisualisation;
-        QWidget * widgetSimulation;
-        QWidget * widgetKonfiguration;
+        //Qwidgets
+          QWidget * widgetCentral;
+          QWidget * widgetHelp;
+          QWidget * widgetKonfiguration;
+          QWidget * widgetKonfigurationHeatSources;
+          QWidget * widgetKonfigurationIBVs;
+          QWidget * widgetKonfigurationThermalConductivities;
+          QWidget * widgetSimulation;
+          QWidget * widgetVisualisation;
 
-        //Layouts
-        QVBoxLayout * mainLayout;
-        QGridLayout * subGridLayout;
-        QHBoxLayout * subHBoxLayout;
+          //Layouts
+          //QVBoxes
+          QVBoxLayout * mainLayout;
+          QVBoxLayout * mainLayoutHelp;
+          QVBoxLayout * mainLayoutKonfiguration;
+          QVBoxLayout * mainLayoutKonfigurationHeatSources;
+          QVBoxLayout * mainLayoutKonfigurationIBVs;
+          QVBoxLayout * mainLayoutKonfigurationThermalConductivities;
+          QVBoxLayout * mainLayoutSimulation;
+          QVBoxLayout * mainLayoutVisualisation;
+          //subGridLayouts
+          QGridLayout * subGridLayout;
+          QGridLayout * subGridLayoutHelp;
+          QGridLayout * subGridLayoutKonfiguration;
+          QGridLayout * subGridLayoutKonfigurationHeatSources;
+          QGridLayout * subGridLayoutKonfigurationIBVs;
+          QGridLayout * subGridLayoutKonfigurationThermalConductivities;
+          QGridLayout * subGridLayoutSimulation;
+          QGridLayout * subGridLayoutVisualisation;
+          //subHBoxLayouts
+          QHBoxLayout * subHBoxLayout;
+          QHBoxLayout * subHBoxLayoutHelp;
+          QHBoxLayout * subHBoxLayoutKonfiguration;
+          QHBoxLayout * subHBoxLayoutKonfigurationHeatSources;
+          QHBoxLayout * subHBoxLayoutKonfigurationIBVs;
+          QHBoxLayout * subHBoxLayoutKonfigurationThermalConductivities;
+          QHBoxLayout * subHBoxLayoutSimualtion;
+          QHBoxLayout * subHBoxLayoutVisualisation;
 
-        //Buttons
-        QPushButton * buttonPlayVideo;
-        QPushButton * buttonSimulate;
-        QPushButton * buttonUndoHeatSource;
-        QPushButton * buttonUndoThermalConductivity;
 
-        //DoubleSpinBoxes
-        QDoubleSpinBox * doubleSpinBoxBottomBoundary;
-        QDoubleSpinBox * doubleSpinBoxInitialValue;
-        QDoubleSpinBox * doubleSpinBoxLeftBoundary;
-        QDoubleSpinBox * doubleSpinBoxRightBoundary;
-        QDoubleSpinBox * doubleSpinBoxT;
-        QDoubleSpinBox * doubleSpinBoxTopBoundary;
+          //Buttons
+          QPushButton * buttonPlayVideo;
+          QPushButton * buttonSimulate;
+          QPushButton * buttonUndoHeatSource;
+          QPushButton * buttonUndoThermalConductivity;
 
-        //SpinBoxes
-        QSpinBox * spinBoxM;
-        QSpinBox * spinBoxN;
+          //DoubleSpinBoxes
+          QDoubleSpinBox * doubleSpinBoxBottomBoundary;
+          QDoubleSpinBox * doubleSpinBoxInitialValue;
+          QDoubleSpinBox * doubleSpinBoxLeftBoundary;
+          QDoubleSpinBox * doubleSpinBoxRightBoundary;
+          QDoubleSpinBox * doubleSpinBoxT;
+          QDoubleSpinBox * doubleSpinBoxTopBoundary;
 
-        //Labels
-        QLabel * labelHelp;
-        QLabel * labelTopHeatSource;
-        QLabel * labelTopIBV;
-        QLabel * labelTopSimulation;
-        QLabel * labelTopThermalConductivity;
-        QLabel * labelTopVisualization;
+          //SpinBoxes
+          QSpinBox * spinBoxM;
+          QSpinBox * spinBoxN;
 
-        //Plate
-        QCustomPlot * plateHeatSource;
-        QCustomPlot * plateThermalConductivity;
-        QCustomPlot * plateVideo;
+          //Labels
+          QLabel * labelTopHeatSource;
+          QLabel * labelTopHelp;
+          QLabel * labelTopIBV;
+          QLabel * labelTopSimulation;
+          QLabel * labelTopThermalConductivity;
+          QLabel * labelTopVisualization;
 
-        //Slider
-        QSlider * sliderVideo;
+          //Plate
+          QCustomPlot * plateHeatSource;
+          QCustomPlot * plateThermalConductivity;
+          QCustomPlot * plateVideo;
 
-        //LCDNumber
-        QLCDNumber * lcdNumberVideoTimestep;
+          //Slider
+          QSlider * sliderVideo;
 
-        //ProgressBar
-        QProgressBar * progressBarProgress;
+          //LCDNumber
+          QLCDNumber * lcdNumberVideoTimestep;
 
-        //ComboBoxes
-        QComboBox * comboBoxIntMethod;
-        QComboBox * comboBoxSolver;
+          //ProgressBar
+          QProgressBar * progressBarProgress;
 
-        //TableViews
-        QTableView * tableViewHeatSources;
-        QTableView * tableViewThermalConductivities;
+          //ComboBoxes
+          QComboBox * comboBoxIntMethod;
+          QComboBox * comboBoxSolver;
 
-        //TabWidgets
-        QTabWidget * tabWidgetMain;
-        QTabWidget * tabWidgetSub;
+          //TableViews
+          QTableView * tableViewHeatSources;
+          QTableView * tableViewThermalConductivities;
+
+          //TabWidgets
+          QTabWidget * tabWidgetMain;
+          QTabWidget * tabWidgetSub;
     };
 
 }
