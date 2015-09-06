@@ -32,6 +32,25 @@ class Controller;
     {
         Q_OBJECT
 
+    //Enums:
+    public:
+        // TODO: IDs setzten
+        enum ActiveTab
+        {
+            TabHeatSources,
+            TabHelp,
+            TabIBVs,
+            TabParameterFitting,
+            TabSimulating,
+            TabThermalConductivity,
+            TabVisualization
+        };
+        enum AreaTableColumn
+        {
+            ColumnValue = 1,
+            ColumnVisibility = 2
+        };
+
     //Funktionen:
     public:
         UI(QWidget *parent = 0);
@@ -39,13 +58,13 @@ class Controller;
 
         void drawPartialHeatSource(QVector<double> & partialAreaX, QVector<double> & partialAreaY);
         void drawPartialThermalConductivity(QVector<double> & partialAreaX, QVector<double> & partialAreaY);
-        bool testFocusChange(QWidget * old);
+        QSize& getHeatSourcePlotSize();
         int getInitialFrame();
         double getNewHeatSourceValue(int row);
         double getNewThermalConductivityValue(int row);
+        QSize& getThermalConductivityPlotSize();
         void heatSourcePixelToCoords(double mouseX, double mouseY, double & x, double & y);
-        void revertFocusChange(QWidget * old, QWidget * now);
-        void setActiveTab(int tab); //Enum?
+        void revertTabChange(UI::ActiveTab targetTab);
         void setController(Controller * controller);
         void setModel(model::Model * model);
         void thermalConductivityPixelToCoords(double mouseX, double mouseY, double & x, double & y);
@@ -63,7 +82,7 @@ class Controller;
 
     //Attribute:
     private:
-        int activeTab;
+        UI::ActiveTab activeTab;
         Controller * controller;
         model::Model * model;
         double *** result;

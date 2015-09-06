@@ -11,16 +11,15 @@ namespace presentation {
     public:
         Controller(QApplication & application);
 
-        void focusChangedSlot(QWidget * old, QWidget * now);
         void heatSourcesClickSlot(QMouseEvent * event);
-        void heatSourceValueChangedSlot(int row, int column); //Column->Modularität?
-        void newBottomBoundarySlot(double newBB);
-        void newInitialValueSlot(double newIV);
-        void newLeftBoundarySlot(double newLB);
+        void heatSourceValueChangedSlot(int pos, UI::AreaTableColumn column); //Column->Modularität?
+        void newBottomBoundarySlot(double newBottomBoundary);
+        void newInitialValueSlot(double newInitialValue);
+        void newLeftBoundarySlot(double newLeftBoundary);
         void newMSlot(int newM);
         void newNSlot(int newN);
-        void newRightBoundarySlot(double newRB);
-        void newTopBoundarySlot(double newTB);
+        void newRightBoundarySlot(double newRightBoundary);
+        void newTopBoundarySlot(double newTopBoundary);
         void newTSlot(double newT);
         void playVideoSlot();
         void selectIntMethodSlot(QString newIntMethod);
@@ -28,10 +27,11 @@ namespace presentation {
         void setModel(model::Model * model);
         void setUI(UI * ui);
         void simulateSlot();
+        void tabChangedSlot(UI::ActiveTab newTab);
         void testPartialHeatSource();
         void testPartialThermalConductivity();
         void thermalConductivitiesClickSlot(QMouseEvent * event);
-        void thermalConductivityValueChangedSlot(int row, int column); //Column->Modularität?
+        void thermalConductivityValueChangedSlot(int pos, UI::AreaTableColumn column); //Column->Modularität?
         void undoHeatSourceSlot();
         void undoThermalConductivitySlot();
         void visualizeStateSlot(int frame);

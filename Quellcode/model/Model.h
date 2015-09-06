@@ -17,7 +17,7 @@ namespace model {
         Model();
 
         void addHeatSource(Area * newHeatSource);
-        void addThemalConductivity(Area * newThermalConductivity);
+        void addThermalConductivity(Area * newThermalConductivity);
         double getBottomBoundary;
         QList<Area*> getHeatSources();
         int getHeatSourcesCount();
@@ -34,8 +34,8 @@ namespace model {
         double getRightBoundary();
         QString getSelectedIntMethod();
         QString getSelectedIterativeSolver();
-        bool getSimulated;
-        bool getSimulating;
+        bool getSimulated();
+        bool getSimulating();
         double getT;
         QList<Area*> getThermalConductivities();
         int getThermalConductivitiesCount();
@@ -45,7 +45,7 @@ namespace model {
         void selectIntMethod(QString intMethod);
         void selectIterativeSolver(QString iterativeSolver);
         void setBottomBoundary(double bottomBoundary);
-        void setIntitialValue(double initialValue);
+        void setInitialValue(double initialValue);
         void setLeftBoundary(double leftBoundary);
         void setM(int m);
         void setN(int n);

@@ -1,6 +1,6 @@
 #include "Area.h"
 
-//Vorbedingung: xKoords und yKoords wurden vorher mit validateArea getestet
+// Vorbedingung: xKoords und yKoords wurden vorher mit validateArea getestet
 // Erstellt neues Gebiet:
 model::Area::Area(QVector<double> const & xKoords,
                   QVector<double> const & yKoords, double value):
