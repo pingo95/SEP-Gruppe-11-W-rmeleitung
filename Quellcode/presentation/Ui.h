@@ -58,11 +58,13 @@ class Controller;
 
         void drawPartialHeatSource(QVector<double> & partialAreaX, QVector<double> & partialAreaY);
         void drawPartialThermalConductivity(QVector<double> & partialAreaX, QVector<double> & partialAreaY);
-        QSize& getHeatSourcePlotSize();
+        QSize getHeatSourcePlotSize();
         int getInitialFrame();
         double getNewHeatSourceValue(int row);
         double getNewThermalConductivityValue(int row);
-        QSize& getThermalConductivityPlotSize();
+        QSize getThermalConductivityPlotSize();
+        int getHeatSourceAreaID(int pos);
+        int getThermalConductivityAreaID(int pos);
         void heatSourcePixelToCoords(double mouseX, double mouseY, double & x, double & y);
         void revertTabChange(UI::ActiveTab targetTab);
         void setController(Controller * controller);
@@ -70,6 +72,7 @@ class Controller;
         void thermalConductivityPixelToCoords(double mouseX, double mouseY, double & x, double & y);
         void updateNotification();
         void visualizeState(int frame);
+
 
     private:
         void updateHeatSources();
@@ -191,6 +194,9 @@ class Controller;
         //TabWidgets
         QTabWidget * tabWidgetMain;
         QTabWidget * tabWidgetSub;
+
+        //Spaceritem
+        QSpacerItem * spacerItem;
     };
 
 }
