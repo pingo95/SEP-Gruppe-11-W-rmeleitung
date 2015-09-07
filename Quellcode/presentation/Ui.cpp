@@ -1,10 +1,16 @@
 #include "ui.h"
 
+
 presentation::UI::UI(QWidget *parent)
     : QMainWindow(parent)
 {
+
     //centrales Widget initialisieren
     widgetCentral = new QWidget(this);
+
+    //Farben
+    QPalette Pal(palette());
+    Pal.setColor(QPalette::Background,Qt::lightGray);
 
     //TabBar initialisieren
     tabWidgetMain = new QTabWidget(widgetCentral);
@@ -73,10 +79,30 @@ presentation::UI::UI(QWidget *parent)
     subGridLayoutKonfigurationThermalConductivities = new QGridLayout(widgetKonfigurationThermalConductivities);
     subHBoxLayoutKonfigurationThermalConductivities = new QHBoxLayout(widgetKonfigurationThermalConductivities);
     mainLayoutKonfigurationThermalConductivities->addLayout(subGridLayoutKonfigurationThermalConductivities);
+    //widgetKonfigurationThermalConductivities->setPalette(Pal);;
+    //widgetKonfigurationThermalConductivities->setAutoFillBackground(true);
         //Labels
     labelTopThermalConductivity = new QLabel("Info",widgetKonfigurationThermalConductivities);
         //Tabelle
-    tableViewThermalConductivities = new QTableView(widgetKonfigurationThermalConductivities);
+    tablewidgetThermalConductivities = new QTableWidget(widgetKonfigurationThermalConductivities);
+    tablewidgetThermalConductivities->setColumnCount(3);
+    listHeaderThermalConductivity <<"ID"<<"Wert"<<"Sichtbar";
+    tablewidgetThermalConductivities->setHorizontalHeaderLabels(listHeaderThermalConductivity);
+    tablewidgetThermalConductivities->setColumnWidth(0,20);
+    tablewidgetThermalConductivities->setColumnWidth(1,60);
+    tablewidgetThermalConductivities->setColumnWidth(2,60);
+    tablewidgetThermalConductivities->setShowGrid(true);
+    tablewidgetThermalConductivities->verticalHeader()->setVisible(false);
+
+    tablewidgetThermalConductivities->setRowCount(20);
+        //test Hinzufügen
+//    tablewidgetThermalConductivities->setItem(0, 1, new QTableWidgetItem("Hello"));
+//    QTableWidgetItem * checkboxItem = new QTableWidgetItem();
+//    checkboxItem->setCheckState(Qt::Checked);
+//    tablewidgetThermalConductivities->setItem(2,1,checkboxItem);
+
+        //UndoKnopf
+    buttonUndoThermalConductivity = new QPushButton("Undo",widgetKonfigurationThermalConductivities);
         //Platte
     plateThermalConductivity = new QCustomPlot(widgetKonfigurationThermalConductivities);
             //Platte xAchse unten
@@ -109,12 +135,17 @@ presentation::UI::UI(QWidget *parent)
     plateThermalConductivity->yAxis2->setTickVectorLabels(Labels);
     plateThermalConductivity->yAxis2->setRange(0,1);
     plateThermalConductivity->yAxis2->grid()->setSubGridVisible(true);
-    //plateThermalConductivity->setMinimumWidth(350);
         //Layout
+    plateThermalConductivity->setMinimumWidth(350);
+    tablewidgetThermalConductivities->setMinimumWidth(142);
+    tablewidgetThermalConductivities->setMaximumWidth(142);
+    buttonUndoThermalConductivity->setMaximumWidth(100);
     subGridLayoutKonfigurationThermalConductivities->addWidget(labelTopThermalConductivity,0,0);
-    subGridLayoutKonfigurationThermalConductivities->addWidget(tableViewThermalConductivities,2,0,2,2);
-    subGridLayoutKonfigurationThermalConductivities->addWidget(plateThermalConductivity,2,2,4,4);
-    subGridLayoutKonfigurationThermalConductivities->addItem(spacerItem,4,1);
+    subGridLayoutKonfigurationThermalConductivities->addWidget(tablewidgetThermalConductivities,1,0);
+    subGridLayoutKonfigurationThermalConductivities->addWidget(plateThermalConductivity,1,1);
+    subGridLayoutKonfigurationThermalConductivities->addWidget(buttonUndoThermalConductivity,1,2);
+    //subGridLayoutKonfigurationThermalConductivities->addItem(spacerItem,2,1);
+
 
     //HeatSourceTab
         //Layouts initialisieren
@@ -125,7 +156,19 @@ presentation::UI::UI(QWidget *parent)
         //Labels
     labelTopHeatSource = new QLabel("Info",widgetKonfigurationHeatSources);
         //Tabelle
-    tableViewHeatSources = new QTableView(widgetKonfigurationHeatSources);
+    tableWidgetHeatSources = new QTableWidget(widgetKonfigurationHeatSources);
+    tableWidgetHeatSources->setColumnCount(3);
+    listHeaderHeatSource <<"ID"<<"Wert"<<"Sichtbar";
+    tableWidgetHeatSources->setHorizontalHeaderLabels(listHeaderHeatSource);
+    tableWidgetHeatSources->setColumnWidth(0,20);
+    tableWidgetHeatSources->setColumnWidth(1,60);
+    tableWidgetHeatSources->setColumnWidth(2,60);
+    tableWidgetHeatSources->setShowGrid(true);
+    tableWidgetHeatSources->verticalHeader()->setVisible(false);
+
+    tableWidgetHeatSources->setRowCount(20);
+        //Undo Knopf
+    buttonUndoHeatSource = new QPushButton("Undo",widgetKonfigurationHeatSources);
         //Platte
     plateHeatSource = new QCustomPlot(widgetKonfigurationHeatSources);
             //Platte xAchse unten
@@ -158,14 +201,16 @@ presentation::UI::UI(QWidget *parent)
     plateHeatSource->yAxis2->setTickVectorLabels(Labels);
     plateHeatSource->yAxis2->setRange(0,1);
     plateHeatSource->yAxis2->grid()->setSubGridVisible(true);
-
-    plateHeatSource->setMinimumWidth(250);
         //Layout
+    plateHeatSource->setMinimumWidth(350);
+    tableWidgetHeatSources->setMinimumWidth(142);
+    tableWidgetHeatSources->setMaximumWidth(142);
+    buttonUndoHeatSource->setMaximumWidth(100);
     subGridLayoutKonfigurationHeatSources->addWidget(labelTopHeatSource,0,0);
-    subGridLayoutKonfigurationHeatSources->addWidget(tableViewHeatSources,2,0,4,2);
-    subGridLayoutKonfigurationHeatSources->addWidget(plateHeatSource,2,2,4,4);
-    subGridLayoutKonfigurationHeatSources->addItem(spacerItem,4,1);
-
+    subGridLayoutKonfigurationHeatSources->addWidget(tableWidgetHeatSources,1,0);
+    subGridLayoutKonfigurationHeatSources->addWidget(plateHeatSource,1,1);
+    subGridLayoutKonfigurationHeatSources->addWidget(buttonUndoHeatSource,1,2);
+    //subGridLayoutKonfigurationHeatSources->addItem(spacerItem,4,1);
 
     //IBVTab
         //Layouts initialisieren
@@ -200,11 +245,30 @@ presentation::UI::UI(QWidget *parent)
     subGridLayoutKonfigurationIBVs->addWidget(doubleSpinBoxTopBoundary,5,1);
     subGridLayoutKonfigurationIBVs->addItem(spacerItem,6,1);
 
+
     //SimulationTab
+        //Layouts initialisieren
+    mainLayoutSimulation = new QVBoxLayout(widgetSimulation);
+    subGridLayoutSimulation = new QGridLayout(widgetSimulation);
+    subHBoxLayoutSimualtion = new QHBoxLayout(widgetSimulation);
+    mainLayoutSimulation->addLayout(subGridLayoutSimulation,0);
+        //Labels
     labelTopSimulation = new QLabel("Info",widgetSimulation);
     labelN = new QLabel("N eingeben",widgetSimulation);
     labelM = new QLabel("M eingeben",widgetSimulation);
     labelT = new QLabel("T eingeben",widgetSimulation);
+        //Boxes
+    doubleSpinBoxT = new QDoubleSpinBox(widgetSimulation);
+    spinBoxM = new QSpinBox(widgetSimulation);
+    spinBoxN = new QSpinBox(widgetSimulation);
+        //Layout
+    subGridLayoutSimulation->addWidget(labelTopSimulation,0,0);
+    subGridLayoutSimulation->addWidget(labelN,1,0);
+    subGridLayoutSimulation->addWidget(spinBoxN,1,1);
+    subGridLayoutSimulation->addWidget(labelM,2,0);
+    subGridLayoutSimulation->addWidget(spinBoxM,2,1);
+    subGridLayoutSimulation->addWidget(labelT,3,0);
+    subGridLayoutSimulation->addWidget(doubleSpinBoxT,3,1);
 
 
 

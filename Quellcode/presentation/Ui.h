@@ -10,7 +10,7 @@
 #include <QProgressBar>
 #include <QSlider>
 #include <QSpinBox>
-#include <QTableView>
+#include <QTableWidget>
 #include <QTabWidget>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -187,9 +187,11 @@ class Controller;
         QComboBox * comboBoxIntMethod;
         QComboBox * comboBoxSolver;
 
-        //TableViews
-        QTableView * tableViewHeatSources;
-        QTableView * tableViewThermalConductivities;
+        //TableWidgets
+        QTableWidget * tableWidgetHeatSources;
+        QTableWidget * tablewidgetThermalConductivities;
+        QStringList listHeaderThermalConductivity;
+        QStringList listHeaderHeatSource;
 
         //TabWidgets
         QTabWidget * tabWidgetMain;
