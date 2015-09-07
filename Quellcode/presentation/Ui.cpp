@@ -94,9 +94,39 @@ presentation::UI::UI(QWidget *parent)
     mainLayoutKonfigurationIBVs = new QVBoxLayout(widgetKonfigurationIBVs);
     subGridLayoutKonfigurationIBVs = new QGridLayout(widgetKonfigurationIBVs);
     subHBoxLayoutKonfigurationIBVs = new QHBoxLayout(widgetKonfigurationIBVs);
-    mainLayoutKonfigurationIBVs->addLayout(subGridLayoutKonfigurationIBVs);
+    mainLayoutKonfigurationIBVs->addLayout(subGridLayoutKonfigurationIBVs,0);
+
+    labelTopIBV = new QLabel("Info",widgetKonfigurationIBVs);
+    labelBottomBoundary = new QLabel("unteren Randwert eingeben",widgetKonfigurationIBVs);
+    labelInitialValue = new QLabel("Anfangswert eingeben",widgetKonfigurationIBVs);
+    labelLeftBoundary = new QLabel("linken Randwert eingeben",widgetKonfigurationIBVs);
+    labelRightBoundary = new QLabel("rechten Randwert eingeben",widgetKonfigurationIBVs);
+    labelTopBoundary = new QLabel("oberen Randwert eingeben",widgetKonfigurationIBVs);
+
+    doubleSpinBoxBottomBoundary = new QDoubleSpinBox(widgetKonfigurationIBVs);
+    doubleSpinBoxInitialValue = new QDoubleSpinBox(widgetKonfigurationIBVs);
+    doubleSpinBoxLeftBoundary = new QDoubleSpinBox(widgetKonfigurationIBVs);
+    doubleSpinBoxRightBoundary = new QDoubleSpinBox(widgetKonfigurationIBVs);
+    doubleSpinBoxTopBoundary = new QDoubleSpinBox(widgetKonfigurationIBVs);
+
+    subGridLayoutKonfigurationIBVs->addWidget(labelTopIBV,0,0);
+    subGridLayoutKonfigurationIBVs->addWidget(labelInitialValue,0,1);
+    subGridLayoutKonfigurationIBVs->addWidget(doubleSpinBoxInitialValue,1,1);
+    subGridLayoutKonfigurationIBVs->addWidget(labelBottomBoundary,2,0);
+    subGridLayoutKonfigurationIBVs->addWidget(doubleSpinBoxBottomBoundary,2,1);
+    subGridLayoutKonfigurationIBVs->addWidget(labelLeftBoundary,3,0);
+    subGridLayoutKonfigurationIBVs->addWidget(doubleSpinBoxLeftBoundary,3,1);
+    subGridLayoutKonfigurationIBVs->addWidget(labelRightBoundary,4,0);
+    subGridLayoutKonfigurationIBVs->addWidget(doubleSpinBoxRightBoundary,4,1);
+    subGridLayoutKonfigurationIBVs->addWidget(labelTopBoundary,5,0);
+    subGridLayoutKonfigurationIBVs->addWidget(doubleSpinBoxTopBoundary,5,1);
 
 
+    //SimulationTab
+    labelTopSimulation = new QLabel("Info",widgetSimulation);
+    labelN = new QLabel("N eingeben",widgetSimulation);
+    labelM = new QLabel("M eingeben",widgetSimulation);
+    labelT = new QLabel("T eingeben",widgetSimulation);
 
 
 
@@ -112,6 +142,8 @@ presentation::UI::UI(QWidget *parent)
     //Layout anwenden
     widgetCentral->setLayout(mainLayout);
     setCentralWidget(widgetCentral);
+
+    //widgetKonfigurationIBVs->setLayout(mainLayoutKonfigurationIBVs);
 
 
 }
