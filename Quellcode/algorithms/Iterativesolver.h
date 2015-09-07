@@ -10,7 +10,7 @@ namespace algorithms {
     public:
         IterativeSolver();
 
-        virtual void solve(QVector<double>& result, CRS& matrix, QVector<double>& rhs)=0;
+        virtual void solve(QVector<double>& result, CRS const &matrix, QVector<double> const &rhs)=0;
     };
 
 }

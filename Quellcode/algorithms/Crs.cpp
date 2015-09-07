@@ -1,25 +1,69 @@
 #include "Crs.h"
 
+algorithms::CRS::CRS() {
+
+}
+
+algorithms::CRS algorithms::CRS::operator-(CRS const &rMat) {
+
+}
+
+algorithms::CRS& algorithms::CRS::operator=(CRS const &rhs) {
+
+}
+
 void algorithms::CRS::A1(int const n)
 {
-    int numRows = n*n;
-    int nnz = 5 * numRows - 24 * n +28; // non-zero elements
-    ptr = new int[numRows];
-    index = new int[nnz];
-    value = new double[nnz];
+    int nnz = 5 * (n-2) * (n-2); // non-zero elements
+    ptr.resize(n*n+1);
+    index.resize(nnz);
+    value.resize(nnz);
 
-    for(int i=0; i<n; i++) {
+    int valCount = 0;
+
+    for(int i=0; i<n; ++i) {
         ptr[i] = 0;
     }
-    for(int i=1; i<n-2; i++) {
-        ptr[i*n] = ptr[i*n-1];
-        ptr[i*n+1] = ptr[i*n];
-        ptr[i*n+2] = ptr[i*n] + 3;
-        for(int j = 1; j<(i+1)*n-2; j++) {
-            ptr[i*n+2+j] = ptr[i*n+2+j-1] + 4;
+    int j;
+    for(int i=1; i<n-1; ++i) {
+        j=i*n;
+        ptr[j] = ptr[j-1];
+        ptr[j+1] = ptr[j];
+        for(int k=1; k<n-1; ++k) {
+            value[valCount] = 1;
+            index[valCount++] = j-n+k;
+            value[valCount] = 1;
+            index[valCount++] = j+k-1;
+            value[valCount] = -4;
+            index[valCount++] = j+k;
+            value[valCount] = 1;
+            index[valCount++] = j+k+1;
+            value[valCount] = 1;
+            index[valCount++] = j+k+n;
+            ptr[j+k+1] = ptr[j+k] + 5;
         }
-        ptr[(i+1)*n-2] = ptr[(i+1)*n-3] + 3;
-        ptr[(i+1)*n-1] = ptr[(i+1)*n-2];
     }
+    for(int i=0; i<n; ++i) {
+        ptr[n*n-n+i+1] =  ptr[n*n-n];
+    }
+    ptr[n*n] = nnz + 1;
+}
+
+void algorithms::CRS::eye(int const n)
+{
+    int nnz = n*n; // non-zero elements
+    ptr.resize(n*n+1);
+    index.resize(nnz);
+    value.resize(nnz);
+
+    for(int i=0; i<n*n; ++i) {
+        ptr[i] = 0+i;
+        value[i] = 1;
+        index[i] = i;
+    }
+    ptr[n*n] = nnz + 1;
+}
+
+algorithms::CRS algorithms::operator*(double const &scalar, algorithms::CRS const &Mat) {
 
 }
