@@ -1,6 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 #include <QString>
+#include <QMap>
 #include "Area.h"
 #include "../algorithms/Intmethod.h"
 
@@ -15,47 +16,48 @@ namespace model {
     //Funktionen:
     public:
         Model();
+        ~Model();
 
         void addHeatSource(Area * newHeatSource);
         void addThermalConductivity(Area * newThermalConductivity);
-        double getBottomBoundary;
-        QList<Area*> getHeatSources();
-        int getHeatSourcesCount();
-        double getInitialValue();
-        QList<QString> getIntMethodNames();
-        QList<QString> getIterativeSolverNames();
-        double getLeftBoundary();
-        int getM();
-        int getN();
-        double*** getResult();
-        int getResultM();
-        int getResultN();
-        double getResultT();
-        double getRightBoundary();
-        QString getSelectedIntMethod();
-        QString getSelectedIterativeSolver();
-        bool getSimulated();
-        bool getSimulating();
-        double getT;
-        QList<Area*> getThermalConductivities();
-        int getThermalConductivitiesCount();
-        double getTopBoundary();
+        double getBottomBoundary() const;
+        QList<Area *> const& getHeatSources() const;
+        int getHeatSourcesCount() const;
+        double getInitialValue() const;
+        const QList<QString> getIntMethodNames() const;
+        QList<QString> const getIterativeSolverNames() const;
+        double getLeftBoundary() const;
+        int getM() const;
+        int getN() const;
+        double*** const & getResult() const;
+        int getResultM() const;
+        int getResultN() const;
+        double getResultT() const;
+        double getRightBoundary() const;
+        QString getSelectedIntMethod() const;
+        QString getSelectedIterativeSolver() const;
+        bool getSimulated() const;
+        bool getSimulating() const;
+        double getT() const;
+        QList<Area*> const & getThermalConductivities() const;
+        int getThermalConductivitiesCount() const;
+        double getTopBoundary() const;
         void removeLastHeatSource();
         void removeLastThermalConductivity();
-        void selectIntMethod(QString intMethod);
-        void selectIterativeSolver(QString iterativeSolver);
-        void setBottomBoundary(double bottomBoundary);
-        void setInitialValue(double initialValue);
-        void setLeftBoundary(double leftBoundary);
-        void setM(int m);
-        void setN(int n);
-        void setRightBoundary(double rightBoundary);
-        void setT(double T);
-        void setTopBoundary(double topBoundary);
+        void selectIntMethod(QString const intMethod);
+        void selectIterativeSolver(QString const newIterativeSolver);
+        void setBottomBoundary(double const newBottomBoundary);
+        void setInitialValue(double const newInitialValue);
+        void setLeftBoundary(double const newLeftBoundary);
+        void setM(int const newM);
+        void setN(int const newN);
+        void setRightBoundary(double const newRightBoundary);
+        void setT(double const T);
+        void setTopBoundary(double const topBoundary);
         void setUI(presentation::UI * ui);
         void simulate();
-        void updateHeatSourceValue(int pos, double value);
-        void updateThermalConductivityValue(int pos, double value);
+        void updateHeatSourceValue(int const pos, double const value);
+        void updateThermalConductivityValue(int const pos, double const newValue);
 
     //Attribute:
     private:
@@ -63,9 +65,11 @@ namespace model {
         QList<Area*> heatSources;
         int heatSourcesCount;
         double initialValue;
+        QMap<QString,algorithms::IntMethod*> intMethods;
+        QMap<QString,algorithms::IterativeSolver*> iterativeSolvers;
         double leftBoundary;
-        int m;
-        int n;
+        long m;
+        long n;
         double *** result;
         int resultM;
         int resultN;
@@ -80,6 +84,7 @@ namespace model {
         int thermalConductivitesCount;
         double topBoundary;
         presentation::UI * ui;
+
     };
 
 }

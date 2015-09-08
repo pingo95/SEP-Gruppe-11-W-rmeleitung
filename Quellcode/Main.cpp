@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     //Anlegen der MVC Objekte
     model::Model * model = new model::Model();
     presentation::UI * ui = new presentation::UI();
-    presentation::Controller * controller = new presentation::Controller(application);
+    presentation::Controller * controller = new presentation::Controller();
 
     //Verbinden der MVC Objekte:
 //    model->setUI(ui);

@@ -1,12 +1,22 @@
 #include "Area.h"
 
+// Statischer ID Counter
+int model::Area::idCounter = 0;
+
 // Vorbedingung: xKoords und yKoords wurden vorher mit validateArea getestet
 // Erstellt neues Gebiet:
 model::Area::Area(QVector<double> const & xKoords,
                   QVector<double> const & yKoords, double value):
-    xKoords(xKoords), yKoords(yKoords), value(value)
+    id(++idCounter), xKoords(xKoords), yKoords(yKoords), value(value)
 {
 
+}
+
+// Gibt eine obere Schranke für die bisher verteilten IDs ohne dabei zu
+// unterscheiden, von wem und wo die Gebiete benutzt wurden
+int model::Area::getCurrentMaxID()
+{
+    return idCounter;
 }
 
 // Testet, ob die Punkte in den Vektoren ein gültiges Gebiet ergeben würden
@@ -74,6 +84,11 @@ void model::Area::getPoints(QVector<double> & xKoords,
 {
     xKoords = this->xKoords;
     yKoords = this->yKoords;
+}
+
+int model::Area::getID() const
+{
+    return id;
 }
 
 double model::Area::getValue() const

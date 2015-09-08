@@ -2,6 +2,8 @@
 #define CONTROLLER_H
 #include "../model/Model.h"
 #include "Ui.h"
+#include <QInputDialog>
+#include <QMessageBox>
 
 namespace presentation {
 
@@ -9,7 +11,8 @@ namespace presentation {
     {
     //Funktionen:
     public:
-        Controller(QApplication & application);
+        Controller();
+        ~Controller();
 
         void heatSourcesClickSlot(QMouseEvent * event);
         void heatSourceValueChangedSlot(int pos, UI::AreaTableColumn column); //Column->Modularität?
@@ -36,18 +39,16 @@ namespace presentation {
         void undoThermalConductivitySlot();
         void visualizeStateSlot(int frame);
 
-    private:
-        Controller();
-
     //Attribute:
     private:
-        QApplication & application;
         model::Model * model;
         QVector<double> partialAreaX;
         QVector<double> partialAreaY;
         bool startedNewHeatSource;
         bool startedNewThermalConductivity;
         UI * ui;
+        QInputDialog * userInput;
+        QMessageBox * errorMessages;
     };
 
 }

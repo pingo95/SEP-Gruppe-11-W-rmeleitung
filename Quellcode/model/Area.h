@@ -10,11 +10,13 @@ namespace model {
     public:
         Area(QVector<double> const & xKoords,
              QVector<double> const & yKoords, double value);
+        static int getCurrentMaxID();
         static bool validateArea(QVector<double> const & xKoords,
                                  QVector<double> const & yKoords);
 
         void getConvexRectangle(double & xMin, double & xMax,
                                 double & yMin, double & yMax) const;
+        int getID() const;
         void getPoints(QVector<double> & xKoords,
                        QVector<double> & yKoords) const;
         double getValue() const;
@@ -41,6 +43,9 @@ namespace model {
 
     //Attribute:
     private:
+        static int idCounter;
+
+        int const id;
         QVector<double> const xKoords;
         QVector<double> const yKoords;
         double value;
