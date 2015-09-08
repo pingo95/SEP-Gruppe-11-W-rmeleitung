@@ -10,6 +10,7 @@ namespace algorithms {
         CrankNicolson();
 
         void calcNextStep(QVector<double> const &last, QVector<double>& next, QVector<double> const &heatSources);
+        void setUp(int const n, int const m, double const T, QVector<double> const &thermalConductivities);
         void setUpItMatrix();
     };
 

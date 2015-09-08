@@ -8,6 +8,10 @@ void algorithms::CrankNicolson::calcNextStep(QVector<double> const &last, QVecto
 
 }
 
+void algorithms::CrankNicolson::setUp(const int n, const int m, const double T, const QVector<double> &thermalConductivities) {
+
+}
+
 void algorithms::CrankNicolson::setUpItMatrix() {
     CRS A1; A1.A1(IntMethod::n);
     CRS eye; eye.eye(IntMethod::n);
