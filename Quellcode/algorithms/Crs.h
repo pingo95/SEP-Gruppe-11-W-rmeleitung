@@ -14,10 +14,12 @@ namespace algorithms {
         CRS(CRS const &rhs);
         CRS& operator=(CRS const &rhs);
         CRS operator*(CRS const &rMat);
+        QVector<double> operator*(QVector<double> const &vec);
+        CRS operator+(CRS const &rMat);
         CRS operator-(CRS const &rMat);
 
         void A1(int const n); // 2D-Diskretisierungsmatrix Laplace-Operator
-        void diag(QVector<double> const &diag);
+        CRS& diag(QVector<double> const &diag);
         void eye(int const n); // Einheitsmatrix der Groesse n*n
 
     //Attribute:

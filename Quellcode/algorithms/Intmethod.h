@@ -15,9 +15,11 @@ namespace algorithms {
         virtual ~IntMethod();
 
 
-        virtual void calcNextStep(QVector<double> const &last, QVector<double>& next, QVector<double> const &heatSources) = 0;
+        virtual void calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources)=0;
+        virtual void getNeedetHeatSources(QVector<double> &neededTimeSteps, bool &reusable)=0;
         void selectIterativeSolver(IterativeSolver* iterativeSolver);
-        virtual void setUp(int const n, int const m, double const T, QVector<double> const &thermalConductivities) = 0;
+        void setUp(int const n, int const m, double const T, QVector<double> const &thermalConductivities);
+        virtual void setUp(QVector<double> const &thermalConductivities)=0;
 
     //Attribute:
     protected:

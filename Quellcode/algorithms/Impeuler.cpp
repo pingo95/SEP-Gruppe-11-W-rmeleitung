@@ -4,22 +4,22 @@ algorithms::ImpEuler::ImpEuler() {
 
 }
 
-void algorithms::ImpEuler::calcNextStep(const QVector<double> &last, QVector<double> &next, const QVector<double> &heatSources) {
-    QVector<double> rhs = last + this->deltaT * heatSources;
+void algorithms::ImpEuler::calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources) {
+    QVector<double> heatSources1 = *(heatSources[1]);
+    QVector<double> rhs = last + this->deltaT * heatSources1;
     this->activeIterativeSolver->solve(next,this->itMatrix,rhs);
 }
 
-void algorithms::ImpEuler::setUp(const int n, const int m, const double T, const QVector<double> &thermalConductivities) {
-    this->n = n;
-    this->deltaX = (1./(double)(n-1));
-    this->deltaT = (T/(double)m);
-    setUpItMatrix();
+void algorithms::ImpEuler::getNeedetHeatSources(QVector<double> &neededTimeSteps, bool &reusable) {
+    reusable = true;
+    neededTimeSteps.resize(1);
+    neededTimeSteps[1]=1;
 }
 
-void algorithms::ImpEuler::setUpItMatrix() {
-    CRS A1; A1.A1(IntMethod::n);
+void algorithms::ImpEuler::setUp(QVector<double> const &thermalConductivities) {
+    CRS A1, tmp; A1.A1(IntMethod::n); A1 = tmp.diag(thermalConductivities)*A1;
     CRS eye; eye.eye(IntMethod::n);
-    itMatrix = deltaT/(deltaX*deltaX) * itMatrix * A1;
+    itMatrix = deltaT/(deltaX*deltaX) * A1;
     itMatrix = eye - itMatrix;
 }
 
