@@ -67,7 +67,7 @@ class Controller;
         QSize getThermalConductivityPlotSize() const;
         void heatSourcePixelToCoords(double const mouseX, double const mouseY, double & x, double & y);
         void revertTabChange(UI::ActiveTab targetTab);
-        void setActiveTab(UI::ActiveTab targetTab);
+        void setActiveTab(int targetTab);
         void setController(Controller * controller);
         void setModel(model::Model * model);
         void thermalConductivityPixelToCoords(double const mouseX, double const mouseY, double & x, double & y);
@@ -95,7 +95,7 @@ class Controller;
 
     //Attribute:
     private:
-        UI::ActiveTab activeTab;
+        int activeTab;
         Controller * controller;
         model::Model * model;
         double *** result;
@@ -199,7 +199,7 @@ class Controller;
 
         //ComboBoxes
         QComboBox * comboBoxIntMethod;
-        QComboBox * comboBoxSolver;
+        QComboBox * comboBoxIterativeSolver;
 
         //TableWidgets
         QTableWidget * tableWidgetHeatSources;

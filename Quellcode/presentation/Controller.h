@@ -2,20 +2,23 @@
 #define CONTROLLER_H
 #include "../model/Model.h"
 #include "Ui.h"
+#include <QObject>
 #include <QInputDialog>
 #include <QMessageBox>
 
 namespace presentation {
 
-    class Controller
+    class Controller : public QObject
     {
+        Q_OBJECT
+
     //Funktionen:
     public:
-        Controller();
+        Controller(QObject * parent = 0);
         ~Controller();
 
         void heatSourcesClickSlot(QMouseEvent * event);
-        void heatSourceValueChangedSlot(int pos, UI::AreaTableColumn column); //Column->Modularität?
+        void heatSourceValueChangedSlot(int pos, int column); //Column->Modularität?
         void newBottomBoundarySlot(double newBottomBoundary);
         void newInitialValueSlot(double newInitialValue);
         void newLeftBoundarySlot(double newLeftBoundary);
@@ -30,11 +33,11 @@ namespace presentation {
         void setModel(model::Model * model);
         void setUI(UI * ui);
         void simulateSlot();
-        void tabChangedSlot(UI::ActiveTab newTab);
+        void tabChangedSlot(int newTab);
         void testPartialHeatSource();
         void testPartialThermalConductivity();
         void thermalConductivitiesClickSlot(QMouseEvent * event);
-        void thermalConductivityValueChangedSlot(int pos, UI::AreaTableColumn column); //Column->Modularität?
+        void thermalConductivityValueChangedSlot(int pos, int column); //Column->Modularität?
         void undoHeatSourceSlot();
         void undoThermalConductivitySlot();
         void visualizeStateSlot(int frame);

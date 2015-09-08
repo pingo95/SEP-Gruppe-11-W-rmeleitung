@@ -265,7 +265,7 @@ presentation::UI::UI(QWidget *parent)
     spinBoxN = new QSpinBox(widgetSimulation);
         //ComboBoxes
     comboBoxIntMethod = new QComboBox(widgetSimulation);
-    comboBoxSolver = new QComboBox(widgetSimulation);
+    comboBoxIterativeSolver = new QComboBox(widgetSimulation);
         //Progressbar
     progressBarProgress =  new QProgressBar(widgetSimulation);
     progressBarProgress->setMaximumWidth(1000);
@@ -284,7 +284,7 @@ presentation::UI::UI(QWidget *parent)
     subGridLayoutSimulation->addWidget(labelSelectIntMethod,4,0);
     subGridLayoutSimulation->addWidget(comboBoxIntMethod,4,1);
     subGridLayoutSimulation->addWidget(labelSelectSolver,5,0);
-    subGridLayoutSimulation->addWidget(comboBoxSolver,5,1);
+    subGridLayoutSimulation->addWidget(comboBoxIterativeSolver,5,1);
     subGridLayoutSimulation->addWidget(buttonSimulate,6,0,1,2);
     subGridLayoutSimulation->addWidget(labelProgressBar,7,0);
     subGridLayoutSimulation->addWidget(progressBarProgress,7,1);
@@ -435,11 +435,9 @@ void presentation::UI::revertTabChange(UI::ActiveTab targetTab)
         tabWidgetMain->setCurrentIndex(UI::TabConfiguration);
         tabWidgetSub->setCurrentIndex(UI::TabThermalConductivity-tabMainCount);
     }
-
-
 }
 
-void presentation::UI::setActiveTab(UI::ActiveTab targetTab)
+void presentation::UI::setActiveTab(int targetTab)
 {
     activeTab = targetTab;
     updateNotification();
@@ -448,6 +446,27 @@ void presentation::UI::setActiveTab(UI::ActiveTab targetTab)
 void presentation::UI::setController(Controller *controller)
 {
     this->controller = controller;
+    connect(plateHeatSource,SIGNAL(mousePress(QMouseEvent*)),controller,SLOT(heatSourceClickSLot(QMouseEvent*)));
+    connect(tableWidgetHeatSources,SIGNAL(cellChanged(int,int)),controller,SLOT(heatSourceValueChanged(int,int)));
+    connect(doubleSpinBoxBottomBoundary,SIGNAL(valueChanged(double)),controller,SLOT(newBottomBoundaryChangedSlot(double)));
+    connect(doubleSpinBoxInitialValue,SIGNAL(valueChanged(double)),controller,SLOT(newInitialValue(double)));
+    connect(doubleSpinBoxLeftBoundary,SIGNAL(valueChanged(double)),controller,SLOT(newLeftBoundarySlot(double)));
+    connect(spinBoxM,SIGNAL(valueChanged(int)),controller,SLOT(newMSlot(double)));
+    connect(spinBoxN,SIGNAL(valueChanged(int)),controller,SLOT(newNSlot(double)));
+    connect(doubleSpinBoxRightBoundary,SIGNAL(valueChanged(double)),controller,SLOT(newRightBoundarySlot(double)));
+    connect(doubleSpinBoxTopBoundary,SIGNAL(valueChanged(double)),controller,SLOT(newTopBoundarySlot(double)));
+    connect(doubleSpinBoxT,SIGNAL(valueChanged(double)),controller,SLOT(newTSlot()));
+    connect(buttonPlayVideo,SIGNAL(pressed()),controller,SLOT(playVideoSlot()));
+    connect(comboBoxIntMethod,SIGNAL(currentTextChanged(QString)),controller,SLOT(selectIntMethodSlot(QString)));
+    connect(comboBoxIterativeSolver,SIGNAL(currentTextChanged(QString)),controller,SLOT(selectIterativeSloverMethod(QString)));
+    connect(buttonSimulate,SIGNAL(clicked(bool)),controller,SLOT(simulateSlot()));
+    connect(tabWidgetMain,SIGNAL(currentChanged(int)),controller,SLOT(tabChangedSlot(int)));
+    connect(this,SIGNAL(subTabChange(int)),controller,SLOT(tabChangedSlot(int)));
+    connect(plateThermalConductivity,SIGNAL(mousePress(QMouseEvent*)),controller,SLOT(thermalConductivitiesClickSlot(QMouseEvent*)));
+    connect(tableWidgetHeatSources,SIGNAL(cellChanged(int,int)),controller,SLOT(thermalConductivityValueChangedSlot(int,int)));
+    connect(buttonUndoHeatSource,SIGNAL(clicked(bool)),controller,SLOT(undoHeatSourceSlot()));
+    connect(buttonUndoThermalConductivity,SIGNAL(clicked(bool)),controller,SLOT(undoThermalConductivitySlot()));
+    connect(sliderVideo,SIGNAL(valueChanged(int)),controller,SLOT(visualizeStateSlot(int)));
 }
 
 void presentation::UI::setModel(model::Model *model)

@@ -311,7 +311,7 @@ void model::Model::simulate()
 
 
     // Anlegen der Vektoren für Wärmequellen und Wärmeleitkoeffizienten
-    QVector<double> heatSourcesGrid(n*n,0);
+    QVector<QVector<double> *> heatSourcesGrid;
     QVector<double> thermalConductivitiesGrid(n*n,0);
 //    double * heatSourcesGrid = new double[n*n];
 //    double * thermalConductivitiesGrid = new double[n*n];
@@ -323,25 +323,25 @@ void model::Model::simulate()
 
     // Berechnen welche Punkte von welcher Wärmequelle abgedeckt werden,
     // dabei überschreiben neure Gebiete ältere
-    if(heatSourcesCount > 0)
-    {
-        QList<Area*>::const_iterator it = heatSources.begin();
-        for(; it != heatSources.end(); ++it)
-        {
-            Area* heatSource = *it;
-            double temperature = heatSource->getValue();
-            double xMin, xMax, yMin, yMax;
-            heatSource->getConvexRectangle(xMin,xMax,yMin,yMax);
-            long xLBound = ceil(xMin/deltaX),
-                    xUBound = floor(xMax/deltaX),
-                    yLBound = ceil(yMin/deltaX),
-                    yUBound = floor(yMax/deltaX);
-            for(long i = xLBound; i <= xUBound; ++i)
-                for(long j = yLBound; j <= yUBound; ++j)
-                    if(heatSource->insidePoint(i*deltaX,j*deltaX))
-                        heatSourcesGrid[i+j*n] = temperature;
-        }
-    }
+//    if(heatSourcesCount > 0)
+//    {
+//        QList<Area*>::const_iterator it = heatSources.begin();
+//        for(; it != heatSources.end(); ++it)
+//        {
+//            Area* heatSource = *it;
+//            double temperature = heatSource->getValue();
+//            double xMin, xMax, yMin, yMax;
+//            heatSource->getConvexRectangle(xMin,xMax,yMin,yMax);
+//            long xLBound = ceil(xMin/deltaX),
+//                    xUBound = floor(xMax/deltaX),
+//                    yLBound = ceil(yMin/deltaX),
+//                    yUBound = floor(yMax/deltaX);
+//            for(long i = xLBound; i <= xUBound; ++i)
+//                for(long j = yLBound; j <= yUBound; ++j)
+//                    if(heatSource->insidePoint(i*deltaX,j*deltaX))
+//                        heatSourcesGrid[i+j*n] = temperature;
+//        }
+//    }
 
     // Berechnen welche Punkte von welchem Wärmeleitkoeffizienten-Gebiet
     // abgedeckt werden, dabei überschreiben neure Gebiete ältere

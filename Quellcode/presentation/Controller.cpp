@@ -1,8 +1,9 @@
 #include "Controller.h"
 
-presentation::Controller::Controller()
-    : model(NULL), startedNewHeatSource(false), startedNewThermalConductivity(false),
-      ui(NULL), userInput(new QInputDialog), errorMessages(new QMessageBox)
+presentation::Controller::Controller(QObject * parent)
+    : QObject(parent), model(NULL), startedNewHeatSource(false),
+      startedNewThermalConductivity(false), ui(NULL),
+      userInput(new QInputDialog), errorMessages(new QMessageBox)
 {
     errorMessages->setWindowTitle("Fehlermeldung");
     errorMessages->setIcon(QMessageBox::Critical);
@@ -95,7 +96,7 @@ void presentation::Controller::heatSourcesClickSlot(QMouseEvent *event)
 
 // Dieser Slot updatet den Wert für ein Wärmequellengebiet, falls der neue
 // gültig ist
-void presentation::Controller::heatSourceValueChangedSlot(int pos, UI::AreaTableColumn column)
+void presentation::Controller::heatSourceValueChangedSlot(int pos, int column)
 {
     // Testen ob auch wirklich Gebietswert geändert wurde, da das Signal bei
     // Änderungen in allen Felder des Tabellen Widgets ausgelöst wird
@@ -370,7 +371,7 @@ void presentation::Controller::simulateSlot()
 
 // Dieser Slot verhindert, dass während des Erstellens eines neuen Gebietes,
 // der Tab gewechselt werden kann, d.h. ohne das neue Gebiet fertigzustellen
-void presentation::Controller::tabChangedSlot(UI::ActiveTab newTab)
+void presentation::Controller::tabChangedSlot(int newTab)
 {
     // Falls gerade ein neues Wärmequellen-Gebiet erstellt wird
     // und der entsprechende Tab nicht mehr geöffnet ist, in diesen
@@ -405,6 +406,9 @@ void presentation::Controller::tabChangedSlot(UI::ActiveTab newTab)
         errorMessages->setDetailedText("");
         errorMessages->exec();
     }
+
+    // Aktiven Tab im UI ändern und UI updaten
+    ui->setActiveTab(newTab);
 }
 
 // Diese Funktion überprüft, ob ein neues Wärmequellen-Gebiet begonnen wurde und
@@ -508,7 +512,7 @@ void presentation::Controller::thermalConductivitiesClickSlot(QMouseEvent *event
 
 // Dieser Slot updatet den Wert für ein Wärmeleitkoeffizienten-Gebiet,
 // falls der neue gültig ist
-void presentation::Controller::thermalConductivityValueChangedSlot(int pos, UI::AreaTableColumn column)
+void presentation::Controller::thermalConductivityValueChangedSlot(int pos, int column)
 {
     // Testen ob auch wirklich Gebietswert geändert wurde, da das Signal bei
     // Änderungen in allen Felder des Tabellen Widgets ausgelöst wird
