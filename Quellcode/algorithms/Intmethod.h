@@ -1,5 +1,6 @@
 #ifndef INTMETHOD_H
 #define INTMETHOD_H
+
 #include "Iterativesolver.h"
 #include <QVector>
 
@@ -30,7 +31,7 @@ namespace algorithms {
         int n;
     };
 
-    QVector<double> operator*(double const &scalar, QVector<double> const & rhs);
+    QVector<double> operator *(double const &scalar, QVector<double> const &rhs);
 }
 
 #endif // INTMETHOD_H

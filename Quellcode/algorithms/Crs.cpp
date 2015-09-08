@@ -32,7 +32,7 @@ algorithms::CRS algorithms::CRS::operator*(CRS const &rMat) {
     return mult;
 }
 
-QVector<double> algorithms::CRS::operator*(QVector<double> const &vec) {
+QVector<double> algorithms::CRS::operator*(QVector<double> const &vec) const {
     QVector<double> res(this->size);
     for(int i=0; i<size; i++) {
         res[i] = 0;
@@ -178,6 +178,17 @@ void algorithms::CRS::eye(int const n)
         index[i] = i;
     }
     ptr[n*n] = nnz;
+}
+
+int algorithms::CRS::getRowsMinCol(int i) const {
+    return this->ptr[i];
+}
+
+double algorithms::CRS::getValue(int i, int j) const {
+    for(int k=this->ptr[i]; k<this->ptr[i+1]; ++k) {
+        if(this->index[k]==j) return this->value[k];
+    }
+    return 0;
 }
 
 algorithms::CRS algorithms::operator*(double const &scalar, algorithms::CRS const &Mat) {

@@ -8,7 +8,11 @@ algorithms::IterativeSolver::~IterativeSolver() {
 
 }
 
-void algorithms::IterativeSolver::solve(QVector<double> &result, CRS const &matrix, QVector<double> const &rhs) {
-
+double algorithms::norm2(QVector<double> const &vec) {
+    double sum=0;
+    for(int i=0; i<vec.size(); i++) {
+        sum += vec[i]*vec[i];
+    }
+    sum = sqrt(sum);
+    return sum;
 }
-

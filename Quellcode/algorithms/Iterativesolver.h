@@ -1,7 +1,9 @@
 #ifndef ITERATIVESOLVER_H
 #define ITERATIVESOLVER_H
+
 #include <QVector>
 #include "Crs.h"
+#include <math.h>
 
 namespace algorithms {
 
@@ -13,6 +15,8 @@ namespace algorithms {
 
         virtual void solve(QVector<double>& result, CRS const &matrix, QVector<double> const &rhs)=0;
     };
+
+    double norm2(QVector<double> const &vec);
 
 }
 
