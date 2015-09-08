@@ -10,23 +10,19 @@ void algorithms::IntMethod::calcNextStep(const QVector<double> &last, QVector<do
 }
 
 void algorithms::IntMethod::selectIterativeSolver(IterativeSolver *iterativeSolver) {
-
-}
-
-
-void algorithms::IntMethod::setThermalConductivities(QVector<double> const &thermalConductivities) {
-
+    activeIterativeSolver = iterativeSolver;
 }
 
 void algorithms::IntMethod::setUp(int const n, int const m, double const T, QVector<double> const &thermalConductivities) {
     this->n = n;
     this->deltaX = (1./(double)(n-1));
     this->deltaT = (T/(double)m);
-    setThermalConductivities(thermalConductivities);
+    itMatrix.diag(thermalConductivities);
     setUpItMatrix();
 }
 
-QVector<double> algorithms::operator *(double const &scalar, QVector<double> const &rhs) {
-    QVector<double> tmp = rhs;
-    for(int i=0; i<rhs.size(); i++) tmp[i] *= scalar;
+QVector<double> algorithms::operator*(double const &scalar, QVector<double> const &rhs) {
+    QVector<double> mult = rhs;
+    for(int i=0; i<rhs.size(); i++) mult[i] *= scalar;
+    return mult;
 }
