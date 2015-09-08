@@ -12,8 +12,10 @@ namespace algorithms {
     //Funktionen:
     public:
         IntMethod();
+        virtual ~IntMethod();
 
-        void calcNextStep(QVector<double> const &last, QVector<double>& next, QVector<double> const &heatSources);
+
+        virtual void calcNextStep(QVector<double> const &last, QVector<double>& next, QVector<double> const &heatSources) = 0;
         void selectIterativeSolver(IterativeSolver* iterativeSolver);
         void setUp(int const n, int const m, double const T, QVector<double> const &thermalConductivities);
         virtual void setUpItMatrix()=0;

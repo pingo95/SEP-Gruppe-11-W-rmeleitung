@@ -9,6 +9,7 @@ namespace algorithms {
     public:
         CrankNicolson();
 
+        void calcNextStep(QVector<double> const &last, QVector<double>& next, QVector<double> const &heatSources);
         void setUpItMatrix();
     };
 

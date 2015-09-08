@@ -9,6 +9,7 @@ namespace algorithms {
     public:
         ImpEuler();
 
+        void calcNextStep(const QVector<double> &last, QVector<double> &next, const QVector<double> &heatSources);
         void setUpItMatrix();
     };
 
