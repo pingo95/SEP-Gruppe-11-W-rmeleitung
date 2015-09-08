@@ -154,20 +154,23 @@ class Controller;
         QSpinBox * spinBoxN;
 
         //Labels
+        QLabel * labelBottomBoundary;
+        QLabel * labelInitialValue;
+        QLabel * labelLeftBoundary;
+        QLabel * labelM;
+        QLabel * labelN;
+        QLabel * labelProgressBar;
+        QLabel * labelRightBoundary;
+        QLabel * labelSelectIntMethod;
+        QLabel * labelSelectSolver;
+        QLabel * labelT;
+        QLabel * labelTopBoundary;
         QLabel * labelTopHeatSource;
         QLabel * labelTopHelp;
         QLabel * labelTopIBV;
         QLabel * labelTopSimulation;
         QLabel * labelTopThermalConductivity;
         QLabel * labelTopVisualization;
-        QLabel * labelBottomBoundary;
-        QLabel * labelInitialValue;
-        QLabel * labelLeftBoundary;
-        QLabel * labelRightBoundary;
-        QLabel * labelTopBoundary;
-        QLabel * labelN;
-        QLabel * labelM;
-        QLabel * labelT;
 
         //Plate
         QCustomPlot * plateHeatSource;
@@ -198,7 +201,12 @@ class Controller;
         QTabWidget * tabWidgetSub;
 
         //Spaceritem
-        QSpacerItem * spacerItem;
+        QSpacerItem * spacerItemTabIBV;
+        QSpacerItem * spacerItemTabSimulation;
+        QSpacerItem * spacerItemTabVisualisation;
+        QSpacerItem * spacerItemTabHelp;
+
+
     };
 
 }

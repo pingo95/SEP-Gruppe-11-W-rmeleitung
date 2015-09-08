@@ -50,11 +50,6 @@ presentation::UI::UI(QWidget *parent)
 
     mainLayout->addWidget(tabWidgetMain);
 
-
-    //Platzhalter
-    spacerItem = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
-
-
     //KonfigurationTab
     tabWidgetSub = new QTabWidget(widgetKonfiguration);
     widgetKonfigurationHeatSources = new QWidget(this);
@@ -144,7 +139,6 @@ presentation::UI::UI(QWidget *parent)
     subGridLayoutKonfigurationThermalConductivities->addWidget(tablewidgetThermalConductivities,1,0);
     subGridLayoutKonfigurationThermalConductivities->addWidget(plateThermalConductivity,1,1);
     subGridLayoutKonfigurationThermalConductivities->addWidget(buttonUndoThermalConductivity,1,2);
-    //subGridLayoutKonfigurationThermalConductivities->addItem(spacerItem,2,1);
 
 
     //HeatSourceTab
@@ -210,7 +204,6 @@ presentation::UI::UI(QWidget *parent)
     subGridLayoutKonfigurationHeatSources->addWidget(tableWidgetHeatSources,1,0);
     subGridLayoutKonfigurationHeatSources->addWidget(plateHeatSource,1,1);
     subGridLayoutKonfigurationHeatSources->addWidget(buttonUndoHeatSource,1,2);
-    //subGridLayoutKonfigurationHeatSources->addItem(spacerItem,4,1);
 
     //IBVTab
         //Layouts initialisieren
@@ -231,6 +224,8 @@ presentation::UI::UI(QWidget *parent)
     doubleSpinBoxLeftBoundary = new QDoubleSpinBox(widgetKonfigurationIBVs);
     doubleSpinBoxRightBoundary = new QDoubleSpinBox(widgetKonfigurationIBVs);
     doubleSpinBoxTopBoundary = new QDoubleSpinBox(widgetKonfigurationIBVs);
+        //Platzhalter
+    spacerItemTabIBV = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
         //Layout
     subGridLayoutKonfigurationIBVs->addWidget(labelTopIBV,0,0);
     subGridLayoutKonfigurationIBVs->addWidget(labelInitialValue,1,0);
@@ -243,32 +238,109 @@ presentation::UI::UI(QWidget *parent)
     subGridLayoutKonfigurationIBVs->addWidget(doubleSpinBoxRightBoundary,4,1);
     subGridLayoutKonfigurationIBVs->addWidget(labelTopBoundary,5,0);
     subGridLayoutKonfigurationIBVs->addWidget(doubleSpinBoxTopBoundary,5,1);
-    subGridLayoutKonfigurationIBVs->addItem(spacerItem,6,1);
+    subGridLayoutKonfigurationIBVs->addItem(spacerItemTabIBV,6,0);
 
 
     //SimulationTab
         //Layouts initialisieren
-    mainLayoutSimulation = new QVBoxLayout(widgetSimulation);
-    subGridLayoutSimulation = new QGridLayout(widgetSimulation);
-    subHBoxLayoutSimualtion = new QHBoxLayout(widgetSimulation);
     mainLayoutSimulation->addLayout(subGridLayoutSimulation,0);
         //Labels
     labelTopSimulation = new QLabel("Info",widgetSimulation);
     labelN = new QLabel("N eingeben",widgetSimulation);
     labelM = new QLabel("M eingeben",widgetSimulation);
     labelT = new QLabel("T eingeben",widgetSimulation);
+    labelProgressBar = new QLabel("Fortschrittsbalken",widgetSimulation);
+    labelSelectIntMethod = new QLabel("IntMethod",widgetSimulation);
+    labelSelectSolver = new QLabel("Solver",widgetSimulation);
         //Boxes
     doubleSpinBoxT = new QDoubleSpinBox(widgetSimulation);
     spinBoxM = new QSpinBox(widgetSimulation);
     spinBoxN = new QSpinBox(widgetSimulation);
+        //ComboBoxes
+    comboBoxIntMethod = new QComboBox(widgetSimulation);
+    comboBoxSolver = new QComboBox(widgetSimulation);
+        //Progressbar
+    progressBarProgress =  new QProgressBar(widgetSimulation);
+    progressBarProgress->setMaximumWidth(1000);
+        //Buttons
+    buttonSimulate = new QPushButton("Simulieren",widgetSimulation);
+        //Platzhalter
+    spacerItemTabSimulation = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
         //Layout
     subGridLayoutSimulation->addWidget(labelTopSimulation,0,0);
-    subGridLayoutSimulation->addWidget(labelN,1,0);
-    subGridLayoutSimulation->addWidget(spinBoxN,1,1);
-    subGridLayoutSimulation->addWidget(labelM,2,0);
-    subGridLayoutSimulation->addWidget(spinBoxM,2,1);
+    subGridLayoutSimulation->addWidget(labelM,1,0);
+    subGridLayoutSimulation->addWidget(spinBoxM,1,1);
+    subGridLayoutSimulation->addWidget(labelN,2,0);
+    subGridLayoutSimulation->addWidget(spinBoxN,2,1);
     subGridLayoutSimulation->addWidget(labelT,3,0);
     subGridLayoutSimulation->addWidget(doubleSpinBoxT,3,1);
+    subGridLayoutSimulation->addWidget(labelSelectIntMethod,4,0);
+    subGridLayoutSimulation->addWidget(comboBoxIntMethod,4,1);
+    subGridLayoutSimulation->addWidget(labelSelectSolver,5,0);
+    subGridLayoutSimulation->addWidget(comboBoxSolver,5,1);
+    subGridLayoutSimulation->addWidget(buttonSimulate,6,0,1,2);
+    subGridLayoutSimulation->addWidget(labelProgressBar,7,0);
+    subGridLayoutSimulation->addWidget(progressBarProgress,7,1);
+    subGridLayoutSimulation->addItem(spacerItemTabSimulation,8,0);
+
+
+    //VisualisierungsTab
+        //Layouts initialisieren
+    mainLayoutVisualisation->addLayout(subGridLayoutVisualisation,0);
+        //Labels
+    labelTopVisualization = new QLabel("Info",widgetVisualisation);
+        //Buttons
+    buttonPlayVideo = new QPushButton("Play",widgetVisualisation);
+        //Schieberegler
+    sliderVideo = new QSlider(widgetVisualisation);
+    sliderVideo->setMaximumHeight(200);
+    sliderVideo->setOrientation(Qt::Horizontal);
+        //LcdNumber
+    lcdNumberVideoTimestep = new QLCDNumber(widgetVisualisation);
+        //Platzhalter
+    spacerItemTabVisualisation = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
+        //Video anzeige
+    plateVideo = new QCustomPlot(widgetVisualisation);
+            //Platte xAchse unten
+    plateVideo->xAxis->setAutoTicks(false);
+    plateVideo->xAxis->setAutoTickLabels(false);
+    plateVideo->xAxis->setTickVector(Ticks);
+    plateVideo->xAxis->setTickVectorLabels(Labels);
+    plateVideo->xAxis->setRange(0,1);
+    plateVideo->xAxis->grid()->setSubGridVisible(true);
+            //Platte yAchse links
+    plateVideo->yAxis->setAutoTicks(false);
+    plateVideo->yAxis->setAutoTickLabels(false);
+    plateVideo->yAxis->setTickVector(Ticks);
+    plateVideo->yAxis->setTickVectorLabels(Labels);
+    plateVideo->yAxis->setRange(0,1);
+    plateVideo->yAxis->grid()->setSubGridVisible(true);
+            //Platte xAchse oben
+    plateVideo->xAxis2->setVisible(true);
+    plateVideo->xAxis2->setAutoTicks(false);
+    plateVideo->xAxis2->setAutoTickLabels(false);
+    plateVideo->xAxis2->setTickVector(Ticks);
+    plateVideo->xAxis2->setTickVectorLabels(Labels);
+    plateVideo->xAxis2->setRange(0,1);
+    plateVideo->xAxis2->grid()->setSubGridVisible(true);
+            //Platte yAchse rechts
+    plateVideo->yAxis2->setVisible(true);
+    plateVideo->yAxis2->setAutoTicks(false);
+    plateVideo->yAxis2->setAutoTickLabels(false);
+    plateVideo->yAxis2->setTickVector(Ticks);
+    plateVideo->yAxis2->setTickVectorLabels(Labels);
+    plateVideo->yAxis2->setRange(0,1);
+    plateVideo->yAxis2->grid()->setSubGridVisible(true);
+        //Layout
+    plateVideo->setMinimumWidth(350);
+    plateVideo->setMinimumHeight(650);
+    buttonPlayVideo->setMaximumWidth(100);
+    subGridLayoutVisualisation->addWidget(labelTopVisualization,0,0);
+    subGridLayoutVisualisation->addWidget(plateVideo,1,0);
+    subGridLayoutVisualisation->addWidget(buttonPlayVideo,1,1);
+    subGridLayoutVisualisation->addWidget(lcdNumberVideoTimestep,2,1);
+    subGridLayoutVisualisation->addWidget(sliderVideo,2,0);
+    subGridLayoutVisualisation->addItem(spacerItemTabVisualisation,3,0);
 
 
 
@@ -276,7 +348,9 @@ presentation::UI::UI(QWidget *parent)
     //HelpTab
     mainLayoutHelp->addLayout(subGridLayoutHelp);
     labelTopHelp = new QLabel("Info",widgetHelp);
+    spacerItemTabHelp = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
     subGridLayoutHelp->addWidget(labelTopHelp,0,0);
+    subGridLayoutHelp->addItem(spacerItemTabHelp,1,0);
 
 
 
@@ -284,8 +358,6 @@ presentation::UI::UI(QWidget *parent)
     //Layout anwenden
     widgetCentral->setLayout(mainLayout);
     setCentralWidget(widgetCentral);
-
-    //widgetKonfigurationIBVs->setLayout(mainLayoutKonfigurationIBVs);
 
 
 }
