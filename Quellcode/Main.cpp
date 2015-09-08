@@ -17,11 +17,11 @@ int main(int argc, char *argv[])
     presentation::Controller * controller = new presentation::Controller();
 
     //Verbinden der MVC Objekte:
-//    model->setUI(ui);
-//    ui->setController(controller);
-//    ui->setModel(model);
-//    controller->setModel(model);
-//    controller->setUI(ui);
+    model->setUI(ui);
+    ui->setController(controller);
+    ui->setModel(model);
+    controller->setModel(model);
+    controller->setUI(ui);
 
     //Anzeigen des UI:
     ui->show();

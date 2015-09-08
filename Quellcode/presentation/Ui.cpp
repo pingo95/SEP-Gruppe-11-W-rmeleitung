@@ -5,8 +5,6 @@
 presentation::UI::UI(QWidget *parent)
     : QMainWindow(parent), activeTab(UI::TabThermalConductivity) , tabMainCount(5)
 {
-    connect(tabWidgetSub,SIGNAL(currentChanged(int)),this,SLOT(transformTabID(int)));
-
     //centrales Widget initialisieren
     widgetCentral = new QWidget(this);
 
@@ -81,22 +79,35 @@ presentation::UI::UI(QWidget *parent)
         //Labels
     labelTopThermalConductivity = new QLabel("Info",widgetKonfigurationThermalConductivities);
         //Tabelle
-    tablewidgetThermalConductivities = new QTableWidget(widgetKonfigurationThermalConductivities);
-    tablewidgetThermalConductivities->setColumnCount(3);
+    tableWidgetThermalConductivities = new QTableWidget(widgetKonfigurationThermalConductivities);
+    tableWidgetThermalConductivities->setColumnCount(3);
     listHeaderThermalConductivity <<"ID"<<"Wert"<<"Sichtbar";
-    tablewidgetThermalConductivities->setHorizontalHeaderLabels(listHeaderThermalConductivity);
-    tablewidgetThermalConductivities->setColumnWidth(0,20);
-    tablewidgetThermalConductivities->setColumnWidth(1,60);
-    tablewidgetThermalConductivities->setColumnWidth(2,60);
-    tablewidgetThermalConductivities->setShowGrid(true);
-    tablewidgetThermalConductivities->verticalHeader()->setVisible(false);
+    tableWidgetThermalConductivities->setHorizontalHeaderLabels(listHeaderThermalConductivity);
+    tableWidgetThermalConductivities->setColumnWidth(0,20);
+    tableWidgetThermalConductivities->setColumnWidth(1,60);
+    tableWidgetThermalConductivities->setColumnWidth(2,60);
+    tableWidgetThermalConductivities->setShowGrid(true);
+    tableWidgetThermalConductivities->verticalHeader()->setVisible(false);
 
-    tablewidgetThermalConductivities->setRowCount(20);
-        //test Hinzufügen
-//    tablewidgetThermalConductivities->setItem(0, 1, new QTableWidgetItem("Hello"));
-//    QTableWidgetItem * checkboxItem = new QTableWidgetItem();
-//    checkboxItem->setCheckState(Qt::Checked);
-//    tablewidgetThermalConductivities->setItem(2,1,checkboxItem);
+//    tableWidgetThermalConductivities->horizontalHeader()->setSelectionBehavior(QAbstractItemView::SelectItems);
+    tableWidgetThermalConductivities->horizontalHeader()->setSectionsClickable(false);
+    tableWidgetThermalConductivities->setRowCount(0);
+//        //test Hinzufügen
+//    QTableWidgetItem * tmpItemPtr = new
+//            QTableWidgetItem(QString().number(4));
+//    tmpItemPtr->setFlags(Qt::ItemIsEnabled);
+//    tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+//    tableWidgetThermalConductivities->setItem(0,UI::ColumnID,tmpItemPtr);
+//    tmpItemPtr = new
+//            QTableWidgetItem(QString().number(1.0));
+//    tmpItemPtr->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+//    tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+//    tableWidgetThermalConductivities->setItem(0,UI::ColumnValue,tmpItemPtr);
+//    tmpItemPtr = new QTableWidgetItem();
+//    tmpItemPtr->setFlags(Qt::ItemIsEnabled| Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
+//    tmpItemPtr->setCheckState(Qt::Checked);
+//    tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignRight);
+//    tableWidgetThermalConductivities->setItem(0,UI::ColumnVisibility,tmpItemPtr);
 
         //UndoKnopf
     buttonUndoThermalConductivity = new QPushButton("Undo",widgetKonfigurationThermalConductivities);
@@ -137,11 +148,11 @@ presentation::UI::UI(QWidget *parent)
     plateThermalConductivity->yAxis2->grid()->setSubGridVisible(true);
         //Layout
     plateThermalConductivity->setMinimumWidth(350);
-    tablewidgetThermalConductivities->setMinimumWidth(142);
-    tablewidgetThermalConductivities->setMaximumWidth(142);
+    tableWidgetThermalConductivities->setMinimumWidth(142);
+    tableWidgetThermalConductivities->setMaximumWidth(142);
     buttonUndoThermalConductivity->setMaximumWidth(100);
     subGridLayoutKonfigurationThermalConductivities->addWidget(labelTopThermalConductivity,0,0);
-    subGridLayoutKonfigurationThermalConductivities->addWidget(tablewidgetThermalConductivities,1,0);
+    subGridLayoutKonfigurationThermalConductivities->addWidget(tableWidgetThermalConductivities,1,0);
     subGridLayoutKonfigurationThermalConductivities->addWidget(plateThermalConductivity,1,1);
     subGridLayoutKonfigurationThermalConductivities->addWidget(buttonUndoThermalConductivity,1,2);
 
@@ -165,7 +176,8 @@ presentation::UI::UI(QWidget *parent)
     tableWidgetHeatSources->setShowGrid(true);
     tableWidgetHeatSources->verticalHeader()->setVisible(false);
 
-    tableWidgetHeatSources->setRowCount(20);
+    tableWidgetHeatSources->horizontalHeader()->setSectionsClickable(false);
+    tableWidgetHeatSources->setRowCount(0);
         //Undo Knopf
     buttonUndoHeatSource = new QPushButton("Undo",widgetKonfigurationHeatSources);
     buttonUndoHeatSource->setEnabled(false);
@@ -369,7 +381,8 @@ presentation::UI::UI(QWidget *parent)
     widgetCentral->setLayout(mainLayout);
     setCentralWidget(widgetCentral);
 
-
+    // internen Slot verbinden
+    connect(tabWidgetSub,SIGNAL(currentChanged(int)),this,SLOT(transformTabID(int)));
 }
 
 presentation::UI::~UI()
@@ -408,7 +421,7 @@ double presentation::UI::getNewHeatSourceValue(int row) const
 
 double presentation::UI::getNewThermalConductivityValue(int row) const
 {
-    return tablewidgetThermalConductivities->item(row,UI::ColumnValue)->text().toDouble();
+    return tableWidgetThermalConductivities->item(row,UI::ColumnValue)->text().toDouble();
 }
 
 QSize presentation::UI::getThermalConductivityPlotSize() const
@@ -446,19 +459,19 @@ void presentation::UI::setActiveTab(int targetTab)
 void presentation::UI::setController(Controller *controller)
 {
     this->controller = controller;
-    connect(plateHeatSource,SIGNAL(mousePress(QMouseEvent*)),controller,SLOT(heatSourceClickSLot(QMouseEvent*)));
-    connect(tableWidgetHeatSources,SIGNAL(cellChanged(int,int)),controller,SLOT(heatSourceValueChanged(int,int)));
-    connect(doubleSpinBoxBottomBoundary,SIGNAL(valueChanged(double)),controller,SLOT(newBottomBoundaryChangedSlot(double)));
-    connect(doubleSpinBoxInitialValue,SIGNAL(valueChanged(double)),controller,SLOT(newInitialValue(double)));
+    connect(plateHeatSource,SIGNAL(mousePress(QMouseEvent*)),controller,SLOT(heatSourcesClickSlot(QMouseEvent*)));
+    connect(tableWidgetHeatSources,SIGNAL(cellChanged(int,int)),controller,SLOT(heatSourceValueChangedSlot(int,int)));
+    connect(doubleSpinBoxBottomBoundary,SIGNAL(valueChanged(double)),controller,SLOT(newBottomBoundarySlot(double)));
+    connect(doubleSpinBoxInitialValue,SIGNAL(valueChanged(double)),controller,SLOT(newInitialValueSlot(double)));
     connect(doubleSpinBoxLeftBoundary,SIGNAL(valueChanged(double)),controller,SLOT(newLeftBoundarySlot(double)));
-    connect(spinBoxM,SIGNAL(valueChanged(int)),controller,SLOT(newMSlot(double)));
-    connect(spinBoxN,SIGNAL(valueChanged(int)),controller,SLOT(newNSlot(double)));
+    connect(spinBoxM,SIGNAL(valueChanged(int)),controller,SLOT(newMSlot(int)));
+    connect(spinBoxN,SIGNAL(valueChanged(int)),controller,SLOT(newNSlot(int)));
     connect(doubleSpinBoxRightBoundary,SIGNAL(valueChanged(double)),controller,SLOT(newRightBoundarySlot(double)));
     connect(doubleSpinBoxTopBoundary,SIGNAL(valueChanged(double)),controller,SLOT(newTopBoundarySlot(double)));
-    connect(doubleSpinBoxT,SIGNAL(valueChanged(double)),controller,SLOT(newTSlot()));
+    connect(doubleSpinBoxT,SIGNAL(valueChanged(double)),controller,SLOT(newTSlot(double)));
     connect(buttonPlayVideo,SIGNAL(pressed()),controller,SLOT(playVideoSlot()));
     connect(comboBoxIntMethod,SIGNAL(currentTextChanged(QString)),controller,SLOT(selectIntMethodSlot(QString)));
-    connect(comboBoxIterativeSolver,SIGNAL(currentTextChanged(QString)),controller,SLOT(selectIterativeSloverMethod(QString)));
+    connect(comboBoxIterativeSolver,SIGNAL(currentTextChanged(QString)),controller,SLOT(selectIterativeSolverSlot(QString)));
     connect(buttonSimulate,SIGNAL(clicked(bool)),controller,SLOT(simulateSlot()));
     connect(tabWidgetMain,SIGNAL(currentChanged(int)),controller,SLOT(tabChangedSlot(int)));
     connect(this,SIGNAL(subTabChange(int)),controller,SLOT(tabChangedSlot(int)));
@@ -472,6 +485,8 @@ void presentation::UI::setController(Controller *controller)
 void presentation::UI::setModel(model::Model *model)
 {
     this->model = model;
+    // Initialen Tab laden/updaten
+    updateNotification();
 }
 
 void presentation::UI::thermalConductivityPixelToCoords(double const mouseX, double const mouseY, double &x, double &y)
@@ -521,7 +536,7 @@ void presentation::UI::updateHeatSources()
     QList<model::Area*> const & heatSources = model->getHeatSources();
     QList<model::Area*>::const_iterator it = heatSources.begin();
     int i = 0;
-    for(; i <= tmpBound; ++i, ++it)
+    for(; i < tmpBound; ++i, ++it)
     {
         tableWidgetHeatSources->item(i,UI::ColumnID)->
                 setText(QString().number((*it)->getID()));
@@ -530,17 +545,28 @@ void presentation::UI::updateHeatSources()
     }
     if(hSCount >= rowCount)
     {
-        for(; i <= hSCount; ++i, ++it)
+        for(; i < hSCount; ++i, ++it)
         {
-            tableWidgetHeatSources->setItem(i,UI::ColumnID,new
-                  QTableWidgetItem(QString().number((*it)->getID())));
-            tableWidgetHeatSources->setItem(i,UI::ColumnValue,new
-                  QTableWidgetItem(QString().number((*it)->getValue())));
+            QTableWidgetItem * tmpItemPtr = new
+                    QTableWidgetItem(QString().number((*it)->getID()));
+            tmpItemPtr->setFlags(Qt::ItemIsEnabled);
+            tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            tableWidgetHeatSources->setItem(i,UI::ColumnID,tmpItemPtr);
+            tmpItemPtr = new
+                    QTableWidgetItem(QString().number((*it)->getValue()));
+            tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+            tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            tableWidgetHeatSources->setItem(i,UI::ColumnValue,tmpItemPtr);
+            tmpItemPtr = new QTableWidgetItem();
+            tmpItemPtr->setFlags(Qt::ItemIsEnabled| Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
+            tmpItemPtr->setCheckState(Qt::Checked);
+            tableWidgetHeatSources->setItem(i,UI::ColumnVisibility,tmpItemPtr);
+
         }
     }
     else
     {
-        for(int j = rowCount; j >= i; --j)
+        for(int j = rowCount-1; j >= i; --j)
         {
             delete tableWidgetHeatSources->takeItem(j,UI::ColumnID);
             delete tableWidgetHeatSources->takeItem(j,UI::ColumnValue);

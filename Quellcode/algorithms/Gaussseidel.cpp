@@ -1,6 +1,6 @@
 #include "Gaussseidel.h"
 
-algorithms::GaussSeidel::GaussSeidel() {
+algorithms::GaussSeidel::GaussSeidel() : eps(1e-5), itCount(0) {
 
 }
 

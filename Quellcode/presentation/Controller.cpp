@@ -16,6 +16,41 @@ presentation::Controller::~Controller()
     delete errorMessages;
 }
 
+// Diese Funktion setzt die Referenz (als Zeiger) auf das mit dem Controller
+// verbundene Modell
+void presentation::Controller::setModel(model::Model *model)
+{
+    this->model = model;
+}
+
+// Diese Funktion setzt die Referenz (als Zeiger) auf das mit dem Controller
+// verbundene UI und die entsprechenden Signale & Slots werden in der
+// korrespondierenden set-Funktion des UI gesetzt
+void presentation::Controller::setUI(UI *ui)
+{
+    this->ui = ui;
+}
+
+// Diese Funktion überprüft, ob ein neues Wärmequellen-Gebiet begonnen wurde und
+// zeichnet diese im UI. (Für den Fall, dass das Modell eine Update-Benachrichtigung
+// an das UI schickt (z.B. aufgrund einer abgeschlossen Simulation), während der
+// Benutzer gerade ein neues Gebiet erstellt)
+void presentation::Controller::testPartialHeatSource()
+{
+    if(startedNewHeatSource)
+        ui->drawPartialHeatSource(partialAreaX,partialAreaY);
+}
+
+// Diese Funktion überprüft, ob ein neues Wärmeleitkoeffizienten-Gebiet begonnen wurde
+// und zeichnet diese im UI. (Für den Fall, dass das Modell eine Update-Benachrichtigung
+// an das UI schickt (z.B. aufgrund einer abgeschlossen Simulation), während der
+// Benutzer gerade ein neues Gebiet erstellt)
+void presentation::Controller::testPartialThermalConductivity()
+{
+    if(startedNewThermalConductivity)
+        ui->drawPartialThermalConductivity(partialAreaX,partialAreaY);
+}
+
 // Dieser Slot verwaltet Mausklicks auf die Fläche zum Erstellen neuer
 // Gebiete für Wärmequellen
 void presentation::Controller::heatSourcesClickSlot(QMouseEvent *event)
@@ -339,21 +374,6 @@ void presentation::Controller::selectIterativeSolverSlot(QString newIterativeSol
     }
 }
 
-// Diese Funktion setzt die Referenz (als Zeiger) auf das mit dem Controller
-// verbundene Modell
-void presentation::Controller::setModel(model::Model *model)
-{
-    this->model = model;
-}
-
-// Diese Funktion setzt die Referenz (als Zeiger) auf das mit dem Controller
-// verbundene UI und die entsprechenden Signale & Slots werden in der
-// korrespondierenden set-Funktion des UI gesetzt
-void presentation::Controller::setUI(UI *ui)
-{
-    this->ui = ui;
-}
-
 // Dieser Slot startet die Simulation, falls diese nicht schon läuft
 void presentation::Controller::simulateSlot()
 {
@@ -376,28 +396,22 @@ void presentation::Controller::tabChangedSlot(int newTab)
     // Falls gerade ein neues Wärmequellen-Gebiet erstellt wird
     // und der entsprechende Tab nicht mehr geöffnet ist, in diesen
     // zurücksetzen
-    if(startedNewHeatSource && newTab != UI::TabHeatSources)
+    if(startedNewHeatSource && !(newTab == UI::TabConfiguration
+                                 || newTab == UI::TabHeatSources))
     {
+        // Fehlermeldung ausgeben:
+        errorMessages->setText("Das von Ihnen angefangen Gebiet muss entweder "
+                               "abgeschlossen oder abgebrochen werden, bevor Sie"
+                               " den Tab wechseln können.");
+        errorMessages->setDetailedText("");
+        errorMessages->exec();
         ui->revertTabChange(UI::TabHeatSources);
         return;
     }
-    else
-    {
-        // Fehlermeldung ausgeben:
-        errorMessages->setText("Das von Ihnen angefangen Gebiet muss entweder "
-                               "abgeschlossen oder abgebrochen werden, bevor Sie"
-                               " den Tab wechseln können.");
-        errorMessages->setDetailedText("");
-        errorMessages->exec();
-    }
 
     // Analog für den Fall, dass ein Wärmeleitkoeffizienten-Gebiet begonnen wurde
-    if(startedNewThermalConductivity && newTab != UI::TabThermalConductivity)
-    {
-        ui->revertTabChange(UI::TabThermalConductivity);
-        return;
-    }
-    else
+    if(startedNewThermalConductivity && (newTab == UI::TabConfiguration
+                                         || newTab == UI::TabThermalConductivity))
     {
         // Fehlermeldung ausgeben:
         errorMessages->setText("Das von Ihnen angefangen Gebiet muss entweder "
@@ -405,30 +419,12 @@ void presentation::Controller::tabChangedSlot(int newTab)
                                " den Tab wechseln können.");
         errorMessages->setDetailedText("");
         errorMessages->exec();
+        ui->revertTabChange(UI::TabThermalConductivity);
+        return;
     }
 
     // Aktiven Tab im UI ändern und UI updaten
     ui->setActiveTab(newTab);
-}
-
-// Diese Funktion überprüft, ob ein neues Wärmequellen-Gebiet begonnen wurde und
-// zeichnet diese im UI. (Für den Fall, dass das Modell eine Update-Benachrichtigung
-// an das UI schickt (z.B. aufgrund einer abgeschlossen Simulation), während der
-// Benutzer gerade ein neues Gebiet erstellt)
-void presentation::Controller::testPartialHeatSource()
-{
-    if(startedNewHeatSource)
-        ui->drawPartialHeatSource(partialAreaX,partialAreaY);
-}
-
-// Diese Funktion überprüft, ob ein neues Wärmeleitkoeffizienten-Gebiet begonnen wurde
-// und zeichnet diese im UI. (Für den Fall, dass das Modell eine Update-Benachrichtigung
-// an das UI schickt (z.B. aufgrund einer abgeschlossen Simulation), während der
-// Benutzer gerade ein neues Gebiet erstellt)
-void presentation::Controller::testPartialThermalConductivity()
-{
-    if(startedNewThermalConductivity)
-        ui->drawPartialThermalConductivity(partialAreaX,partialAreaY);
 }
 
 // Dieser Slot verwaltet Mausklicks auf die Fläche zum Erstellen neuer

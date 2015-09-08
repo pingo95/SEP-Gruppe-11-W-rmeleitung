@@ -203,7 +203,7 @@ class Controller;
 
         //TableWidgets
         QTableWidget * tableWidgetHeatSources;
-        QTableWidget * tablewidgetThermalConductivities;
+        QTableWidget * tableWidgetThermalConductivities;
         QStringList listHeaderThermalConductivity;
         QStringList listHeaderHeatSource;
 

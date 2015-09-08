@@ -17,6 +17,12 @@ namespace presentation {
         Controller(QObject * parent = 0);
         ~Controller();
 
+        void setModel(model::Model * model);
+        void setUI(UI * ui);
+        void testPartialHeatSource();
+        void testPartialThermalConductivity();
+
+    public slots:
         void heatSourcesClickSlot(QMouseEvent * event);
         void heatSourceValueChangedSlot(int pos, int column); //Column->Modularität?
         void newBottomBoundarySlot(double newBottomBoundary);
@@ -30,12 +36,8 @@ namespace presentation {
         void playVideoSlot();
         void selectIntMethodSlot(QString newIntMethod);
         void selectIterativeSolverSlot(QString newIterativeSolver);
-        void setModel(model::Model * model);
-        void setUI(UI * ui);
         void simulateSlot();
         void tabChangedSlot(int newTab);
-        void testPartialHeatSource();
-        void testPartialThermalConductivity();
         void thermalConductivitiesClickSlot(QMouseEvent * event);
         void thermalConductivityValueChangedSlot(int pos, int column); //Column->Modularität?
         void undoHeatSourceSlot();
