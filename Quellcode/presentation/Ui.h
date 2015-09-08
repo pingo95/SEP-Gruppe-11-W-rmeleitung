@@ -37,16 +37,18 @@ class Controller;
         // TODO: IDs setzten
         enum ActiveTab
         {
-            TabHeatSources,
-            TabHelp,
-            TabIBVs,
-            TabParameterFitting,
-            TabSimulating,
-            TabThermalConductivity,
-            TabVisualization
+            TabConfiguration = 0,
+            TabHeatSources = 6,
+            TabHelp = 4,
+            TabIBVs = 7,
+            TabParameterFitting = 3,
+            TabSimulating = 1,
+            TabThermalConductivity = 5,
+            TabVisualization = 2
         };
         enum AreaTableColumn
         {
+            ColumnID = 0,
             ColumnValue = 1,
             ColumnVisibility = 2
         };
@@ -56,22 +58,21 @@ class Controller;
         UI(QWidget *parent = 0);
         ~UI();
 
-        void drawPartialHeatSource(QVector<double> & partialAreaX, QVector<double> & partialAreaY);
-        void drawPartialThermalConductivity(QVector<double> & partialAreaX, QVector<double> & partialAreaY);
-        QSize getHeatSourcePlotSize();
-        int getInitialFrame();
-        double getNewHeatSourceValue(int row);
-        double getNewThermalConductivityValue(int row);
-        QSize getThermalConductivityPlotSize();
-        int getHeatSourceAreaID(int pos);
-        int getThermalConductivityAreaID(int pos);
-        void heatSourcePixelToCoords(double mouseX, double mouseY, double & x, double & y);
+        void drawPartialHeatSource(QVector<double> const & partialAreaX, QVector<double> const & partialAreaY);
+        void drawPartialThermalConductivity(QVector<double> const & partialAreaX, QVector<double> const & partialAreaY);
+        QSize getHeatSourcePlotSize() const;
+        int getInitialFrame() const;
+        double getNewHeatSourceValue(int row) const;
+        double getNewThermalConductivityValue(int row) const;
+        QSize getThermalConductivityPlotSize() const;
+        void heatSourcePixelToCoords(double const mouseX, double const mouseY, double & x, double & y);
         void revertTabChange(UI::ActiveTab targetTab);
+        void setActiveTab(UI::ActiveTab targetTab);
         void setController(Controller * controller);
         void setModel(model::Model * model);
-        void thermalConductivityPixelToCoords(double mouseX, double mouseY, double & x, double & y);
+        void thermalConductivityPixelToCoords(double const mouseX, double const mouseY, double & x, double & y);
         void updateNotification();
-        void visualizeState(int frame);
+        void visualizeState(int const frame);
 
 
     private:
@@ -80,8 +81,17 @@ class Controller;
         void updateSimulating();
         void updateThermalConductivties();
         void updateVisualization();
+        void valueToColour(double const value);
         void visualizeHeatSourceArea(model::Area * area);
         void visualizeThermalConductivityArea(model::Area * area);
+
+    private slots:
+        void transformTabID(int targetTab);
+
+    signals:
+        void subTabChange(int targetTab);
+
+
 
     //Attribute:
     private:
@@ -92,6 +102,7 @@ class Controller;
         int resultM;
         int resultN;
         int resultT;
+        int const tabMainCount;
 
 
         //Qt Elemente:

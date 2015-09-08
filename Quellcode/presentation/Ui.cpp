@@ -1,9 +1,11 @@
-#include "ui.h"
-
+#include "Ui.h"
+#include "../model/Model.h"
+#include "Controller.h"
 
 presentation::UI::UI(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent), activeTab(UI::TabThermalConductivity) , tabMainCount(5)
 {
+    connect(tabWidgetSub,SIGNAL(currentChanged(int)),this,SLOT(transformTabID(int)));
 
     //centrales Widget initialisieren
     widgetCentral = new QWidget(this);
@@ -98,8 +100,11 @@ presentation::UI::UI(QWidget *parent)
 
         //UndoKnopf
     buttonUndoThermalConductivity = new QPushButton("Undo",widgetKonfigurationThermalConductivities);
+    buttonUndoThermalConductivity->setEnabled(false);
         //Platte
     plateThermalConductivity = new QCustomPlot(widgetKonfigurationThermalConductivities);
+    plateThermalConductivity->addGraph();
+    //plateThermalConductivity->graph(0)->setPen(Qt::SolidLine);
             //Platte xAchse unten
     plateThermalConductivity->xAxis->setAutoTicks(false);
     plateThermalConductivity->xAxis->setAutoTickLabels(false);
@@ -163,8 +168,10 @@ presentation::UI::UI(QWidget *parent)
     tableWidgetHeatSources->setRowCount(20);
         //Undo Knopf
     buttonUndoHeatSource = new QPushButton("Undo",widgetKonfigurationHeatSources);
+    buttonUndoHeatSource->setEnabled(false);
         //Platte
     plateHeatSource = new QCustomPlot(widgetKonfigurationHeatSources);
+    plateHeatSource->addGraph();
             //Platte xAchse unten
     plateHeatSource->xAxis->setAutoTicks(false);
     plateHeatSource->xAxis->setAutoTickLabels(false);
@@ -291,8 +298,10 @@ presentation::UI::UI(QWidget *parent)
     labelTopVisualization = new QLabel("Info",widgetVisualisation);
         //Buttons
     buttonPlayVideo = new QPushButton("Play",widgetVisualisation);
+    buttonPlayVideo->setEnabled(false);
         //Schieberegler
     sliderVideo = new QSlider(widgetVisualisation);
+    sliderVideo->setEnabled(false);
     sliderVideo->setMaximumHeight(200);
     sliderVideo->setOrientation(Qt::Horizontal);
         //LcdNumber
@@ -301,6 +310,7 @@ presentation::UI::UI(QWidget *parent)
     spacerItemTabVisualisation = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
         //Video anzeige
     plateVideo = new QCustomPlot(widgetVisualisation);
+    plateVideo->addGraph();
             //Platte xAchse unten
     plateVideo->xAxis->setAutoTicks(false);
     plateVideo->xAxis->setAutoTickLabels(false);
@@ -368,78 +378,114 @@ presentation::UI::~UI()
 }
 
 
-void presentation::UI::drawPartialHeatSource(QVector<double> &partialAreaX, QVector<double> &partialAreaY)
+void presentation::UI::drawPartialHeatSource(QVector<double> const & partialAreaX,
+                                             QVector<double> const & partialAreaY)
 {
+    plateHeatSource->graph(0)->setData(partialAreaX,partialAreaY);
 
 }
 
-void presentation::UI::drawPartialThermalConductivity(QVector<double> &partialAreaX, QVector<double> &partialAreaY)
+void presentation::UI::drawPartialThermalConductivity(QVector<double> const & partialAreaX,
+                                                      QVector<double> const & partialAreaY)
 {
-
+    plateThermalConductivity->graph(0)->setData(partialAreaX,partialAreaY);
 }
 
-QSize presentation::UI::getHeatSourcePlotSize(){
+QSize presentation::UI::getHeatSourcePlotSize() const
+{
     return plateHeatSource->size();
 }
 
-int presentation::UI::getInitialFrame()
+int presentation::UI::getInitialFrame() const
 {
-    return 5;
+    return sliderVideo->value();
 }
 
-double presentation::UI::getNewHeatSourceValue(int row)
+double presentation::UI::getNewHeatSourceValue(int row) const
 {
-    return 5;
+    return tableWidgetHeatSources->item(row,UI::ColumnValue)->text().toDouble();
 }
 
-double presentation::UI::getNewThermalConductivityValue(int row)
+double presentation::UI::getNewThermalConductivityValue(int row) const
 {
-    return 5;
+    return tablewidgetThermalConductivities->item(row,UI::ColumnValue)->text().toDouble();
 }
 
-QSize presentation::UI::getThermalConductivityPlotSize()
+QSize presentation::UI::getThermalConductivityPlotSize() const
 {
     return plateThermalConductivity->size();
 }
 
-int presentation::UI::getHeatSourceAreaID(int pos)
-{
-    return 5;
-}
 
-int presentation::UI::getThermalConductivityAreaID(int pos)
+void presentation::UI::heatSourcePixelToCoords(double const mouseX, double const mouseY, double &x, double &y)
 {
-    return 5;
-}
-
-void presentation::UI::heatSourcePixelToCoords(double mouseX, double mouseY, double &x, double &y)
-{
-
+    x = plateHeatSource->xAxis->pixelToCoord(mouseX);
+    y = plateHeatSource->yAxis->pixelToCoord(mouseY);
 }
 
 void presentation::UI::revertTabChange(UI::ActiveTab targetTab)
 {
+    if(targetTab == UI::TabHeatSources)
+    {
+        tabWidgetMain->setCurrentIndex(UI::TabConfiguration);
+        tabWidgetSub->setCurrentIndex(UI::TabHeatSources-tabMainCount);
+    }
+    else
+    {
+        tabWidgetMain->setCurrentIndex(UI::TabConfiguration);
+        tabWidgetSub->setCurrentIndex(UI::TabThermalConductivity-tabMainCount);
+    }
 
+
+}
+
+void presentation::UI::setActiveTab(UI::ActiveTab targetTab)
+{
+    activeTab = targetTab;
+    updateNotification();
 }
 
 void presentation::UI::setController(Controller *controller)
 {
-
+    this->controller = controller;
 }
 
 void presentation::UI::setModel(model::Model *model)
 {
-
+    this->model = model;
 }
 
-void presentation::UI::thermalConductivityPixelToCoords(double mouseX, double mouseY, double &x, double &y)
+void presentation::UI::thermalConductivityPixelToCoords(double const mouseX, double const mouseY, double &x, double &y)
 {
-
+    x = plateThermalConductivity->xAxis->pixelToCoord(mouseX);
+    y = plateThermalConductivity->yAxis->pixelToCoord(mouseY);
 }
 
 void presentation::UI::updateNotification()
 {
-
+    switch(activeTab)
+    {
+    case TabHeatSources:
+        updateHeatSources();
+        break;
+    case TabIBVs:
+        updateIBVs();
+        break;
+    case TabParameterFitting:
+        //updateParameterFitting;
+        break;
+    case TabSimulating:
+        updateSimulating();
+        break;
+    case TabThermalConductivity:
+        updateThermalConductivties();
+        break;
+    case TabVisualization:
+        updateVisualization();
+        break;
+    default:
+        break;
+    }
 }
 
 void presentation::UI::visualizeState(int frame)
@@ -449,7 +495,47 @@ void presentation::UI::visualizeState(int frame)
 
 void presentation::UI::updateHeatSources()
 {
+    int hSCount = model->getHeatSourcesCount();
+    int rowCount = tableWidgetHeatSources->rowCount();
+    tableWidgetHeatSources->setRowCount(hSCount);
+    int tmpBound = hSCount <= rowCount ? hSCount : rowCount;
+    QList<model::Area*> const & heatSources = model->getHeatSources();
+    QList<model::Area*>::const_iterator it = heatSources.begin();
+    int i = 0;
+    for(; i <= tmpBound; ++i, ++it)
+    {
+        tableWidgetHeatSources->item(i,UI::ColumnID)->
+                setText(QString().number((*it)->getID()));
+        tableWidgetHeatSources->item(i,UI::ColumnValue)->
+                setText(QString().number((*it)->getValue()));
+    }
+    if(hSCount >= rowCount)
+    {
+        for(; i <= hSCount; ++i, ++it)
+        {
+            tableWidgetHeatSources->setItem(i,UI::ColumnID,new
+                  QTableWidgetItem(QString().number((*it)->getID())));
+            tableWidgetHeatSources->setItem(i,UI::ColumnValue,new
+                  QTableWidgetItem(QString().number((*it)->getValue())));
+        }
+    }
+    else
+    {
+        for(int j = rowCount; j >= i; --j)
+        {
+            delete tableWidgetHeatSources->takeItem(j,UI::ColumnID);
+            delete tableWidgetHeatSources->takeItem(j,UI::ColumnValue);
+        }
+    }
 
+    if(hSCount==0)
+    {
+        buttonUndoHeatSource->setEnabled(false);
+    }
+    else
+    {
+        buttonUndoHeatSource->setEnabled(true);
+    }
 }
 
 void presentation::UI::updateIBVs()
@@ -472,6 +558,11 @@ void presentation::UI::updateVisualization()
 
 }
 
+void presentation::UI::valueToColour(const double value)
+{
+
+}
+
 void presentation::UI::visualizeHeatSourceArea(model::Area *area)
 {
 
@@ -480,4 +571,9 @@ void presentation::UI::visualizeHeatSourceArea(model::Area *area)
 void presentation::UI::visualizeThermalConductivityArea(model::Area *area)
 {
 
+}
+
+void presentation::UI::transformTabID(int targetTab)
+{
+    emit subTabChange(targetTab + tabMainCount);
 }
