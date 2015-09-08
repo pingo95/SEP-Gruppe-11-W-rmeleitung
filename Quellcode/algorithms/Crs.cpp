@@ -191,7 +191,13 @@ double algorithms::CRS::getValue(int i, int j) const {
     return 0;
 }
 
-algorithms::CRS algorithms::operator*(double const &scalar, algorithms::CRS const &Mat) {
+QVector<double> algorithms::operator *(double const &scalar, QVector<double> const &rhs) {
+    QVector<double> mult = rhs;
+    for(int i=0; i<rhs.size(); i++) mult[i] *= scalar;
+    return mult;
+}
+
+algorithms::CRS algorithms::operator *(double const &scalar, algorithms::CRS const &Mat) {
     algorithms::CRS mult;
     mult = Mat;
     for(int i=0; i<Mat.value.size(); i++) {

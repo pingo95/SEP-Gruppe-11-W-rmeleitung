@@ -1,7 +1,6 @@
 #ifndef GAUSSSEIDEL_H
 #define GAUSSSEIDEL_H
 
-#include "Intmethod.h"
 #include "Iterativesolver.h"
 
 namespace algorithms {

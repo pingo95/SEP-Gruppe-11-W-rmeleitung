@@ -18,9 +18,3 @@ void algorithms::IntMethod::setUp(int const n, int const m, double const T, QVec
     this->deltaT = (T/(double)m);
     this->setUp(thermalConductivities);
 }
-
-QVector<double> algorithms::operator *(double const &scalar, QVector<double> const &rhs) {
-    QVector<double> mult = rhs;
-    for(int i=0; i<rhs.size(); i++) mult[i] *= scalar;
-    return mult;
-}

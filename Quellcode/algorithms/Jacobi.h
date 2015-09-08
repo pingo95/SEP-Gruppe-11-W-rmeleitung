@@ -1,7 +1,6 @@
 #ifndef JACOBI_H
 #define JACOBI_H
 
-#include "Intmethod.h"
 #include "Iterativesolver.h"
 
 namespace algorithms {

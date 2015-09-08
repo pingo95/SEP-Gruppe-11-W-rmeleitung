@@ -30,8 +30,6 @@ namespace algorithms {
         CRS itMatrix;
         int n;
     };
-
-    QVector<double> operator *(double const &scalar, QVector<double> const &rhs);
 }
 
 #endif // INTMETHOD_H

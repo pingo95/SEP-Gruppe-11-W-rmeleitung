@@ -35,7 +35,10 @@ namespace algorithms {
 
     };
 
-    CRS operator*(double const &scalar, CRS const &Mat);
+
+    QVector<double> operator *(double const &scalar, QVector<double> const &rhs);
+    CRS operator *(double const &scalar, CRS const &Mat);
+
 }
 
 #endif // CRS_H
