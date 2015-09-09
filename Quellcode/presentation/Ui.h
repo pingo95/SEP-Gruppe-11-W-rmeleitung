@@ -32,7 +32,7 @@ class Controller;
     {
         Q_OBJECT
 
-    //Enums:
+    //Enums + public Konstanten:
     public:
         // TODO: IDs setzten
         enum ActiveTab
@@ -52,6 +52,8 @@ class Controller;
             ColumnValue = 1,
             ColumnVisibility = 2
         };
+        double const MaxConductivity;
+        double const MaxTemperature;
 
     //Funktionen:
     public:

@@ -34,7 +34,7 @@ bool model::Area::validateArea(QVector<double> const & xKoords,
     // 2. Bedingung: geschlossenes Gebiet:
     if(!((xKoords.first()==xKoords.last()) && (yKoords.first()==yKoords.last()))) return false;
     // 3. Bedinungen: mindestens 4 Punkte (inkl. doppeltem Erstem)
-    if(xKoords.size() >= 4) return false;
+    if(xKoords.size() < 4) return false;
     // 4. Bedingung: keine sich schneidene Seiten
     // Die i-te Kante besteht aus den i-ten und (i+1)-ten Werten in xKoords und yKoords,
     // d.h. insgesamt xKoords.size()-1 Kanten

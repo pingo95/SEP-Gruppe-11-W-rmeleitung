@@ -1,9 +1,9 @@
 #include "Controller.h"
 
 presentation::Controller::Controller(QObject * parent)
-    : QObject(parent), model(NULL), startedNewHeatSource(false),
-      startedNewThermalConductivity(false), ui(NULL),
-      userInput(new QInputDialog), errorMessages(new QMessageBox)
+    : QObject(parent), loopBack(false),model(NULL),
+      startedNewHeatSource(false), startedNewThermalConductivity(false),
+      ui(NULL), userInput(new QInputDialog), errorMessages(new QMessageBox)
 {
     errorMessages->setWindowTitle("Fehlermeldung");
     errorMessages->setIcon(QMessageBox::Critical);
@@ -29,6 +29,8 @@ void presentation::Controller::setModel(model::Model *model)
 void presentation::Controller::setUI(UI *ui)
 {
     this->ui = ui;
+//    errorMessages->setParent(ui);
+//    userInput->setParent(ui);
 }
 
 // Diese Funktion überprüft, ob ein neues Wärmequellen-Gebiet begonnen wurde und
@@ -84,8 +86,11 @@ void presentation::Controller::heatSourcesClickSlot(QMouseEvent *event)
                        text = "Bitte geben Sie nun den Wert für die "
                               "neue Wärmequelle ein:";
                 bool ok;
-                double value = userInput->getDouble(ui,title,text,0,0,10000,2,&ok);
+                double value = userInput->getDouble(ui,title,text,0,0,
+                                                    ui->MaxTemperature,2,&ok);
+
                 // Gebiet zum Modell hinzufügen
+                loopBack = true;
                 model->addHeatSource(new model::Area(partialAreaX,
                                                      partialAreaY, ok ? value : 0, "Wärmequelle"));
 
@@ -137,10 +142,14 @@ void presentation::Controller::heatSourceValueChangedSlot(int pos, int column)
     // Testen ob auch wirklich Gebietswert geändert wurde, da das Signal bei
     // Änderungen in allen Felder des Tabellen Widgets ausgelöst wird
     if(column != UI::ColumnValue) return; // TODO: Wert überprüfen
-    int id = ui->getThermalConductivityID(pos);
+    if(loopBack == true)
+    {
+        loopBack = false;
+        return;
+    }
     double value = ui->getNewHeatSourceValue(pos);
     // Temperatur in Kelvin
-    if(value > 0 && value != model->getHeatSource(id)->getValue())
+    if(value >= 0 && value <= ui->MaxTemperature)
         // Wert updaten
         model->updateHeatSourceValue(pos,value);
     else
@@ -150,16 +159,17 @@ void presentation::Controller::heatSourceValueChangedSlot(int pos, int column)
                                "ungültig. Bitte versuchen Sie es erneut.");
         errorMessages->setDetailedText("Das Programm nutzt für Temperaturen"
                                        " die Kelvin Skala, daher sind nur W"
-                                       "erte größer null zulässig.");
+                                       "erte größer gleich null zulässig.");
         errorMessages->exec();
     }
+    loopBack = true;
 }
 
 // Dieser Slot updatet den Wert für den unteren Rand, falls der neue gültig ist
 void presentation::Controller::newBottomBoundarySlot(double newBottomBoundary)
 {
     // Temperatur in Kelvin
-    if(newBottomBoundary > 0)
+    if(newBottomBoundary >= 0 && newBottomBoundary <= ui->MaxTemperature)
         // Wert updaten
         model->setBottomBoundary(newBottomBoundary);
     else
@@ -169,7 +179,7 @@ void presentation::Controller::newBottomBoundarySlot(double newBottomBoundary)
                                "ungültig. Bitte versuchen Sie es erneut.");
         errorMessages->setDetailedText("Das Programm nutzt für Temperaturen"
                                        " die Kelvin Skala, daher sind nur W"
-                                       "erte größer null zulässig.");
+                                       "erte größer gleich null zulässig.");
         errorMessages->exec();
     }
 }
@@ -178,7 +188,7 @@ void presentation::Controller::newBottomBoundarySlot(double newBottomBoundary)
 void presentation::Controller::newInitialValueSlot(double newInitialValue)
 {
     // Temperatur in Kelvin
-    if(newInitialValue > 0)
+    if(newInitialValue >= 0 && newInitialValue <= ui->MaxTemperature)
         // Wert updaten
         model->setInitialValue(newInitialValue);
     else
@@ -188,7 +198,7 @@ void presentation::Controller::newInitialValueSlot(double newInitialValue)
                                "ungültig. Bitte versuchen Sie es erneut.");
         errorMessages->setDetailedText("Das Programm nutzt für Temperaturen"
                                        " die Kelvin Skala, daher sind nur W"
-                                       "erte größer null zulässig.");
+                                       "erte größer gleich null zulässig.");
         errorMessages->exec();
     }
 }
@@ -197,7 +207,7 @@ void presentation::Controller::newInitialValueSlot(double newInitialValue)
 void presentation::Controller::newLeftBoundarySlot(double newLeftBoundary)
 {
     // Temperatur in Kelvin
-    if(newLeftBoundary > 0)
+    if(newLeftBoundary >= 0 && newLeftBoundary <= ui->MaxTemperature)
         // Wert updaten
         model->setLeftBoundary(newLeftBoundary);
     else
@@ -207,7 +217,7 @@ void presentation::Controller::newLeftBoundarySlot(double newLeftBoundary)
                                "ungültig. Bitte versuchen Sie es erneut.");
         errorMessages->setDetailedText("Das Programm nutzt für Temperaturen"
                                        " die Kelvin Skala, daher sind nur W"
-                                       "erte größer null zulässig.");
+                                       "erte größer gleich null zulässig.");
         errorMessages->exec();
     }
 }
@@ -252,7 +262,7 @@ void presentation::Controller::newNSlot(int newN)
 void presentation::Controller::newRightBoundarySlot(double newRightBoundary)
 {
     // Temperatur in Kelvin
-    if(newRightBoundary > 0)
+    if(newRightBoundary >= 0 && newRightBoundary <= ui->MaxTemperature)
         // Wert updaten
         model->setRightBoundary(newRightBoundary);
     else
@@ -262,7 +272,7 @@ void presentation::Controller::newRightBoundarySlot(double newRightBoundary)
                                "ungültig. Bitte versuchen Sie es erneut.");
         errorMessages->setDetailedText("Das Programm nutzt für Temperaturen"
                                        " die Kelvin Skala, daher sind nur W"
-                                       "erte größer null zulässig.");
+                                       "erte größer gleich null zulässig.");
         errorMessages->exec();
     }
 }
@@ -271,7 +281,7 @@ void presentation::Controller::newRightBoundarySlot(double newRightBoundary)
 void presentation::Controller::newTopBoundarySlot(double newTopBoundary)
 {
     // Temperatur in Kelvin
-    if(newTopBoundary > 0)
+    if(newTopBoundary >= 0 && newTopBoundary <= ui->MaxTemperature)
         // Wert updaten
         model->setTopBoundary(newTopBoundary);
     else
@@ -281,7 +291,7 @@ void presentation::Controller::newTopBoundarySlot(double newTopBoundary)
                                "ungültig. Bitte versuchen Sie es erneut.");
         errorMessages->setDetailedText("Das Programm nutzt für Temperaturen"
                                        " die Kelvin Skala, daher sind nur W"
-                                       "erte größer null zulässig.");
+                                       "erte größer gleich null zulässig.");
         errorMessages->exec();
     }
 }
@@ -462,9 +472,11 @@ void presentation::Controller::thermalConductivitiesClickSlot(QMouseEvent *event
                        text = "Bitte geben Sie nun den Wert für das "
                               "neue Wärmeleitkoeffizienten-Gebiet ein:";
                 bool ok;
-                double value = userInput->getDouble(ui,title,text,0,0,10000,2,&ok);
+                double value = userInput->getDouble(ui,title,text,0,0,
+                                                    ui->MaxConductivity,2,&ok);
 
                 // Gebiet zum Modell hinzufügen
+                loopBack = true;
                 model->addThermalConductivity(new model::Area(partialAreaX,
                                                               partialAreaY,ok ? value : 0, "Wärmeleitkoeffizient"));
 
@@ -516,21 +528,27 @@ void presentation::Controller::thermalConductivityValueChangedSlot(int pos, int 
     // Testen ob auch wirklich Gebietswert geändert wurde, da das Signal bei
     // Änderungen in allen Felder des Tabellen Widgets ausgelöst wird
     if(column != UI::ColumnValue) return; // TODO: Wert überprüfen
-    int id = ui->getHeatSourceID(pos);
+    if(loopBack == true)
+    {
+        loopBack = false;
+        return;
+    }
+    int id = ui->getThermalConductivityID(pos);
     double value = ui->getNewThermalConductivityValue(pos);
     // Temperatur in Kelvin
-    if(value > 0 && value != model->getThermalConductivity(id)->getValue())
+    if(value > 0 && value <= ui->MaxConductivity &&
+            value != model->getThermalConductivity(id)->getValue())
         model->updateThermalConductivityValue(pos,value);
     else
     {
         // Fehlermeldung ausgeben:
         errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
                                "ungültig. Bitte versuchen Sie es erneut.");
-        errorMessages->setDetailedText("Das Programm nutzt für Temperaturen"
-                                       " die Kelvin Skala, daher sind nur W"
-                                       "erte größer null zulässig.");
+        errorMessages->setDetailedText("Es sind nur Werte größer gleich "
+                                       "Null zulässig.");
         errorMessages->exec();
     }
+    loopBack = true;
 }
 
 // Dieser Slot löscht das zuletzt erstellte Wärmequellen-Gebiet, falls

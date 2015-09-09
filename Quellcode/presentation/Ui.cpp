@@ -3,7 +3,8 @@
 #include "Controller.h"
 
 presentation::UI::UI(QWidget *parent)
-    : QMainWindow(parent), activeTab(UI::TabThermalConductivity) , tabMainCount(5)
+    : QMainWindow(parent), MaxConductivity(1000), MaxTemperature(1000),
+      activeTab(UI::TabThermalConductivity) , tabMainCount(5)
 {
     //centrales Widget initialisieren
     widgetCentral = new QWidget(this);
@@ -253,6 +254,24 @@ presentation::UI::UI(QWidget *parent)
     doubleSpinBoxLeftBoundary = new QDoubleSpinBox(widgetKonfigurationIBVs);
     doubleSpinBoxRightBoundary = new QDoubleSpinBox(widgetKonfigurationIBVs);
     doubleSpinBoxTopBoundary = new QDoubleSpinBox(widgetKonfigurationIBVs);
+
+    doubleSpinBoxBottomBoundary->setKeyboardTracking(false);
+    doubleSpinBoxInitialValue->setKeyboardTracking(false);
+    doubleSpinBoxLeftBoundary->setKeyboardTracking(false);
+    doubleSpinBoxRightBoundary->setKeyboardTracking(false);
+    doubleSpinBoxTopBoundary->setKeyboardTracking(false);
+
+    doubleSpinBoxBottomBoundary->setMinimum(0);
+    doubleSpinBoxBottomBoundary->setMaximum(MaxTemperature);
+    doubleSpinBoxInitialValue->setMinimum(0);
+    doubleSpinBoxInitialValue->setMaximum(MaxTemperature);
+    doubleSpinBoxLeftBoundary->setMinimum(0);
+    doubleSpinBoxLeftBoundary->setMaximum(MaxTemperature);
+    doubleSpinBoxRightBoundary->setMinimum(0);
+    doubleSpinBoxRightBoundary->setMaximum(MaxTemperature);
+    doubleSpinBoxTopBoundary->setMinimum(0);
+    doubleSpinBoxTopBoundary->setMaximum(MaxTemperature);
+
         //Platzhalter
     spacerItemTabIBV = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
         //Layout
@@ -289,6 +308,11 @@ presentation::UI::UI(QWidget *parent)
     spinBoxN = new QSpinBox(widgetSimulation);
     spinBoxN->setMaximum(0);
     spinBoxN->setMaximum(800);
+
+    doubleSpinBoxT->setKeyboardTracking(false);
+    spinBoxM->setKeyboardTracking(false);
+    spinBoxN->setKeyboardTracking(false);
+
         //ComboBoxes
     comboBoxIntMethod = new QComboBox(widgetSimulation);
     comboBoxIterativeSolver = new QComboBox(widgetSimulation);
@@ -503,7 +527,7 @@ void presentation::UI::setController(Controller *controller)
     connect(tabWidgetMain,SIGNAL(currentChanged(int)),controller,SLOT(tabChangedSlot(int)));
     connect(this,SIGNAL(subTabChange(int)),controller,SLOT(tabChangedSlot(int)));
     connect(plateThermalConductivity,SIGNAL(mousePress(QMouseEvent*)),controller,SLOT(thermalConductivitiesClickSlot(QMouseEvent*)));
-    connect(tableWidgetHeatSources,SIGNAL(cellChanged(int,int)),controller,SLOT(thermalConductivityValueChangedSlot(int,int)));
+    connect(tableWidgetThermalConductivities,SIGNAL(cellChanged(int,int)),controller,SLOT(thermalConductivityValueChangedSlot(int,int)));
     connect(buttonUndoHeatSource,SIGNAL(clicked(bool)),controller,SLOT(undoHeatSourceSlot()));
     connect(buttonUndoThermalConductivity,SIGNAL(clicked(bool)),controller,SLOT(undoThermalConductivitySlot()));
     connect(sliderVideo,SIGNAL(valueChanged(int)),controller,SLOT(visualizeStateSlot(int)));
@@ -576,7 +600,7 @@ void presentation::UI::updateHeatSources()
         tableWidgetHeatSources->item(i,UI::ColumnID)->
                 setText(QString().number((*it)->getID()));
         tableWidgetHeatSources->item(i,UI::ColumnValue)->
-                setText(QString().number((*it)->getValue()));
+                setText(QString().number((*it)->getValue(),'g',2));
     }
     if(hSCount >= rowCount)
     {
@@ -588,7 +612,7 @@ void presentation::UI::updateHeatSources()
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetHeatSources->setItem(i,UI::ColumnID,tmpItemPtr);
             tmpItemPtr = new
-                    QTableWidgetItem(QString().number((*it)->getValue()));
+                    QTableWidgetItem(QString().number((*it)->getValue(),'g',2));
             tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetHeatSources->setItem(i,UI::ColumnValue,tmpItemPtr);
@@ -661,7 +685,7 @@ void presentation::UI::updateThermalConductivties()
         tableWidgetThermalConductivities->item(i,UI::ColumnID)->
                 setText(QString().number((*it)->getID()));
         tableWidgetThermalConductivities->item(i,UI::ColumnValue)->
-                setText(QString().number((*it)->getValue()));
+                setText(QString().number((*it)->getValue(),'g',2));
     }
     if (tCCount >= rowCount)
     {
@@ -673,7 +697,7 @@ void presentation::UI::updateThermalConductivties()
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetThermalConductivities->setItem(i,UI::ColumnID,tmpItemPtr);
             tmpItemPtr = new
-                    QTableWidgetItem(QString().number((*it)->getValue()));
+                    QTableWidgetItem(QString().number((*it)->getValue(),'g',2));
             tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetThermalConductivities->setItem(i,UI::ColumnValue,tmpItemPtr);

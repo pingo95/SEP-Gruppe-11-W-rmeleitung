@@ -5,11 +5,11 @@
 #include "../algorithms/Gaussseidel.h"
 #include "../presentation/Ui.h"
 
-model::Model::Model() : bottomBoundary(0.), heatSourcesCount(0), initialValue(0.),
-    leftBoundary(0.), m(1), n(1), result(NULL), resultM(0), resultN(0), resultT(0.),
-    rightBoundary(0.), selectedIntMethod(NULL), selectedIterativeSolver(""),
+model::Model::Model() : bottomBoundary(300), heatSourcesCount(0), initialValue(300),
+    leftBoundary(300), m(1), n(1), result(NULL), resultM(0), resultN(0), resultT(0.),
+    rightBoundary(300), selectedIntMethod(NULL), selectedIterativeSolver(""),
     simulated(false), simulating(false), T(1.), thermalConductivitesCount(0),
-    topBoundary(0.), ui(NULL)
+    topBoundary(300), ui(NULL)
 {
     // Registrieren der Integrationsmethoden
     intMethods.insert("Impliziter Euler",new algorithms::ImpEuler());
