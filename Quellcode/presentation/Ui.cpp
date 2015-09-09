@@ -36,17 +36,17 @@ presentation::UI::UI(QWidget *parent)
     mainLayoutSimulation = new QVBoxLayout(widgetSimulation);
     mainLayoutVisualisation = new QVBoxLayout(widgetVisualisation);
     //subGridLayouts
-    subGridLayout = new QGridLayout(widgetCentral);
-    subGridLayoutHelp = new QGridLayout(widgetHelp);
-    subGridLayoutKonfiguration = new QGridLayout(widgetKonfiguration);
-    subGridLayoutSimulation = new QGridLayout(widgetSimulation);
-    subGridLayoutVisualisation = new QGridLayout(widgetVisualisation);
+    subGridLayout = new QGridLayout();
+    subGridLayoutHelp = new QGridLayout();
+    subGridLayoutKonfiguration = new QGridLayout();
+    subGridLayoutSimulation = new QGridLayout();
+    subGridLayoutVisualisation = new QGridLayout();
     //subHBoxLayouts
-    subHBoxLayout = new QHBoxLayout(widgetCentral);
-    subHBoxLayoutHelp = new QHBoxLayout(widgetHelp);
-    subHBoxLayoutKonfiguration = new QHBoxLayout(widgetKonfiguration);
-    subHBoxLayoutSimualtion = new QHBoxLayout(widgetSimulation);
-    subHBoxLayoutVisualisation = new QHBoxLayout(widgetVisualisation);
+    subHBoxLayout = new QHBoxLayout();
+    subHBoxLayoutHelp = new QHBoxLayout();
+    subHBoxLayoutKonfiguration = new QHBoxLayout();
+    subHBoxLayoutSimualtion = new QHBoxLayout();
+    subHBoxLayoutVisualisation = new QHBoxLayout();
 
     mainLayout->addWidget(tabWidgetMain);
 
@@ -71,8 +71,8 @@ presentation::UI::UI(QWidget *parent)
     //ThermalConductivityTab
         //Layouts initialisieren
     mainLayoutKonfigurationThermalConductivities = new QVBoxLayout(widgetKonfigurationThermalConductivities);
-    subGridLayoutKonfigurationThermalConductivities = new QGridLayout(widgetKonfigurationThermalConductivities);
-    subHBoxLayoutKonfigurationThermalConductivities = new QHBoxLayout(widgetKonfigurationThermalConductivities);
+    subGridLayoutKonfigurationThermalConductivities = new QGridLayout();
+    subHBoxLayoutKonfigurationThermalConductivities = new QHBoxLayout();
     mainLayoutKonfigurationThermalConductivities->addLayout(subGridLayoutKonfigurationThermalConductivities);
     //widgetKonfigurationThermalConductivities->setPalette(Pal);;
     //widgetKonfigurationThermalConductivities->setAutoFillBackground(true);
@@ -160,8 +160,8 @@ presentation::UI::UI(QWidget *parent)
     //HeatSourceTab
         //Layouts initialisieren
     mainLayoutKonfigurationHeatSources = new QVBoxLayout(widgetKonfigurationHeatSources);
-    subGridLayoutKonfigurationHeatSources = new QGridLayout(widgetKonfigurationHeatSources);
-    subHBoxLayoutKonfigurationHeatSources = new QHBoxLayout(widgetKonfigurationHeatSources);
+    subGridLayoutKonfigurationHeatSources = new QGridLayout();
+    subHBoxLayoutKonfigurationHeatSources = new QHBoxLayout();
     mainLayoutKonfigurationHeatSources->addLayout(subGridLayoutKonfigurationHeatSources);
         //Labels
     labelTopHeatSource = new QLabel("Info",widgetKonfigurationHeatSources);
@@ -233,8 +233,8 @@ presentation::UI::UI(QWidget *parent)
     //IBVTab
         //Layouts initialisieren
     mainLayoutKonfigurationIBVs = new QVBoxLayout(widgetKonfigurationIBVs);
-    subGridLayoutKonfigurationIBVs = new QGridLayout(widgetKonfigurationIBVs);
-    subHBoxLayoutKonfigurationIBVs = new QHBoxLayout(widgetKonfigurationIBVs);
+    subGridLayoutKonfigurationIBVs = new QGridLayout();
+    subHBoxLayoutKonfigurationIBVs = new QHBoxLayout();
     mainLayoutKonfigurationIBVs->addLayout(subGridLayoutKonfigurationIBVs,0);
         //Labels
     labelTopIBV = new QLabel("Info",widgetKonfigurationIBVs);
@@ -401,6 +401,7 @@ void presentation::UI::drawPartialHeatSource(QVector<double> const & partialArea
                                              QVector<double> const & partialAreaY)
 {
     plateHeatSource->graph(0)->setData(partialAreaX,partialAreaY);
+    plateHeatSource->replot();
 
 }
 
@@ -408,6 +409,7 @@ void presentation::UI::drawPartialThermalConductivity(QVector<double> const & pa
                                                       QVector<double> const & partialAreaY)
 {
     plateThermalConductivity->graph(0)->setData(partialAreaX,partialAreaY);
+    plateThermalConductivity->replot();
 }
 
 QSize presentation::UI::getHeatSourcePlotSize() const
@@ -534,7 +536,7 @@ void presentation::UI::visualizeState(int frame)
 }
 
 void presentation::UI::updateHeatSources()
-{
+{   
     int hSCount = model->getHeatSourcesCount();
     int rowCount = tableWidgetHeatSources->rowCount();
     tableWidgetHeatSources->setRowCount(hSCount);
@@ -564,10 +566,9 @@ void presentation::UI::updateHeatSources()
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetHeatSources->setItem(i,UI::ColumnValue,tmpItemPtr);
             tmpItemPtr = new QTableWidgetItem();
-            tmpItemPtr->setFlags(Qt::ItemIsEnabled| Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
+            tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
             tmpItemPtr->setCheckState(Qt::Checked);
             tableWidgetHeatSources->setItem(i,UI::ColumnVisibility,tmpItemPtr);
-
         }
     }
     else
@@ -579,6 +580,19 @@ void presentation::UI::updateHeatSources()
         }
     }
 
+
+    for(int j = 1; j <= rowCount; ++j)
+        plateHeatSource->graph(j)->setVisible(false);
+    it = heatSources.begin();
+    for(; it != heatSources.end(); ++it)
+    {
+        for(int j = rowCount+1; j <= (*it)->getID(); ++j)
+            plateHeatSource->addGraph();
+        visualizeHeatSourceArea(*it);
+    }
+    plateHeatSource->replot();
+    controller->testPartialHeatSource();
+
     if(hSCount==0)
     {
         buttonUndoHeatSource->setEnabled(false);
@@ -587,8 +601,6 @@ void presentation::UI::updateHeatSources()
     {
         buttonUndoHeatSource->setEnabled(true);
     }
-
-    controller->testPartialHeatSource();
 }
 
 void presentation::UI::updateIBVs()
@@ -633,7 +645,39 @@ void presentation::UI::updateThermalConductivties()
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetThermalConductivities->setItem(i,UI::ColumnValue,tmpItemPtr);
             tmpItemPtr = new QTableWidgetItem();
+            tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
+            tmpItemPtr->setCheckState(Qt::Checked);
+            tableWidgetThermalConductivities->setItem(i,UI::ColumnVisibility,tmpItemPtr);
         }
+    }
+    else
+    {
+        for(int j = rowCount-1; j>=i; --j)
+        {
+            delete tableWidgetThermalConductivities->takeItem(j,UI::ColumnID);
+            delete tableWidgetThermalConductivities->takeItem(j,UI::ColumnValue);
+        }
+    }
+
+    for(int j = 1; j <= rowCount; ++j)
+        plateThermalConductivity->graph(j)->setVisible(false);
+    it = thermalConductivities.begin();
+    for(; it != thermalConductivities.end(); ++it)
+    {
+        for(int j = rowCount+1; j <= (*it)->getID(); ++j)
+            plateThermalConductivity->addGraph();
+        visualizeThermalConductivityArea(*it);
+    }
+    plateThermalConductivity->replot();
+    controller->testPartialThermalConductivity();
+
+    if(tCCount==0)
+    {
+        buttonUndoThermalConductivity->setEnabled(false);
+    }
+    else
+    {
+        buttonUndoThermalConductivity->setEnabled(true);
     }
 }
 
@@ -642,19 +686,33 @@ void presentation::UI::updateVisualization()
 
 }
 
-void presentation::UI::valueToColour(const double value)
+QColor presentation::UI::valueToColour(const double value)
 {
-
+    return Qt::blue;
 }
 
 void presentation::UI::visualizeHeatSourceArea(model::Area *area)
 {
-
+    int id = area->getID();
+    QVector<double> x,y;
+    area->getPoints(x,y);
+    plateHeatSource->graph(id)->setData(x,y);
+    plateHeatSource->graph(id)->setPen(QPen(Qt::black));
+    plateHeatSource->graph(id)->setBrush(QBrush(
+                valueToColour(area->getValue()),Qt::SolidPattern));
+    plateHeatSource->graph(id)->setVisible(true);
 }
 
 void presentation::UI::visualizeThermalConductivityArea(model::Area *area)
 {
-
+    int id = area->getID();
+    QVector<double> x,y;
+    area->getPoints(x,y);
+    plateThermalConductivity->graph(id)->setData(x,y);
+    plateThermalConductivity->graph(id)->setPen(QPen(Qt::black));
+    plateThermalConductivity->graph(id)->setBrush(QBrush(
+                valueToColour(area->getValue()),Qt::SolidPattern));
+    plateHeatSource->graph(id)->setVisible(true);
 }
 
 void presentation::UI::transformTabID(int targetTab)

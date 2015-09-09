@@ -81,7 +81,7 @@ class Controller;
         void updateSimulating();
         void updateThermalConductivties();
         void updateVisualization();
-        void valueToColour(double const value);
+        QColor valueToColour(double const value);
         void visualizeHeatSourceArea(model::Area * area);
         void visualizeThermalConductivityArea(model::Area * area);
 
