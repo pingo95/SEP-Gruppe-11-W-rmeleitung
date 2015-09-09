@@ -284,7 +284,11 @@ presentation::UI::UI(QWidget *parent)
         //Boxes
     doubleSpinBoxT = new QDoubleSpinBox(widgetSimulation);
     spinBoxM = new QSpinBox(widgetSimulation);
+    spinBoxM->setMinimum(0);
+    spinBoxM->setMaximum(800);
     spinBoxN = new QSpinBox(widgetSimulation);
+    spinBoxN->setMaximum(0);
+    spinBoxN->setMaximum(800);
         //ComboBoxes
     comboBoxIntMethod = new QComboBox(widgetSimulation);
     comboBoxIterativeSolver = new QComboBox(widgetSimulation);
@@ -375,8 +379,6 @@ presentation::UI::UI(QWidget *parent)
     subGridLayoutVisualisation->addItem(spacerItemTabVisualisation,3,0);
 
 
-
-
     //HelpTab
     mainLayoutHelp->addLayout(subGridLayoutHelp);
     labelTopHelp = new QLabel("Info",widgetHelp);
@@ -385,9 +387,8 @@ presentation::UI::UI(QWidget *parent)
     subGridLayoutHelp->addItem(spacerItemTabHelp,1,0);
 
 
-
-
     //Layout anwenden
+    this->setMinimumSize(750,750);
     widgetCentral->setLayout(mainLayout);
     setCentralWidget(widgetCentral);
 
@@ -512,12 +513,13 @@ void presentation::UI::setModel(model::Model *model)
 {
     this->model = model;
     QList<QString> tmpList = model->getIntMethodNames();
-    QStringList tmp(tmpList);
-    //comboBoxIntMethod->addItem("hfbhdbfh");
-
-    //comboBoxIntMethod->addItems(tmp);
-    //comboBoxIntMethod->addItems(QStringList(model->getIntMethodNames()));
-    //comboBoxIterativeSolver->addItems(QStringList(model->getIterativeSolverNames()));
+    QList<QString>::const_iterator it = tmpList.begin();
+    for(; it < tmpList.end(); ++it)
+        comboBoxIntMethod->addItem((*it));
+    tmpList = model->getIterativeSolverNames();
+    it = tmpList.begin();
+    for(; it < tmpList.end(); ++it)
+        comboBoxIterativeSolver->addItem((*it));
     // Initialen Tab laden/updaten
     updateNotification();
 }
