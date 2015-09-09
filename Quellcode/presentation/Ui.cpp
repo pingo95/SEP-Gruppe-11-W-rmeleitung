@@ -113,7 +113,7 @@ presentation::UI::UI(QWidget *parent)
     buttonUndoThermalConductivity = new QPushButton("Undo",widgetKonfigurationThermalConductivities);
     buttonUndoThermalConductivity->setEnabled(false);
         //Platte
-    plateThermalConductivity = new QCustomPlot(widgetKonfigurationThermalConductivities);
+    plateThermalConductivity = new QCustomPlot(widgetKonfigurationThermalConductivities,false);
     plateThermalConductivity->addGraph();
     //plateThermalConductivity->graph(0)->setPen(Qt::SolidLine);
             //Platte xAchse unten
@@ -182,8 +182,14 @@ presentation::UI::UI(QWidget *parent)
     buttonUndoHeatSource = new QPushButton("Undo",widgetKonfigurationHeatSources);
     buttonUndoHeatSource->setEnabled(false);
         //Platte
-    plateHeatSource = new QCustomPlot(widgetKonfigurationHeatSources);
+    plateHeatSource = new QCustomPlot(widgetKonfigurationHeatSources,false);
     plateHeatSource->addGraph();
+    QCPScatterStyle myScatter;
+    myScatter.setShape(QCPScatterStyle::ssCrossSquare);
+    myScatter.setPen(QPen(Qt::blue));
+    myScatter.setBrush(Qt::green);
+    myScatter.setSize(5);
+    plateHeatSource->graph(0)->setScatterStyle(myScatter);
             //Platte xAchse unten
     plateHeatSource->xAxis->setAutoTicks(false);
     plateHeatSource->xAxis->setAutoTickLabels(false);
@@ -321,7 +327,7 @@ presentation::UI::UI(QWidget *parent)
         //Platzhalter
     spacerItemTabVisualisation = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
         //Video anzeige
-    plateVideo = new QCustomPlot(widgetVisualisation);
+    plateVideo = new QCustomPlot(widgetVisualisation,false);
     plateVideo->addGraph();
             //Platte xAchse unten
     plateVideo->xAxis->setAutoTicks(false);
@@ -581,12 +587,15 @@ void presentation::UI::updateHeatSources()
     {
         buttonUndoHeatSource->setEnabled(true);
     }
+
+    controller->testPartialHeatSource();
 }
 
 void presentation::UI::updateIBVs()
 {
 
 }
+
 
 void presentation::UI::updateSimulating()
 {
@@ -595,7 +604,37 @@ void presentation::UI::updateSimulating()
 
 void presentation::UI::updateThermalConductivties()
 {
-
+    int tCCount = model->getThermalConductivitiesCount();
+    int rowCount = tableWidgetThermalConductivities->rowCount();
+    tableWidgetThermalConductivities->setRowCount(tCCount);
+    int tmpBound = tCCount <= rowCount ? tCCount : rowCount;
+    QList<model::Area*> const & thermalConductivities = model->getThermalConductivities();
+    QList<model::Area*>::const_iterator it = thermalConductivities.begin();
+    int i = 0;
+    for (; i < tmpBound; ++i, ++it)
+    {
+        tableWidgetThermalConductivities->item(i,UI::ColumnID)->
+                setText(QString().number((*it)->getID()));
+        tableWidgetThermalConductivities->item(i,UI::ColumnValue)->
+                setText(QString().number((*it)->getValue()));
+    }
+    if (tCCount >= rowCount)
+    {
+        for(; i < tCCount; ++i, ++it)
+        {
+            QTableWidgetItem * tmpItemPtr = new
+                    QTableWidgetItem(QString().number((*it)->getID()));
+            tmpItemPtr->setFlags(Qt::ItemIsEnabled);
+            tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            tableWidgetThermalConductivities->setItem(i,UI::ColumnID,tmpItemPtr);
+            tmpItemPtr = new
+                    QTableWidgetItem(QString().number((*it)->getValue()));
+            tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+            tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            tableWidgetThermalConductivities->setItem(i,UI::ColumnValue,tmpItemPtr);
+            tmpItemPtr = new QTableWidgetItem();
+        }
+    }
 }
 
 void presentation::UI::updateVisualization()
