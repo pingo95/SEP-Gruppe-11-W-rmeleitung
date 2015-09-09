@@ -1,6 +1,8 @@
 #ifndef AREA_H
 #define AREA_H
 #include <QVector>
+#include <QString>
+#include <QMap>
 
 namespace model {
 
@@ -8,9 +10,10 @@ namespace model {
     {
     //Funktionen:
     public:
-        Area(QVector<double> const & xKoords,
-             QVector<double> const & yKoords, double value);
-        static int getCurrentMaxID();
+        explicit Area(QVector<double> const & xKoords,
+             QVector<double> const & yKoords, double value, QString const type);
+        ~Area();
+        static int getCurrentMaxID(const QString type);
         static bool validateArea(QVector<double> const & xKoords,
                                  QVector<double> const & yKoords);
 
@@ -24,7 +27,7 @@ namespace model {
         void setValue(double const value);
 
     private:
-        Area();
+        explicit Area();
         static double det(double const pX, double const pY,
                           double const qX, double const qY);
         static double direction(double const pX, double const pY,
@@ -43,12 +46,14 @@ namespace model {
 
     //Attribute:
     private:
-        static int idCounter;
+        explicit Area(Area const &);
+        static QMap<QString,int> idCounters;
 
         int const id;
+        QString const type;
+        double value;
         QVector<double> const xKoords;
         QVector<double> const yKoords;
-        double value;
     };
 
 }

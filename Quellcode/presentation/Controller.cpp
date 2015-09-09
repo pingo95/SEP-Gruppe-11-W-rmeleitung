@@ -63,13 +63,13 @@ void presentation::Controller::heatSourcesClickSlot(QMouseEvent *event)
     {
         // Überprüfen, ob der Punkt nahe an dem ersten Punkt liegt
         // (Schließbedingung)
-        double diffX = abs(x - partialAreaX.first());
-        double diffY = abs(y - partialAreaY.first());
+        double diffX = fabs(x - partialAreaX.first());
+        double diffY = fabs(y - partialAreaY.first());
         QSize plotSize = ui->getHeatSourcePlotSize();
         // (x,y) € [0,1] x [0,1], Radius von 10 Pixeln:
         double epsilonX = 10./plotSize.width();
         double epsilonY = 10./plotSize.height();
-        if((diffX * diffX <= epsilonX) && (diffY * diffY <= epsilonY))
+        if((diffX <= epsilonX) && (diffY <= epsilonY))
         {
             // Den ersten Punkt als neuen (letzten) Punkt hinzufügen
             partialAreaX.append(partialAreaX.first());
@@ -78,6 +78,7 @@ void presentation::Controller::heatSourcesClickSlot(QMouseEvent *event)
             // einfach wegzusammenhängend
             if(model::Area::validateArea(partialAreaX,partialAreaY))
             {
+                ui->drawPartialHeatSource(partialAreaX,partialAreaY);
                 // Wert für das neue Gebiet vom Benutzer abfragen
                 QString title = "Eingabe Wert Waermequellen",
                        text = "Bitte geben Sie nun den Wert für die "
@@ -86,13 +87,12 @@ void presentation::Controller::heatSourcesClickSlot(QMouseEvent *event)
                 double value = userInput->getDouble(ui,title,text,0,0,10000,2,&ok);
                 // Gebiet zum Modell hinzufügen
                 model->addHeatSource(new model::Area(partialAreaX,
-                                                     partialAreaY, ok ? value : 0));
+                                                     partialAreaY, ok ? value : 0, "Wärmequelle"));
 
                 // Temporäres Gebiet zurücksetzen
                 partialAreaX.clear();
                 partialAreaY.clear();
                 startedNewHeatSource = false;
-                return;
             }
             else
             {
@@ -102,7 +102,8 @@ void presentation::Controller::heatSourcesClickSlot(QMouseEvent *event)
                 errorMessages->setDetailedText("Damit ein Gebiet gültig ist, muss es"
                                                " geschlossen einfach wegzusammenhängend"
                                                " sein. D.h. es dürfen sich keine Kanten"
-                                               " schneiden oder doppelt vorkommen.");
+                                               " schneiden oder doppelt vorkommen und es"
+                                               "muss aus mindestens drei Punkten bestehen.");
                 errorMessages->exec();
 
                 // Temporäres Gebiet zurücksetzen
@@ -136,9 +137,10 @@ void presentation::Controller::heatSourceValueChangedSlot(int pos, int column)
     // Testen ob auch wirklich Gebietswert geändert wurde, da das Signal bei
     // Änderungen in allen Felder des Tabellen Widgets ausgelöst wird
     if(column != UI::ColumnValue) return; // TODO: Wert überprüfen
+    int id = ui->getThermalConductivityID(pos);
     double value = ui->getNewHeatSourceValue(pos);
     // Temperatur in Kelvin
-    if(value > 0)
+    if(value > 0 && value != model->getHeatSource(id)->getValue())
         // Wert updaten
         model->updateHeatSourceValue(pos,value);
     else
@@ -399,27 +401,27 @@ void presentation::Controller::tabChangedSlot(int newTab)
     if(startedNewHeatSource && !(newTab == UI::TabConfiguration
                                  || newTab == UI::TabHeatSources))
     {
+        ui->revertTabChange(UI::TabHeatSources);
         // Fehlermeldung ausgeben:
         errorMessages->setText("Das von Ihnen angefangen Gebiet muss entweder "
                                "abgeschlossen oder abgebrochen werden, bevor Sie"
                                " den Tab wechseln können.");
         errorMessages->setDetailedText("");
         errorMessages->exec();
-        ui->revertTabChange(UI::TabHeatSources);
         return;
     }
 
     // Analog für den Fall, dass ein Wärmeleitkoeffizienten-Gebiet begonnen wurde
-    if(startedNewThermalConductivity && (newTab == UI::TabConfiguration
+    if(startedNewThermalConductivity && !(newTab == UI::TabConfiguration
                                          || newTab == UI::TabThermalConductivity))
     {
+        ui->revertTabChange(UI::TabThermalConductivity);
         // Fehlermeldung ausgeben:
         errorMessages->setText("Das von Ihnen angefangen Gebiet muss entweder "
                                "abgeschlossen oder abgebrochen werden, bevor Sie"
                                " den Tab wechseln können.");
         errorMessages->setDetailedText("");
         errorMessages->exec();
-        ui->revertTabChange(UI::TabThermalConductivity);
         return;
     }
 
@@ -439,13 +441,13 @@ void presentation::Controller::thermalConductivitiesClickSlot(QMouseEvent *event
     {
         // Überprüfen, ob der Punkt nahe an dem ersten Punkt liegt
         // (Schließbedingung)
-        double diffX = abs(x - partialAreaX.first());
-        double diffY = abs(y - partialAreaY.first());
+        double diffX = fabs(x - partialAreaX.first());
+        double diffY = fabs(y - partialAreaY.first());
         QSize plotSize = ui->getThermalConductivityPlotSize();
         // (x,y) € [0,1] x [0,1], Radius von 10 Pixeln:
         double epsilonX = 10./plotSize.width();
         double epsilonY = 10./plotSize.height();
-        if((diffX * diffX <= epsilonX) && (diffY * diffY <= epsilonY))
+        if((diffX <= epsilonX) && (diffY <= epsilonY))
         {
             // Den ersten Punkt als neuen (letzten) Punkt hinzufügen
             partialAreaX.append(partialAreaX.first());
@@ -454,6 +456,7 @@ void presentation::Controller::thermalConductivitiesClickSlot(QMouseEvent *event
             // einfach wegzusammenhängend
             if(model::Area::validateArea(partialAreaX,partialAreaY))
             {
+                ui->drawPartialThermalConductivity(partialAreaX,partialAreaY);
                 // Den Wert für das neue Gebiet vom Benuter abfragen
                 QString title = "Eingabe Wert Waermeleitkoeffizient",
                        text = "Bitte geben Sie nun den Wert für das "
@@ -463,13 +466,12 @@ void presentation::Controller::thermalConductivitiesClickSlot(QMouseEvent *event
 
                 // Gebiet zum Modell hinzufügen
                 model->addThermalConductivity(new model::Area(partialAreaX,
-                                                              partialAreaY,value));
+                                                              partialAreaY,ok ? value : 0, "Wärmeleitkoeffizient"));
 
                 // Temporäres Gebiet zurücksetzen
                 partialAreaX.clear();
                 partialAreaY.clear();
                 startedNewThermalConductivity = false;
-                return;
             }
             else
             {
@@ -479,7 +481,8 @@ void presentation::Controller::thermalConductivitiesClickSlot(QMouseEvent *event
                 errorMessages->setDetailedText("Damit ein Gebiet gültig ist, muss es"
                                                " geschlossen einfach wegzusammenhängend"
                                                " sein. D.h. es dürfen sich keine Kanten"
-                                               " schneiden oder doppelt vorkommen.");
+                                               " schneiden oder doppelt vorkommen und es"
+                                               "muss aus mindestens drei Punkten bestehen.");
                 errorMessages->exec();
 
                 // Temporäres Gebiet zurücksetzen
@@ -513,9 +516,10 @@ void presentation::Controller::thermalConductivityValueChangedSlot(int pos, int 
     // Testen ob auch wirklich Gebietswert geändert wurde, da das Signal bei
     // Änderungen in allen Felder des Tabellen Widgets ausgelöst wird
     if(column != UI::ColumnValue) return; // TODO: Wert überprüfen
+    int id = ui->getHeatSourceID(pos);
     double value = ui->getNewThermalConductivityValue(pos);
     // Temperatur in Kelvin
-    if(value > 0)
+    if(value > 0 && value != model->getThermalConductivity(id)->getValue())
         model->updateThermalConductivityValue(pos,value);
     else
     {

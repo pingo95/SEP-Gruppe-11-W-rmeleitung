@@ -1,9 +1,9 @@
 #include "Model.h"
-#include "algorithms/Impeuler.h"
-#include "algorithms/Cranknicolson.h"
-#include "algorithms/Jacobi.h"
-#include "algorithms/Gaussseidel.h"
-#include "presentation/Ui.h"
+#include "../algorithms/Impeuler.h"
+#include "../algorithms/Cranknicolson.h"
+#include "../algorithms/Jacobi.h"
+#include "../algorithms/Gaussseidel.h"
+#include "../presentation/Ui.h"
 
 model::Model::Model() : bottomBoundary(0.), heatSourcesCount(0), initialValue(0.),
     leftBoundary(0.), m(1), n(1), result(NULL), resultM(0), resultN(0), resultT(0.),
@@ -73,6 +73,16 @@ void model::Model::addThermalConductivity(Area *newThermalConductivity)
 double model::Model::getBottomBoundary() const
 {
     return bottomBoundary;
+}
+
+// Vorbedingung: ID ist die gültige ID eines Gebietes im Modell
+model::Area* const & model::Model::getHeatSource(int const id) const
+{
+    QList<Area*>::const_iterator it = heatSources.begin();
+    for(; it != heatSources.end(); ++it)
+        if((*it)->getID() == id)
+            return (*it);
+    return NULL;
 }
 
 QList<model::Area*> const & model::Model::getHeatSources() const
@@ -165,6 +175,15 @@ double model::Model::getT() const
     return T;
 }
 
+model::Area * const & model::Model::getThermalConductivity(int const id) const
+{
+    QList<Area*>::const_iterator it = thermalConductivites.begin();
+    for(; it != thermalConductivites.end(); ++it)
+        if((*it)->getID() == id)
+            return (*it);
+    return NULL;
+}
+
 QList<model::Area *> const & model::Model::getThermalConductivities() const
 {
     return thermalConductivites;
@@ -186,7 +205,8 @@ void model::Model::removeLastHeatSource()
 {
     if(heatSourcesCount > 0)
     {
-        heatSources.removeLast();
+        delete heatSources.takeLast();
+        --heatSourcesCount;
         ui->updateNotification();
     }
 }
@@ -197,7 +217,8 @@ void model::Model::removeLastThermalConductivity()
 {
     if(thermalConductivitesCount > 0 )
     {
-        thermalConductivites.removeLast();
+        delete thermalConductivites.takeLast();
+        --thermalConductivitesCount;
         ui->updateNotification();
     }
 }

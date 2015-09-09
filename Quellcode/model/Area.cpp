@@ -1,22 +1,28 @@
 #include "Area.h"
-
-// Statischer ID Counter
-int model::Area::idCounter = 0;
+QMap<QString, int> model::Area::idCounters;
 
 // Vorbedingung: xKoords und yKoords wurden vorher mit validateArea getestet
 // Erstellt neues Gebiet:
 model::Area::Area(QVector<double> const & xKoords,
-                  QVector<double> const & yKoords, double value):
-    id(++idCounter), xKoords(xKoords), yKoords(yKoords), value(value)
+                  QVector<double> const & yKoords, double value, QString const type):
+    id(idCounters.value(type,1)), type(type), value(value),
+    xKoords(xKoords), yKoords(yKoords)
 {
+    if(idCounters.contains(type))
+        ++idCounters[type];
+    else
+        idCounters.insert(type,2);
+}
 
+model::Area::~Area(){
+    --idCounters[type];
 }
 
 // Gibt eine obere Schranke für die bisher verteilten IDs ohne dabei zu
 // unterscheiden, von wem und wo die Gebiete benutzt wurden
-int model::Area::getCurrentMaxID()
+int model::Area::getCurrentMaxID(QString const type)
 {
-    return idCounter;
+    return idCounters[type];
 }
 
 // Testet, ob die Punkte in den Vektoren ein gültiges Gebiet ergeben würden
@@ -27,31 +33,36 @@ bool model::Area::validateArea(QVector<double> const & xKoords,
     if(xKoords.size() != yKoords.size()) return false;
     // 2. Bedingung: geschlossenes Gebiet:
     if(!((xKoords.first()==xKoords.last()) && (yKoords.first()==yKoords.last()))) return false;
-    // 3. Bedingung: keine sich schneidene Seiten
+    // 3. Bedinungen: mindestens 4 Punkte (inkl. doppeltem Erstem)
+    if(xKoords.size() >= 4) return false;
+    // 4. Bedingung: keine sich schneidene Seiten
     // Die i-te Kante besteht aus den i-ten und (i+1)-ten Werten in xKoords und yKoords,
-    // d.h. insgesamt xKoords-1 Kanten
-    for(int i = 0; i < xKoords.size()-1; ++i)
-        for(int j = 0; j < yKoords.size()-1; ++j)
+    // d.h. insgesamt xKoords.size()-1 Kanten
+    int n = xKoords.size()-1;
+    for(int i = 0; i < n; ++i)
+        for(int j = 0; j < n; ++j)
         {
             // Überspringen der aktuellen Kante
             if(j==i) continue;
             // Nachbarkanten dürfen sich im gemeinsamen Punkt schneiden,
             // aber nicht überlagern
             // linker (vorheriger) Nachbar:
-            if(j-i == -1)
+            if(j == (i + n-1) % n)
             {
-                if(onLine(xKoords[i-1],yKoords[i-1],xKoords[i],yKoords[i],
+                if(onLine(xKoords[j],yKoords[j],xKoords[i],yKoords[i],
                           xKoords[i+1],yKoords[i+1])
                      || onLine(xKoords[i],yKoords[i],xKoords[i+1],yKoords[i+1],
-                               xKoords[i-1],yKoords[i-1])) return false;
+                               xKoords[j],yKoords[j])) return false;
+                continue;
             }
             // rechte ( nachfolgender) Nachbar:
-            if(j-i == 1)
+            if(j == ((i + 1) % n))
             {
                 if(onLine(xKoords[i],yKoords[i],xKoords[i+1],yKoords[i+1],
-                          xKoords[i+2],yKoords[i+2])
-                     || onLine(xKoords[i+1],yKoords[i+1],xKoords[i+2],yKoords[i+2],
+                          xKoords[j+1],yKoords[j+1])
+                     || onLine(xKoords[i+1],yKoords[i+1],xKoords[j+1],yKoords[j+1],
                                xKoords[i],yKoords[i])) return false;
+                continue;
             }
             // Ansonsten normaler "Schnitt-Test":
             if(segIntersect(xKoords[i],yKoords[i],xKoords[i+1],yKoords[i+1],

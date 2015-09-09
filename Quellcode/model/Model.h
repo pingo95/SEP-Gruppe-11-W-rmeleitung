@@ -21,10 +21,11 @@ namespace model {
         void addHeatSource(Area * newHeatSource);
         void addThermalConductivity(Area * newThermalConductivity);
         double getBottomBoundary() const;
+        Area * const & getHeatSource(int const id) const;
         QList<Area *> const& getHeatSources() const;
         int getHeatSourcesCount() const;
         double getInitialValue() const;
-        const QList<QString> getIntMethodNames() const;
+        QList<QString> const getIntMethodNames() const;
         QList<QString> const getIterativeSolverNames() const;
         double getLeftBoundary() const;
         int getM() const;
@@ -39,8 +40,9 @@ namespace model {
         bool getSimulated() const;
         bool getSimulating() const;
         double getT() const;
-        QList<Area*> const & getThermalConductivities() const;
+        QList<Area *> const & getThermalConductivities() const;
         int getThermalConductivitiesCount() const;
+        Area * const & getThermalConductivity(int const id) const;
         double getTopBoundary() const;
         void removeLastHeatSource();
         void removeLastThermalConductivity();
@@ -58,6 +60,7 @@ namespace model {
         void simulate();
         void updateHeatSourceValue(int const pos, double const value);
         void updateThermalConductivityValue(int const pos, double const newValue);
+
 
     //Attribute:
     private:
