@@ -15,7 +15,6 @@ namespace algorithms {
         IntMethod();
         virtual ~IntMethod();
 
-
         virtual void calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources)=0;
         virtual void getNeedetHeatSources(QVector<double> &neededTimeSteps, bool &reusable)=0;
         void selectIterativeSolver(IterativeSolver* iterativeSolver);

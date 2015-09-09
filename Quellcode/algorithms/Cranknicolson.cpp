@@ -5,8 +5,8 @@ algorithms::CrankNicolson::CrankNicolson() {
 }
 
 void algorithms::CrankNicolson::calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources) {
-    QVector<double> heatSources1 = *(heatSources[1]);
-    QVector<double> heatSources2 = *(heatSources[2]);
+    QVector<double> heatSources1 = *(heatSources[0]);
+    QVector<double> heatSources2 = *(heatSources[1]);
     QVector<double> rhs = rhsMatrix * last + this->deltaT/2 * (heatSources2 + heatSources1);
     this->activeIterativeSolver->solve(next,this->itMatrix,rhs);
 }
@@ -14,8 +14,8 @@ void algorithms::CrankNicolson::calcNextStep(QVector<double> const &last, QVecto
 void algorithms::CrankNicolson::getNeedetHeatSources(QVector<double> &neededTimeSteps, bool &reusable) {
     reusable = true;
     neededTimeSteps.resize(2);
-    neededTimeSteps[1]=1;
-    neededTimeSteps[2]=0;
+    neededTimeSteps[0]=1;
+    neededTimeSteps[1]=0;
 }
 
 void algorithms::CrankNicolson::setUp(QVector<double> const &thermalConductivities) {

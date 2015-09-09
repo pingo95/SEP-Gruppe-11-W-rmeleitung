@@ -1,6 +1,6 @@
 #include "Jacobi.h"
 
-algorithms::Jacobi::Jacobi() : eps(1e-5), itCount(0) {
+algorithms::Jacobi::Jacobi() {
 
 }
 

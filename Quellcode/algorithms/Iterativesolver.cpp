@@ -1,6 +1,6 @@
 #include "Iterativesolver.h"
 
-algorithms::IterativeSolver::IterativeSolver() {
+algorithms::IterativeSolver::IterativeSolver() : eps(1e-5), itCount(0) {
 
 }
 

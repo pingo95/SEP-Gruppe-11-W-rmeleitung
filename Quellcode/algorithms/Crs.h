@@ -3,8 +3,12 @@
 
 #include <QVector>
 #include <assert.h>
+#include <iostream>
+#include <fstream>
 
 namespace algorithms {
+
+    class TesterCRS;
 
     class CRS
     {
@@ -13,10 +17,10 @@ namespace algorithms {
         CRS();
         CRS(CRS const &rhs);
         CRS& operator=(CRS const &rhs);
-        CRS operator*(CRS const &rMat);
+        CRS operator*(CRS const &rMat) const;
         QVector<double> operator*(QVector<double> const &vec) const;
-        CRS operator+(CRS const &rMat);
-        CRS operator-(CRS const &rMat);
+        CRS operator+(CRS const &rMat) const;
+        CRS operator-(CRS const &rMat) const;
 
         void A1(int const n); // 2D-Diskretisierungsmatrix Laplace-Operator
         CRS& diag(QVector<double> const &diag);
@@ -32,6 +36,8 @@ namespace algorithms {
         int size;
 
     friend CRS operator*(double const &scalar, CRS const &Mat);
+
+    friend class TesterCRS;
 
     };
 
