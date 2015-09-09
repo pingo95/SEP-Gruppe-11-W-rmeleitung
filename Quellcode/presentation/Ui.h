@@ -60,10 +60,12 @@ class Controller;
 
         void drawPartialHeatSource(QVector<double> const & partialAreaX, QVector<double> const & partialAreaY);
         void drawPartialThermalConductivity(QVector<double> const & partialAreaX, QVector<double> const & partialAreaY);
+        int getHeatSourceID(int const pos) const;
         QSize getHeatSourcePlotSize() const;
         int getInitialFrame() const;
         double getNewHeatSourceValue(int row) const;
         double getNewThermalConductivityValue(int row) const;
+        int getThermalConductivityID(int const pos) const;
         QSize getThermalConductivityPlotSize() const;
         void heatSourcePixelToCoords(double const mouseX, double const mouseY, double & x, double & y);
         void revertTabChange(UI::ActiveTab targetTab);

@@ -67,6 +67,11 @@ presentation::UI::UI(QWidget *parent)
     Labels << QString().number(0)   << QString().number(0.1) << QString().number(0.2) << QString().number(0.3)
            << QString().number(0.4) << QString().number(0.5) << QString().number(0.6) << QString().number(0.7)
            << QString().number(0.8) << QString().number(0.9) << QString().number(1);
+    QCPScatterStyle myScatter;
+    myScatter.setShape(QCPScatterStyle::ssCrossSquare);
+    myScatter.setPen(QPen(Qt::blue));
+    myScatter.setBrush(Qt::green);
+    myScatter.setSize(5);
 
     //ThermalConductivityTab
         //Layouts initialisieren
@@ -110,12 +115,12 @@ presentation::UI::UI(QWidget *parent)
 //    tableWidgetThermalConductivities->setItem(0,UI::ColumnVisibility,tmpItemPtr);
 
         //UndoKnopf
-    buttonUndoThermalConductivity = new QPushButton("Undo",widgetKonfigurationThermalConductivities);
+    buttonUndoThermalConductivity = new QPushButton("Zurück",widgetKonfigurationThermalConductivities);
     buttonUndoThermalConductivity->setEnabled(false);
         //Platte
     plateThermalConductivity = new QCustomPlot(widgetKonfigurationThermalConductivities,false);
     plateThermalConductivity->addGraph();
-    //plateThermalConductivity->graph(0)->setPen(Qt::SolidLine);
+    plateThermalConductivity->graph(0)->setScatterStyle(myScatter);
             //Platte xAchse unten
     plateThermalConductivity->xAxis->setAutoTicks(false);
     plateThermalConductivity->xAxis->setAutoTickLabels(false);
@@ -179,12 +184,11 @@ presentation::UI::UI(QWidget *parent)
     tableWidgetHeatSources->horizontalHeader()->setSectionsClickable(false);
     tableWidgetHeatSources->setRowCount(0);
         //Undo Knopf
-    buttonUndoHeatSource = new QPushButton("Undo",widgetKonfigurationHeatSources);
+    buttonUndoHeatSource = new QPushButton("Zurück",widgetKonfigurationHeatSources);
     buttonUndoHeatSource->setEnabled(false);
         //Platte
     plateHeatSource = new QCustomPlot(widgetKonfigurationHeatSources,false);
     plateHeatSource->addGraph();
-    QCPScatterStyle myScatter;
     myScatter.setShape(QCPScatterStyle::ssCrossSquare);
     myScatter.setPen(QPen(Qt::blue));
     myScatter.setBrush(Qt::green);
@@ -412,6 +416,11 @@ void presentation::UI::drawPartialThermalConductivity(QVector<double> const & pa
     plateThermalConductivity->replot();
 }
 
+int presentation::UI::getHeatSourceID(const int pos) const
+{
+    return tableWidgetHeatSources->item(pos,UI::ColumnID)->text().toInt();
+}
+
 QSize presentation::UI::getHeatSourcePlotSize() const
 {
     return plateHeatSource->size();
@@ -424,12 +433,21 @@ int presentation::UI::getInitialFrame() const
 
 double presentation::UI::getNewHeatSourceValue(int row) const
 {
-    return tableWidgetHeatSources->item(row,UI::ColumnValue)->text().toDouble();
+    bool ok;
+    double value = tableWidgetHeatSources->item(row,UI::ColumnValue)->text().toDouble(&ok);
+    return ok ? value : 0;
 }
 
 double presentation::UI::getNewThermalConductivityValue(int row) const
 {
-    return tableWidgetThermalConductivities->item(row,UI::ColumnValue)->text().toDouble();
+    bool ok;
+    double value = tableWidgetThermalConductivities->item(row,UI::ColumnValue)->text().toDouble(&ok);
+    return ok ? value : 0;
+}
+
+int presentation::UI::getThermalConductivityID(const int pos) const
+{
+    return tableWidgetThermalConductivities->item(pos,UI::ColumnID)->text().toInt();
 }
 
 QSize presentation::UI::getThermalConductivityPlotSize() const
@@ -478,8 +496,8 @@ void presentation::UI::setController(Controller *controller)
     connect(doubleSpinBoxTopBoundary,SIGNAL(valueChanged(double)),controller,SLOT(newTopBoundarySlot(double)));
     connect(doubleSpinBoxT,SIGNAL(valueChanged(double)),controller,SLOT(newTSlot(double)));
     connect(buttonPlayVideo,SIGNAL(pressed()),controller,SLOT(playVideoSlot()));
-    connect(comboBoxIntMethod,SIGNAL(currentTextChanged(QString)),controller,SLOT(selectIntMethodSlot(QString)));
-    connect(comboBoxIterativeSolver,SIGNAL(currentTextChanged(QString)),controller,SLOT(selectIterativeSolverSlot(QString)));
+    connect(comboBoxIntMethod,SIGNAL(activated(QString)),controller,SLOT(selectIntMethodSlot(QString)));
+    connect(comboBoxIterativeSolver,SIGNAL(activated(QString)),controller,SLOT(selectIterativeSolverSlot(QString)));
     connect(buttonSimulate,SIGNAL(clicked(bool)),controller,SLOT(simulateSlot()));
     connect(tabWidgetMain,SIGNAL(currentChanged(int)),controller,SLOT(tabChangedSlot(int)));
     connect(this,SIGNAL(subTabChange(int)),controller,SLOT(tabChangedSlot(int)));
@@ -493,6 +511,13 @@ void presentation::UI::setController(Controller *controller)
 void presentation::UI::setModel(model::Model *model)
 {
     this->model = model;
+    QList<QString> tmpList = model->getIntMethodNames();
+    QStringList tmp(tmpList);
+    //comboBoxIntMethod->addItem("hfbhdbfh");
+
+    //comboBoxIntMethod->addItems(tmp);
+    //comboBoxIntMethod->addItems(QStringList(model->getIntMethodNames()));
+    //comboBoxIterativeSolver->addItems(QStringList(model->getIterativeSolverNames()));
     // Initialen Tab laden/updaten
     updateNotification();
 }
@@ -605,13 +630,19 @@ void presentation::UI::updateHeatSources()
 
 void presentation::UI::updateIBVs()
 {
-
+    doubleSpinBoxBottomBoundary->setValue(model->getBottomBoundary());
+    doubleSpinBoxInitialValue->setValue(model->getInitialValue());
+    doubleSpinBoxLeftBoundary->setValue(model->getLeftBoundary());
+    doubleSpinBoxRightBoundary->setValue(model->getRightBoundary());
+    doubleSpinBoxTopBoundary->setValue(model->getTopBoundary());
 }
 
 
 void presentation::UI::updateSimulating()
 {
-
+    doubleSpinBoxT->setValue(model->getT());
+    spinBoxM->setValue(model->getM());
+    spinBoxN->setValue(model->getN());
 }
 
 void presentation::UI::updateThermalConductivties()
@@ -712,7 +743,7 @@ void presentation::UI::visualizeThermalConductivityArea(model::Area *area)
     plateThermalConductivity->graph(id)->setPen(QPen(Qt::black));
     plateThermalConductivity->graph(id)->setBrush(QBrush(
                 valueToColour(area->getValue()),Qt::SolidPattern));
-    plateHeatSource->graph(id)->setVisible(true);
+    plateThermalConductivity->graph(id)->setVisible(true);
 }
 
 void presentation::UI::transformTabID(int targetTab)
