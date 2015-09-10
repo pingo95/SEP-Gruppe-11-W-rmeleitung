@@ -169,6 +169,13 @@ class Controller;
 
         //Labels
         QLabel * labelBottomBoundary;
+        QLabel * labelHelpTabHeatSource;
+        QLabel * labelHelpTabIBVs;
+        QLabel * labelHelpTabKonfiguration;
+        QLabel * labelHelpTabSimuation;
+        QLabel * labelHelpTabThermalConductivity;
+        QLabel * labelHelpTabVisualization;
+//        QLabel * labelHelpTabOptinal;
         QLabel * labelInitialValue;
         QLabel * labelLeftBoundary;
         QLabel * labelM;
@@ -180,13 +187,15 @@ class Controller;
         QLabel * labelT;
         QLabel * labelTopBoundary;
         QLabel * labelTopHeatSource;
-        QLabel * labelTopHelp;
         QLabel * labelTopIBV;
         QLabel * labelTopSimulation;
         QLabel * labelTopThermalConductivity;
         QLabel * labelTopVisualization;
 
         //Plate
+        QCustomPlot * colorBarHeatSource;
+        QCustomPlot * colorBarThermalConductivity;
+        QCustomPlot * colorBarVisualization;
         QCustomPlot * plateHeatSource;
         QCustomPlot * plateThermalConductivity;
         QCustomPlot * plateVideo;
@@ -215,8 +224,10 @@ class Controller;
         QTabWidget * tabWidgetSub;
 
         //Spaceritem
-        QSpacerItem * spacerItemTabIBV;
-        QSpacerItem * spacerItemTabSimulation;
+        QSpacerItem * spacerItemTabIBVHorizontal;
+        QSpacerItem * spacerItemTabIBVVertical;
+        QSpacerItem * spacerItemTabSimulationHorizontal;
+        QSpacerItem * spacerItemTabSimulationVertical;
         QSpacerItem * spacerItemTabVisualisation;
         QSpacerItem * spacerItemTabHelp;
 

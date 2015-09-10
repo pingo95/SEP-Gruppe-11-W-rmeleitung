@@ -57,17 +57,24 @@ presentation::UI::UI(QWidget *parent)
     widgetKonfigurationIBVs = new QWidget(this);
     widgetKonfigurationThermalConductivities = new QWidget(this);
     tabWidgetSub->setMinimumSize(350,250);
-    tabWidgetSub->addTab(widgetKonfigurationThermalConductivities,"Waermeleitkoeff");
-    tabWidgetSub->addTab(widgetKonfigurationHeatSources,"Waermequellen");
+    tabWidgetSub->addTab(widgetKonfigurationThermalConductivities,"Wärmeleitkoeffizienten");
+    tabWidgetSub->addTab(widgetKonfigurationHeatSources,"Wärmequellen");
     tabWidgetSub->addTab(widgetKonfigurationIBVs,"IBV");
     mainLayoutKonfiguration->addWidget(tabWidgetSub);
         //Für Platte
-    QVector<double> Ticks;
-    QVector<QString> Labels;
+    QVector<double> Ticks,TicksColorBar,TicksEmpty;
+    QVector<QString> Labels,LabelsColorBar,LabelsEmpty;
     Ticks << 0 << 0.1 << 0.2 << 0.3 << 0.4 << 0.5 << 0.6 << 0.7 << 0.8 << 0.9 << 1 ;
     Labels << QString().number(0)   << QString().number(0.1) << QString().number(0.2) << QString().number(0.3)
            << QString().number(0.4) << QString().number(0.5) << QString().number(0.6) << QString().number(0.7)
            << QString().number(0.8) << QString().number(0.9) << QString().number(1);
+    TicksColorBar << 0 << MaxTemperature * 0.1 << MaxTemperature * 0.2  << MaxTemperature * 0.3 << MaxTemperature * 0.4
+                  << MaxTemperature * 0.5 << MaxTemperature * 0.6 << MaxTemperature * 0.7 << MaxTemperature * 0.8
+                  << MaxTemperature * 0.9 << MaxTemperature;
+    LabelsColorBar << QString().number(0) << QString().number(MaxTemperature * 0.1) << QString().number(MaxTemperature * 0.2)
+                   << QString().number(MaxTemperature * 0.3) << QString().number(MaxTemperature * 0.4) << QString().number(MaxTemperature * 0.5)
+                   << QString().number(MaxTemperature * 0.6) << QString().number(MaxTemperature * 0.7) << QString().number(MaxTemperature * 0.8)
+                   << QString().number(MaxTemperature * 0.9) << QString().number(MaxTemperature);
 
     //ThermalConductivityTab
         //Layouts initialisieren
@@ -78,7 +85,11 @@ presentation::UI::UI(QWidget *parent)
     //widgetKonfigurationThermalConductivities->setPalette(Pal);;
     //widgetKonfigurationThermalConductivities->setAutoFillBackground(true);
         //Labels
-    labelTopThermalConductivity = new QLabel("Info",widgetKonfigurationThermalConductivities);
+    labelTopThermalConductivity = new QLabel("Dies ist der Tab zur Einstellung der Wärmeleitkoeffizienten.\n"
+                                             "Sie können hier die Gebiete der einzelnen Schrottkomponenten festlegen "
+                                             "sowie den zugehörigen Wärmeleitkoeffizienten eingeben."
+                                             "Für weitere Informationen wechseln Sie in den Hilfs-Tab.",widgetKonfigurationThermalConductivities);
+    labelTopThermalConductivity->setWordWrap(true);
         //Tabelle
     tableWidgetThermalConductivities = new QTableWidget(widgetKonfigurationThermalConductivities);
     tableWidgetThermalConductivities->setColumnCount(3);
@@ -93,26 +104,39 @@ presentation::UI::UI(QWidget *parent)
 //    tableWidgetThermalConductivities->horizontalHeader()->setSelectionBehavior(QAbstractItemView::SelectItems);
     tableWidgetThermalConductivities->horizontalHeader()->setSectionsClickable(false);
     tableWidgetThermalConductivities->setRowCount(0);
-//        //test Hinzufügen
-//    QTableWidgetItem * tmpItemPtr = new
-//            QTableWidgetItem(QString().number(4));
-//    tmpItemPtr->setFlags(Qt::ItemIsEnabled);
-//    tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-//    tableWidgetThermalConductivities->setItem(0,UI::ColumnID,tmpItemPtr);
-//    tmpItemPtr = new
-//            QTableWidgetItem(QString().number(1.0));
-//    tmpItemPtr->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-//    tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-//    tableWidgetThermalConductivities->setItem(0,UI::ColumnValue,tmpItemPtr);
-//    tmpItemPtr = new QTableWidgetItem();
-//    tmpItemPtr->setFlags(Qt::ItemIsEnabled| Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
-//    tmpItemPtr->setCheckState(Qt::Checked);
-//    tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignRight);
-//    tableWidgetThermalConductivities->setItem(0,UI::ColumnVisibility,tmpItemPtr);
 
         //UndoKnopf
     buttonUndoThermalConductivity = new QPushButton("Zurück",widgetKonfigurationThermalConductivities);
     buttonUndoThermalConductivity->setEnabled(false);
+
+    //Color Bar
+    colorBarThermalConductivity = new QCustomPlot(widgetKonfigurationHeatSources,false);
+            //Color Bar unten
+    colorBarThermalConductivity->xAxis->setAutoTicks(false);
+    colorBarThermalConductivity->xAxis->setAutoTickLabels(false);
+    colorBarThermalConductivity->xAxis->setTickVector(TicksEmpty);
+    colorBarThermalConductivity->xAxis->setTickVectorLabels(LabelsEmpty);
+            //Color Bar links
+    colorBarThermalConductivity->yAxis->setAutoTicks(false);
+    colorBarThermalConductivity->yAxis->setAutoTickLabels(false);
+    colorBarThermalConductivity->yAxis->setTickVector(TicksColorBar);
+    colorBarThermalConductivity->yAxis->setTickVectorLabels(LabelsColorBar);
+    colorBarThermalConductivity->yAxis->setRange(0,MaxTemperature);
+            //Color Bar links
+    colorBarThermalConductivity->xAxis2->setAutoTicks(false);
+    colorBarThermalConductivity->xAxis2->setAutoTickLabels(false);
+    colorBarThermalConductivity->xAxis2->setVisible(true);
+    colorBarThermalConductivity->xAxis2->setTickVector(TicksEmpty);
+    colorBarThermalConductivity->xAxis2->setTickVectorLabels(LabelsEmpty);
+            //Color Bar rechts
+    colorBarThermalConductivity->yAxis2->setAutoTicks(false);
+    colorBarThermalConductivity->yAxis2->setAutoTickLabels(false);
+    colorBarThermalConductivity->yAxis2->setVisible(true);
+    colorBarThermalConductivity->yAxis2->setTickVector(TicksEmpty);
+    colorBarThermalConductivity->yAxis2->setTickVectorLabels(LabelsEmpty);
+
+    colorBarThermalConductivity->setMaximumWidth(100);
+
         //Platte
     plateThermalConductivity = new QCustomPlot(widgetKonfigurationThermalConductivities,false);
             //Platte xAchse unten
@@ -150,10 +174,11 @@ presentation::UI::UI(QWidget *parent)
     tableWidgetThermalConductivities->setMinimumWidth(142);
     tableWidgetThermalConductivities->setMaximumWidth(142);
     buttonUndoThermalConductivity->setMaximumWidth(100);
-    subGridLayoutKonfigurationThermalConductivities->addWidget(labelTopThermalConductivity,0,0);
+    subGridLayoutKonfigurationThermalConductivities->addWidget(labelTopThermalConductivity,0,0,1,4);
+    subGridLayoutKonfigurationThermalConductivities->addWidget(colorBarThermalConductivity,1,1);
     subGridLayoutKonfigurationThermalConductivities->addWidget(tableWidgetThermalConductivities,1,0);
-    subGridLayoutKonfigurationThermalConductivities->addWidget(plateThermalConductivity,1,1);
-    subGridLayoutKonfigurationThermalConductivities->addWidget(buttonUndoThermalConductivity,1,2);
+    subGridLayoutKonfigurationThermalConductivities->addWidget(plateThermalConductivity,1,2);
+    subGridLayoutKonfigurationThermalConductivities->addWidget(buttonUndoThermalConductivity,1,3);
 
 
     //HeatSourceTab
@@ -163,7 +188,11 @@ presentation::UI::UI(QWidget *parent)
     subHBoxLayoutKonfigurationHeatSources = new QHBoxLayout();
     mainLayoutKonfigurationHeatSources->addLayout(subGridLayoutKonfigurationHeatSources);
         //Labels
-    labelTopHeatSource = new QLabel("Info",widgetKonfigurationHeatSources);
+    labelTopHeatSource = new QLabel("Dies ist der Tab zur Einstellung der Wärmequellen. \n"
+                                    "Sie können hier die Gebiete der Wärmequellen markieren "
+                                    "und dessen Wert eingeben."
+                                    "Für weitere Informationen wechseln Sie in den Hilfe-Tab",widgetKonfigurationHeatSources);
+    labelTopHeatSource->setWordWrap(true);
         //Tabelle
     tableWidgetHeatSources = new QTableWidget(widgetKonfigurationHeatSources);
     tableWidgetHeatSources->setColumnCount(3);
@@ -180,6 +209,33 @@ presentation::UI::UI(QWidget *parent)
         //Undo Knopf
     buttonUndoHeatSource = new QPushButton("Zurück",widgetKonfigurationHeatSources);
     buttonUndoHeatSource->setEnabled(false);
+    //Color Bar
+    colorBarHeatSource = new QCustomPlot(widgetKonfigurationHeatSources,false);
+            //Color Bar links
+    colorBarHeatSource->yAxis->setAutoTicks(false);
+    colorBarHeatSource->yAxis->setAutoTickLabels(false);
+    colorBarHeatSource->yAxis->setTickVector(TicksColorBar);
+    colorBarHeatSource->yAxis->setTickVectorLabels(LabelsColorBar);
+    colorBarHeatSource->yAxis->setRange(0,MaxTemperature);
+            //Color Bar unten
+    colorBarHeatSource->xAxis->setAutoTicks(false);
+    colorBarHeatSource->xAxis->setAutoTickLabels(false);
+    colorBarHeatSource->xAxis->setTickVector(TicksEmpty);
+    colorBarHeatSource->xAxis->setTickVectorLabels(LabelsEmpty);
+            //Color Bar rechts
+    colorBarHeatSource->yAxis2->setAutoTicks(false);
+    colorBarHeatSource->yAxis2->setAutoTickLabels(false);
+    colorBarHeatSource->yAxis2->setVisible(true);
+    colorBarHeatSource->yAxis2->setTickVector(TicksEmpty);
+    colorBarHeatSource->yAxis2->setTickVectorLabels(LabelsEmpty);
+            //Color Bar links
+    colorBarHeatSource->xAxis2->setAutoTicks(false);
+    colorBarHeatSource->xAxis2->setAutoTickLabels(false);
+    colorBarHeatSource->xAxis2->setVisible(true);
+    colorBarHeatSource->xAxis2->setTickVector(TicksEmpty);
+    colorBarHeatSource->xAxis2->setTickVectorLabels(LabelsEmpty);
+
+    colorBarHeatSource->setMaximumWidth(100);
         //Platte
     plateHeatSource = new QCustomPlot(widgetKonfigurationHeatSources,false);
             //Platte xAchse unten
@@ -217,10 +273,11 @@ presentation::UI::UI(QWidget *parent)
     tableWidgetHeatSources->setMinimumWidth(142);
     tableWidgetHeatSources->setMaximumWidth(142);
     buttonUndoHeatSource->setMaximumWidth(100);
-    subGridLayoutKonfigurationHeatSources->addWidget(labelTopHeatSource,0,0);
+    subGridLayoutKonfigurationHeatSources->addWidget(labelTopHeatSource,0,0,1,4);
     subGridLayoutKonfigurationHeatSources->addWidget(tableWidgetHeatSources,1,0);
-    subGridLayoutKonfigurationHeatSources->addWidget(plateHeatSource,1,1);
-    subGridLayoutKonfigurationHeatSources->addWidget(buttonUndoHeatSource,1,2);
+    subGridLayoutKonfigurationHeatSources->addWidget(colorBarHeatSource,1,1);
+    subGridLayoutKonfigurationHeatSources->addWidget(plateHeatSource,1,2);
+    subGridLayoutKonfigurationHeatSources->addWidget(buttonUndoHeatSource,1,3);
 
     //IBVTab
         //Layouts initialisieren
@@ -229,7 +286,9 @@ presentation::UI::UI(QWidget *parent)
     subHBoxLayoutKonfigurationIBVs = new QHBoxLayout();
     mainLayoutKonfigurationIBVs->addLayout(subGridLayoutKonfigurationIBVs,0);
         //Labels
-    labelTopIBV = new QLabel("Info",widgetKonfigurationIBVs);
+    labelTopIBV = new QLabel("Dies ist der Tab zur Einstellung der Anfangs- und Randwerte."
+            "Für weitere Informationen wechseln Sie in den Hifle-Tab",widgetKonfigurationIBVs);
+    labelTopIBV->setWordWrap(true);
     labelBottomBoundary = new QLabel("unteren Randwert eingeben",widgetKonfigurationIBVs);
     labelInitialValue = new QLabel("Anfangswert eingeben",widgetKonfigurationIBVs);
     labelLeftBoundary = new QLabel("linken Randwert eingeben",widgetKonfigurationIBVs);
@@ -260,9 +319,10 @@ presentation::UI::UI(QWidget *parent)
     doubleSpinBoxTopBoundary->setMaximum(MaxTemperature);
 
         //Platzhalter
-    spacerItemTabIBV = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
+    spacerItemTabIBVHorizontal = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
+    spacerItemTabIBVVertical = new QSpacerItem(0,0,QSizePolicy::Expanding,QSizePolicy::MinimumExpanding);
         //Layout
-    subGridLayoutKonfigurationIBVs->addWidget(labelTopIBV,0,0);
+    subGridLayoutKonfigurationIBVs->addWidget(labelTopIBV,0,0,1,2);
     subGridLayoutKonfigurationIBVs->addWidget(labelInitialValue,1,0);
     subGridLayoutKonfigurationIBVs->addWidget(doubleSpinBoxInitialValue,1,1);
     subGridLayoutKonfigurationIBVs->addWidget(labelBottomBoundary,2,0);
@@ -273,14 +333,17 @@ presentation::UI::UI(QWidget *parent)
     subGridLayoutKonfigurationIBVs->addWidget(doubleSpinBoxRightBoundary,4,1);
     subGridLayoutKonfigurationIBVs->addWidget(labelTopBoundary,5,0);
     subGridLayoutKonfigurationIBVs->addWidget(doubleSpinBoxTopBoundary,5,1);
-    subGridLayoutKonfigurationIBVs->addItem(spacerItemTabIBV,6,0);
+    subGridLayoutKonfigurationIBVs->addItem(spacerItemTabIBVHorizontal,6,0);
+    subGridLayoutKonfigurationIBVs->addItem(spacerItemTabIBVVertical,1,2,5,1);
+    subGridLayoutKonfigurationIBVs->setColumnMinimumWidth(0,200);
+    subGridLayoutKonfigurationIBVs->setColumnMinimumWidth(1,150);
 
 
     //SimulationTab
         //Layouts initialisieren
     mainLayoutSimulation->addLayout(subGridLayoutSimulation,0);
-        //Labels
-    labelTopSimulation = new QLabel("Info",widgetSimulation);
+    labelTopSimulation = new QLabel("",widgetSimulation);
+    labelTopSimulation->setWordWrap(true);
     labelN = new QLabel("N eingeben",widgetSimulation);
     labelM = new QLabel("M eingeben",widgetSimulation);
     labelT = new QLabel("T eingeben",widgetSimulation);
@@ -305,13 +368,15 @@ presentation::UI::UI(QWidget *parent)
     comboBoxIterativeSolver = new QComboBox(widgetSimulation);
         //Progressbar
     progressBarProgress =  new QProgressBar(widgetSimulation);
-    progressBarProgress->setMaximumWidth(1000);
+
         //Buttons
     buttonSimulate = new QPushButton("Simulieren",widgetSimulation);
+    buttonSimulate->setMaximumWidth(150);
         //Platzhalter
-    spacerItemTabSimulation = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
+    spacerItemTabSimulationHorizontal = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
+    spacerItemTabSimulationVertical = new QSpacerItem(0,0,QSizePolicy::Expanding,QSizePolicy::MinimumExpanding);
         //Layout
-    subGridLayoutSimulation->addWidget(labelTopSimulation,0,0);
+    subGridLayoutSimulation->addWidget(labelTopSimulation,0,0,1,2);
     subGridLayoutSimulation->addWidget(labelM,1,0);
     subGridLayoutSimulation->addWidget(spinBoxM,1,1);
     subGridLayoutSimulation->addWidget(labelN,2,0);
@@ -322,17 +387,21 @@ presentation::UI::UI(QWidget *parent)
     subGridLayoutSimulation->addWidget(comboBoxIntMethod,4,1);
     subGridLayoutSimulation->addWidget(labelSelectSolver,5,0);
     subGridLayoutSimulation->addWidget(comboBoxIterativeSolver,5,1);
-    subGridLayoutSimulation->addWidget(buttonSimulate,6,0,1,2);
-    subGridLayoutSimulation->addWidget(labelProgressBar,7,0);
-    subGridLayoutSimulation->addWidget(progressBarProgress,7,1);
-    subGridLayoutSimulation->addItem(spacerItemTabSimulation,8,0);
+    subGridLayoutSimulation->addWidget(buttonSimulate,6,1);
+    subGridLayoutSimulation->addItem(spacerItemTabSimulationHorizontal,7,0);
+    subGridLayoutSimulation->addItem(spacerItemTabSimulationVertical,1,2,7,1);
+    subGridLayoutSimulation->addWidget(labelProgressBar,8,0);
+    subGridLayoutSimulation->addWidget(progressBarProgress,8,1,1,2);
+    subGridLayoutSimulation->setColumnMinimumWidth(0,200);
+    subGridLayoutSimulation->setColumnMinimumWidth(1,150);
 
 
     //VisualisierungsTab
         //Layouts initialisieren
     mainLayoutVisualisation->addLayout(subGridLayoutVisualisation,0);
         //Labels
-    labelTopVisualization = new QLabel("Info",widgetVisualisation);
+    labelTopVisualization = new QLabel("",widgetVisualisation);
+    labelTopVisualization->setWordWrap(true);
         //Buttons
     buttonPlayVideo = new QPushButton("Play",widgetVisualisation);
     buttonPlayVideo->setEnabled(false);
@@ -345,6 +414,34 @@ presentation::UI::UI(QWidget *parent)
     lcdNumberVideoTimestep = new QLCDNumber(widgetVisualisation);
         //Platzhalter
     spacerItemTabVisualisation = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
+    //Color Bar
+    colorBarVisualization = new QCustomPlot(widgetKonfigurationHeatSources,false);
+            //Color Bar unten
+    colorBarVisualization->xAxis->setAutoTicks(false);
+    colorBarVisualization->xAxis->setAutoTickLabels(false);
+    colorBarVisualization->xAxis->setTickVector(TicksEmpty);
+    colorBarVisualization->xAxis->setTickVectorLabels(LabelsEmpty);
+            //Color Bar links
+    colorBarVisualization->yAxis->setAutoTicks(false);
+    colorBarVisualization->yAxis->setAutoTickLabels(false);
+    colorBarVisualization->yAxis->setTickVector(TicksColorBar);
+    colorBarVisualization->yAxis->setTickVectorLabels(LabelsColorBar);
+    colorBarVisualization->yAxis->setRange(0,MaxTemperature);
+            //Color Bar links
+    colorBarVisualization->xAxis2->setAutoTicks(false);
+    colorBarVisualization->xAxis2->setAutoTickLabels(false);
+    colorBarVisualization->xAxis2->setVisible(true);
+    colorBarVisualization->xAxis2->setTickVector(TicksEmpty);
+    colorBarVisualization->xAxis2->setTickVectorLabels(LabelsEmpty);
+            //Color Bar rechts
+    colorBarVisualization->yAxis2->setAutoTicks(false);
+    colorBarVisualization->yAxis2->setAutoTickLabels(false);
+    colorBarVisualization->yAxis2->setVisible(true);
+    colorBarVisualization->yAxis2->setTickVector(TicksEmpty);
+    colorBarVisualization->yAxis2->setTickVectorLabels(LabelsEmpty);
+
+    colorBarVisualization->setMinimumWidth(100);
+    colorBarVisualization->setMaximumWidth(100);
         //Video anzeige
     plateVideo = new QCustomPlot(widgetVisualisation,false);
     plateVideo->addGraph();
@@ -382,20 +479,43 @@ presentation::UI::UI(QWidget *parent)
     plateVideo->setMinimumWidth(350);
     plateVideo->setMinimumHeight(650);
     buttonPlayVideo->setMaximumWidth(100);
-    subGridLayoutVisualisation->addWidget(labelTopVisualization,0,0);
-    subGridLayoutVisualisation->addWidget(plateVideo,1,0);
-    subGridLayoutVisualisation->addWidget(buttonPlayVideo,1,1);
-    subGridLayoutVisualisation->addWidget(lcdNumberVideoTimestep,2,1);
-    subGridLayoutVisualisation->addWidget(sliderVideo,2,0);
+    subGridLayoutVisualisation->addWidget(labelTopVisualization,0,0,1,2);
+    subGridLayoutVisualisation->addWidget(colorBarVisualization,1,0);
+    subGridLayoutVisualisation->addWidget(plateVideo,1,1);
+    subGridLayoutVisualisation->addWidget(buttonPlayVideo,1,2);
+    subGridLayoutVisualisation->addWidget(sliderVideo,2,1);
+    subGridLayoutVisualisation->addWidget(lcdNumberVideoTimestep,2,2);
+    subGridLayoutVisualisation->addItem(spacerItemTabVisualisation,3,0);
     subGridLayoutVisualisation->addItem(spacerItemTabVisualisation,3,0);
 
 
     //HelpTab
     mainLayoutHelp->addLayout(subGridLayoutHelp);
-    labelTopHelp = new QLabel("Info",widgetHelp);
+    //Layout initialisieren
+    mainLayoutHelp->addLayout(subGridLayoutHelp);
+        //Labels
+    labelHelpTabKonfiguration = new QLabel("Info zum Tab Konfiguration",widgetHelp);
+    labelHelpTabKonfiguration->setWordWrap(true);
+    labelHelpTabThermalConductivity = new QLabel("Info zum Tab Wärmeleitkoeff");
+    labelHelpTabThermalConductivity->setWordWrap(true);
+    labelHelpTabHeatSource = new QLabel("Info zum Tab Wärmequellen");
+    labelHelpTabHeatSource->setWordWrap(true);
+    labelHelpTabIBVs = new QLabel("Info zum Tab IBV");
+    labelHelpTabIBVs->setWordWrap(true);
+    labelHelpTabSimuation = new QLabel("Info zum Tab Simualtion");
+    labelHelpTabSimuation->setWordWrap(true);
+    labelHelpTabVisualization = new QLabel("Info zum Tab Visualisierung");
+    labelHelpTabVisualization->setWordWrap(true);
+        //Platzhalter
     spacerItemTabHelp = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
-    subGridLayoutHelp->addWidget(labelTopHelp,0,0);
-    subGridLayoutHelp->addItem(spacerItemTabHelp,1,0);
+        //Layout
+    subGridLayoutHelp->addWidget(labelHelpTabKonfiguration,0,0);
+    subGridLayoutHelp->addWidget(labelHelpTabThermalConductivity,1,0);
+    subGridLayoutHelp->addWidget(labelHelpTabHeatSource,2,0);
+    subGridLayoutHelp->addWidget(labelHelpTabIBVs,3,0);
+    subGridLayoutHelp->addWidget(labelHelpTabSimuation,4,0);
+    subGridLayoutHelp->addWidget(labelHelpTabVisualization,5,0);
+    subGridLayoutHelp->addItem(spacerItemTabHelp,6,0);
 
 
     //Layout anwenden
@@ -706,6 +826,22 @@ void presentation::UI::updateSimulating()
     doubleSpinBoxT->setValue(model->getT());
     spinBoxM->setValue(model->getM());
     spinBoxN->setValue(model->getN());
+    doubleSpinBoxT->setValue(model->getT());
+    if(model->getSimulating())
+    {
+        buttonSimulate->setEnabled(false);
+        labelTopSimulation->setText("Es kann nicht noch einmal simuliert werden, "
+                                    "wenn die vorherige Simulation noch nicht abgeschlossen wurde");
+    }
+    else
+    {
+       buttonSimulate->setEnabled(true);
+       labelTopSimulation->setText("Dies ist der Tab zur Einstellung der Simulation.\n"
+                                   "Für weitere Informationen wechseln Sie in den Hilfe-Tab.");
+    }
+
+    comboBoxIntMethod->setCurrentText(model->getSelectedIntMethod());
+    comboBoxIterativeSolver->setCurrentText(model->getSelectedIterativeSolver());
 }
 
 void presentation::UI::updateThermalConductivties()
@@ -786,7 +922,23 @@ void presentation::UI::updateThermalConductivties()
 
 void presentation::UI::updateVisualization()
 {
-
+    if (model->getSimulated())
+    {
+        sliderVideo->setEnabled(true);
+        buttonPlayVideo->setEnabled(true);
+        labelTopVisualization->setText("Dies ist der Tab zur Visualisierung der Simulationsergebnisse.\n"
+                                       "Hier können Sie sich, mit Hilfe des Schiebereglers, Einzelbilder oder ein Video anzeigen lassen."
+                                       "Für genauere Informationen wechseln Sie in den Hilfe-Tab.");
+        resultM = model->getResultM();
+        resultN = model->getResultN();
+        resultT = model->getResultT();
+        result = model->getResult();
+    }
+    else
+    {
+        labelTopVisualization->setText("Ergebnisse können erst angezeigt werden, "
+                                       "nachdem eine Simulation durchgeführt wurde.");
+    }
 }
 
 QColor presentation::UI::valueToColour(const double value, model::Model::AreaTyp type)
