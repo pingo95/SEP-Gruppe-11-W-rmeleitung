@@ -19,20 +19,6 @@ algorithms::CRS& algorithms::CRS::operator=(algorithms::CRS const &rhs) {
     return *this;
 }
 
-algorithms::CRS algorithms::CRS::operator*(CRS const &rMat) const {
-    algorithms::CRS mult; mult.size=this->size; mult.ptr.resize(size+1);
-    int j=0; mult.ptr[0]=0;
-    for(int i=0; i<mult.size; ++i) {
-        for(j=rMat.ptr[i]; j<rMat.ptr[i+1]; ++j) {
-            mult.value.append(rMat.value[j] * this->value[i]);
-            mult.index.append(rMat.index[j]);
-        }
-        mult.ptr[i+1] = j;
-    }
-    mult.ptr[size] = mult.value.size();
-    return mult;
-}
-
 QVector<double> algorithms::CRS::operator*(QVector<double> const &vec) const {
     QVector<double> res(this->size);
     for(int i=0; i<size; i++) {
@@ -52,23 +38,38 @@ algorithms::CRS algorithms::CRS::operator+(algorithms::CRS const &rMat) const {
     for(int i=0; i<diff.size; ++i) {
         diff.ptr[i+1] = diff.ptr[i];
         jl = this->ptr[i]; jr = rMat.ptr[i];
-        while(jl < this->ptr[i+1] && jr < rMat.ptr[i+1]) {
-            if(this->index[jl] < rMat.index[jr]) {
-                diff.index.append(index[jl]);
-                diff.value.append(this->value[jl]);
-                ++jl;
-            }
+        while(jl < this->ptr[i+1] || jr < rMat.ptr[i+1]) {
+            if(jr == rMat.ptr[i+1]) {
+                    diff.index.append(this->index[jl]);
+                    diff.value.append(this->value[jl]);
+                    ++jl;
+                }
             else {
-                if(this->index[jl] > rMat.index[jr]) {
+                if(jl == this->ptr[i+1]) {
                     diff.index.append(rMat.index[jr]);
                     diff.value.append(rMat.value[jr]);
                     ++jr;
                 }
                 else {
-                    diff.index.append(index[jl]);
-                    diff.value.append(this->value[jl]+rMat.value[jr]);
-                    ++jl; ++jr;
+                    if(this->index[jl] < rMat.index[jr]) {
+                        diff.index.append(this->index[jl]);
+                        diff.value.append(this->value[jl]);
+                        ++jl;
+                    }
+                    else {
+                        if(this->index[jl] > rMat.index[jr]) {
+                            diff.index.append(rMat.index[jr]);
+                            diff.value.append(rMat.value[jr]);
+                            ++jr;
+                        }
+                        else {
+                            diff.index.append(index[jl]);
+                            diff.value.append(this->value[jl]+rMat.value[jr]);
+                            ++jl; ++jr;
+                        }
+                    }
                 }
+
             }
             diff.ptr[i+1]++;
         }
@@ -85,23 +86,38 @@ algorithms::CRS algorithms::CRS::operator-(algorithms::CRS const &rMat) const {
     for(int i=0; i<diff.size; ++i) {
         diff.ptr[i+1] = diff.ptr[i];
         jl = this->ptr[i]; jr = rMat.ptr[i];
-        while(jl < this->ptr[i+1] && jr < rMat.ptr[i+1]) {
-            if(this->index[jl] < rMat.index[jr]) {
-                diff.index.append(index[jl]);
-                diff.value.append(this->value[jl]);
-                ++jl;
-            }
+        while(jl < this->ptr[i+1] || jr < rMat.ptr[i+1]) {
+            if(jr == rMat.ptr[i+1]) {
+                    diff.index.append(this->index[jl]);
+                    diff.value.append(this->value[jl]);
+                    ++jl;
+                }
             else {
-                if(this->index[jl] > rMat.index[jr]) {
+                if(jl == this->ptr[i+1]) {
                     diff.index.append(rMat.index[jr]);
-                    diff.value.append(rMat.value[-jr]);
+                    diff.value.append(-rMat.value[jr]);
                     ++jr;
                 }
                 else {
-                    diff.index.append(index[jl]);
-                    diff.value.append(this->value[jl]-rMat.value[jr]);
-                    ++jl; ++jr;
+                    if(this->index[jl] < rMat.index[jr]) {
+                        diff.index.append(this->index[jl]);
+                        diff.value.append(this->value[jl]);
+                        ++jl;
+                    }
+                    else {
+                        if(this->index[jl] > rMat.index[jr]) {
+                            diff.index.append(rMat.index[jr]);
+                            diff.value.append(-rMat.value[jr]);
+                            ++jr;
+                        }
+                        else {
+                            diff.index.append(index[jl]);
+                            diff.value.append(this->value[jl]-rMat.value[jr]);
+                            ++jl; ++jr;
+                        }
+                    }
                 }
+
             }
             diff.ptr[i+1]++;
         }
@@ -181,7 +197,11 @@ void algorithms::CRS::eye(int const n)
     ptr[n*n] = nnz;
 }
 
-int algorithms::CRS::getRowsMinCol(int i) const {
+int algorithms::CRS::getIndex(int i) const {
+    return this->index[i];
+}
+
+int algorithms::CRS::getRowsNumElem(int i) const {
     return this->ptr[i];
 }
 
@@ -192,9 +212,17 @@ double algorithms::CRS::getValue(int i, int j) const {
     return 0;
 }
 
-QVector<double> algorithms::operator *(double const &scalar, QVector<double> const &rhs) {
-    QVector<double> mult = rhs;
-    for(int i=0; i<rhs.size(); i++) mult[i] *= scalar;
+algorithms::CRS algorithms::multCRSCRS(CRS const &lMat, CRS const &rMat) {
+    algorithms::CRS mult; mult.size=lMat.size; mult.ptr.resize(mult.size+1);
+    int j=0; mult.ptr[0]=0;
+    for(int i=0; i<mult.size; ++i) {
+        for(j=rMat.ptr[i]; j<rMat.ptr[i+1]; ++j) {
+            mult.value.append(rMat.value[j] * lMat.value[i]);
+            mult.index.append(rMat.index[j]);
+        }
+        mult.ptr[i+1] = j;
+    }
+    mult.ptr[mult.size] = mult.value.size();
     return mult;
 }
 
@@ -205,4 +233,16 @@ algorithms::CRS algorithms::operator *(double const &scalar, algorithms::CRS con
         mult.value[i] *= scalar;
     }
     return mult;
+}
+
+QVector<double> algorithms::operator *(double const &scalar, QVector<double> const &rhs) {
+    QVector<double> mult = rhs;
+    for(int i=0; i<rhs.size(); i++) mult[i] *= scalar;
+    return mult;
+}
+
+QVector<double> algorithms::addQVectors(QVector<double> const &lhs, QVector<double> const &rhs) {
+    QVector<double> sum = lhs;
+    for(int i=0; i<sum.size(); i++) sum[i] += rhs[i];
+    return sum;
 }

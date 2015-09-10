@@ -9,6 +9,8 @@
 #include <QTabWidget>
 #include <QGridLayout>
 
+#include "../algorithms/Crs.h"
+
 class TestWindow : public QMainWindow
 {
     Q_OBJECT
@@ -26,5 +28,10 @@ private:
     QGridLayout* subGridLayout;
     QTabWidget* tabWidget;
 };
+
+namespace algorithms {
+    QString printCRS(CRS const &matrix);
+    QString printQVector(QVector<double> const &vector);
+}
 
 #endif // TESTWINDOW_H

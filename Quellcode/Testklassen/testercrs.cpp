@@ -4,40 +4,122 @@ algorithms::TesterCRS::TesterCRS() {
     text = new QLabel();
 }
 
-QLabel* algorithms::TesterCRS::print() {
-    int testSize=3;
+QLabel* algorithms::TesterCRS::testA1() {
     QString testString;
+    int testSize=4;
+
+    testMatrix.A1(testSize);
+
+    testString = printCRS(testMatrix);
+    text->setText(testString);
+    return text;
+}
+
+QLabel* algorithms::TesterCRS::testDiag() {
+    QString testString;
+    int testSize=4;
 
     QVector<double> testVec(testSize*testSize);
     for(int i=0;i<testSize*testSize;++i) testVec[i]=(i+1)*(i+1);
-    QVector<double> res(testSize*testSize);
+
+    testMatrix = testMatrix.diag(testVec);
+
+    testString = printCRS(testMatrix);
+    text->setText(testString);
+    return text;
+}
+
+QLabel* algorithms::TesterCRS::testDiffCRS() {
+    QString testString;
+    int testSize=3;
+
+    algorithms::CRS mat1, mat2;
+    mat1.A1(testSize); mat2.eye(testSize);
+
+    testMatrix = mat1 - mat2;
+
+    testString = printCRS(testMatrix);
+    text->setText(testString);
+    return text;
+}
+
+QLabel* algorithms::TesterCRS::testEye() {
+    QString testString;
+    int testSize=3;
+
+    testMatrix.eye(testSize);
+
+    testString = printCRS(testMatrix);
+    text->setText(testString);
+    return text;
+}
+
+QLabel* algorithms::TesterCRS::testMultCRSCRS() {
+    QString testString;
+    int testSize=3;
+
+    QVector<double> testVec(testSize*testSize);
+    for(int i=0;i<testSize*testSize;++i) testVec[i]=(i+1)*(i+1);
+    algorithms::CRS mat1, mat2;
+    mat1 = mat1.diag(testVec); mat2.A1(testSize);
+
+    testMatrix = algorithms::multCRSCRS(mat1,mat2);
+
+    testString = printCRS(testMatrix);
+    text->setText(testString);
+    return text;
+}
+
+QLabel* algorithms::TesterCRS::testMultCRSQVector() {
+    QString testString;
+    int testSize=3;
+
+    QVector<double> testVec(testSize*testSize);
+    for(int i=0;i<testSize*testSize;++i) testVec[i]=(i+1)*(i+1);
 
     testMatrix.A1(testSize);
-    res = 2 * testVec;
+    testVec = testMatrix * testVec;
 
-    int kl, ku, il, iu;
-    for(int i=0; i<testMatrix.size; ++i) {
-        kl = testMatrix.getRowsMinCol(i);
-        ku = testMatrix.getRowsMinCol(i+1);
-        if(kl==ku) {
-            for(int j=0; j<testMatrix.size; ++j) testString.append(QString().number(0)+"\t");
-        }
-        else {
-            il = testMatrix.index[kl];
-            iu = testMatrix.index[ku-1];
-            for(int j=0; j<testMatrix.size; ++j) {
-                if(j >= il && j <= iu) {
-                    if(j==testMatrix.index[kl]) {
-                        testString.append(QString().number(testMatrix.value[kl])+"\t");
-                        ++kl;
-                    }
-                    else testString.append(QString().number(0)+"\t");
-                }
-                else testString.append(QString().number(0)+"\t");
-            }
-        }
-        testString.append("\n");
-    }
+    testString = printQVector(testVec);
+    text->setText(testString);
+    return text;
+}
+
+QLabel* algorithms::TesterCRS::testScalarCRS() {
+    QString testString;
+    int testSize=3;
+
+    testMatrix.eye(testSize);
+    testMatrix = 3 * testMatrix;
+    testString = printCRS(testMatrix);
+    text->setText(testString);
+    return text;
+}
+
+QLabel* algorithms::TesterCRS::testScalarQVector() {
+    QString testString;
+    int testSize=3;
+
+    QVector<double> testVec(testSize*testSize);
+    for(int i=0;i<testSize*testSize;++i) testVec[i]=(i+1)*(i+1);
+
+    testVec = 3 * testVec;
+
+    testString = printQVector(testVec);
+    text->setText(testString);
+    return text;
+}
+
+QLabel* algorithms::TesterCRS::testSumCRS() {
+    QString testString;
+    int testSize=3;
+
+    algorithms::CRS mat1, mat2;
+    mat1.A1(testSize); mat2.eye(testSize);
+
+    testMatrix = mat1 + mat2;
+
+    testString = printCRS(testMatrix);
     text->setText(testString);
     return text;
 }

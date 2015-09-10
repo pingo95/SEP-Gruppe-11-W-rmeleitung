@@ -1,9 +1,12 @@
 #ifndef ITERATIVESOLVER_H
 #define ITERATIVESOLVER_H
 
-#include <QVector>
-#include "Crs.h"
 #include <math.h>
+#include <cassert>
+
+#include <QVector>
+
+#include "Crs.h"
 
 namespace algorithms {
 

@@ -2,7 +2,7 @@
 #define CRS_H
 
 #include <QVector>
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 #include <fstream>
 
@@ -17,7 +17,6 @@ namespace algorithms {
         CRS();
         CRS(CRS const &rhs);
         CRS& operator=(CRS const &rhs);
-        CRS operator*(CRS const &rMat) const;
         QVector<double> operator*(QVector<double> const &vec) const;
         CRS operator+(CRS const &rMat) const;
         CRS operator-(CRS const &rMat) const;
@@ -25,7 +24,8 @@ namespace algorithms {
         void A1(int const n); // 2D-Diskretisierungsmatrix Laplace-Operator
         CRS& diag(QVector<double> const &diag);
         void eye(int const n); // Einheitsmatrix der Groesse n*n
-        int getRowsMinCol(int i) const;
+        int getIndex(int i) const;
+        int getRowsNumElem(int i) const;
         double getValue(int i, int j) const;
 
     //Attribute:
@@ -36,14 +36,18 @@ namespace algorithms {
         int size;
 
     friend CRS operator*(double const &scalar, CRS const &Mat);
+    friend CRS multCRSCRS(CRS const &lMat,CRS const &rMat);
 
-    friend class TesterCRS;
+    friend QString printCRS(algorithms::CRS const &matrix);
 
     };
 
+    CRS operator *(double const &scalar, CRS const &Mat);
+    CRS multCRSCRS(CRS const &lMat,CRS const &rMat);
 
     QVector<double> operator *(double const &scalar, QVector<double> const &rhs);
-    CRS operator *(double const &scalar, CRS const &Mat);
+    QVector<double> addQVectors(QVector<double> const &lhs, QVector<double> const &rhs);
+
 
 }
 
