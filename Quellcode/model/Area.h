@@ -11,9 +11,8 @@ namespace model {
     //Funktionen:
     public:
         explicit Area(QVector<double> const & xKoords,
-             QVector<double> const & yKoords, double value = 0., QString const type = "Undefiniert");
+             QVector<double> const & yKoords, double value, int const type);
         ~Area();
-        static int getCurrentMaxID(const QString type);
         static bool validateArea(QVector<double> const & xKoords,
                                  QVector<double> const & yKoords);
 
@@ -47,10 +46,10 @@ namespace model {
     //Attribute:
     private:
         explicit Area(Area const &);
-        static QMap<QString,int> idCounters;
+        static QMap<int,int> idCounters;
 
         int const id;
-        QString const type;
+        int const type;
         double value;
         QVector<double> const xKoords;
         QVector<double> const yKoords;

@@ -425,9 +425,11 @@ void model::Model::simulate()
 void model::Model::updateHeatSourceValue(int pos, double newValue)
 {
     heatSources.at(pos)->setValue(newValue);
+    ui->updateNotification();
 }
 
 void model::Model::updateThermalConductivityValue(int pos, double newValue)
 {
     thermalConductivites.at(pos)->setValue(newValue);
+    ui->updateNotification();
 }

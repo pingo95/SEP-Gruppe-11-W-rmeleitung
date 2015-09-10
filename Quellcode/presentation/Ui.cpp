@@ -3,7 +3,7 @@
 #include "Controller.h"
 
 presentation::UI::UI(QWidget *parent)
-    : QMainWindow(parent), MaxConductivity(1000), MaxTemperature(1000),
+    : QMainWindow(parent), MaxConductivity(430), MaxTemperature(1000), // höchste Leitfähigkeit eines Metalls -> Silber
       activeTab(UI::TabThermalConductivity) , tabMainCount(5)
 {
     //centrales Widget initialisieren
@@ -68,11 +68,6 @@ presentation::UI::UI(QWidget *parent)
     Labels << QString().number(0)   << QString().number(0.1) << QString().number(0.2) << QString().number(0.3)
            << QString().number(0.4) << QString().number(0.5) << QString().number(0.6) << QString().number(0.7)
            << QString().number(0.8) << QString().number(0.9) << QString().number(1);
-    QCPScatterStyle myScatter;
-    myScatter.setShape(QCPScatterStyle::ssCrossSquare);
-    myScatter.setPen(QPen(Qt::blue));
-    myScatter.setBrush(Qt::green);
-    myScatter.setSize(5);
 
     //ThermalConductivityTab
         //Layouts initialisieren
@@ -120,8 +115,6 @@ presentation::UI::UI(QWidget *parent)
     buttonUndoThermalConductivity->setEnabled(false);
         //Platte
     plateThermalConductivity = new QCustomPlot(widgetKonfigurationThermalConductivities,false);
-    plateThermalConductivity->addGraph();
-    plateThermalConductivity->graph(0)->setScatterStyle(myScatter);
             //Platte xAchse unten
     plateThermalConductivity->xAxis->setAutoTicks(false);
     plateThermalConductivity->xAxis->setAutoTickLabels(false);
@@ -189,12 +182,6 @@ presentation::UI::UI(QWidget *parent)
     buttonUndoHeatSource->setEnabled(false);
         //Platte
     plateHeatSource = new QCustomPlot(widgetKonfigurationHeatSources,false);
-    plateHeatSource->addGraph();
-    myScatter.setShape(QCPScatterStyle::ssCrossSquare);
-    myScatter.setPen(QPen(Qt::blue));
-    myScatter.setBrush(Qt::green);
-    myScatter.setSize(5);
-    plateHeatSource->graph(0)->setScatterStyle(myScatter);
             //Platte xAchse unten
     plateHeatSource->xAxis->setAutoTicks(false);
     plateHeatSource->xAxis->setAutoTickLabels(false);
@@ -429,15 +416,36 @@ presentation::UI::~UI()
 void presentation::UI::drawPartialHeatSource(QVector<double> const & partialAreaX,
                                              QVector<double> const & partialAreaY)
 {
-    plateHeatSource->graph(0)->setData(partialAreaX,partialAreaY);
+    if(plateHeatSource->graphCount() <= tableWidgetHeatSources->rowCount())
+        plateHeatSource->addGraph();
+    plateHeatSource->graph(plateHeatSource->graphCount()-1)->setData(partialAreaX,partialAreaY);
+    QCPScatterStyle myScatter;
+    myScatter.setShape(QCPScatterStyle::ssCircle);
+    QPen myPen(Qt::gray);
+    myScatter.setPen(myPen);
+    myScatter.setBrush(Qt::gray);
+    myScatter.setSize(5);
+    plateHeatSource->graph(plateHeatSource->graphCount()-1)->setScatterStyle(myScatter);
+    myPen.setWidth(2* myPen.width());
+    plateHeatSource->graph(plateHeatSource->graphCount()-1)->setPen(myPen);
     plateHeatSource->replot();
-
 }
 
 void presentation::UI::drawPartialThermalConductivity(QVector<double> const & partialAreaX,
                                                       QVector<double> const & partialAreaY)
 {
-    plateThermalConductivity->graph(0)->setData(partialAreaX,partialAreaY);
+    if(plateThermalConductivity->graphCount() <= tableWidgetThermalConductivities->rowCount())
+        plateThermalConductivity->addGraph();
+    plateThermalConductivity->graph(plateThermalConductivity->graphCount()-1)->setData(partialAreaX,partialAreaY);
+    QCPScatterStyle myScatter;
+    myScatter.setShape(QCPScatterStyle::ssCircle);
+    QPen myPen(Qt::gray);
+    myScatter.setPen(myPen);
+    myScatter.setBrush(Qt::gray);
+    myScatter.setSize(5);
+    plateThermalConductivity->graph(plateThermalConductivity->graphCount()-1)->setScatterStyle(myScatter);
+    myPen.setWidth(2* myPen.width());
+    plateThermalConductivity->graph(plateThermalConductivity->graphCount()-1)->setPen(myPen);
     plateThermalConductivity->replot();
 }
 
@@ -544,6 +552,30 @@ void presentation::UI::setModel(model::Model *model)
     updateNotification();
 }
 
+void presentation::UI::updateVisibilityHeatSource(const int pos)
+{
+    bool visible = tableWidgetHeatSources->item(pos,UI::ColumnVisibility)->checkState() == Qt::Checked ? true : false;
+    bool ok;
+    int id = tableWidgetHeatSources->item(pos,UI::ColumnID)->text().toInt(&ok);
+    if(ok)
+    {
+        visibilityHeatSources[id] = visible;
+        plateHeatSource->graph(pos)->setVisible(visible);
+    }
+}
+
+void presentation::UI::updateVisibilityThermalConductivity(const int pos)
+{
+    bool visible = tableWidgetThermalConductivities->item(pos,UI::ColumnVisibility)->checkState() == Qt::Checked ? true : false;
+    bool ok;
+    int id = tableWidgetThermalConductivities->item(pos,UI::ColumnID)->text().toInt(&ok);
+    if(ok)
+    {
+        visibilityThermalConductivities[id] = visible;
+        plateThermalConductivity->graph(pos)->setVisible(visible);
+    }
+}
+
 void presentation::UI::thermalConductivityPixelToCoords(double const mouseX, double const mouseY, double &x, double &y)
 {
     x = plateThermalConductivity->xAxis->pixelToCoord(mouseX);
@@ -596,7 +628,9 @@ void presentation::UI::updateHeatSources()
         tableWidgetHeatSources->item(i,UI::ColumnID)->
                 setText(QString().number((*it)->getID()));
         tableWidgetHeatSources->item(i,UI::ColumnValue)->
-                setText(QString().number((*it)->getValue(),'g',2));
+                setText(QString().number((*it)->getValue()));
+        tableWidgetHeatSources->item(i,UI::ColumnVisibility)->
+                setCheckState(visibilityHeatSources.value((*it)->getID(),true) ? Qt::Checked : Qt::Unchecked);
     }
     if(hSCount >= rowCount)
     {
@@ -608,13 +642,13 @@ void presentation::UI::updateHeatSources()
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetHeatSources->setItem(i,UI::ColumnID,tmpItemPtr);
             tmpItemPtr = new
-                    QTableWidgetItem(QString().number((*it)->getValue(),'g',2));
+                    QTableWidgetItem(QString().number((*it)->getValue()));
             tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetHeatSources->setItem(i,UI::ColumnValue,tmpItemPtr);
             tmpItemPtr = new QTableWidgetItem();
             tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
-            tmpItemPtr->setCheckState(Qt::Checked);
+            tmpItemPtr->setCheckState(visibilityHeatSources.value((*it)->getID(),true) ? Qt::Checked : Qt::Unchecked);
             tableWidgetHeatSources->setItem(i,UI::ColumnVisibility,tmpItemPtr);
         }
     }
@@ -628,14 +662,21 @@ void presentation::UI::updateHeatSources()
     }
 
 
-    for(int j = 1; j <= rowCount; ++j)
+    for(int j = 0; j < rowCount; ++j)
         plateHeatSource->graph(j)->setVisible(false);
+    for(int j = rowCount+1; j < hSCount; ++j)
+        plateHeatSource->addGraph();
     it = heatSources.begin();
-    for(; it != heatSources.end(); ++it)
+    for(int j = 0; j < hSCount; ++j,++it)
     {
-        for(int j = rowCount+1; j <= (*it)->getID(); ++j)
-            plateHeatSource->addGraph();
-        visualizeHeatSourceArea(*it);
+        QVector<double> x,y;
+        (*it)->getPoints(x,y);
+        plateHeatSource->graph(j)->setData(x,y);
+        plateHeatSource->graph(j)->setPen(QPen(Qt::black));
+        plateHeatSource->graph(j)->setBrush(QBrush(valueToColour((*it)->getValue(),
+                                  model::Model::HeatSourceArea),Qt::SolidPattern));
+        plateHeatSource->graph(j)->setScatterStyle(QCPScatterStyle::ssNone);
+        plateHeatSource->graph(j)->setVisible(visibilityHeatSources.value((*it)->getID(),true));
     }
     plateHeatSource->replot();
     controller->testPartialHeatSource();
@@ -681,7 +722,9 @@ void presentation::UI::updateThermalConductivties()
         tableWidgetThermalConductivities->item(i,UI::ColumnID)->
                 setText(QString().number((*it)->getID()));
         tableWidgetThermalConductivities->item(i,UI::ColumnValue)->
-                setText(QString().number((*it)->getValue(),'g',2));
+                setText(QString().number((*it)->getValue()));
+        tableWidgetThermalConductivities->item(i,UI::ColumnVisibility)->
+                setCheckState(visibilityThermalConductivities.value((*it)->getID(),true) ? Qt::Checked : Qt::Unchecked);
     }
     if (tCCount >= rowCount)
     {
@@ -693,33 +736,40 @@ void presentation::UI::updateThermalConductivties()
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetThermalConductivities->setItem(i,UI::ColumnID,tmpItemPtr);
             tmpItemPtr = new
-                    QTableWidgetItem(QString().number((*it)->getValue(),'g',2));
+                    QTableWidgetItem(QString().number((*it)->getValue()));
             tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetThermalConductivities->setItem(i,UI::ColumnValue,tmpItemPtr);
             tmpItemPtr = new QTableWidgetItem();
             tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
-            tmpItemPtr->setCheckState(Qt::Checked);
+            tmpItemPtr->setCheckState(visibilityThermalConductivities.value((*it)->getID(),true) ? Qt::Checked : Qt::Unchecked);
             tableWidgetThermalConductivities->setItem(i,UI::ColumnVisibility,tmpItemPtr);
         }
     }
     else
     {
-        for(int j = rowCount-1; j>=i; --j)
+        for(int j = rowCount-1; j >= i; --j)
         {
             delete tableWidgetThermalConductivities->takeItem(j,UI::ColumnID);
             delete tableWidgetThermalConductivities->takeItem(j,UI::ColumnValue);
         }
     }
 
-    for(int j = 1; j <= rowCount; ++j)
+    for(int j = 0; j < rowCount; ++j)
         plateThermalConductivity->graph(j)->setVisible(false);
+    for(int j = rowCount+1; j < tCCount; ++j)
+        plateThermalConductivity->addGraph();
     it = thermalConductivities.begin();
-    for(; it != thermalConductivities.end(); ++it)
+    for(int j = 0; j < tCCount; ++j,++it)
     {
-        for(int j = rowCount+1; j <= (*it)->getID(); ++j)
-            plateThermalConductivity->addGraph();
-        visualizeThermalConductivityArea(*it);
+        QVector<double> x,y;
+        (*it)->getPoints(x,y);
+        plateThermalConductivity->graph(j)->setData(x,y);
+        plateThermalConductivity->graph(j)->setPen(QPen(Qt::black));
+        plateThermalConductivity->graph(j)->setBrush(QBrush(valueToColour((*it)->getValue(),
+                                  model::Model::ThermalConductivityArea),Qt::SolidPattern));
+        plateThermalConductivity->graph(j)->setScatterStyle(QCPScatterStyle::ssNone);
+        plateThermalConductivity->graph(j)->setVisible(visibilityThermalConductivities.value((*it)->getID(),true));
     }
     plateThermalConductivity->replot();
     controller->testPartialThermalConductivity();
@@ -739,33 +789,95 @@ void presentation::UI::updateVisualization()
 
 }
 
-QColor presentation::UI::valueToColour(const double value)
+QColor presentation::UI::valueToColour(const double value, model::Model::AreaTyp type)
 {
-    return Qt::blue;
-}
+    double maxValue;
+    switch(type)
+    {
+    case model::Model::HeatSourceArea:
+        maxValue = MaxTemperature;
+        break;
+    case model::Model::ThermalConductivityArea:
+        maxValue = MaxConductivity;
+        break;
+    default:
+        return Qt::blue;
+    }
+    // value in Wellenlänge umwandeln
+    double minValue = 0, minVisibleWaveLength = 380.0,
+            maxVisibileWaveLength = 780.0;
+    double wavelength = (value - minValue) / (maxValue - minValue) *
+            (maxVisibileWaveLength - minVisibleWaveLength) + minVisibleWaveLength;
 
-void presentation::UI::visualizeHeatSourceArea(model::Area *area)
-{
-    int id = area->getID();
-    QVector<double> x,y;
-    area->getPoints(x,y);
-    plateHeatSource->graph(id)->setData(x,y);
-    plateHeatSource->graph(id)->setPen(QPen(Qt::black));
-    plateHeatSource->graph(id)->setBrush(QBrush(
-                valueToColour(area->getValue()),Qt::SolidPattern));
-    plateHeatSource->graph(id)->setVisible(true);
-}
-
-void presentation::UI::visualizeThermalConductivityArea(model::Area *area)
-{
-    int id = area->getID();
-    QVector<double> x,y;
-    area->getPoints(x,y);
-    plateThermalConductivity->graph(id)->setData(x,y);
-    plateThermalConductivity->graph(id)->setPen(QPen(Qt::black));
-    plateThermalConductivity->graph(id)->setBrush(QBrush(
-                valueToColour(area->getValue()),Qt::SolidPattern));
-    plateThermalConductivity->graph(id)->setVisible(true);
+    // Wellenlänge in rgb umrechnen
+    double factor = 1.0, red, green, blue;
+    if(wavelength >= 380 && wavelength <= 439)
+    {
+        red = -(wavelength -440) / (440-380);
+        green = 0.0;
+        blue = 1.0;
+    }
+    else
+    {
+        if(wavelength >= 440 && wavelength <= 489)
+        {
+            red = 0.0;
+            green = (wavelength - 440) / (490 - 440);
+            blue = 1.0;
+        }
+        else
+        {
+            if(wavelength >= 490 && wavelength <= 509)
+            {
+                red = 0.0;
+                green = 1.0;
+                blue = -(wavelength - 510) / (510 - 490);
+            }
+            else
+            {
+                if(wavelength >= 510 && wavelength <= 579)
+                {
+                    red = (wavelength - 510) / (580 - 510);
+                    green = 1.0;
+                    blue = 0.0;
+                }
+                else
+                {
+                    if(wavelength >= 580 && wavelength <= 644)
+                    {
+                        red = 1.0;
+                        green = -(wavelength - 645) / (645 - 580);
+                        blue = 0.0;
+                    }
+                    else
+                    {
+                        if(wavelength >= 645 && wavelength <= 780)
+                        {
+                            red = 1.0;
+                            green = 0.0;
+                            blue = 0.0;
+                        }
+                        else
+                        {
+                            red = 0.0;
+                            green = 0.0;
+                            blue = 0.0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if(wavelength >= 380 && wavelength <= 419)
+        factor = 0.3 + 0.7*(wavelength - 380) / (420 -380);
+    else
+        if(wavelength >= 701 && wavelength <= 780)
+            factor = 0.3 + 0.7*(780 -  wavelength) / (780 - 700);
+    double gamma = 0.8, intensityMax = 255;
+    int r = round(intensityMax * pow(red*factor,gamma));
+    int g = round(intensityMax * pow(green*factor,gamma));
+    int b = round(intensityMax * pow(blue*factor,gamma));
+    return QColor(r,g,b,255);
 }
 
 void presentation::UI::transformTabID(int targetTab)

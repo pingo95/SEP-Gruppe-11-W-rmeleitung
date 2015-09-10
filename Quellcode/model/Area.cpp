@@ -1,10 +1,10 @@
 #include "Area.h"
-QMap<QString, int> model::Area::idCounters;
+QMap<int, int> model::Area::idCounters;
 
 // Vorbedingung: xKoords und yKoords wurden vorher mit validateArea getestet
 // Erstellt neues Gebiet:
 model::Area::Area(QVector<double> const & xKoords,
-                  QVector<double> const & yKoords, double value, QString const type):
+                  QVector<double> const & yKoords, double value, int const type):
     id(idCounters.value(type,1)), type(type), value(value),
     xKoords(xKoords), yKoords(yKoords)
 {
@@ -16,13 +16,6 @@ model::Area::Area(QVector<double> const & xKoords,
 
 model::Area::~Area(){
     --idCounters[type];
-}
-
-// Gibt eine obere Schranke für die bisher verteilten IDs ohne dabei zu
-// unterscheiden, von wem und wo die Gebiete benutzt wurden
-int model::Area::getCurrentMaxID(QString const type)
-{
-    return idCounters[type];
 }
 
 // Testet, ob die Punkte in den Vektoren ein gültiges Gebiet ergeben würden

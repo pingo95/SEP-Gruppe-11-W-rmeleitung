@@ -13,6 +13,14 @@ namespace model {
 
     class Model
     {
+    // Enum:
+    public:
+        enum AreaTyp
+        {
+            HeatSourceArea,
+            ThermalConductivityArea,
+        };
+
     //Funktionen:
     public:
         Model();

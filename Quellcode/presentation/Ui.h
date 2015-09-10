@@ -20,10 +20,7 @@
 
 #include "../model/Area.h"
 #include "Qcustomplot.h"
-
-namespace model{
-    class Model;
-}
+#include "../model/Model.h"
 
 namespace presentation {
 class Controller;
@@ -76,6 +73,8 @@ class Controller;
         void setModel(model::Model * model);
         void thermalConductivityPixelToCoords(double const mouseX, double const mouseY, double & x, double & y);
         void updateNotification();
+        void updateVisibilityHeatSource(int const pos);
+        void updateVisibilityThermalConductivity(int const pos);
         void visualizeState(int const frame);
 
 
@@ -85,9 +84,7 @@ class Controller;
         void updateSimulating();
         void updateThermalConductivties();
         void updateVisualization();
-        QColor valueToColour(double const value);
-        void visualizeHeatSourceArea(model::Area * area);
-        void visualizeThermalConductivityArea(model::Area * area);
+        QColor valueToColour(double const value, model::Model::AreaTyp type);
 
     private slots:
         void transformTabID(int targetTab);
@@ -107,6 +104,8 @@ class Controller;
         int resultN;
         int resultT;
         int const tabMainCount;
+        QMap<int,bool> visibilityHeatSources;
+        QMap<int,bool> visibilityThermalConductivities;
 
 
         //Qt Elemente:

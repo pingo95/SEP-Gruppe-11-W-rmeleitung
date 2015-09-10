@@ -1,9 +1,9 @@
 #include "Controller.h"
-
+#include <iostream>
 presentation::Controller::Controller(QObject * parent)
-    : QObject(parent), loopBack(false),model(NULL),
-      startedNewHeatSource(false), startedNewThermalConductivity(false),
-      ui(NULL), userInput(new QInputDialog), errorMessages(new QMessageBox)
+    : QObject(parent),model(NULL), startedNewHeatSource(false),
+      startedNewThermalConductivity(false), ui(NULL),
+      userInput(new QInputDialog), errorMessages(new QMessageBox)
 {
     errorMessages->setWindowTitle("Fehlermeldung");
     errorMessages->setIcon(QMessageBox::Critical);
@@ -89,15 +89,14 @@ void presentation::Controller::heatSourcesClickSlot(QMouseEvent *event)
                 double value = userInput->getDouble(ui,title,text,0,0,
                                                     ui->MaxTemperature,2,&ok);
 
-                // Gebiet zum Modell hinzufügen
-                loopBack = true;
-                model->addHeatSource(new model::Area(partialAreaX,
-                                                     partialAreaY, ok ? value : 0, "Wärmequelle"));
 
+                // Gebiet zum Modell hinzufügen
+                startedNewHeatSource = false;
+                model->addHeatSource(new model::Area(partialAreaX, partialAreaY,
+                                    ok ? value : 0, model::Model::HeatSourceArea));
                 // Temporäres Gebiet zurücksetzen
                 partialAreaX.clear();
                 partialAreaY.clear();
-                startedNewHeatSource = false;
             }
             else
             {
@@ -141,30 +140,32 @@ void presentation::Controller::heatSourceValueChangedSlot(int pos, int column)
 {
     // Testen ob auch wirklich Gebietswert geändert wurde, da das Signal bei
     // Änderungen in allen Felder des Tabellen Widgets ausgelöst wird
-    if(column != UI::ColumnValue) return; // TODO: Wert überprüfen
-    if(loopBack == true)
-    {
-        loopBack = false;
+    if(!(column == UI::ColumnValue && column == UI::ColumnVisibility))
         return;
+    if(column == UI::ColumnValue)
+    {
+        QString text = ui->getNewHeatSourceValue(pos);
+        bool ok;
+        double value = text.toDouble(&ok);
+        // Temperatur in Kelvin
+        if(value >= 0 && value <= ui->MaxTemperature && ok)
+            // Wert updaten
+            model->updateHeatSourceValue(pos,value);
+        else
+        {
+            // Fehlermeldung ausgeben:
+            errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
+                                   "ungültig. Bitte versuchen Sie es erneut.");
+            errorMessages->setDetailedText("Das Programm nutzt für Temperaturen"
+                                           " die Kelvin Skala, daher sind nur W"
+                                           "erte größer gleich null zulässig.");
+            errorMessages->exec();
+        }
     }
-    QString text = ui->getNewHeatSourceValue(pos);
-    bool ok;
-    double value = text.toDouble(&ok);
-    // Temperatur in Kelvin
-    if(value >= 0 && value <= ui->MaxTemperature && ok)
-        // Wert updaten
-        model->updateHeatSourceValue(pos,value);
     else
     {
-        // Fehlermeldung ausgeben:
-        errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
-                               "ungültig. Bitte versuchen Sie es erneut.");
-        errorMessages->setDetailedText("Das Programm nutzt für Temperaturen"
-                                       " die Kelvin Skala, daher sind nur W"
-                                       "erte größer gleich null zulässig.");
-        errorMessages->exec();
+        ui->updateVisibilityHeatSource(pos);
     }
-    loopBack = true;
 }
 
 // Dieser Slot updatet den Wert für den unteren Rand, falls der neue gültig ist
@@ -478,14 +479,13 @@ void presentation::Controller::thermalConductivitiesClickSlot(QMouseEvent *event
                                                     ui->MaxConductivity,2,&ok);
 
                 // Gebiet zum Modell hinzufügen
-                loopBack = true;
-                model->addThermalConductivity(new model::Area(partialAreaX,
-                                                              partialAreaY,ok ? value : 0, "Wärmeleitkoeffizient"));
+                startedNewThermalConductivity = false;
+                model->addThermalConductivity(new model::Area(partialAreaX, partialAreaY,
+                                    ok ? value : 0, model::Model::ThermalConductivityArea));
 
                 // Temporäres Gebiet zurücksetzen
                 partialAreaX.clear();
                 partialAreaY.clear();
-                startedNewThermalConductivity = false;
             }
             else
             {
@@ -529,12 +529,8 @@ void presentation::Controller::thermalConductivityValueChangedSlot(int pos, int 
 {
     // Testen ob auch wirklich Gebietswert geändert wurde, da das Signal bei
     // Änderungen in allen Felder des Tabellen Widgets ausgelöst wird
-    if(column != UI::ColumnValue) return; // TODO: Wert überprüfen
-    if(loopBack == true)
-    {
-        loopBack = false;
-        return;
-    }
+    if(!(column == UI::ColumnValue && column == UI::ColumnVisibility))
+            return;
     QString text = ui->getNewThermalConductivityValue(pos);
     bool ok;
     double value = text.toDouble(&ok);
@@ -550,7 +546,6 @@ void presentation::Controller::thermalConductivityValueChangedSlot(int pos, int 
                                        "Null zulässig.");
         errorMessages->exec();
     }
-    loopBack = true;
 }
 
 // Dieser Slot löscht das zuletzt erstellte Wärmequellen-Gebiet, falls
