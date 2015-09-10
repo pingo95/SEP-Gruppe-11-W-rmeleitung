@@ -147,9 +147,11 @@ void presentation::Controller::heatSourceValueChangedSlot(int pos, int column)
         loopBack = false;
         return;
     }
-    double value = ui->getNewHeatSourceValue(pos);
+    QString text = ui->getNewHeatSourceValue(pos);
+    bool ok;
+    double value = text.toDouble(&ok);
     // Temperatur in Kelvin
-    if(value >= 0 && value <= ui->MaxTemperature)
+    if(value >= 0 && value <= ui->MaxTemperature && ok)
         // Wert updaten
         model->updateHeatSourceValue(pos,value);
     else
@@ -533,11 +535,11 @@ void presentation::Controller::thermalConductivityValueChangedSlot(int pos, int 
         loopBack = false;
         return;
     }
-    int id = ui->getThermalConductivityID(pos);
-    double value = ui->getNewThermalConductivityValue(pos);
+    QString text = ui->getNewThermalConductivityValue(pos);
+    bool ok;
+    double value = text.toDouble(&ok);
     // Temperatur in Kelvin
-    if(value > 0 && value <= ui->MaxConductivity &&
-            value != model->getThermalConductivity(id)->getValue())
+    if(value > 0 && value <= ui->MaxConductivity && ok)
         model->updateThermalConductivityValue(pos,value);
     else
     {

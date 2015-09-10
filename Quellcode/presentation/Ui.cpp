@@ -456,18 +456,14 @@ int presentation::UI::getInitialFrame() const
     return sliderVideo->value();
 }
 
-double presentation::UI::getNewHeatSourceValue(int row) const
+QString presentation::UI::getNewHeatSourceValue(int row) const
 {
-    bool ok;
-    double value = tableWidgetHeatSources->item(row,UI::ColumnValue)->text().toDouble(&ok);
-    return ok ? value : 0;
+    return tableWidgetHeatSources->item(row,UI::ColumnValue)->text();
 }
 
-double presentation::UI::getNewThermalConductivityValue(int row) const
+QString presentation::UI::getNewThermalConductivityValue(int row) const
 {
-    bool ok;
-    double value = tableWidgetThermalConductivities->item(row,UI::ColumnValue)->text().toDouble(&ok);
-    return ok ? value : 0;
+    return tableWidgetThermalConductivities->item(row,UI::ColumnValue)->text();
 }
 
 int presentation::UI::getThermalConductivityID(const int pos) const
