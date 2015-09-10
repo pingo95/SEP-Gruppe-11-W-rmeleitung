@@ -140,7 +140,7 @@ void presentation::Controller::heatSourceValueChangedSlot(int pos, int column)
 {
     // Testen ob auch wirklich Gebietswert geändert wurde, da das Signal bei
     // Änderungen in allen Felder des Tabellen Widgets ausgelöst wird
-    if(!(column == UI::ColumnValue && column == UI::ColumnVisibility))
+    if((column != UI::ColumnValue) && (column != UI::ColumnVisibility))
         return;
     if(column == UI::ColumnValue)
     {
@@ -529,7 +529,7 @@ void presentation::Controller::thermalConductivityValueChangedSlot(int pos, int 
 {
     // Testen ob auch wirklich Gebietswert geändert wurde, da das Signal bei
     // Änderungen in allen Felder des Tabellen Widgets ausgelöst wird
-    if(!(column == UI::ColumnValue && column == UI::ColumnVisibility))
+    if((column != UI::ColumnValue) && (column != UI::ColumnVisibility))
             return;
     QString text = ui->getNewThermalConductivityValue(pos);
     bool ok;
