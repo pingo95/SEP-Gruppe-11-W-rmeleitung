@@ -11,7 +11,7 @@ namespace model {
     //Funktionen:
     public:
         explicit Area(QVector<double> const & xKoords,
-             QVector<double> const & yKoords, double value, QString const type);
+             QVector<double> const & yKoords, double value = 0., QString const type = "Undefiniert");
         ~Area();
         static int getCurrentMaxID(const QString type);
         static bool validateArea(QVector<double> const & xKoords,
