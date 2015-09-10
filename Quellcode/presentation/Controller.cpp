@@ -1,5 +1,5 @@
 #include "Controller.h"
-#include <iostream>
+
 presentation::Controller::Controller(QObject * parent)
     : QObject(parent),model(NULL), startedNewHeatSource(false),
       startedNewThermalConductivity(false), ui(NULL),
@@ -163,9 +163,7 @@ void presentation::Controller::heatSourceValueChangedSlot(int pos, int column)
         }
     }
     else
-    {
         ui->updateVisibilityHeatSource(pos);
-    }
 }
 
 // Dieser Slot updatet den Wert für den unteren Rand, falls der neue gültig ist
@@ -531,21 +529,26 @@ void presentation::Controller::thermalConductivityValueChangedSlot(int pos, int 
     // Änderungen in allen Felder des Tabellen Widgets ausgelöst wird
     if((column != UI::ColumnValue) && (column != UI::ColumnVisibility))
             return;
-    QString text = ui->getNewThermalConductivityValue(pos);
-    bool ok;
-    double value = text.toDouble(&ok);
-    // Temperatur in Kelvin
-    if(value > 0 && value <= ui->MaxConductivity && ok)
-        model->updateThermalConductivityValue(pos,value);
-    else
+    if(column == UI::ColumnValue)
     {
-        // Fehlermeldung ausgeben:
-        errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
-                               "ungültig. Bitte versuchen Sie es erneut.");
-        errorMessages->setDetailedText("Es sind nur Werte größer gleich "
-                                       "Null zulässig.");
-        errorMessages->exec();
+        QString text = ui->getNewThermalConductivityValue(pos);
+        bool ok;
+        double value = text.toDouble(&ok);
+        // Temperatur in Kelvin
+        if(value > 0 && value <= ui->MaxConductivity && ok)
+            model->updateThermalConductivityValue(pos,value);
+        else
+        {
+            // Fehlermeldung ausgeben:
+            errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
+                                   "ungültig. Bitte versuchen Sie es erneut.");
+            errorMessages->setDetailedText("Es sind nur Werte größer gleich "
+                                           "Null zulässig.");
+            errorMessages->exec();
+        }
     }
+    else
+        ui->updateVisibilityThermalConductivity(pos);
 }
 
 // Dieser Slot löscht das zuletzt erstellte Wärmequellen-Gebiet, falls

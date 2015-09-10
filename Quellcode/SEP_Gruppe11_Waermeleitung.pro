@@ -23,6 +23,7 @@ SOURCES += \
     algorithms/Impeuler.cpp \
     algorithms/Cranknicolson.cpp \
     model/Model.cpp \
+    presentation/Uiinit.cpp \
     presentation/Ui.cpp \
     presentation/Controller.cpp \
     Main.cpp

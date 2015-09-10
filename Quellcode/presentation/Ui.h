@@ -79,6 +79,13 @@ class Controller;
 
 
     private:
+        void initConfiguration();
+        void initHeatSources();
+        void initHelp();
+        void initIBVs();
+        void initSimulating();
+        void initThermalConductivities();
+        void initVisualization();
         void updateHeatSources();
         void updateIBVs();
         void updateSimulating();
@@ -112,10 +119,10 @@ class Controller;
         //Widgets
         QWidget * widgetCentral;
         QWidget * widgetHelp;
-        QWidget * widgetKonfiguration;
-        QWidget * widgetKonfigurationHeatSources;
-        QWidget * widgetKonfigurationIBVs;
-        QWidget * widgetKonfigurationThermalConductivities;
+        QWidget * widgetConfiguration;
+        QWidget * widgetConfigurationHeatSources;
+        QWidget * widgetConfigurationIBVs;
+        QWidget * widgetConfigurationThermalConductivities;
         QWidget * widgetSimulation;
         QWidget * widgetVisualisation;
 
@@ -123,7 +130,7 @@ class Controller;
         //QVBoxes
         QVBoxLayout * mainLayout;
         QVBoxLayout * mainLayoutHelp;
-        QVBoxLayout * mainLayoutKonfiguration;
+        QVBoxLayout * mainLayoutConfiguration;
         QVBoxLayout * mainLayoutKonfigurationHeatSources;
         QVBoxLayout * mainLayoutKonfigurationIBVs;
         QVBoxLayout * mainLayoutKonfigurationThermalConductivities;
@@ -132,7 +139,7 @@ class Controller;
         //subGridLayouts
         QGridLayout * subGridLayout;
         QGridLayout * subGridLayoutHelp;
-        QGridLayout * subGridLayoutKonfiguration;
+        QGridLayout * subGridLayoutConfiguration;
         QGridLayout * subGridLayoutKonfigurationHeatSources;
         QGridLayout * subGridLayoutKonfigurationIBVs;
         QGridLayout * subGridLayoutKonfigurationThermalConductivities;
@@ -141,13 +148,12 @@ class Controller;
         //subHBoxLayouts
         QHBoxLayout * subHBoxLayout;
         QHBoxLayout * subHBoxLayoutHelp;
-        QHBoxLayout * subHBoxLayoutKonfiguration;
+        QHBoxLayout * subHBoxLayoutConfiguration;
         QHBoxLayout * subHBoxLayoutKonfigurationHeatSources;
         QHBoxLayout * subHBoxLayoutKonfigurationIBVs;
         QHBoxLayout * subHBoxLayoutKonfigurationThermalConductivities;
         QHBoxLayout * subHBoxLayoutSimualtion;
         QHBoxLayout * subHBoxLayoutVisualisation;
-
 
         //Buttons
         QPushButton * buttonPlayVideo;
@@ -230,8 +236,6 @@ class Controller;
         QSpacerItem * spacerItemTabSimulationVertical;
         QSpacerItem * spacerItemTabVisualisation;
         QSpacerItem * spacerItemTabHelp;
-
-
     };
 
 }
