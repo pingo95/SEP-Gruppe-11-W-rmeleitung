@@ -496,7 +496,6 @@ void presentation::UI::initVisualization()
     colorBarVisualization->setMaximumWidth(100);
         //Video anzeige
     plateVideo = new QCustomPlot(widgetVisualisation,false);
-    plateVideo->addGraph();
             //Platte xAchse unten
     plateVideo->xAxis->setAutoTicks(false);
     plateVideo->xAxis->setAutoTickLabels(false);

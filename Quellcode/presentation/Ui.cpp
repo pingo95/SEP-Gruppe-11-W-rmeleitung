@@ -236,7 +236,21 @@ void presentation::UI::updateNotification()
 
 void presentation::UI::visualizeState(int frame)
 {
-
+    for(int i = 0; i < resultN; ++i)
+        for(int j = 0; j < resultN; ++j)
+        {
+            QVector<double> x(1,(double)i/(resultN-1)),y(1,(double)j/(resultN-1));
+            plateVideo->graph(i+j*resultN)->setData(x,y);
+            QColor color = valueToColour(result[frame][i][j],model::Model::HeatSourceArea);
+            QCPScatterStyle myScatter;
+            myScatter.setShape(QCPScatterStyle::ssCircle);
+            QPen myPen(color);
+            myScatter.setPen(myPen);
+            myScatter.setBrush(color);
+            myScatter.setSize(5);
+            plateVideo->graph(i+j*resultN)->setScatterStyle(myScatter);
+            plateVideo->replot();
+        }
 }
 
 void presentation::UI::updateHeatSources()
@@ -427,17 +441,37 @@ void presentation::UI::updateThermalConductivties()
 
 void presentation::UI::updateVisualization()
 {
-    if (model->getSimulated())
+    if (true)
     {
         sliderVideo->setEnabled(true);
         buttonPlayVideo->setEnabled(true);
         labelTopVisualization->setText("Dies ist der Tab zur Visualisierung der Simulationsergebnisse.\n"
                                        "Hier können Sie sich, mit Hilfe des Schiebereglers, Einzelbilder oder ein Video anzeigen lassen."
                                        "Für genauere Informationen wechseln Sie in den Hilfe-Tab.");
-        resultM = model->getResultM();
-        resultN = model->getResultN();
+//        resultM = model->getResultM();
+//        resultN = model->getResultN();
         resultT = model->getResultT();
-        result = model->getResult();
+        //result = model->getResult();
+        resultM = 1;
+        resultN = 15;
+        result  = new double** [resultM];
+        for(int i = 0; i < resultM; ++i)
+        {
+            result[i] = new double* [resultN];
+            for(int j = 0; j < resultN; ++j)
+                result[i][j] = new double [resultN];
+        }
+        for(int i = 0; i < resultM; ++i)
+        {
+            for(int j = 0; j < resultN; ++j)
+            {
+                for(int k = 0; k< resultN; ++k)
+                    result[i][j][k] = MaxTemperature * j / resultN;
+            }
+        }
+        while(plateVideo->graphCount() < resultN * resultN)
+            plateVideo->addGraph();
+        visualizeState(0);
     }
     else
     {

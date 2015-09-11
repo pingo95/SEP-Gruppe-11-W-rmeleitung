@@ -116,7 +116,6 @@ class Controller;
         //Qt Elemente:
         //Widgets
         QWidget * widgetHelp;
-        QWidget * widgetConfiguration;
         QWidget * widgetConfigurationHeatSources;
         QWidget * widgetConfigurationIBVs;
         QWidget * widgetConfigurationThermalConductivities;
@@ -126,7 +125,6 @@ class Controller;
         //Layouts
         //subGridLayouts
         QGridLayout * subGridLayoutHelp;
-        QGridLayout * subGridLayoutConfiguration;
         QGridLayout * subGridLayoutKonfigurationHeatSources;
         QGridLayout * subGridLayoutKonfigurationIBVs;
         QGridLayout * subGridLayoutKonfigurationThermalConductivities;
