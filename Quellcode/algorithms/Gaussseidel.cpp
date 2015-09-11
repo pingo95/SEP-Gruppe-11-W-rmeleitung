@@ -7,8 +7,9 @@ algorithms::GaussSeidel::GaussSeidel() {
 void algorithms::GaussSeidel::solve(QVector<double> &result, CRS const &matrix, QVector<double> const &rhs) {
     double rel=1;
     QVector<double> res(result.size());
-    while(rel-eps>0) {
+    while(rel-eps>0 && itCount < maxIt) {
         for(int i=0; i<result.size(); ++i) {
+            assert(matrix.getValue(i,i)!=0);
             double sum=0;
             int lb = matrix.getRowsNumElem(i); lb = matrix.getIndex(lb);
             int ub = matrix.getRowsNumElem(i+1); ub = matrix.getIndex(ub-1);
@@ -17,12 +18,12 @@ void algorithms::GaussSeidel::solve(QVector<double> &result, CRS const &matrix, 
                 for(int j=lb; j<ub1; ++j) {
                     sum += matrix.getValue(i,j) * result[j];
                 }
-                for(int j=ub1+1; j<ub; ++j) {
+                for(int j=ub1+1; j<=ub; ++j) {
                     sum += matrix.getValue(i,j) * result[j];
                 }
             }
             else {
-                for(int j=lb; j<ub; ++j) {
+                for(int j=lb; j<=ub; ++j) {
                     sum += matrix.getValue(i,j) * result[j];
                 }
             }

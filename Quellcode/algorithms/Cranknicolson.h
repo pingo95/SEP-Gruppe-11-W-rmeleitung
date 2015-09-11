@@ -9,9 +9,9 @@ namespace algorithms {
     public:
         CrankNicolson();
 
-        void calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources);
-        void getNeedetHeatSources(QVector<double> &neededTimeSteps, bool &reusable);
-        void setUp(QVector<double> const &thermalConductivities);
+        void calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources) const;
+        void getNeedetHeatSources(QVector<double> &neededTimeSteps, bool &reusable) const;
+        void setUpSpecific(QVector<double> const &thermalConductivities);
 
     private:
         CRS rhsMatrix;

@@ -22,7 +22,7 @@ QLabel* algorithms::TesterCRS::testDiag() {
     QVector<double> testVec(testSize*testSize);
     for(int i=0;i<testSize*testSize;++i) testVec[i]=(i+1)*(i+1);
 
-    testMatrix = testMatrix.diag(testVec);
+    testMatrix.diag(testVec);
 
     testString = printCRS(testMatrix);
     text->setText(testString);
@@ -61,9 +61,9 @@ QLabel* algorithms::TesterCRS::testMultCRSCRS() {
     QVector<double> testVec(testSize*testSize);
     for(int i=0;i<testSize*testSize;++i) testVec[i]=(i+1)*(i+1);
     algorithms::CRS mat1, mat2;
-    mat1 = mat1.diag(testVec); mat2.A1(testSize);
+    mat1.diag(testVec); mat2.A1(testSize);
 
-    testMatrix = algorithms::multCRSCRS(mat1,mat2);
+    testMatrix = mat1.multCRSCRS(mat2);
 
     testString = printCRS(testMatrix);
     text->setText(testString);
@@ -120,6 +120,22 @@ QLabel* algorithms::TesterCRS::testSumCRS() {
     testMatrix = mat1 + mat2;
 
     testString = printCRS(testMatrix);
+    text->setText(testString);
+    return text;
+}
+
+QLabel* algorithms::TesterCRS::testSumQVector() {
+    QString testString;
+    int testSize=3;
+
+    QVector<double> vec1(testSize), vec2(testSize);
+    for(int i=0; i<vec1.size(); ++i) {
+        vec1[i] = i;
+        vec2[i] = 5;
+    }
+    vec1 = algorithms::addQVectors(vec1,vec2);
+
+    testString = printQVector(vec1);
     text->setText(testString);
     return text;
 }

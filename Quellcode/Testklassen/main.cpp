@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
 
 
-    text = testerCRS.testMultCRSCRS();
+    text = testerCRS.testSumQVector();
     w.addNewTab(text,"TesterCRS");
     text = testerIterativeSolver.testSolveJacobi();
     w.addNewTab(text,"TesterIterativeSolver");

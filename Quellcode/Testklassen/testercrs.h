@@ -22,6 +22,7 @@ namespace algorithms {
             QLabel* testScalarCRS();
             QLabel* testScalarQVector();
             QLabel* testSumCRS();
+            QLabel* testSumQVector();
 
         private:
 

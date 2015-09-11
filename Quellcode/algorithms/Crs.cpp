@@ -165,20 +165,19 @@ void algorithms::CRS::A1(int const n)
 }
 
 
-algorithms::CRS& algorithms::CRS::diag(QVector<double> const &diag) {
+void algorithms::CRS::diag(QVector<double> const &diag) {
     int n = diag.size();
     int nnz = n; // non-zero elements
-    ptr.resize(n+1);
-    size = n;
-    index.resize(nnz);
-    value.resize(nnz);
+    this->ptr.resize(n+1);
+    this->size = n;
+    this->index.resize(nnz);
+    this->value.resize(nnz);
     for(int i=0; i<n; ++i) {
-        ptr[i] = i;
-        value[i] = diag[i];
-        index[i] = i;
+        this->ptr[i] = i;
+        this->value[i] = diag[i];
+        this->index[i] = i;
     }
-    ptr[n] = nnz;
-    return *this;
+    this->ptr[n] = nnz;
 }
 
 void algorithms::CRS::eye(int const n)
@@ -212,12 +211,12 @@ double algorithms::CRS::getValue(int i, int j) const {
     return 0;
 }
 
-algorithms::CRS algorithms::multCRSCRS(CRS const &lMat, CRS const &rMat) {
-    algorithms::CRS mult; mult.size=lMat.size; mult.ptr.resize(mult.size+1);
+algorithms::CRS algorithms::CRS::multCRSCRS(CRS const &rMat) const {
+    algorithms::CRS mult; mult.size=this->size; mult.ptr.resize(mult.size+1);
     int j=0; mult.ptr[0]=0;
     for(int i=0; i<mult.size; ++i) {
         for(j=rMat.ptr[i]; j<rMat.ptr[i+1]; ++j) {
-            mult.value.append(rMat.value[j] * lMat.value[i]);
+            mult.value.append(rMat.value[j] * this->value[i]);
             mult.index.append(rMat.index[j]);
         }
         mult.ptr[i+1] = j;

@@ -22,18 +22,19 @@ namespace algorithms {
         CRS operator-(CRS const &rMat) const;
 
         void A1(int const n); // 2D-Diskretisierungsmatrix Laplace-Operator
-        CRS& diag(QVector<double> const &diag);
-        void eye(int const n); // Einheitsmatrix der Groesse n*n
+        void diag(QVector<double> const &diag); // Diagonalmatrix mit Vektoreinträgen auf der Diagonalen
+        void eye(int const n); // Einheitsmatrix der Größe n*n
         int getIndex(int i) const;
         int getRowsNumElem(int i) const;
-        double getValue(int i, int j) const;
+        double getValue(int i, int j) const; // Liefert Eintrag a_ij
+        CRS multCRSCRS(CRS const &rMat) const; // Implementiert lediglich Diagonalmatrix * bel. Matrix
 
     //Attribute:
     private:
         QVector<int> index;
         QVector<int> ptr;
-        QVector<double> value;
         int size;
+        QVector<double> value;
 
     friend CRS operator*(double const &scalar, CRS const &Mat);
     friend CRS multCRSCRS(CRS const &lMat,CRS const &rMat);
@@ -43,7 +44,6 @@ namespace algorithms {
     };
 
     CRS operator *(double const &scalar, CRS const &Mat);
-    CRS multCRSCRS(CRS const &lMat,CRS const &rMat);
 
     QVector<double> operator *(double const &scalar, QVector<double> const &rhs);
     QVector<double> addQVectors(QVector<double> const &lhs, QVector<double> const &rhs);

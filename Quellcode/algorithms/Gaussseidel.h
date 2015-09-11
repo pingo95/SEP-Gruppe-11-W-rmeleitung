@@ -11,10 +11,6 @@ namespace algorithms {
         GaussSeidel();
 
         void solve(QVector<double> &result, CRS const &matrix, QVector<double> const &rhs);
-
-    private:
-        double eps;
-        int itCount;
     };
 
 }
