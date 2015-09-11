@@ -2,16 +2,9 @@
 
 void presentation::UI::initConfiguration()
 {
-    widgetConfiguration = new QWidget(this);
-    tabWidgetMain->addTab(widgetConfiguration,"Konfiguration");
-
-    mainLayoutConfiguration = new QVBoxLayout(widgetConfiguration); // <-- überflüssig
-    subGridLayoutConfiguration = new QGridLayout();
-    subHBoxLayoutConfiguration = new QHBoxLayout(); // <-- überflüssig
-
-    tabWidgetSub = new QTabWidget(widgetConfiguration);
+    tabWidgetSub = new QTabWidget(tabWidgetMain);
+    tabWidgetMain->addTab(tabWidgetSub,"Konfiguration");
     tabWidgetSub->setMinimumSize(350,250);
-    mainLayoutConfiguration->addWidget(tabWidgetSub);
 
     // internen Slot verbinden
     connect(tabWidgetSub,SIGNAL(currentChanged(int)),this,SLOT(transformTabID(int)));
@@ -23,11 +16,7 @@ void presentation::UI::initHeatSources()
     tabWidgetSub->addTab(widgetConfigurationHeatSources,"Wärmequellen");
 
         //Layouts initialisieren
-    mainLayoutKonfigurationHeatSources = new QVBoxLayout(widgetConfigurationHeatSources); // <-- überflüssig
-    subGridLayoutKonfigurationHeatSources = new QGridLayout();
-    subHBoxLayoutKonfigurationHeatSources = new QHBoxLayout(); // <-- überflüssig
-
-    mainLayoutKonfigurationHeatSources->addLayout(subGridLayoutKonfigurationHeatSources);
+    subGridLayoutKonfigurationHeatSources = new QGridLayout(widgetConfigurationHeatSources);
 
         //Labels
     labelTopHeatSource = new QLabel("Dies ist der Tab zur Einstellung der Wärmequellen. \n"
@@ -153,12 +142,8 @@ void presentation::UI::initHelp()
     widgetHelp = new QWidget(this);
     tabWidgetMain->addTab(widgetHelp, "Hilfe");
 
-    mainLayoutHelp = new QVBoxLayout(widgetHelp); // <-- überflüssig
-    subGridLayoutHelp = new QGridLayout();
-    subHBoxLayoutHelp = new QHBoxLayout(); // <-- überflüssig
+    subGridLayoutHelp = new QGridLayout(widgetHelp);
 
-    //Layout initialisieren
-    mainLayoutHelp->addLayout(subGridLayoutHelp);
         //Labels
     labelHelpTabKonfiguration = new QLabel("Info zum Tab Konfiguration",widgetHelp);
     labelHelpTabKonfiguration->setWordWrap(true);
@@ -189,11 +174,7 @@ void presentation::UI::initIBVs()
     widgetConfigurationIBVs = new QWidget(this);
     tabWidgetSub->addTab(widgetConfigurationIBVs,"IBV");
 
-    mainLayoutKonfigurationIBVs = new QVBoxLayout(widgetConfigurationIBVs); // <-- überflüssig
-    subGridLayoutKonfigurationIBVs = new QGridLayout();
-    subHBoxLayoutKonfigurationIBVs = new QHBoxLayout(); // <-- überflüssig
-
-    mainLayoutKonfigurationIBVs->addLayout(subGridLayoutKonfigurationIBVs,0);
+    subGridLayoutKonfigurationIBVs = new QGridLayout(widgetConfigurationIBVs);
 
         //Labels
     labelTopIBV = new QLabel("Dies ist der Tab zur Einstellung der Anfangs- und Randwerte."
@@ -254,12 +235,9 @@ void presentation::UI::initSimulating()
     widgetSimulation = new QWidget(this);
     tabWidgetMain->addTab(widgetSimulation,"Simulation");
 
-    mainLayoutSimulation = new QVBoxLayout(widgetSimulation); // <-- übeflüssig
-    subGridLayoutSimulation = new QGridLayout();
-    subHBoxLayoutSimualtion = new QHBoxLayout(); // <-- übeflüssig
+    subGridLayoutSimulation = new QGridLayout(widgetSimulation);
 
         //Layouts initialisieren
-    mainLayoutSimulation->addLayout(subGridLayoutSimulation,0);
     labelTopSimulation = new QLabel("",widgetSimulation);
     labelTopSimulation->setWordWrap(true);
     labelN = new QLabel("N eingeben",widgetSimulation);
@@ -320,11 +298,7 @@ void presentation::UI::initThermalConductivities()
     tabWidgetSub->addTab(widgetConfigurationThermalConductivities,
                          "Wärmeleitkoeffizienten");
 
-    mainLayoutKonfigurationThermalConductivities = new QVBoxLayout(widgetConfigurationThermalConductivities);
-    subGridLayoutKonfigurationThermalConductivities = new QGridLayout();
-    subHBoxLayoutKonfigurationThermalConductivities = new QHBoxLayout();
-
-    mainLayoutKonfigurationThermalConductivities->addLayout(subGridLayoutKonfigurationThermalConductivities);
+    subGridLayoutKonfigurationThermalConductivities = new QGridLayout(widgetConfigurationThermalConductivities);
 
         //Labels
     labelTopThermalConductivity = new QLabel("Dies ist der Tab zur Einstellung der Wärmeleitkoeffizienten.\n"
@@ -452,9 +426,7 @@ void presentation::UI::initVisualization()
     widgetVisualisation = new QWidget(this);
     tabWidgetMain->addTab(widgetVisualisation, "Visualisierung");
 
-    mainLayoutVisualisation = new QVBoxLayout(widgetVisualisation); // <--überflüssig
-    subGridLayoutVisualisation = new QGridLayout();
-    subHBoxLayoutVisualisation = new QHBoxLayout(); // <-- überflüssig
+    subGridLayoutVisualisation = new QGridLayout(widgetVisualisation);
 
         //Für Platte
     QVector<double> Ticks,TicksColorBar,TicksEmpty;
@@ -479,8 +451,6 @@ void presentation::UI::initVisualization()
                    << QString().number(MaxTemperature * 0.8) << QString().number(MaxTemperature * 0.9)
                    << QString().number(MaxTemperature);
 
-        //Layouts initialisieren
-    mainLayoutVisualisation->addLayout(subGridLayoutVisualisation,0);
         //Labels
     labelTopVisualization = new QLabel("",widgetVisualisation);
     labelTopVisualization->setWordWrap(true);

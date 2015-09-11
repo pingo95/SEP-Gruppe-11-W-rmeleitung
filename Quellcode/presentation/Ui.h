@@ -12,11 +12,9 @@
 #include <QSpinBox>
 #include <QTableWidget>
 #include <QTabWidget>
-#include <QVBoxLayout>
 #include <QWidget>
 
 #include <QGridLayout>
-#include <QHBoxLayout>
 
 #include "../model/Area.h"
 #include "Qcustomplot.h"
@@ -117,7 +115,6 @@ class Controller;
 
         //Qt Elemente:
         //Widgets
-        QWidget * widgetCentral;
         QWidget * widgetHelp;
         QWidget * widgetConfiguration;
         QWidget * widgetConfigurationHeatSources;
@@ -127,17 +124,7 @@ class Controller;
         QWidget * widgetVisualisation;
 
         //Layouts
-        //QVBoxes
-        QVBoxLayout * mainLayout;
-        QVBoxLayout * mainLayoutHelp;
-        QVBoxLayout * mainLayoutConfiguration;
-        QVBoxLayout * mainLayoutKonfigurationHeatSources;
-        QVBoxLayout * mainLayoutKonfigurationIBVs;
-        QVBoxLayout * mainLayoutKonfigurationThermalConductivities;
-        QVBoxLayout * mainLayoutSimulation;
-        QVBoxLayout * mainLayoutVisualisation;
         //subGridLayouts
-        QGridLayout * subGridLayout;
         QGridLayout * subGridLayoutHelp;
         QGridLayout * subGridLayoutConfiguration;
         QGridLayout * subGridLayoutKonfigurationHeatSources;
@@ -145,15 +132,6 @@ class Controller;
         QGridLayout * subGridLayoutKonfigurationThermalConductivities;
         QGridLayout * subGridLayoutSimulation;
         QGridLayout * subGridLayoutVisualisation;
-        //subHBoxLayouts
-        QHBoxLayout * subHBoxLayout;
-        QHBoxLayout * subHBoxLayoutHelp;
-        QHBoxLayout * subHBoxLayoutConfiguration;
-        QHBoxLayout * subHBoxLayoutKonfigurationHeatSources;
-        QHBoxLayout * subHBoxLayoutKonfigurationIBVs;
-        QHBoxLayout * subHBoxLayoutKonfigurationThermalConductivities;
-        QHBoxLayout * subHBoxLayoutSimualtion;
-        QHBoxLayout * subHBoxLayoutVisualisation;
 
         //Buttons
         QPushButton * buttonPlayVideo;
