@@ -1,7 +1,7 @@
 #include "Controller.h"
 
 presentation::Controller::Controller(QObject * parent)
-    : QObject(parent),model(NULL), startedNewHeatSource(false),
+    : QObject(parent), loopBack(false), model(NULL), startedNewHeatSource(false),
       startedNewThermalConductivity(false), ui(NULL),
       userInput(new QInputDialog), errorMessages(new QMessageBox)
 {
@@ -92,6 +92,7 @@ void presentation::Controller::heatSourcesClickSlot(QMouseEvent *event)
 
                 // Gebiet zum Modell hinzufügen
                 startedNewHeatSource = false;
+                loopBack = true;
                 model->addHeatSource(new model::Area(partialAreaX, partialAreaY,
                                     ok ? value : 0, model::Model::HeatSourceArea));
                 // Temporäres Gebiet zurücksetzen
@@ -142,6 +143,11 @@ void presentation::Controller::heatSourceValueChangedSlot(int pos, int column)
     // Änderungen in allen Felder des Tabellen Widgets ausgelöst wird
     if((column != UI::ColumnValue) && (column != UI::ColumnVisibility))
         return;
+    if(loopBack)
+    {
+        loopBack = false;
+        return;
+    }
     if(column == UI::ColumnValue)
     {
         QString text = ui->getNewHeatSourceValue(pos);
@@ -477,6 +483,7 @@ void presentation::Controller::thermalConductivitiesClickSlot(QMouseEvent *event
                                                     ui->MaxConductivity,2,&ok);
 
                 // Gebiet zum Modell hinzufügen
+                loopBack = true;
                 startedNewThermalConductivity = false;
                 model->addThermalConductivity(new model::Area(partialAreaX, partialAreaY,
                                     ok ? value : 0, model::Model::ThermalConductivityArea));
@@ -529,6 +536,11 @@ void presentation::Controller::thermalConductivityValueChangedSlot(int pos, int 
     // Änderungen in allen Felder des Tabellen Widgets ausgelöst wird
     if((column != UI::ColumnValue) && (column != UI::ColumnVisibility))
             return;
+    if(loopBack)
+    {
+        loopBack = false;
+        return;
+    }
     if(column == UI::ColumnValue)
     {
         QString text = ui->getNewThermalConductivityValue(pos);

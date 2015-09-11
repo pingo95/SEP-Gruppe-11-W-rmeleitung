@@ -46,6 +46,7 @@ namespace presentation {
 
     //Attribute:
     private:
+        bool loopBack;
         model::Model * model;
         QVector<double> partialAreaX;
         QVector<double> partialAreaY;
