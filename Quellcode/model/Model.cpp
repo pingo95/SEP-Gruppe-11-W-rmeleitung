@@ -115,12 +115,12 @@ double model::Model::getLeftBoundary() const
     return leftBoundary;
 }
 
-int model::Model::getM() const
+long model::Model::getM() const
 {
     return m;
 }
 
-int model::Model::getN() const
+long model::Model::getN() const
 {
     return n;
 }
@@ -130,12 +130,12 @@ double*** const & model::Model::getResult() const
     return result;
 }
 
-int model::Model::getResultM() const
+long model::Model::getResultM() const
 {
     return resultM;
 }
 
-int model::Model::getResultN() const
+long model::Model::getResultN() const
 {
     return resultN;
 }
@@ -298,6 +298,7 @@ void model::Model::simulate()
 
     // Deltax
     double deltaX = (double) 1 / (double) n;
+//    double deltaT = (double) 1 / (double) m;
 
     // konsekutives Anlegen
     double * consecutiveTempArray = new double [m*n*n];
@@ -329,40 +330,42 @@ void model::Model::simulate()
         for(long k = 0; k < n; ++k)
             result[i][n-1][k] = topBoundary;
     }
+    bool reusable;
+    QVector<double> neededTimeSteps;
 
-
-    // Anlegen der Vektoren für Wärmequellen und Wärmeleitkoeffizienten
-    QVector<QVector<double> *> heatSourcesGrid;
-    QVector<double> thermalConductivitiesGrid(n*n,0);
-//    double * heatSourcesGrid = new double[n*n];
-//    double * thermalConductivitiesGrid = new double[n*n];
-//    for(long i = 0; i < n*n; ++i)
-//    {
-//        heatSourcesGrid[i] = 0.;
-//        thermalConductivitiesGrid[i] = 1.;
-//    }
+    selectedIntMethod->getNeedetHeatSources(neededTimeSteps, reusable); // timesteps in vielfachen von deltaT, "neuester" zuerst
+    int neededTimeStepsCount = neededTimeSteps.size();
 
     // Berechnen welche Punkte von welcher Wärmequelle abgedeckt werden,
-    // dabei überschreiben neure Gebiete ältere
-//    if(heatSourcesCount > 0)
-//    {
-//        QList<Area*>::const_iterator it = heatSources.begin();
-//        for(; it != heatSources.end(); ++it)
-//        {
-//            Area* heatSource = *it;
-//            double temperature = heatSource->getValue();
-//            double xMin, xMax, yMin, yMax;
-//            heatSource->getConvexRectangle(xMin,xMax,yMin,yMax);
-//            long xLBound = ceil(xMin/deltaX),
-//                    xUBound = floor(xMax/deltaX),
-//                    yLBound = ceil(yMin/deltaX),
-//                    yUBound = floor(yMax/deltaX);
-//            for(long i = xLBound; i <= xUBound; ++i)
-//                for(long j = yLBound; j <= yUBound; ++j)
-//                    if(heatSource->insidePoint(i*deltaX,j*deltaX))
-//                        heatSourcesGrid[i+j*n] = temperature;
-//        }
-//    }
+    // zwischenspeichern als Indizes
+    QList<QList<double> *> heatSourceIndices;
+    if(heatSourcesCount > 0)
+    {
+        QList<Area*>::const_iterator it = heatSources.begin();
+        for(; it != heatSources.end(); ++it)
+        {
+            QList<double> * tmpListPtr = new QList<double>;
+            Area* heatSource = *it;
+            double xMin, xMax, yMin, yMax;
+            heatSource->getTransitiveRectangle(xMin,xMax,yMin,yMax);
+            long xLBound = ceil(xMin/deltaX),
+                    xUBound = floor(xMax/deltaX),
+                    yLBound = ceil(yMin/deltaX),
+                    yUBound = floor(yMax/deltaX);
+            for(long i = xLBound; i <= xUBound; ++i)
+                for(long j = yLBound; j <= yUBound; ++j)
+                    if(heatSource->insidePoint(i*deltaX,j*deltaX))
+                        tmpListPtr->append(i+j*n);
+            heatSourceIndices.append(tmpListPtr);
+        }
+    }
+
+    // Anlegen der Vektoren für Wärmequellen und Wärmeleitkoeffizienten
+    QVector<QVector<double> *> heatSourcesGrid(neededTimeStepsCount,NULL);
+    QVector<double> thermalConductivitiesGrid(n*n,0);
+
+    for(int i = 0; i < neededTimeStepsCount; ++i)
+        heatSourcesGrid[i] = new QVector<double>(n*n,0);
 
     // Berechnen welche Punkte von welchem Wärmeleitkoeffizienten-Gebiet
     // abgedeckt werden, dabei überschreiben neure Gebiete ältere
@@ -374,7 +377,7 @@ void model::Model::simulate()
             Area* thermalConductivity = *it;
             double conductivity = thermalConductivity->getValue();
             double xMin, xMax, yMin, yMax;
-            thermalConductivity->getConvexRectangle(xMin,xMax,yMin,yMax);
+            thermalConductivity->getTransitiveRectangle(xMin,xMax,yMin,yMax);
             long xLBound = ceil(xMin/deltaX),
                     xUBound = floor(xMax/deltaX),
                     yLBound = ceil(yMin/deltaX),
@@ -382,17 +385,38 @@ void model::Model::simulate()
             for(long i = xLBound; i <= xUBound; ++i)
                 for(long j = yLBound; j <= yUBound; ++j)
                     if(thermalConductivity->insidePoint(i*deltaX,j*deltaX))
-                        thermalConductivitiesGrid[i+j*n] = conductivity;
+                        thermalConductivitiesGrid[i+j*n] = conductivity;    //thermalConductivity.getValue(i*deltaX,j*deltaX);
         }
     }
 
     // Intialisieren der Int-Methode
     selectedIntMethod->setUp(m,n,T,thermalConductivitiesGrid);
 
+    // Initiales Auswerten der Wärmequellenvektoren
+    if(heatSourcesCount > 0)
+    {
+        for(int i = 0; i < neededTimeStepsCount; ++i)
+        {
+    //        currentT = deltaT * neededTimeSteps[i];
+            QList<Area*>::const_iterator it = heatSources.begin();
+            QList<QList<double> *>::const_iterator it2 = heatSourceIndices.begin();
+            for(; it != heatSources.end(); ++it,++it2)
+            {
+                QList<double>::const_iterator it3 = (*it2)->begin();
+                for(; it3 != (*it2)->end(); ++it3)
+                {
+                    long pos = (*it3);
+                    (*(heatSourcesGrid[i]))[pos] = (*it)->getValue(); //(*it)->getValue(currentT,(pos % n) * deltaX,((pos - (pos % n)) / n) + deltaX);
+                }
+            }
+        }
+    }
+
+
     // Iterationsvektoren
     QVector<double> * step1 = new QVector<double>(n*n,0);
     QVector<double> * step2 = new QVector<double>(n*n,0);
-    QVector<double> * tmp;
+    QVector<double> * swapTmp;
     for(long i = 0; i < n; ++i)
         for(long j = 0; j < n; ++j)
             (*step1)[i+j*n] = result[0][i][j];
@@ -404,19 +428,73 @@ void model::Model::simulate()
         for(long j = 0; j < n; ++j)
             for(long k = 0; k < n; ++k)
                 result[i][j][k] = (*step2)[j+k*n];
-        tmp = step1;
+        swapTmp = step1;
         step1 = step2;
-        step2 = tmp;
+        step2 = swapTmp;
+        if(reusable)
+        {
+            // Wiederverwertbar -> ring swap rückwärts
+            swapTmp = heatSourcesGrid[neededTimeStepsCount-1];
+            for(int i = neededTimeStepsCount-2; i >= 0; --i)
+                heatSourcesGrid[i] = heatSourcesGrid[i-1];
+            heatSourcesGrid[0] = swapTmp;
+
+            // neusten aktualisieren
+            if(heatSourcesCount > 0)
+            {
+        //        currentT = deltaT * neededTimeSteps[0] + i * deltaT;
+                QList<Area*>::const_iterator it = heatSources.begin();
+                QList<QList<double> *>::const_iterator it2 = heatSourceIndices.begin();
+                for(; it != heatSources.end(); ++it,++it2)
+                {
+                    QList<double>::const_iterator it3 = (*it2)->begin();
+                    for(; it3 != (*it2)->end(); ++it3)
+                    {
+                        long pos = (*it3);
+                        (*(heatSourcesGrid[0]))[pos] = (*it)->getValue(); //(*it)->getValue(currentT,(pos % n) * deltaX,((pos - (pos % n)) / n) + deltaX);
+                    }
+                }
+
+            }
+        }
+        else
+        {
+            // nicht wiederverwertbar -> alle neu berechnen
+            if(heatSourcesCount > 0)
+            {
+                for(int k = 0; k < neededTimeStepsCount; ++k)
+                {
+            //        currentT = deltaT * neededTimeSteps[k] + i * deltaT;
+                    QList<Area*>::const_iterator it = heatSources.begin();
+                    QList<QList<double> *>::const_iterator it2 = heatSourceIndices.begin();
+                    for(; it != heatSources.end(); ++it,++it2)
+                    {
+                        QList<double>::const_iterator it3 = (*it2)->begin();
+                        for(; it3 != (*it2)->end(); ++it3)
+                        {
+                            long pos = (*it3);
+                            (*(heatSourcesGrid[k]))[pos] = (*it)->getValue(); //(*it)->getValue(currentT,(pos % n) * deltaX,((pos - (pos % n)) / n) + deltaX);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     resultM = m;
     resultN = n;
     resultT = T;
 
+    QList<QList<double> *>::iterator it = heatSourceIndices.begin();
+    for(; it != heatSourceIndices.end(); ++it)
+        delete (*it);
+
+    while(heatSourcesGrid.size() > 0)
+        delete heatSourcesGrid.takeFirst();
+
     delete step1;
     delete step2;
-//    delete heatSourcesGrid;
-//    delete thermalConductivitiesGrid;
+
     simulated = true;
     simulating = false;
     ui->updateNotification();

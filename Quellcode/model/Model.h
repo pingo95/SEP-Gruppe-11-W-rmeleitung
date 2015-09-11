@@ -36,11 +36,11 @@ namespace model {
         QList<QString> const getIntMethodNames() const;
         QList<QString> const getIterativeSolverNames() const;
         double getLeftBoundary() const;
-        int getM() const;
-        int getN() const;
+        long getM() const;
+        long getN() const;
         double*** const & getResult() const;
-        int getResultM() const;
-        int getResultN() const;
+        long getResultM() const;
+        long getResultN() const;
         double getResultT() const;
         double getRightBoundary() const;
         QString getSelectedIntMethod() const;
@@ -82,8 +82,8 @@ namespace model {
         long m;
         long n;
         double *** result;
-        int resultM;
-        int resultN;
+        long resultM;
+        long resultN;
         double resultT;
         double rightBoundary;
         algorithms::IntMethod * selectedIntMethod;

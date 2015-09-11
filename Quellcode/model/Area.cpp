@@ -65,7 +65,7 @@ bool model::Area::validateArea(QVector<double> const & xKoords,
 }
 
 // Returned Rechteck, das parallel zur x und y Achse das Gebiet einschließt
-void model::Area::getConvexRectangle(double &xMin, double &xMax,
+void model::Area::getTransitiveRectangle(double &xMin, double &xMax,
                                      double &yMin, double &yMax) const
 {
     xMin = xKoords[0];

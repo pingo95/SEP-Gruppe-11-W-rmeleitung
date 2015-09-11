@@ -16,7 +16,7 @@ namespace model {
         static bool validateArea(QVector<double> const & xKoords,
                                  QVector<double> const & yKoords);
 
-        void getConvexRectangle(double & xMin, double & xMax,
+        void getTransitiveRectangle(double & xMin, double & xMax,
                                 double & yMin, double & yMax) const;
         int getID() const;
         void getPoints(QVector<double> & xKoords,
