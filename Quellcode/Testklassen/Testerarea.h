@@ -13,7 +13,7 @@ public:
     TesterArea();
     ~TesterArea();
 
-    QWidget *simpleRobustnessTesterInsidePoint();
+    QWidget *robustnessWorstCaseTesterInsidePoint();
 private :
     QTabWidget * tabs;
     QVector<QWidget *> ptr;

@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
     QWidget * crsTest1 = testerCRS.testSumQVector();
     QWidget * solverTest1 = testerIterativeSolver.testSolveJacobi();
-    QWidget * areaTest1 = testerArea.simpleRobustnessTesterInsidePoint();
+    QWidget * areaTest1 = testerArea.robustnessWorstCaseTesterInsidePoint();
 
     w.addNewTab(crsTest1,"TesterCRS");
     w.addNewTab(solverTest1,"TesterIterativeSolver");

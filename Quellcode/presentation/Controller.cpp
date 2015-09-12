@@ -60,6 +60,16 @@ void presentation::Controller::heatSourcesClickSlot(QMouseEvent *event)
     // Umwandeln von Pixeln in Koordinaten:
     double x,y;
     ui->heatSourcePixelToCoords(event->x(),event->y(),x,y);
+    if(x < 0)
+        x = 0;
+    else
+        if(x > 1)
+            x = 1;
+    if(y < 0)
+        y = 0;
+    else
+        if(y > 1)
+            y = 1;
     // Falls ein neues Gebiet bereits angefangen wurde:
     if(startedNewHeatSource)
     {
@@ -461,6 +471,16 @@ void presentation::Controller::thermalConductivitiesClickSlot(QMouseEvent *event
     // Umwandeln von Pixeln in Koordinaten:
     double x,y;
     ui->thermalConductivityPixelToCoords(event->x(),event->y(),x,y);
+    if(x < 0)
+        x = 0;
+    else
+        if(x > 1)
+            x = 1;
+    if(y < 0)
+        y = 0;
+    else
+        if(y > 1)
+            y = 1;
     // Falls ein neues Gebiet bereits angefangen wurde:
     if(startedNewThermalConductivity)
     {

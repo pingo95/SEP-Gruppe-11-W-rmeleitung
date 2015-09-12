@@ -11,7 +11,7 @@ TesterArea::~TesterArea()
 //    delete ptr;
 }
 
-QWidget *TesterArea::simpleRobustnessTesterInsidePoint()
+QWidget *TesterArea::robustnessWorstCaseTesterInsidePoint()
 {
     tabs = new QTabWidget();
     int numberTests = 5;
@@ -28,8 +28,8 @@ QWidget *TesterArea::simpleRobustnessTesterInsidePoint()
         grid[t]->addWidget(plot[t],0,0);
         grid[t]->addWidget(log[t],1,0);
 
-        plot[t]->setMinimumSize(400,400);
-        log[t]->setMinimumSize(400,300);
+        plot[t]->setMinimumSize(500,500);
+        log[t]->setMinimumSize(500,400);
         log[t]->setReadOnly(true);
         double tmp = (double) rand() / RAND_MAX;
         double tmp2 = (double) rand() /RAND_MAX;
@@ -85,7 +85,7 @@ QWidget *TesterArea::simpleRobustnessTesterInsidePoint()
         plot[t]->graph(1)->setPen(Qt::NoPen);
         plot[t]->replot();
 
-        QString logText = "Einfacher Robustness Test der InsidePoint-Funktionen der Area-Klasse:\n"
+        QString logText = "Robustness Worse Case Test der InsidePoint-Funktionen der Area-Klasse:\n"
                           "Generierte Werte: \n\tmax = " + QString::number(max) + "\n\tmin = "
                           + QString::number(min) + "\n\tnom = " + QString::number(nom) +
                           "\n\toffset = " + QString::number(offset) +
