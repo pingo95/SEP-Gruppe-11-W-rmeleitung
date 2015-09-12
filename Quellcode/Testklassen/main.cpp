@@ -1,27 +1,34 @@
-#include "testwindow.h"
+#include "Testwindow.h"
 #include <QApplication>
 
-#include "testercrs.h"
-#include "testeriterativesolver.h"
+#include "Testercrs.h"
+#include "Testeriterativesolver.h"
+#include "Testerarea.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     TestWindow w;
 
-    QLabel* text;
-
     algorithms::TesterCRS testerCRS;
     algorithms::TesterIterativeSolver testerIterativeSolver;
+    TesterArea testerArea;
 
+    QWidget * crsTest1 = testerCRS.testSumQVector();
+    QWidget * solverTest1 = testerIterativeSolver.testSolveJacobi();
+    QWidget * areaTest1 = testerArea.simpleRobustnessTesterInsidePoint();
 
-
-    text = testerCRS.testSumQVector();
-    w.addNewTab(text,"TesterCRS");
-    text = testerIterativeSolver.testSolveJacobi();
-    w.addNewTab(text,"TesterIterativeSolver");
+    w.addNewTab(crsTest1,"TesterCRS");
+    w.addNewTab(solverTest1,"TesterIterativeSolver");
+    w.addNewTab(areaTest1,"InsidePointTest1");
 
     w.show();
 
-    return a.exec();
+    int ret = a.exec();
+
+//    delete crsTest1;
+//    delete solverTest1;
+//    delete areaTest1;
+
+    return ret;
 }

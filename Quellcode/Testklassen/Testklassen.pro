@@ -23,12 +23,14 @@ SOURCES += \
     ../algorithms/Impeuler.cpp \
     ../algorithms/Cranknicolson.cpp \
     ../model/Model.cpp \
+    ../presentation/Uiinit.cpp \
     ../presentation/Ui.cpp\
     ../presentation/Controller.cpp \
-    testwindow.cpp \
-    testercrs.cpp \
-    testeriterativesolver.cpp \
-    main.cpp
+    Testerarea.cpp \
+    Main.cpp \
+    Testercrs.cpp \
+    Testeriterativesolver.cpp \
+    Testwindow.cpp
 
 HEADERS  += \
     ../algorithms/Crs.h \
@@ -43,6 +45,7 @@ HEADERS  += \
     ../model/Model.h \
     ../presentation/Ui.h \
     ../presentation/Controller.h \
-    testwindow.h \
-    testercrs.h \
-    testeriterativesolver.h
+    Testerarea.h \
+    Testercrs.h \
+    Testeriterativesolver.h \
+    Testwindow.h

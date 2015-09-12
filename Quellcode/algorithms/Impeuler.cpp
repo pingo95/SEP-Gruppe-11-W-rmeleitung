@@ -17,8 +17,11 @@ void algorithms::ImpEuler::getNeedetHeatSources(QVector<double> &neededTimeSteps
 }
 
 void algorithms::ImpEuler::setUpSpecific(QVector<double> const &thermalConductivities) {
-    algorithms::CRS A1, diag; A1.A1(IntMethod::n); diag.diag(thermalConductivities); diag = diag.multCRSCRS(A1);
-    A1.eye(IntMethod::n);
+    algorithms::CRS A1, diag;
+    A1.A1(n);
+    diag.diag(thermalConductivities);
+    diag = diag.multCRSCRS(A1);
+    A1.eye(n);
     itMatrix = deltaT/(deltaX*deltaX) * diag;
     itMatrix = A1 - itMatrix;
 }

@@ -1,7 +1,11 @@
-#include "testercrs.h"
+#include "Testercrs.h"
 
 algorithms::TesterCRS::TesterCRS() {
     text = new QLabel();
+}
+algorithms::TesterCRS::~TesterCRS()
+{
+//    delete text;
 }
 
 QLabel* algorithms::TesterCRS::testA1() {

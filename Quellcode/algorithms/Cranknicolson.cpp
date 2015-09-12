@@ -19,8 +19,11 @@ void algorithms::CrankNicolson::getNeedetHeatSources(QVector<double> &neededTime
 }
 
 void algorithms::CrankNicolson::setUpSpecific(QVector<double> const &thermalConductivities) {
-    algorithms::CRS A1, diag; A1.A1(IntMethod::n); diag.diag(thermalConductivities); diag = diag.multCRSCRS(A1);
-    A1.eye(IntMethod::n);
+    algorithms::CRS A1, diag;
+    A1.A1(n);
+    diag.diag(thermalConductivities);
+    diag = diag.multCRSCRS(A1);
+    A1.eye(n);
     diag = deltaT/(2*deltaX*deltaX) * diag;
     itMatrix = A1 - diag;
     rhsMatrix = A1 + diag;

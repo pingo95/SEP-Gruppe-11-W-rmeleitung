@@ -4,7 +4,7 @@
 #include <QLabel>
 
 #include <../algorithms/Iterativesolver.h>
-#include "testwindow.h"
+#include "Testwindow.h"
 #include "../algorithms/Jacobi.h"
 #include "../algorithms/Gaussseidel.h"
 

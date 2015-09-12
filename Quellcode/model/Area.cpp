@@ -104,7 +104,7 @@ double model::Area::getValue() const
 bool model::Area::insidePoint(double const xKoord, double const yKoord) const
 {
     // 1. Testet, ob der Punkt auf einer Kante des Gebietes liegt:
-    for(int i = 0; i < xKoords.size(); ++i){
+    for(int i = 0; i < xKoords.size()-1; ++i){
         if(onLine(xKoords[i],yKoords[i],xKoords[i+1],yKoords[i+1],
                   xKoord,yKoord)) return true;
     }
@@ -116,8 +116,8 @@ bool model::Area::insidePoint(double const xKoord, double const yKoord) const
     // d.h. entspricht der Strecke xr
     // Die Gerade geht von der linken Begrenzung (x=0) parallel zur x-Achse durch den Punkt
     // bis zur rechten Begrenzung, d.h. entspricht der Strecke lr
-    double lX = 0, lY = yKoord,
-           rX = 1, rY = yKoord;
+    double lX = -1, lY = yKoord,    // zur Sicherheit -1 & 2 da plot unsichtbar-klickbar
+           rX = 2, rY = yKoord;
     for(int i = 1; i < xKoords.size(); ++i)
     {
         if(ignore)

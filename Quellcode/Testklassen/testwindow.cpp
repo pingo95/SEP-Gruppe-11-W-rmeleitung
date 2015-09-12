@@ -1,4 +1,4 @@
-#include "testwindow.h"
+#include "Testwindow.h"
 
 TestWindow::TestWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -12,7 +12,7 @@ TestWindow::~TestWindow()
 
 }
 
-void TestWindow::addNewTab(QLabel* text, QString name) {
+void TestWindow::addNewTab(QWidget* text, QString name) {
     tabWidget->addTab(text,name);
 }
 
@@ -23,7 +23,7 @@ QString algorithms::printCRS(algorithms::CRS const &matrix) {
         kl = matrix.getRowsNumElem(i);
         ku = matrix.getRowsNumElem(i+1);
         if(kl==ku) {
-            for(int j=0; j<matrix.size; ++j) string.append(QString().number(0)+"\t");
+            for(int j=0; j<matrix.size; ++j) string.append(QString::number(0)+"\t");
         }
         else {
             il = matrix.index[kl];
@@ -31,12 +31,12 @@ QString algorithms::printCRS(algorithms::CRS const &matrix) {
             for(int j=0; j<matrix.size; ++j) {
                 if(j >= il && j <= iu) {
                     if(j==matrix.index[kl]) {
-                        string.append(QString().number(matrix.value[kl])+"\t");
+                        string.append(QString::number(matrix.value[kl])+"\t");
                         ++kl;
                     }
-                    else string.append(QString().number(0)+"\t");
+                    else string.append(QString::number(0)+"\t");
                 }
-                else string.append(QString().number(0)+"\t");
+                else string.append(QString::number(0)+"\t");
             }
         }
         string.append("\n");
@@ -47,6 +47,6 @@ QString algorithms::printCRS(algorithms::CRS const &matrix) {
 QString algorithms::printQVector(QVector<double> const &vector) {
     QString string;
 
-    for(int i=0; i<vector.size(); ++i) string.append(QString().number(vector[i])+"\n");
+    for(int i=0; i<vector.size(); ++i) string.append(QString::number(vector[i])+"\n");
     return string;
 }

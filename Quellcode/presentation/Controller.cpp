@@ -181,6 +181,7 @@ void presentation::Controller::newBottomBoundarySlot(double newBottomBoundary)
         model->setBottomBoundary(newBottomBoundary);
     else
     {
+        ui->updateNotification();
         // Fehlermeldung ausgeben:
         errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
                                "ungültig. Bitte versuchen Sie es erneut.");
@@ -200,6 +201,7 @@ void presentation::Controller::newInitialValueSlot(double newInitialValue)
         model->setInitialValue(newInitialValue);
     else
     {
+        ui->updateNotification();
         // Fehlermeldung ausgeben:
         errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
                                "ungültig. Bitte versuchen Sie es erneut.");
@@ -219,6 +221,7 @@ void presentation::Controller::newLeftBoundarySlot(double newLeftBoundary)
         model->setLeftBoundary(newLeftBoundary);
     else
     {
+        ui->updateNotification();
         // Fehlermeldung ausgeben:
         errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
                                "ungültig. Bitte versuchen Sie es erneut.");
@@ -233,16 +236,17 @@ void presentation::Controller::newLeftBoundarySlot(double newLeftBoundary)
 // gültig ist
 void presentation::Controller::newMSlot(int newM)
 {
-    if ((newM <= 800) && (newM > 0))
+    if ((newM <= 800) && (newM > 1))
         // Wert updaten
         model->setM(newM);
     else
     {
+        ui->updateNotification();
         // Fehlermeldung ausgeben:
         errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
                                "ungültig. Bitte versuchen Sie es erneut.");
         errorMessages->setDetailedText("Der zulässige Wertebereich für die"
-                                       " Zeitdiskretisierungsgröße m ist (0,800].");
+                                       " Zeitdiskretisierungsgröße m ist (1,800].");
         errorMessages->exec();
     }
 }
@@ -251,16 +255,17 @@ void presentation::Controller::newMSlot(int newM)
 // gültig ist
 void presentation::Controller::newNSlot(int newN)
 {
-    if ((newN <= 500) && (newN > 0))
+    if ((newN <= 500) && (newN > 2))
         // Wert updaten
         model->setN(newN);
     else
     {
+        ui->updateNotification();
         // Fehlermeldung ausgeben:
         errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
                                "ungültig. Bitte versuchen Sie es erneut.");
         errorMessages->setDetailedText("Der zulässige Wertebereich für die"
-                                       " Ortsdiskretisierungsgröße n ist (0,500].");
+                                       " Ortsdiskretisierungsgröße n ist (2,500].");
         errorMessages->exec();
     }
 }
@@ -274,6 +279,7 @@ void presentation::Controller::newRightBoundarySlot(double newRightBoundary)
         model->setRightBoundary(newRightBoundary);
     else
     {
+        ui->updateNotification();
         // Fehlermeldung ausgeben:
         errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
                                "ungültig. Bitte versuchen Sie es erneut.");
@@ -293,6 +299,7 @@ void presentation::Controller::newTopBoundarySlot(double newTopBoundary)
         model->setTopBoundary(newTopBoundary);
     else
     {
+        ui->updateNotification();
         // Fehlermeldung ausgeben:
         errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
                                "ungültig. Bitte versuchen Sie es erneut.");
@@ -312,6 +319,7 @@ void presentation::Controller::newTSlot(double newT)
         model->setT(newT);
     else
     {
+        ui->updateNotification();
         // Fehlermeldung ausgeben:
         errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
                                "ungültig. Bitte versuchen Sie es erneut.");

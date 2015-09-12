@@ -19,7 +19,7 @@ public:
     TestWindow(QWidget *parent = 0);
     ~TestWindow();
 
-    void addNewTab(QLabel* newTab,QString name);
+    void addNewTab(QWidget *newTab, QString name);
 
 private:
     QWidget* centralWidget;

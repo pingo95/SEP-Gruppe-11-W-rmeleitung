@@ -5,9 +5,9 @@
 #include "../algorithms/Gaussseidel.h"
 #include "../presentation/Ui.h"
 
-model::Model::Model() : bottomBoundary(300), heatSourcesCount(0), initialValue(300),
-    leftBoundary(300), m(1), n(1), result(NULL), resultM(0), resultN(0), resultT(0.),
-    rightBoundary(300), selectedIntMethod(NULL), selectedIterativeSolver(""),
+model::Model::Model() : bottomBoundary(100), heatSourcesCount(0), initialValue(500),
+    leftBoundary(200), m(2), n(3), result(NULL), resultM(0), resultN(0), resultT(0.),
+    rightBoundary(400), selectedIntMethod(NULL), selectedIterativeSolver("Jacobi"),
     simulated(false), simulating(false), T(1.), thermalConductivitesCount(0),
     topBoundary(300), ui(NULL)
 {
@@ -39,13 +39,7 @@ model::Model::~Model()
         delete (*it3);
     if(simulated)
     {
-        for(int j = 0; j < m; ++j)
-        {
-            for(int i = 0; i < n; ++n)
-                delete result[j][i];
-            delete result[j];
-        }
-        delete result;
+        delete consecutiveTempArray;
     }
 }
 
@@ -296,12 +290,17 @@ void model::Model::simulate()
 {
     simulating = true;
 
-    // Deltax
-    double deltaX = (double) 1 / (double) n;
-//    double deltaT = (double) 1 / (double) m;
+    //altes ergebniss löschen
+    if(simulated)
+        delete consecutiveTempArray;
+
+
+    // Deltas
+    double deltaX = (double) 1 / (double) (n); // <--- Besprechen das -1
+//    double deltaT = T / (double) (m);
 
     // konsekutives Anlegen
-    double * consecutiveTempArray = new double [m*n*n];
+    consecutiveTempArray = new double [m*n*n];
     // umwandeln in die Ergebnismatrix
     result = new double**[m];
     for(long i = 0; i < m; ++i)
@@ -320,16 +319,19 @@ void model::Model::simulate()
             // Erste und letzter Punkt mit linkem bzw rechtem Randwert
             result[i][j][0] = leftBoundary;
             result[i][j][n-1] = rightBoundary;
-            // Inneren Punkt initialisiert mit  0
+            // Inneren Punkt initialisiert mit  initialValue
             for(long k = 1; k < n-1; ++k)
-                result[i][j][k] = 0.;
+                result[i][j][k] = initialValue;
         }
 
         // Letzte Zeilen mit oberem Randwert
-        result[i][n-1] = &(consecutiveTempArray[i*n*n]);
+        result[i][n-1] = &(consecutiveTempArray[i*n*n + (n-1)*n]);
         for(long k = 0; k < n; ++k)
             result[i][n-1][k] = topBoundary;
     }
+
+    QString vorher = printResult("Vorher");
+
     bool reusable;
     QVector<double> neededTimeSteps;
 
@@ -362,7 +364,7 @@ void model::Model::simulate()
 
     // Anlegen der Vektoren für Wärmequellen und Wärmeleitkoeffizienten
     QVector<QVector<double> *> heatSourcesGrid(neededTimeStepsCount,NULL);
-    QVector<double> thermalConductivitiesGrid(n*n,0);
+    QVector<double> thermalConductivitiesGrid(n*n,1);
 
     for(int i = 0; i < neededTimeStepsCount; ++i)
         heatSourcesGrid[i] = new QVector<double>(n*n,0);
@@ -389,8 +391,13 @@ void model::Model::simulate()
         }
     }
 
+    QString koeff = "\nAusgabe der Koeffizienten:\nm = " + QString::number(m)
+            + "\nn = " + QString::number(n) + "\nT = " + QString::number(T)
+            + "\ndeltaX = " + QString::number(1./(double)n) + "\ndeltaT = "
+            + QString::number(T/(double)m) + "\n Werte:\n" + printVector(thermalConductivitiesGrid, "Koeffizienten:");
+
     // Intialisieren der Int-Methode
-    selectedIntMethod->setUp(m,n,T,thermalConductivitiesGrid);
+    selectedIntMethod->setUp(n,m,T,thermalConductivitiesGrid);
 
     // Initiales Auswerten der Wärmequellenvektoren
     if(heatSourcesCount > 0)
@@ -411,7 +418,8 @@ void model::Model::simulate()
             }
         }
     }
-
+    for(int i = 0; i < neededTimeStepsCount; ++i)
+        koeff += printVector((*(heatSourcesGrid[i])),"Quelle Nr." + QString::number(i));
 
     // Iterationsvektoren
     QVector<double> * step1 = new QVector<double>(n*n,0);
@@ -425,8 +433,8 @@ void model::Model::simulate()
     for(long i = 1; i < m; ++i)
     {
         selectedIntMethod->calcNextStep(*step1,*step2,heatSourcesGrid);
-        for(long j = 0; j < n; ++j)
-            for(long k = 0; k < n; ++k)
+        for(long j = 1; j < n-1; ++j)       //<-- Achtung fall Ränder nicht mehr const
+            for(long k = 1; k < n-1; ++k)
                 result[i][j][k] = (*step2)[j+k*n];
         swapTmp = step1;
         step1 = step2;
@@ -435,7 +443,7 @@ void model::Model::simulate()
         {
             // Wiederverwertbar -> ring swap rückwärts
             swapTmp = heatSourcesGrid[neededTimeStepsCount-1];
-            for(int i = neededTimeStepsCount-2; i >= 0; --i)
+            for(int i = neededTimeStepsCount-1; i > 0; --i)
                 heatSourcesGrid[i] = heatSourcesGrid[i-1];
             heatSourcesGrid[0] = swapTmp;
 
@@ -481,6 +489,15 @@ void model::Model::simulate()
         }
     }
 
+    QString nachher = printResult("Nachher");
+
+    QDialog diag;
+    QGridLayout layout(&diag);
+    layout.addWidget(new QLabel(koeff,&diag),0,0);
+    layout.addWidget(new QLabel(vorher,&diag),0,1);
+    layout.addWidget(new QLabel(nachher,&diag),0,2);
+    diag.exec();
+
     resultM = m;
     resultN = n;
     resultT = T;
@@ -510,4 +527,67 @@ void model::Model::updateThermalConductivityValue(int pos, double newValue)
 {
     thermalConductivites.at(pos)->setValue(newValue);
     ui->updateNotification();
+}
+
+QString model::Model::printResult(QString title)
+{
+    QString output(title);
+    output += "\nAusgabe der Ergebnis-Matrix:\n";
+    for(long i = 0; i < m; ++i)
+    {
+        output += "m = " + QString::number(i) + "\n";
+        for(long k = 0; k < n; ++k)
+            output += "-------------";
+        output += "\nj\\k\t| ";
+        for(long k = 0; k < n-1; ++k)
+            output += QString::number(k) + "\t| ";
+        output += QString::number(n-1) + "\n";
+        for(long k = 0; k < n; ++k)
+            output += "-------------";
+        output += "\n";
+        for(long j = n-1; j >= 0; --j)
+        {
+            output += QString::number(j) + "\t| ";
+            for(long k = 0; k < n-1; ++k)
+            {
+                output += QString::number(result[i][j][k]) + "\t| ";
+            }
+            output += QString::number(result[i][j][n-1]) + "\n";
+            for(long k = 0; k < n; ++k)
+                output += "-------------";
+            output += "\n";
+        }
+        output += "\n";
+    }
+    output += "\n";
+    return output;
+}
+
+QString model::Model::printVector(const QVector<double> &vec, QString title)
+{
+    QString output(title);
+    output += "\n";
+    for(long k = 0; k < n; ++k)
+        output += "-------------";
+    output += "\nj\\k\t| ";
+    for(long k = 0; k < n-1; ++k)
+        output += QString::number(k) + "\t| ";
+    output += QString::number(n-1) + "\n";
+    for(long k = 0; k < n; ++k)
+        output += "-------------";
+    output += "\n";
+    for(long j = n-1; j >= 0; --j)
+    {
+        output += QString::number(j) + "\t| ";
+        for(long k = 0; k < n-1; ++k)
+        {
+            output += QString::number(vec[k + j*n]) + "\t| ";
+        }
+        output += QString::number(vec[n-1 + j*n]) + "\n";
+        for(long k = 0; k < n; ++k)
+            output += "-------------";
+        output += "\n";
+    }
+    output += "\n";
+    return output;
 }

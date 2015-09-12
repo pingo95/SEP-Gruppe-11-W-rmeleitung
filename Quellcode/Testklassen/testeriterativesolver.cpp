@@ -1,4 +1,4 @@
-#include "testeriterativesolver.h"
+#include "Testeriterativesolver.h"
 
 algorithms::TesterIterativeSolver::TesterIterativeSolver() {
     text = new QLabel();

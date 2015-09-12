@@ -47,23 +47,23 @@ void presentation::UI::initHeatSources()
     QVector<QString> Labels,LabelsColorBar,LabelsEmpty;
     Ticks << 0 << 0.1 << 0.2 << 0.3 << 0.4 << 0.5
           << 0.6 << 0.7 << 0.8 << 0.9 << 1 ;
-    Labels << QString().number(0)   << QString().number(0.1)
-           << QString().number(0.2) << QString().number(0.3)
-           << QString().number(0.4) << QString().number(0.5)
-           << QString().number(0.6) << QString().number(0.7)
-           << QString().number(0.8) << QString().number(0.9)
-           << QString().number(1);
+    Labels << QString::number(0)   << QString::number(0.1)
+           << QString::number(0.2) << QString::number(0.3)
+           << QString::number(0.4) << QString::number(0.5)
+           << QString::number(0.6) << QString::number(0.7)
+           << QString::number(0.8) << QString::number(0.9)
+           << QString::number(1);
     TicksColorBar << 0 << MaxTemperature * 0.1 << MaxTemperature * 0.2
                   << MaxTemperature * 0.3 << MaxTemperature * 0.4
                   << MaxTemperature * 0.5 << MaxTemperature * 0.6
                   << MaxTemperature * 0.7 << MaxTemperature * 0.8
                   << MaxTemperature * 0.9 << MaxTemperature;
-    LabelsColorBar << QString().number(0) << QString().number(MaxTemperature * 0.1)
-                   << QString().number(MaxTemperature * 0.2) << QString().number(MaxTemperature * 0.3)
-                   << QString().number(MaxTemperature * 0.4) << QString().number(MaxTemperature * 0.5)
-                   << QString().number(MaxTemperature * 0.6) << QString().number(MaxTemperature * 0.7)
-                   << QString().number(MaxTemperature * 0.8) << QString().number(MaxTemperature * 0.9)
-                   << QString().number(MaxTemperature);
+    LabelsColorBar << QString::number(0) << QString::number(MaxTemperature * 0.1)
+                   << QString::number(MaxTemperature * 0.2) << QString::number(MaxTemperature * 0.3)
+                   << QString::number(MaxTemperature * 0.4) << QString::number(MaxTemperature * 0.5)
+                   << QString::number(MaxTemperature * 0.6) << QString::number(MaxTemperature * 0.7)
+                   << QString::number(MaxTemperature * 0.8) << QString::number(MaxTemperature * 0.9)
+                   << QString::number(MaxTemperature);
 
     //Color Bar
     colorBarHeatSource = new QCustomPlot(widgetConfigurationHeatSources,false);
@@ -330,23 +330,23 @@ void presentation::UI::initThermalConductivities()
     QVector<QString> Labels,LabelsColorBar,LabelsEmpty;
     Ticks << 0 << 0.1 << 0.2 << 0.3 << 0.4 << 0.5
           << 0.6 << 0.7 << 0.8 << 0.9 << 1 ;
-    Labels << QString().number(0)   << QString().number(0.1)
-           << QString().number(0.2) << QString().number(0.3)
-           << QString().number(0.4) << QString().number(0.5)
-           << QString().number(0.6) << QString().number(0.7)
-           << QString().number(0.8) << QString().number(0.9)
-           << QString().number(1);
+    Labels << QString::number(0)   << QString::number(0.1)
+           << QString::number(0.2) << QString::number(0.3)
+           << QString::number(0.4) << QString::number(0.5)
+           << QString::number(0.6) << QString::number(0.7)
+           << QString::number(0.8) << QString::number(0.9)
+           << QString::number(1);
     TicksColorBar << 0 << MaxConductivity * 0.1 << MaxConductivity * 0.2
                   << MaxConductivity * 0.3 << MaxConductivity * 0.4
                   << MaxConductivity * 0.5 << MaxConductivity * 0.6
                   << MaxConductivity * 0.7 << MaxConductivity * 0.8
                   << MaxConductivity * 0.9 << MaxConductivity;
-    LabelsColorBar << QString().number(0) << QString().number(MaxConductivity * 0.1)
-                   << QString().number(MaxConductivity * 0.2) << QString().number(MaxConductivity * 0.3)
-                   << QString().number(MaxConductivity * 0.4) << QString().number(MaxConductivity * 0.5)
-                   << QString().number(MaxConductivity * 0.6) << QString().number(MaxConductivity * 0.7)
-                   << QString().number(MaxConductivity * 0.8) << QString().number(MaxConductivity * 0.9)
-                   << QString().number(MaxConductivity);
+    LabelsColorBar << QString::number(0) << QString::number(MaxConductivity * 0.1)
+                   << QString::number(MaxConductivity * 0.2) << QString::number(MaxConductivity * 0.3)
+                   << QString::number(MaxConductivity * 0.4) << QString::number(MaxConductivity * 0.5)
+                   << QString::number(MaxConductivity * 0.6) << QString::number(MaxConductivity * 0.7)
+                   << QString::number(MaxConductivity * 0.8) << QString::number(MaxConductivity * 0.9)
+                   << QString::number(MaxConductivity);
 
     //Color Bar
     colorBarThermalConductivity = new QCustomPlot(widgetConfigurationThermalConductivities,false);
@@ -433,23 +433,23 @@ void presentation::UI::initVisualization()
     QVector<QString> Labels,LabelsColorBar,LabelsEmpty;
     Ticks << 0 << 0.1 << 0.2 << 0.3 << 0.4 << 0.5
           << 0.6 << 0.7 << 0.8 << 0.9 << 1 ;
-    Labels << QString().number(0)   << QString().number(0.1)
-           << QString().number(0.2) << QString().number(0.3)
-           << QString().number(0.4) << QString().number(0.5)
-           << QString().number(0.6) << QString().number(0.7)
-           << QString().number(0.8) << QString().number(0.9)
-           << QString().number(1);
+    Labels << QString::number(0)   << QString::number(0.1)
+           << QString::number(0.2) << QString::number(0.3)
+           << QString::number(0.4) << QString::number(0.5)
+           << QString::number(0.6) << QString::number(0.7)
+           << QString::number(0.8) << QString::number(0.9)
+           << QString::number(1);
     TicksColorBar << 0 << MaxTemperature * 0.1 << MaxTemperature * 0.2
                   << MaxTemperature * 0.3 << MaxTemperature * 0.4
                   << MaxTemperature * 0.5 << MaxTemperature * 0.6
                   << MaxTemperature * 0.7 << MaxTemperature * 0.8
                   << MaxTemperature * 0.9 << MaxTemperature;
-    LabelsColorBar << QString().number(0) << QString().number(MaxTemperature * 0.1)
-                   << QString().number(MaxTemperature * 0.2) << QString().number(MaxTemperature * 0.3)
-                   << QString().number(MaxTemperature * 0.4) << QString().number(MaxTemperature * 0.5)
-                   << QString().number(MaxTemperature * 0.6) << QString().number(MaxTemperature * 0.7)
-                   << QString().number(MaxTemperature * 0.8) << QString().number(MaxTemperature * 0.9)
-                   << QString().number(MaxTemperature);
+    LabelsColorBar << QString::number(0) << QString::number(MaxTemperature * 0.1)
+                   << QString::number(MaxTemperature * 0.2) << QString::number(MaxTemperature * 0.3)
+                   << QString::number(MaxTemperature * 0.4) << QString::number(MaxTemperature * 0.5)
+                   << QString::number(MaxTemperature * 0.6) << QString::number(MaxTemperature * 0.7)
+                   << QString::number(MaxTemperature * 0.8) << QString::number(MaxTemperature * 0.9)
+                   << QString::number(MaxTemperature);
 
         //Labels
     labelTopVisualization = new QLabel("",widgetVisualisation);

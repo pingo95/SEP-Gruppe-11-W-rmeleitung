@@ -4,7 +4,7 @@
 #include <QLabel>
 
 #include "../algorithms/Crs.h"
-#include "testwindow.h"
+#include "Testwindow.h"
 
 namespace algorithms {
 
@@ -12,6 +12,7 @@ namespace algorithms {
     {
         public:
             TesterCRS();
+            ~TesterCRS();
 
             QLabel* testA1();
             QLabel* testDiag();

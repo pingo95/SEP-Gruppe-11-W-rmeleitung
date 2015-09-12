@@ -265,9 +265,9 @@ void presentation::UI::updateHeatSources()
     for(; i < tmpBound; ++i, ++it)
     {
         tableWidgetHeatSources->item(i,UI::ColumnID)->
-                setText(QString().number((*it)->getID()));
+                setText(QString::number((*it)->getID()));
         tableWidgetHeatSources->item(i,UI::ColumnValue)->
-                setText(QString().number((*it)->getValue()));
+                setText(QString::number((*it)->getValue()));
         tableWidgetHeatSources->item(i,UI::ColumnVisibility)->
                 setCheckState(visibilityHeatSources.value((*it)->getID(),true) ? Qt::Checked : Qt::Unchecked);
     }
@@ -276,12 +276,12 @@ void presentation::UI::updateHeatSources()
         for(; i < hSCount; ++i, ++it)
         {
             QTableWidgetItem * tmpItemPtr = new
-                    QTableWidgetItem(QString().number((*it)->getID()));
+                    QTableWidgetItem(QString::number((*it)->getID()));
             tmpItemPtr->setFlags(Qt::ItemIsEnabled);
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetHeatSources->setItem(i,UI::ColumnID,tmpItemPtr);
             tmpItemPtr = new
-                    QTableWidgetItem(QString().number((*it)->getValue()));
+                    QTableWidgetItem(QString::number((*it)->getValue()));
             tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetHeatSources->setItem(i,UI::ColumnValue,tmpItemPtr);
@@ -375,9 +375,9 @@ void presentation::UI::updateThermalConductivties()
     for (; i < tmpBound; ++i, ++it)
     {
         tableWidgetThermalConductivities->item(i,UI::ColumnID)->
-                setText(QString().number((*it)->getID()));
+                setText(QString::number((*it)->getID()));
         tableWidgetThermalConductivities->item(i,UI::ColumnValue)->
-                setText(QString().number((*it)->getValue()));
+                setText(QString::number((*it)->getValue()));
         tableWidgetThermalConductivities->item(i,UI::ColumnVisibility)->
                 setCheckState(visibilityThermalConductivities.value((*it)->getID(),true) ? Qt::Checked : Qt::Unchecked);
     }
@@ -386,12 +386,12 @@ void presentation::UI::updateThermalConductivties()
         for(; i < tCCount; ++i, ++it)
         {
             QTableWidgetItem * tmpItemPtr = new
-                    QTableWidgetItem(QString().number((*it)->getID()));
+                    QTableWidgetItem(QString::number((*it)->getID()));
             tmpItemPtr->setFlags(Qt::ItemIsEnabled);
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetThermalConductivities->setItem(i,UI::ColumnID,tmpItemPtr);
             tmpItemPtr = new
-                    QTableWidgetItem(QString().number((*it)->getValue()));
+                    QTableWidgetItem(QString::number((*it)->getValue()));
             tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetThermalConductivities->setItem(i,UI::ColumnValue,tmpItemPtr);

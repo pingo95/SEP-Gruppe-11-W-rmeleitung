@@ -69,10 +69,14 @@ namespace model {
         void updateHeatSourceValue(int const pos, double const value);
         void updateThermalConductivityValue(int const pos, double const newValue);
 
+    private:
+        QString printResult(QString title);
+        QString printVector(QVector<double> const & vec, QString title);
 
     //Attribute:
     private:
         double bottomBoundary;
+        double * consecutiveTempArray;
         QList<Area*> heatSources;
         int heatSourcesCount;
         double initialValue;
