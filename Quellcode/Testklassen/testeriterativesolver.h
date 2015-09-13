@@ -4,9 +4,10 @@
 #include <QLabel>
 
 #include <../algorithms/Iterativesolver.h>
-#include "Testwindow.h"
 #include "../algorithms/Jacobi.h"
 #include "../algorithms/Gaussseidel.h"
+
+#include "Testwindow.h"
 
 namespace algorithms {
 
@@ -20,7 +21,6 @@ namespace algorithms {
 
     private:
         IterativeSolver* itSolver;
-        QLabel* text;
     };
 
 }

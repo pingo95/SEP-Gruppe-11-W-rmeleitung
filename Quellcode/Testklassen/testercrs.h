@@ -28,7 +28,6 @@ namespace algorithms {
         private:
 
             CRS testMatrix;
-            QLabel* text;
     };
 }
 

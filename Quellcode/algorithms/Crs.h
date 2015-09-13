@@ -3,8 +3,6 @@
 
 #include <QVector>
 #include <cassert>
-#include <iostream>
-#include <fstream>
 
 namespace algorithms {
 
@@ -40,6 +38,7 @@ namespace algorithms {
     friend CRS multCRSCRS(CRS const &lMat,CRS const &rMat);
 
     friend QString printCRS(algorithms::CRS const &matrix);
+    friend class TesterIterativeSolver;
 
     };
 

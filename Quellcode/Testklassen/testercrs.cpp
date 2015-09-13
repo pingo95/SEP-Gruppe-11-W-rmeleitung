@@ -1,14 +1,15 @@
 #include "Testercrs.h"
 
 algorithms::TesterCRS::TesterCRS() {
-    text = new QLabel();
+
 }
-algorithms::TesterCRS::~TesterCRS()
-{
-//    delete text;
+
+algorithms::TesterCRS::~TesterCRS() {
+
 }
 
 QLabel* algorithms::TesterCRS::testA1() {
+    QLabel* text = new QLabel();
     QString testString;
     int testSize=4;
 
@@ -20,6 +21,7 @@ QLabel* algorithms::TesterCRS::testA1() {
 }
 
 QLabel* algorithms::TesterCRS::testDiag() {
+    QLabel* text = new QLabel();
     QString testString;
     int testSize=4;
 
@@ -34,6 +36,7 @@ QLabel* algorithms::TesterCRS::testDiag() {
 }
 
 QLabel* algorithms::TesterCRS::testDiffCRS() {
+    QLabel* text = new QLabel();
     QString testString;
     int testSize=3;
 
@@ -48,6 +51,7 @@ QLabel* algorithms::TesterCRS::testDiffCRS() {
 }
 
 QLabel* algorithms::TesterCRS::testEye() {
+    QLabel* text = new QLabel();
     QString testString;
     int testSize=3;
 
@@ -59,6 +63,7 @@ QLabel* algorithms::TesterCRS::testEye() {
 }
 
 QLabel* algorithms::TesterCRS::testMultCRSCRS() {
+    QLabel* text = new QLabel();
     QString testString;
     int testSize=3;
 
@@ -75,6 +80,7 @@ QLabel* algorithms::TesterCRS::testMultCRSCRS() {
 }
 
 QLabel* algorithms::TesterCRS::testMultCRSQVector() {
+    QLabel* text = new QLabel();
     QString testString;
     int testSize=3;
 
@@ -90,6 +96,7 @@ QLabel* algorithms::TesterCRS::testMultCRSQVector() {
 }
 
 QLabel* algorithms::TesterCRS::testScalarCRS() {
+    QLabel* text = new QLabel();
     QString testString;
     int testSize=3;
 
@@ -101,6 +108,7 @@ QLabel* algorithms::TesterCRS::testScalarCRS() {
 }
 
 QLabel* algorithms::TesterCRS::testScalarQVector() {
+    QLabel* text = new QLabel();
     QString testString;
     int testSize=3;
 
@@ -115,6 +123,7 @@ QLabel* algorithms::TesterCRS::testScalarQVector() {
 }
 
 QLabel* algorithms::TesterCRS::testSumCRS() {
+    QLabel* text = new QLabel();
     QString testString;
     int testSize=3;
 
@@ -129,6 +138,7 @@ QLabel* algorithms::TesterCRS::testSumCRS() {
 }
 
 QLabel* algorithms::TesterCRS::testSumQVector() {
+    QLabel* text = new QLabel();
     QString testString;
     int testSize=3;
 
