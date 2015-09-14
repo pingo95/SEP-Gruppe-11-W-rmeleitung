@@ -24,6 +24,13 @@ void presentation::UI::initHeatSources()
                                     "und dessen Wert eingeben."
                                     "Für weitere Informationen wechseln Sie in den Hilfe-Tab",widgetConfigurationHeatSources);
     labelTopHeatSource->setWordWrap(true);
+    labelKeyboardHeatSource = new QLabel("Punkte per Tastatur eingeben",widgetConfigurationHeatSources);
+        //Undo Knopf
+    buttonUndoHeatSource = new QPushButton("Zurück",widgetConfigurationHeatSources);
+    buttonUndoHeatSource->setEnabled(false);
+        //Double Spin Boxes
+    doubleSpinBoxXValueHeatSource = new QDoubleSpinBox(widgetConfigurationHeatSources);
+    doubleSpinBoxYValueHeatSource = new QDoubleSpinBox(widgetConfigurationHeatSources);
         //Tabelle
     tableWidgetHeatSources = new QTableWidget(widgetConfigurationHeatSources);
     tableWidgetHeatSources->setColumnCount(3);
@@ -36,11 +43,19 @@ void presentation::UI::initHeatSources()
     tableWidgetHeatSources->verticalHeader()->setVisible(false);
 
     tableWidgetHeatSources->horizontalHeader()->setSectionsClickable(false);
-    tableWidgetHeatSources->setRowCount(0);
+    tableWidgetHeatSources->setRowCount(1);
+    QTableWidgetItem * tmpItemPtr = new QTableWidgetItem("0");
+    tmpItemPtr->setFlags(Qt::ItemIsEnabled);
+    tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    tableWidgetHeatSources->setItem(0,UI::ColumnID,tmpItemPtr);
+    tmpItemPtr = new QTableWidgetItem("0");
+    tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable ); //| Qt::ItemIsEditable
+    tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    tableWidgetHeatSources->setItem(0,UI::ColumnValue,tmpItemPtr);
+    tmpItemPtr = new QTableWidgetItem("-");
+    tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    tableWidgetHeatSources->setItem(0,UI::ColumnVisibility,tmpItemPtr);
 
-        //Undo Knopf
-    buttonUndoHeatSource = new QPushButton("Zurück",widgetConfigurationHeatSources);
-    buttonUndoHeatSource->setEnabled(false);
 
         //Für Platte
     QVector<double> ticks,ticksColorBar;
@@ -104,8 +119,8 @@ void presentation::UI::initHeatSources()
     plateHeatSource->plotLayout()->addElement(0,1,colorScaleHeatSource);
     colorScaleHeatSource->setLabel("Conductivity");
 
-    QCPMarginGroup group(plateHeatSource);
-    colorScaleHeatSource->setMarginGroup(QCP::msTop|QCP::msBottom, &group);
+    QCPMarginGroup * group = new QCPMarginGroup(plateHeatSource);
+    colorScaleHeatSource->setMarginGroup(QCP::msTop|QCP::msBottom, group);
     colorScaleHeatSource->setGradient(QCPColorGradient::gpThermal);
     colorScaleHeatSource->setDataRange(QCPRange(0,MaxTemperature));
     colorScaleHeatSource->setDataRange(QCPRange(0,MaxTemperature));
@@ -113,7 +128,7 @@ void presentation::UI::initHeatSources()
     colorScaleHeatSource->axis()->setAutoTickLabels(false);
     colorScaleHeatSource->axis()->setTickVector(ticksColorBar);
     colorScaleHeatSource->axis()->setTickVectorLabels(labelsColorBar);
-    plateHeatSource->axisRect()->setMarginGroup(QCP::msTop|QCP::msBottom, &group);
+    plateHeatSource->axisRect()->setMarginGroup(QCP::msTop|QCP::msBottom, group);
     plateHeatSource->axisRect()->setBackground(
                 QBrush(colorScaleHeatSource->gradient().color(0,QCPRange(0,MaxTemperature),false)));
 
@@ -126,6 +141,9 @@ void presentation::UI::initHeatSources()
     subGridLayoutKonfigurationHeatSources->addWidget(tableWidgetHeatSources,1,0);
     subGridLayoutKonfigurationHeatSources->addWidget(plateHeatSource,1,1);
     subGridLayoutKonfigurationHeatSources->addWidget(buttonUndoHeatSource,1,2);
+    subGridLayoutKonfigurationHeatSources->addWidget(labelKeyboardHeatSource,2,0);
+    subGridLayoutKonfigurationHeatSources->addWidget(doubleSpinBoxXValueHeatSource,2,1);
+    subGridLayoutKonfigurationHeatSources->addWidget(doubleSpinBoxYValueHeatSource,2,2);
 }
 
 void presentation::UI::initHelp()
@@ -311,7 +329,18 @@ void presentation::UI::initThermalConductivities()
 
     //    tableWidgetThermalConductivities->horizontalHeader()->setSelectionBehavior(QAbstractItemView::SelectItems);
     tableWidgetThermalConductivities->horizontalHeader()->setSectionsClickable(false);
-    tableWidgetThermalConductivities->setRowCount(0);
+    tableWidgetThermalConductivities->setRowCount(1);
+    QTableWidgetItem * tmpItemPtr = new QTableWidgetItem("0");
+    tmpItemPtr->setFlags(Qt::ItemIsEnabled);
+    tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    tableWidgetThermalConductivities->setItem(0,UI::ColumnID,tmpItemPtr);
+    tmpItemPtr = new QTableWidgetItem("1");
+    tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable ); //| Qt::ItemIsEditable
+    tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    tableWidgetThermalConductivities->setItem(0,UI::ColumnValue,tmpItemPtr);
+    tmpItemPtr = new QTableWidgetItem("-");
+    tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    tableWidgetThermalConductivities->setItem(0,UI::ColumnVisibility,tmpItemPtr);
 
         //UndoKnopf
     buttonUndoThermalConductivity = new QPushButton("Zurück",widgetConfigurationThermalConductivities);
@@ -378,15 +407,15 @@ void presentation::UI::initThermalConductivities()
     plateThermalConductivity->plotLayout()->addElement(0,1,colorScaleThermalConductivity);
     colorScaleThermalConductivity->setLabel("Conductivity");
 
-    QCPMarginGroup group(plateThermalConductivity);
-    colorScaleThermalConductivity->setMarginGroup(QCP::msTop|QCP::msBottom, &group);
+    QCPMarginGroup * group = new QCPMarginGroup(plateThermalConductivity);
+    colorScaleThermalConductivity->setMarginGroup(QCP::msTop|QCP::msBottom, group);
     colorScaleThermalConductivity->setGradient(QCPColorGradient::gpThermal);
     colorScaleThermalConductivity->setDataRange(QCPRange(0,MaxConductivity));
     colorScaleThermalConductivity->axis()->setAutoTicks(false);
     colorScaleThermalConductivity->axis()->setAutoTickLabels(false);
     colorScaleThermalConductivity->axis()->setTickVector(ticksColorBar);
     colorScaleThermalConductivity->axis()->setTickVectorLabels(labelsColorBar);
-    plateThermalConductivity->axisRect()->setMarginGroup(QCP::msTop|QCP::msBottom, &group);
+    plateThermalConductivity->axisRect()->setMarginGroup(QCP::msTop|QCP::msBottom, group);
     plateThermalConductivity->axisRect()->setBackground(
                 QBrush(colorScaleThermalConductivity->gradient().color(1,QCPRange(0,MaxConductivity),false)));
         //Layout
@@ -440,7 +469,8 @@ void presentation::UI::initVisualization()
         //Schieberegler
     sliderVideo = new QSlider(widgetVisualisation);
     sliderVideo->setEnabled(false);
-    sliderVideo->setMaximumHeight(200);
+    sliderVideo->setMinimumHeight(20);
+    //sliderVideo->setMaximumHeight(200);
     sliderVideo->setOrientation(Qt::Horizontal);
     sliderVideo->setSingleStep(1);
     connect(sliderVideo,SIGNAL(sliderMoved(int)),this,SLOT(updateLcdSlot(int)));
@@ -486,9 +516,9 @@ void presentation::UI::initVisualization()
     plateVideo->plotLayout()->addElement(0,1,colorScaleVideo);
     colorScaleVideo->setLabel("Temperatur (in K)");
 
-    QCPMarginGroup group(plateVideo);
-    colorScaleVideo->setMarginGroup(QCP::msTop|QCP::msBottom, &group);
-    plateVideo->axisRect()->setMarginGroup(QCP::msTop|QCP::msBottom, &group);
+    QCPMarginGroup * group = new QCPMarginGroup(plateVideo);
+    plateVideo->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, group);
+    colorScaleVideo->setMarginGroup(QCP::msBottom | QCP::msTop, group);
     colorScaleVideo->setGradient(QCPColorGradient::gpThermal);
     colorScaleVideo->setDataRange(QCPRange(0,MaxTemperature));
     colorScaleVideo->axis()->setAutoTicks(false);
@@ -508,10 +538,9 @@ void presentation::UI::initVisualization()
     plateVideo->setMinimumHeight(650);
     buttonPlayVideo->setMaximumWidth(100);
     subGridLayoutVisualisation->addWidget(labelTopVisualization,0,0,1,2);
-//    subGridLayoutVisualisation->addWidget(colorBarVisualization,1,0);
-    subGridLayoutVisualisation->addWidget(plateVideo,1,1);
-    subGridLayoutVisualisation->addWidget(buttonPlayVideo,1,2);
-    subGridLayoutVisualisation->addWidget(sliderVideo,2,1);
-    subGridLayoutVisualisation->addWidget(lcdNumberVideoTimestep,2,2);
+    subGridLayoutVisualisation->addWidget(plateVideo,1,0);
+    subGridLayoutVisualisation->addWidget(buttonPlayVideo,1,1);
+    subGridLayoutVisualisation->addWidget(sliderVideo,2,0);
+    subGridLayoutVisualisation->addWidget(lcdNumberVideoTimestep,2,1);
     subGridLayoutVisualisation->addItem(spacerItemTabVisualisation,3,0);
 }

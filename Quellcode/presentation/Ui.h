@@ -145,6 +145,10 @@ class Controller;
         QDoubleSpinBox * doubleSpinBoxRightBoundary;
         QDoubleSpinBox * doubleSpinBoxT;
         QDoubleSpinBox * doubleSpinBoxTopBoundary;
+        QDoubleSpinBox * doubleSpinBoxXValueHeatSource;
+        QDoubleSpinBox * doubleSpinBoxYValueHeatSource;
+        QDoubleSpinBox * doubleSpinBoxXValueThermalConductivity;
+        QDoubleSpinBox * doubleSpinBoxYValueThermalConductivity;
 
         //SpinBoxes
         QSpinBox * spinBoxM;
@@ -174,6 +178,8 @@ class Controller;
         QLabel * labelTopSimulation;
         QLabel * labelTopThermalConductivity;
         QLabel * labelTopVisualization;
+        QLabel * labelKeyboardHeatSource;
+        QLabel * labelKeyboardThermalConductivity;
 
         //Plots + Plottables
         QCustomPlot * plateHeatSource;
