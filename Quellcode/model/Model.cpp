@@ -5,7 +5,7 @@
 #include "../algorithms/Gaussseidel.h"
 #include "../presentation/Ui.h"
 
-model::Model::Model() : bottomBoundary(300), heatSourcesCount(0), initialValue(100),
+model::Model::Model() : bottomBoundary(300), heatSourcesCount(0), initialValue(300),
     leftBoundary(300), m(2), n(3), result(NULL), resultM(0), resultN(0), resultT(0.),
     rightBoundary(300), selectedIntMethod(NULL), selectedIterativeSolver("Jacobi"),
     simulated(false), simulating(false), T(1.), thermalConductivitesCount(0),
@@ -40,6 +40,9 @@ model::Model::~Model()
     if(simulated)
     {
         delete consecutiveTempArray;
+        for(long i = 0; i < resultM; ++i)
+            delete result[i];
+        delete result;
     }
 }
 
@@ -297,7 +300,7 @@ void model::Model::simulate()
 
     // Deltas
     double deltaX = (double) 1 / (double) (n-1); // <--- Besprechen das -1
-//    double deltaT = T / (double) (m-1);
+    double deltaT = T / (double) (m-1);
 
     // konsekutives Anlegen
     consecutiveTempArray = new double [m*n*n];
@@ -329,8 +332,9 @@ void model::Model::simulate()
         for(long k = 0; k < n; ++k)
             result[i][n-1][k] = topBoundary;
     }
-
-//    QString vorher = printResult("Vorher");
+    QString vorher;
+    if(m<=5 && n <=10)
+        vorher = printResult("Vorher");
 
     bool reusable;
     QVector<double> neededTimeSteps;
@@ -350,10 +354,10 @@ void model::Model::simulate()
             Area* heatSource = *it;
             double xMin, xMax, yMin, yMax;
             heatSource->getTransitiveRectangle(xMin,xMax,yMin,yMax);
-            long xLBound = ceil(xMin/deltaX),
-                    xUBound = floor(xMax/deltaX),
-                    yLBound = ceil(yMin/deltaX),
-                    yUBound = floor(yMax/deltaX);
+            long xLBound = xMin > 0 ? ceil(xMin/deltaX) : 1,
+                    xUBound = xMax < 1 ? floor(xMax/deltaX) : n-2,
+                    yLBound = yMin > 0 ? ceil(yMin/deltaX) : 1,
+                    yUBound = yMax < 1 ? floor(yMax/deltaX) : n-2;
             for(long i = xLBound; i <= xUBound; ++i)
                 for(long j = yLBound; j <= yUBound; ++j)
                     if(heatSource->insidePoint(i*deltaX,j*deltaX))
@@ -364,7 +368,7 @@ void model::Model::simulate()
 
     // Anlegen der Vektoren für Wärmequellen und Wärmeleitkoeffizienten
     QVector<QVector<double> *> heatSourcesGrid(neededTimeStepsCount,NULL);
-    QVector<double> thermalConductivitiesGrid(n*n,1);
+    QVector<double> thermalConductivitiesGrid(n*n,0.01);
 
     for(int i = 0; i < neededTimeStepsCount; ++i)
         heatSourcesGrid[i] = new QVector<double>(n*n,0);
@@ -390,11 +394,12 @@ void model::Model::simulate()
                         thermalConductivitiesGrid[i+j*n] = conductivity;    //thermalConductivity.getValue(i*deltaX,j*deltaX);
         }
     }
-
-//    QString koeff = "\nAusgabe der Koeffizienten:\nm = " + QString::number(m)
-//            + "\nn = " + QString::number(n) + "\nT = " + QString::number(T)
-//            + "\ndeltaX = " + QString::number(1./(double)n) + "\ndeltaT = "
-//            + QString::number(T/(double)m) + "\nWerte:\n" + printVector(thermalConductivitiesGrid, "Koeffizienten:");
+    QString koeff;
+    if(m<=5 && n <=10)
+         koeff = "\nAusgabe der Koeffizienten:\nm = " + QString::number(m)
+            + "\nn = " + QString::number(n) + "\nT = " + QString::number(T)
+            + "\ndeltaX = " + QString::number(deltaX) + "\ndeltaT = "
+            + QString::number(deltaT) + "\nWerte:\n" + printVector(thermalConductivitiesGrid, "Koeffizienten:");
 
     // Intialisieren der Int-Methode
     selectedIntMethod->setUp(n,m,T,thermalConductivitiesGrid);
@@ -418,15 +423,16 @@ void model::Model::simulate()
             }
         }
     }
-//    for(int i = 0; i < neededTimeStepsCount; ++i)
-//        koeff += printVector((*(heatSourcesGrid[i])),"Quelle Nr." + QString::number(i));
+    if(m<=5 && n <=10)
+        for(int i = 0; i < neededTimeStepsCount; ++i)
+            koeff += printVector((*(heatSourcesGrid[i])),"Quelle Nr." + QString::number(i));
 
     // Iterationsvektoren
     QVector<double> * step1 = new QVector<double>(n*n,0);
     QVector<double> * swapTmp;
     for(long i = 0; i < n; ++i)
         for(long j = 0; j < n; ++j)
-            (*step1)[i+j*n] = result[0][i][j];
+            (*step1)[i*n + j] = result[0][i][j];
     QVector<double> * step2 = new QVector<double>(*step1);
 
     // Berechnen der Zeitschritte
@@ -435,7 +441,7 @@ void model::Model::simulate()
         selectedIntMethod->calcNextStep(*step1,*step2,heatSourcesGrid);
         for(long j = 1; j < n-1; ++j)       //<-- Achtung fall Ränder nicht mehr const
             for(long k = 1; k < n-1; ++k)
-                result[i][j][k] = (*step2)[j+k*n];
+                result[i][j][k] = (*step2)[k+j*n];
         swapTmp = step1;
         step1 = step2;
         step2 = swapTmp;
@@ -489,14 +495,17 @@ void model::Model::simulate()
         }
     }
 
-//    QString nachher = printResult("Nachher");
 
-//    QDialog diag;
-//    QGridLayout layout(&diag);
-//    layout.addWidget(new QLabel(koeff,&diag),0,0);
-//    layout.addWidget(new QLabel(vorher,&diag),0,1);
-//    layout.addWidget(new QLabel(nachher,&diag),0,2);
-//    diag.exec();
+    QDialog diag;
+    QGridLayout layout(&diag);
+    if(m<=5 && n <=10)
+    {
+        QString nachher = printResult("Nachher");
+        layout.addWidget(new QLabel(koeff,&diag),0,0);
+        layout.addWidget(new QLabel(vorher,&diag),0,1);
+        layout.addWidget(new QLabel(nachher,&diag),0,2);
+        diag.exec();
+    }
 
     resultM = m;
     resultN = n;

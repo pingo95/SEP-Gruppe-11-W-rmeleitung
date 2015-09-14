@@ -1,6 +1,6 @@
 #include "Iterativesolver.h"
 
-algorithms::IterativeSolver::IterativeSolver() : eps(1e-5), itCount(0), maxIt(1000){
+algorithms::IterativeSolver::IterativeSolver() : eps(1e-10), itCount(0), maxIt(1000){
 
 }
 

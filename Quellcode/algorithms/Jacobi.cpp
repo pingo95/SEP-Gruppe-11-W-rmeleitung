@@ -6,6 +6,7 @@ algorithms::Jacobi::Jacobi() {
 
 void algorithms::Jacobi::solve(QVector<double> &result, CRS const &matrix, QVector<double> const &rhs) {
     double rel=1, sum;
+    itCount = 0;
     QVector<double> res(result.size()), old = result;
     int lb, ub, ub1;
     while(rel-eps>0 && itCount < maxIt) {

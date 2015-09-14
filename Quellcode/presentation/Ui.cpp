@@ -13,7 +13,7 @@ presentation::UI::UI(QWidget *parent)
     tabWidgetMain->setMinimumSize(350,250);
 
     //Layout anwenden
-    this->setMinimumSize(750,750);
+    this->setMinimumSize(760,760);
     setCentralWidget(tabWidgetMain);
 
     //initFunktionen
@@ -178,7 +178,7 @@ void presentation::UI::setModel(model::Model *model)
     for(; it < tmpList.end(); ++it)
         comboBoxIterativeSolver->addItem((*it));
     // Initialen Tab laden/updaten
-//    updateNotification();
+    updateNotification();
 }
 
 void presentation::UI::updateVisibilityHeatSource(const int pos)
@@ -189,7 +189,7 @@ void presentation::UI::updateVisibilityHeatSource(const int pos)
     if(ok)
     {
         visibilityHeatSources[id] = visible;
-        plateHeatSource->graph(pos)->setVisible(visible);
+        plateHeatSource->graph(pos-1)->setVisible(visible);
     }
 }
 
@@ -201,7 +201,7 @@ void presentation::UI::updateVisibilityThermalConductivity(const int pos)
     if(ok)
     {
         visibilityThermalConductivities[id] = visible;
-        plateThermalConductivity->graph(pos)->setVisible(visible);
+        plateThermalConductivity->graph(pos-1)->setVisible(visible);
     }
 }
 
@@ -238,31 +238,13 @@ void presentation::UI::updateNotification()
     }
 }
 
-#include <qthread.h>
-
-class I : public QThread
-{
-public:
-    static void sleep(unsigned long secs) {
-        QThread::sleep(secs);
-    }
-    static void msleep(unsigned long msecs) {
-        QThread::msleep(msecs);
-    }
-    static void usleep(unsigned long usecs) {
-        QThread::usleep(usecs);
-    }
-};
-
 void presentation::UI::visualizeState(int frame)
 {
     for(int i = 0; i < resultN; ++i)
         for(int j = 0; j < resultN; ++j)
             colorMapVideo->data()->setCell(i,j,result[frame][i][j]);
-//    colorMapVideo->rescaleDataRange(true);
     plateVideo->replot();
     updateLcdSlot(frame);
-    I::msleep(50);
 
 }
 
@@ -317,7 +299,7 @@ void presentation::UI::updateHeatSources()
 
     for(int j = 0; j < rowCount-1; ++j)
         plateHeatSource->graph(j)->setVisible(false);
-    for(int j = rowCount; j < hSCount; ++j)
+    for(int j = rowCount-1; j < hSCount; ++j)
         plateHeatSource->addGraph();
     it = heatSources.begin();
     for(int j = 0; j < hSCount; ++j,++it)
@@ -364,16 +346,17 @@ void presentation::UI::updateSimulating()
     {
         buttonSimulate->setEnabled(false);
         labelTopSimulation->setText("Es wird zur Zeit simuliert.");
-        progressBarProgress->setValue(progressBarProgress->minimum());
+        progressBarProgress->setValue(0);
+
     }
     else
     {
        buttonSimulate->setEnabled(true);
        labelTopSimulation->setText("Dies ist der Tab zur Einstellung der Simulation.\n"
                                    "Für weitere Informationen wechseln Sie in den Hilfe-Tab.");
+       if(model->getSimulated())
+           progressBarProgress->setValue(progressBarProgress->maximum());
     }
-    if(model->getSimulated())
-        progressBarProgress->setValue(progressBarProgress->maximum());
     comboBoxIntMethod->setCurrentText(model->getSelectedIntMethod());
     comboBoxIterativeSolver->setCurrentText(model->getSelectedIterativeSolver());
 }
@@ -407,12 +390,11 @@ void presentation::UI::updateThermalConductivties()
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetThermalConductivities->setItem(i,UI::ColumnID,tmpItemPtr);
             double value = (*it)->getValue();
-            tmpItemPtr = new
-                    QTableWidgetItem(QString::number(value));
+            tmpItemPtr = new QTableWidgetItem(QString::number(value));
             tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetThermalConductivities->setItem(i,UI::ColumnValue,tmpItemPtr);
-            tmpItemPtr = new QTableWidgetItem();
+            tmpItemPtr = new QTableWidgetItem(" ");
             tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
             tmpItemPtr->setCheckState(visibilityThermalConductivities.value((*it)->getID(),true) ? Qt::Checked : Qt::Unchecked);
             tableWidgetThermalConductivities->setItem(i,UI::ColumnVisibility,tmpItemPtr);
@@ -427,11 +409,11 @@ void presentation::UI::updateThermalConductivties()
         }
     }
     QCPRange range(0,MaxConductivity);
-//    colorScaleThermalConductivity->setDataRange(range);
+    colorScaleThermalConductivity->setDataRange(range);
 
     for(int j = 0; j < rowCount-1; ++j)
         plateThermalConductivity->graph(j)->setVisible(false);
-    for(int j = rowCount; j < tCCount; ++j)
+    for(int j = rowCount-1; j < tCCount; ++j)
         plateThermalConductivity->addGraph();
     it = thermalConductivities.begin();
     for(int j = 0; j < tCCount; ++j,++it)
@@ -477,28 +459,8 @@ void presentation::UI::updateVisualization()
         result = model->getResult();
         sliderVideo->setRange(0,resultM-1);
         sliderVideo->setValue(0);
-//        resultM = 700;
-//        resultN = 500;
-//        result  = new double** [resultM];
+
         colorMapVideo->data()->setSize(resultN,resultN);
-
-
-//        for(int i = 0; i < resultM; ++i)
-//        {
-//            result[i] = new double* [resultN];
-//            for(int j = 0; j < resultN; ++j)
-//                result[i][j] = new double [resultN];
-//        }
-//        for(int i = 0; i < resultM; ++i)
-//        {
-//            for(int j = 0; j < resultN; ++j)
-//            {
-//                for(int k = 0; k< resultN; ++k)
-//                    result[i][j][k] =  cos(i) / (double) (resultM) * (double) j+1 * (double) k * MaxTemperature / (double)resultN / (double) resultN;
-//            }
-//        }
-//        while(plateVideo->graphCount() < resultN * resultN)
-//            plateVideo->addGraph();
 
         visualizeState(0);
     }
@@ -507,97 +469,6 @@ void presentation::UI::updateVisualization()
         labelTopVisualization->setText("Ergebnisse können erst angezeigt werden, "
                                        "nachdem eine Simulation durchgeführt wurde.");
     }
-}
-
-QColor presentation::UI::valueToColour(const double value, model::Model::AreaTyp type)
-{
-    double maxValue;
-    switch(type)
-    {
-    case model::Model::HeatSourceArea:
-        maxValue = MaxTemperature;
-        break;
-    case model::Model::ThermalConductivityArea:
-        maxValue = MaxConductivity;
-        break;
-    default:
-        return Qt::blue;
-    }
-    // value in Wellenlänge umwandeln
-    double minValue = 0, minVisibleWaveLength = 380.0,
-            maxVisibileWaveLength = 780.0;
-    double wavelength = (value - minValue) / (maxValue - minValue) *
-            (maxVisibileWaveLength - minVisibleWaveLength) + minVisibleWaveLength;
-
-    // Wellenlänge in rgb umrechnen
-    double factor = 1.0, red, green, blue;
-    if(wavelength >= 380 && wavelength <= 439)
-    {
-        red = -(wavelength -440) / (440-380);
-        green = 0.0;
-        blue = 1.0;
-    }
-    else
-    {
-        if(wavelength >= 440 && wavelength <= 489)
-        {
-            red = 0.0;
-            green = (wavelength - 440) / (490 - 440);
-            blue = 1.0;
-        }
-        else
-        {
-            if(wavelength >= 490 && wavelength <= 509)
-            {
-                red = 0.0;
-                green = 1.0;
-                blue = -(wavelength - 510) / (510 - 490);
-            }
-            else
-            {
-                if(wavelength >= 510 && wavelength <= 579)
-                {
-                    red = (wavelength - 510) / (580 - 510);
-                    green = 1.0;
-                    blue = 0.0;
-                }
-                else
-                {
-                    if(wavelength >= 580 && wavelength <= 644)
-                    {
-                        red = 1.0;
-                        green = -(wavelength - 645) / (645 - 580);
-                        blue = 0.0;
-                    }
-                    else
-                    {
-                        if(wavelength >= 645 && wavelength <= 780)
-                        {
-                            red = 1.0;
-                            green = 0.0;
-                            blue = 0.0;
-                        }
-                        else
-                        {
-                            red = 0.0;
-                            green = 0.0;
-                            blue = 0.0;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    if(wavelength >= 380 && wavelength <= 419)
-        factor = 0.3 + 0.7*(wavelength - 380) / (420 -380);
-    else
-        if(wavelength >= 701 && wavelength <= 780)
-            factor = 0.3 + 0.7*(780 -  wavelength) / (780 - 700);
-    double gamma = 0.8, intensityMax = 255;
-    int r = round(intensityMax * pow(red*factor,gamma));
-    int g = round(intensityMax * pow(green*factor,gamma));
-    int b = round(intensityMax * pow(blue*factor,gamma));
-    return QColor(r,g,b,255);
 }
 
 void presentation::UI::transformTabIDSlot(int targetTab)

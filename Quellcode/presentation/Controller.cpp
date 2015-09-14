@@ -166,7 +166,7 @@ void presentation::Controller::heatSourceValueChangedSlot(int pos, int column)
         // Temperatur in Kelvin
         if(value >= 0 && value <= ui->MaxTemperature && ok)
             // Wert updaten
-            model->updateHeatSourceValue(pos,value);
+            model->updateHeatSourceValue(pos-1,value);
         else
         {
             // Fehlermeldung ausgeben:
@@ -510,7 +510,7 @@ void presentation::Controller::thermalConductivitiesClickSlot(QMouseEvent *event
                               "neue Wärmeleitkoeffizienten-Gebiet ein:";
                 bool ok;
                 double value = userInput->getDouble(ui,title,text,0,0,
-                                                    ui->MaxConductivity,2,&ok);
+                                                    ui->MaxConductivity,5,&ok);
 
                 // Gebiet zum Modell hinzufügen
                 loopBack = true;
@@ -578,7 +578,7 @@ void presentation::Controller::thermalConductivityValueChangedSlot(int pos, int 
         double value = text.toDouble(&ok);
         // Temperatur in Kelvin
         if(value > 0 && value <= ui->MaxConductivity && ok)
-            model->updateThermalConductivityValue(pos,value);
+            model->updateThermalConductivityValue(pos-1,value);
         else
         {
             // Fehlermeldung ausgeben:
