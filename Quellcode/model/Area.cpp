@@ -1,6 +1,5 @@
 #include "Area.h"
 QMap<int, int> model::Area::idCounters;
-#include <iostream>
 
 // Vorbedingung: xKoords und yKoords wurden vorher mit validateArea getestet
 // Erstellt neues Gebiet:
@@ -116,7 +115,6 @@ bool model::Area::insidePoint(double const xKoord, double const yKoord) const
     double dX = 2, dY = 1.5;
     // Der Strahl darf keine Ecke des Gebietes treffen
     bool hit;
-    static int misscount = 0;
     do
     {
         hit = false;
@@ -132,7 +130,6 @@ bool model::Area::insidePoint(double const xKoord, double const yKoord) const
             // Falls ja, neuen zufälligen Strahl
             dX = (double) qrand() / RAND_MAX + 1; //Zufallszahl zwischen 1 und 2 damit der Strahl den Rand erreicht
             dY = (double) qrand() / RAND_MAX * 2 - 1;
-            std::cout << "Neuer Strahl muss ausgewaehlt werden, Count : " << ++misscount << std::endl;
         }
     }
     while(hit);

@@ -10,10 +10,10 @@ presentation::UI::UI(QWidget *parent)
 
     //TabBar initialisieren
     tabWidgetMain = new QTabWidget(this);
-    tabWidgetMain->setMinimumSize(350,250);
+//    tabWidgetMain->setMinimumSize(350,250);
 
     //Layout anwenden
-    this->setMinimumSize(760,760);
+    this->setMinimumSize(1360,765);
     setCentralWidget(tabWidgetMain);
 
     //initFunktionen
@@ -177,6 +177,11 @@ void presentation::UI::setModel(model::Model *model)
     it = tmpList.begin();
     for(; it < tmpList.end(); ++it)
         comboBoxIterativeSolver->addItem((*it));
+
+    connect(model,SIGNAL(beginningStage(QString,int)),this,SLOT(nextProgresseStage(QString,int)));
+    connect(model,SIGNAL(finishedStep(int)),progressBarProgress,SLOT(setValue(int)));
+    connect(model,SIGNAL(simulationUpdate(QString)),simulationLog,SLOT(append(QString)));
+
     // Initialen Tab laden/updaten
     updateNotification();
 }
@@ -299,7 +304,7 @@ void presentation::UI::updateHeatSources()
 
     for(int j = 0; j < rowCount-1; ++j)
         plateHeatSource->graph(j)->setVisible(false);
-    for(int j = rowCount-1; j < hSCount; ++j)
+    for(int j = plateHeatSource->graphCount(); j < hSCount; ++j)
         plateHeatSource->addGraph();
     it = heatSources.begin();
     for(int j = 0; j < hSCount; ++j,++it)
@@ -346,8 +351,6 @@ void presentation::UI::updateSimulating()
     {
         buttonSimulate->setEnabled(false);
         labelTopSimulation->setText("Es wird zur Zeit simuliert.");
-        progressBarProgress->setValue(0);
-
     }
     else
     {
@@ -355,7 +358,8 @@ void presentation::UI::updateSimulating()
        labelTopSimulation->setText("Dies ist der Tab zur Einstellung der Simulation.\n"
                                    "Für weitere Informationen wechseln Sie in den Hilfe-Tab.");
        if(model->getSimulated())
-           progressBarProgress->setValue(progressBarProgress->maximum());
+           labelProgressBar->setText("Simulation beendet");
+
     }
     comboBoxIntMethod->setCurrentText(model->getSelectedIntMethod());
     comboBoxIterativeSolver->setCurrentText(model->getSelectedIterativeSolver());
@@ -413,8 +417,9 @@ void presentation::UI::updateThermalConductivties()
 
     for(int j = 0; j < rowCount-1; ++j)
         plateThermalConductivity->graph(j)->setVisible(false);
-    for(int j = rowCount-1; j < tCCount; ++j)
+    for(int j = plateThermalConductivity->graphCount(); j < tCCount; ++j)
         plateThermalConductivity->addGraph();
+
     it = thermalConductivities.begin();
     for(int j = 0; j < tCCount; ++j,++it)
     {
@@ -479,4 +484,12 @@ void presentation::UI::transformTabIDSlot(int targetTab)
 void presentation::UI::updateLcdSlot(int value)
 {
     lcdNumberVideoTimestep->display((double) value * resultT/(double)(resultM-1));
+}
+
+void presentation::UI::nextProgresseStage(QString stage, int maximum)
+{
+    progressBarProgress->setMaximum(maximum);
+    progressBarProgress->setMinimum(0);
+    progressBarProgress->setValue(0);
+    labelProgressBar->setText(stage);
 }

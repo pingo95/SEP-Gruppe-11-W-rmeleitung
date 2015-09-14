@@ -13,7 +13,7 @@
 #include <QTableWidget>
 #include <QTabWidget>
 #include <QWidget>
-
+#include <QTextEdit>
 #include <QGridLayout>
 #include <QVBoxLayout>
 
@@ -76,6 +76,8 @@ class Controller;
         void updateVisibilityThermalConductivity(int const pos);
         void visualizeState(int const frame);
 
+    signals:
+        void subTabChange(int targetTab);
 
     private:
         void initConfiguration();
@@ -94,9 +96,8 @@ class Controller;
     private slots:
         void transformTabIDSlot(int targetTab);
         void updateLcdSlot(int value);
+        void nextProgresseStage(QString stage, int maximum);
 
-    signals:
-        void subTabChange(int targetTab);
 
 
 
@@ -226,6 +227,9 @@ class Controller;
 
         //ProgressBar
         QProgressBar * progressBarProgress;
+
+        //TextEdit
+        QTextEdit * simulationLog;
 
         //ComboBoxes
         QComboBox * comboBoxIntMethod;

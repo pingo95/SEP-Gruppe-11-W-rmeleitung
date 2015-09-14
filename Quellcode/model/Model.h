@@ -1,5 +1,6 @@
 #ifndef MODEL_H
 #define MODEL_H
+#include <QWidget>
 #include <QString>
 #include <QMap>
 #include "Area.h"
@@ -11,8 +12,10 @@ namespace presentation{
 
 namespace model {
 
-    class Model
+    class Model : public QWidget
     {
+        Q_OBJECT
+
     // Enum:
     public:
         enum AreaTyp
@@ -69,9 +72,14 @@ namespace model {
         void updateHeatSourceValue(int const pos, double const value);
         void updateThermalConductivityValue(int const pos, double const newValue);
 
+    signals:
+        void beginningStage(QString stage, int stepCount);
+        void finishedStep(int step);
+        void simulationUpdate(QString message);
+
     private:
-        QString printResult(QString title);
-        QString printVector(QVector<double> const & vec, QString title);
+        QString printResult();
+        QString printVector(QVector<double> const & vec);
 
     //Attribute:
     private:

@@ -355,7 +355,9 @@ void presentation::UI::initSimulating()
     comboBoxIterativeSolver = new QComboBox(widgetSimulation);
         //Progressbar
     progressBarProgress =  new QProgressBar(widgetSimulation);
-
+    //TextEdit
+    simulationLog = new QTextEdit(widgetSimulation);
+    simulationLog->setReadOnly(true);
         //Buttons
     buttonSimulate = new QPushButton("Simulieren",widgetSimulation);
     buttonSimulate->setMaximumWidth(150);
@@ -376,6 +378,7 @@ void presentation::UI::initSimulating()
     subGridLayoutSimulation->addWidget(labelSelectSolver,5,0);
     subGridLayoutSimulation->addWidget(comboBoxIterativeSolver,5,1);
     subGridLayoutSimulation->addWidget(buttonSimulate,6,1);
+    subGridLayoutSimulation->addWidget(simulationLog,7,0,1,3);
     subGridLayoutSimulation->addItem(spacerItemTabSimulationHorizontal,7,0);
     subGridLayoutSimulation->addItem(spacerItemTabSimulationVertical,1,2,7,1);
     subGridLayoutSimulation->addWidget(labelProgressBar,8,0);
