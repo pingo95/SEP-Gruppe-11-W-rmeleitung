@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/Icons">
+        <file alias="2down">2down.PNG</file>
+        <file alias="2up">2up.PNG</file>
+        <file alias="down">down.PNG</file>
+        <file alias="up">up.PNG</file>
+        <file alias="redo">redoPfeil.png</file>
+        <file alias="undo">undoPfeil.png</file>
+        <file alias="play">play.png</file>
+    </qresource>
+</RCC>

@@ -15,6 +15,7 @@
 #include <QWidget>
 
 #include <QGridLayout>
+#include <QVBoxLayout>
 
 #include "../model/Area.h"
 #include "Qcustomplot.h"
@@ -89,7 +90,6 @@ class Controller;
         void updateSimulating();
         void updateThermalConductivties();
         void updateVisualization();
-        QColor valueToColour(double const value, model::Model::AreaTyp type);
 
     private slots:
         void transformTabIDSlot(int targetTab);
@@ -108,7 +108,7 @@ class Controller;
         double *** result;
         int resultM;
         int resultN;
-        int resultT;
+        double resultT;
         int const tabMainCount;
         QMap<int,bool> visibilityHeatSources;
         QMap<int,bool> visibilityThermalConductivities;
@@ -131,12 +131,26 @@ class Controller;
         QGridLayout * subGridLayoutKonfigurationThermalConductivities;
         QGridLayout * subGridLayoutSimulation;
         QGridLayout * subGridLayoutVisualisation;
+        QGridLayout * subsubGridLayoutHeatSource;
 
         //Buttons
         QPushButton * buttonPlayVideo;
         QPushButton * buttonSimulate;
         QPushButton * buttonUndoHeatSource;
         QPushButton * buttonUndoThermalConductivity;
+        QPushButton * buttonRedoHeatSource;
+        QPushButton * buttonRedoThermalConductivity;
+        QPushButton * buttonClearHeatSource;
+        QPushButton * buttonClearThermalConductivity;
+        QPushButton * buttonConfirmHeatSource;
+        QPushButton * buttonUpHeatSource;
+        QPushButton * buttonUpAllHeatSource;
+        QPushButton * buttonDownHeatSource;
+        QPushButton * buttonDownAllHeatSource;
+        QPushButton * buttonDiscardHeatSource;
+        QPushButton * buttonDeleteHeatSource;
+        QPushButton * buttonSaveHeatSource;
+        QPushButton * buttonLoadHeatSource;
 
         //DoubleSpinBoxes
         QDoubleSpinBox * doubleSpinBoxBottomBoundary;
@@ -153,6 +167,15 @@ class Controller;
         //SpinBoxes
         QSpinBox * spinBoxM;
         QSpinBox * spinBoxN;
+
+        //RadioButtons
+        QGroupBox * groupBoxAuswaehlenHeatSource;
+        QGroupBox * groupBoxHeatSource;
+        QRadioButton * radioButtonAuswahl;
+        QRadioButton * radioButtonNeuesGebiet;
+        QRadioButton * radioButtonPunktweise;
+        QRadioButton * radioButtonGebietsweise;
+
 
         //Labels
         QLabel * labelBottomBoundary;
@@ -180,6 +203,8 @@ class Controller;
         QLabel * labelTopVisualization;
         QLabel * labelKeyboardHeatSource;
         QLabel * labelKeyboardThermalConductivity;
+        QLabel * labelKeyboardHeatSourceXValue;
+        QLabel * labelKeyboardHeatSourceYValue;
 
         //Plots + Plottables
         QCustomPlot * plateHeatSource;
@@ -223,6 +248,10 @@ class Controller;
         QSpacerItem * spacerItemTabSimulationVertical;
         QSpacerItem * spacerItemTabVisualisation;
         QSpacerItem * spacerItemTabHelp;
+        QSpacerItem * spaceritemHeatSource;
+        QSpacerItem * spaceritem2HeatSource;
+        QSpacerItem * spaceritem3HeatSource;
+        QSpacerItem * spaceritem4HeatSource;
     };
 
 }

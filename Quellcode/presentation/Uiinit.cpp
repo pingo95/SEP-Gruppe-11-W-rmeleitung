@@ -17,6 +17,7 @@ void presentation::UI::initHeatSources()
 
         //Layouts initialisieren
     subGridLayoutKonfigurationHeatSources = new QGridLayout(widgetConfigurationHeatSources);
+    subsubGridLayoutHeatSource = new QGridLayout();
 
         //Labels
     labelTopHeatSource = new QLabel("Dies ist der Tab zur Einstellung der Wärmequellen. \n"
@@ -25,12 +26,64 @@ void presentation::UI::initHeatSources()
                                     "Für weitere Informationen wechseln Sie in den Hilfe-Tab",widgetConfigurationHeatSources);
     labelTopHeatSource->setWordWrap(true);
     labelKeyboardHeatSource = new QLabel("Punkte per Tastatur eingeben",widgetConfigurationHeatSources);
-        //Undo Knopf
-    buttonUndoHeatSource = new QPushButton("Zurück",widgetConfigurationHeatSources);
+    labelKeyboardHeatSourceXValue = new QLabel("x-Wert eingeben",widgetConfigurationHeatSources);
+    labelKeyboardHeatSourceYValue = new QLabel("y-Wert eingeben",widgetConfigurationHeatSources);
+        //Push buttons
+    buttonUndoHeatSource = new QPushButton(widgetConfigurationHeatSources);
+    buttonUndoHeatSource->setIcon(QIcon(":/Icons/undo"));
+    buttonUndoHeatSource->setText("Zurück");
+    buttonUndoHeatSource->setIconSize(QSize(15,15));
     buttonUndoHeatSource->setEnabled(false);
+    buttonRedoHeatSource = new QPushButton(widgetConfigurationHeatSources);
+    buttonRedoHeatSource->setIcon(QIcon(":/Icons/redo"));
+    buttonRedoHeatSource->setText("Vor");
+    buttonRedoHeatSource->setIconSize(QSize(15,15));
+    buttonRedoHeatSource->setEnabled(false);
+    buttonClearHeatSource = new QPushButton("Alle Gebiete löschen",widgetConfigurationHeatSources);
+    buttonClearHeatSource->setEnabled(false);
+    buttonConfirmHeatSource = new QPushButton("Bestätigen",widgetConfigurationHeatSources);
+    buttonUpHeatSource = new QPushButton(widgetConfigurationHeatSources);
+    buttonUpHeatSource->setIcon(QIcon(":/Icons/up"));
+    buttonUpHeatSource->setIconSize(QSize(15,15));
+    buttonUpAllHeatSource = new QPushButton(widgetConfigurationHeatSources);
+    buttonUpAllHeatSource->setIcon(QIcon(":/Icons/2up"));
+    buttonUpHeatSource->setIconSize(QSize(15,15));
+    buttonDownHeatSource = new QPushButton(widgetConfigurationHeatSources);
+    buttonDownHeatSource->setIcon(QIcon(":/Icons/down"));
+    buttonDownHeatSource->setIconSize(QSize(15,15));
+    buttonDownAllHeatSource = new QPushButton(widgetConfigurationHeatSources);
+    buttonDownAllHeatSource->setIcon(QIcon(":/Icons/2down"));
+    buttonDownAllHeatSource->setIconSize(QSize(15,15));
+    buttonDiscardHeatSource = new QPushButton("Verwerfen",widgetConfigurationHeatSources);
+    buttonDiscardHeatSource->setEnabled(false);
+    buttonDeleteHeatSource = new QPushButton("Gebiet löschen",widgetConfigurationHeatSources);
+    buttonDeleteHeatSource->setEnabled(false);
+    buttonSaveHeatSource = new QPushButton("Speichern",widgetConfigurationHeatSources);
+    buttonLoadHeatSource = new QPushButton("Laden",widgetConfigurationHeatSources);
         //Double Spin Boxes
     doubleSpinBoxXValueHeatSource = new QDoubleSpinBox(widgetConfigurationHeatSources);
     doubleSpinBoxYValueHeatSource = new QDoubleSpinBox(widgetConfigurationHeatSources);
+        //Radio Buttons
+    groupBoxAuswaehlenHeatSource = new QGroupBox(widgetConfigurationHeatSources);
+    radioButtonAuswahl = new QRadioButton("Auswählen",widgetConfigurationHeatSources);
+    radioButtonNeuesGebiet = new QRadioButton("Neues Gebiet",widgetConfigurationHeatSources);
+    radioButtonNeuesGebiet->setChecked(true);
+    QVBoxLayout *vbox = new QVBoxLayout;
+    vbox->addWidget(radioButtonAuswahl);
+    vbox->addWidget(radioButtonNeuesGebiet);
+    vbox->addStretch(1);
+    groupBoxAuswaehlenHeatSource->setLayout(vbox);
+
+    groupBoxHeatSource = new QGroupBox(widgetConfigurationHeatSources);
+    radioButtonPunktweise = new QRadioButton("Punktweise",widgetConfigurationHeatSources);
+    radioButtonGebietsweise = new QRadioButton("Gebietsweise",widgetConfigurationHeatSources);
+    radioButtonGebietsweise->setChecked(true);
+    QVBoxLayout *vbox2 = new QVBoxLayout;
+    vbox2->addWidget(radioButtonGebietsweise);
+    vbox2->addWidget(radioButtonPunktweise);
+    vbox2->addStretch(1);
+    groupBoxHeatSource->setLayout(vbox2);
+
         //Tabelle
     tableWidgetHeatSources = new QTableWidget(widgetConfigurationHeatSources);
     tableWidgetHeatSources->setColumnCount(3);
@@ -136,14 +189,43 @@ void presentation::UI::initHeatSources()
     plateHeatSource->setMinimumWidth(350);
     tableWidgetHeatSources->setMinimumWidth(142);
     tableWidgetHeatSources->setMaximumWidth(142);
-    buttonUndoHeatSource->setMaximumWidth(100);
+    spaceritemHeatSource = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
+    spaceritem2HeatSource = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
+    spaceritem3HeatSource = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
+    spaceritem4HeatSource = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
+
     subGridLayoutKonfigurationHeatSources->addWidget(labelTopHeatSource,0,0,1,3);
-    subGridLayoutKonfigurationHeatSources->addWidget(tableWidgetHeatSources,1,0);
-    subGridLayoutKonfigurationHeatSources->addWidget(plateHeatSource,1,1);
-    subGridLayoutKonfigurationHeatSources->addWidget(buttonUndoHeatSource,1,2);
-    subGridLayoutKonfigurationHeatSources->addWidget(labelKeyboardHeatSource,2,0);
-    subGridLayoutKonfigurationHeatSources->addWidget(doubleSpinBoxXValueHeatSource,2,1);
-    subGridLayoutKonfigurationHeatSources->addWidget(doubleSpinBoxYValueHeatSource,2,2);
+    subGridLayoutKonfigurationHeatSources->addWidget(tableWidgetHeatSources,1,0,6,1);
+    subGridLayoutKonfigurationHeatSources->addWidget(buttonUpAllHeatSource,2,1);
+    subGridLayoutKonfigurationHeatSources->addWidget(buttonUpHeatSource,3,1);
+    subGridLayoutKonfigurationHeatSources->addWidget(buttonDownHeatSource,4,1);
+    subGridLayoutKonfigurationHeatSources->addWidget(buttonDownAllHeatSource,5,1);
+    subGridLayoutKonfigurationHeatSources->addItem(spaceritem2HeatSource,6,1);
+    subGridLayoutKonfigurationHeatSources->addWidget(plateHeatSource,1,2,6,1);
+
+    subGridLayoutKonfigurationHeatSources->addLayout(subsubGridLayoutHeatSource,1,4);
+    //subsubGridLayoutHeatSource->addItem(spaceritem3HeatSource,0,0);
+    subsubGridLayoutHeatSource->addWidget(groupBoxAuswaehlenHeatSource,1,0,1,2);
+    subsubGridLayoutHeatSource->addWidget(labelKeyboardHeatSource,2,0,1,2);
+    subsubGridLayoutHeatSource->addWidget(labelKeyboardHeatSourceXValue,3,0);
+    subsubGridLayoutHeatSource->addWidget(doubleSpinBoxXValueHeatSource,3,1);
+    subsubGridLayoutHeatSource->addWidget(labelKeyboardHeatSourceYValue,4,0);
+    subsubGridLayoutHeatSource->addWidget(doubleSpinBoxYValueHeatSource,4,1);
+    subsubGridLayoutHeatSource->addWidget(buttonConfirmHeatSource,5,0,1,2);  
+    //subsubGridLayoutHeatSource->addItem(spaceritem4HeatSource,6,0);
+    subsubGridLayoutHeatSource->addWidget(groupBoxHeatSource,7,0,1,2);
+    subsubGridLayoutHeatSource->addWidget(buttonUndoHeatSource,8,0);
+    subsubGridLayoutHeatSource->addWidget(buttonRedoHeatSource,9,0);
+    subsubGridLayoutHeatSource->addWidget(buttonDiscardHeatSource,10,0);
+    subsubGridLayoutHeatSource->addWidget(buttonDeleteHeatSource,11,0);
+    subsubGridLayoutHeatSource->addWidget(buttonClearHeatSource,12,0);
+    subsubGridLayoutHeatSource->addItem(spaceritemHeatSource,13,0);
+    subsubGridLayoutHeatSource->addWidget(buttonSaveHeatSource,14,0);
+    subsubGridLayoutHeatSource->addWidget(buttonLoadHeatSource,15,0);
+
+    subGridLayoutKonfigurationHeatSources->setColumnStretch(2,50);
+    subsubGridLayoutHeatSource->setColumnStretch(0,120);
+    subsubGridLayoutHeatSource->setColumnStretch(1,100);
 }
 
 void presentation::UI::initHelp()
@@ -334,7 +416,7 @@ void presentation::UI::initThermalConductivities()
     tmpItemPtr->setFlags(Qt::ItemIsEnabled);
     tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     tableWidgetThermalConductivities->setItem(0,UI::ColumnID,tmpItemPtr);
-    tmpItemPtr = new QTableWidgetItem("1");
+    tmpItemPtr = new QTableWidgetItem("0.01");
     tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable ); //| Qt::ItemIsEditable
     tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     tableWidgetThermalConductivities->setItem(0,UI::ColumnValue,tmpItemPtr);
@@ -464,7 +546,10 @@ void presentation::UI::initVisualization()
     labelTopVisualization = new QLabel("",widgetVisualisation);
     labelTopVisualization->setWordWrap(true);
         //Buttons
-    buttonPlayVideo = new QPushButton("Play",widgetVisualisation);
+    buttonPlayVideo = new QPushButton(widgetVisualisation);
+    buttonPlayVideo->setIcon(QIcon(":/Icons/play"));
+    buttonPlayVideo->setText("Play");
+    buttonPlayVideo->setIconSize(QSize(15,15));
     buttonPlayVideo->setEnabled(false);
         //Schieberegler
     sliderVideo = new QSlider(widgetVisualisation);
@@ -528,7 +613,7 @@ void presentation::UI::initVisualization()
     colorScaleVideo->axis()->setRange(QCPRange(0,MaxTemperature));
 
     // Color Map
-    colorMapVideo = new QCPColorMap(plateVideo->xAxis,plateVideo->yAxis);
+    colorMapVideo = new QCPColorMap(plateVideo->yAxis,plateVideo->xAxis);
     colorMapVideo->data()->setRange(QCPRange(0,1),QCPRange(0,1));
     colorMapVideo->setColorScale(colorScaleVideo);
     plateVideo->addPlottable(colorMapVideo);

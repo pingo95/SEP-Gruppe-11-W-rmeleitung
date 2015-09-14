@@ -43,3 +43,6 @@ HEADERS  += \
     model/Model.h \
     presentation/Ui.h \
     presentation/Controller.h
+
+RESOURCES += \
+    presentation/uiicons.qrc
