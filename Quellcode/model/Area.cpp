@@ -1,5 +1,6 @@
 #include "Area.h"
 QMap<int, int> model::Area::idCounters;
+#include <iostream>
 
 // Vorbedingung: xKoords und yKoords wurden vorher mit validateArea getestet
 // Erstellt neues Gebiet:
@@ -105,42 +106,42 @@ bool model::Area::insidePoint(double const xKoord, double const yKoord) const
 {
     // 1. Testet, ob der Punkt auf einer Kante des Gebietes liegt:
     for(int i = 0; i < xKoords.size()-1; ++i){
-        if(onLine(xKoords[i],yKoords[i],xKoords[i+1],yKoords[i+1],
-                  xKoord,yKoord)) return true;
+        if(onLine(xKoords[i],yKoords[i],xKoords[i+1],yKoords[i+1],xKoord,yKoord))
+            return true;
     }
-    // 2. Strahl-Methode (Jordan) in einer Ignorier-Variante:
-    bool ignore = false;
-    int count = 0;
-    // Annahme: Gebiete sind immer Teilmengen von [0,1] x [0,1]
-    // Der Strahl geht vom Punkt aus parallel zur x-Achse bis zur rechten Begrenzung (x=1),
-    // d.h. entspricht der Strecke xr
-    // Die Gerade geht von der linken Begrenzung (x=0) parallel zur x-Achse durch den Punkt
-    // bis zur rechten Begrenzung, d.h. entspricht der Strecke lr
-    double lX = -1, lY = yKoord,    // zur Sicherheit -1 & 2 da plot unsichtbar-klickbar
-           rX = 2, rY = yKoord;
-    for(int i = 1; i < xKoords.size(); ++i)
+
+    // Strahl-Methode(Jordan)
+    // Erste Auswahl des Strahls mit Richtung (c,s) ausgehend von (xKoord,yKoord)
+    // Annahme: Gebiete sind immer Teilmengen von [0,1] x [0,1] und xKoord,yKoord € [0,1]
+    double dX = 2, dY = 1.5;
+    // Der Strahl darf keine Ecke des Gebietes treffen
+    bool hit;
+    static int misscount = 0;
+    do
     {
-        if(ignore)
-        {
-            if(onLine(lX,lY,rX,rY,xKoords[i],yKoords[i])) ignore = true;
-            else
+        hit = false;
+        // Daher überprüfen ob eine Ecke getroffen:
+        for(int i = 0; i < xKoords.size()-1; ++i)
+            if(dX*(yKoords[i]-yKoord) == dY*(xKoords[i]-xKoord))
             {
-                if(segIntersect(xKoords[i-1],yKoords[i-1],xKoords[i],yKoords[i],
-                                lX,lY,rX,rY)) ++count;
-                ignore = false;
+                hit = true;
+                break;
             }
-        }
-        else
+        if(hit)
         {
-            if(onLine(xKoord,yKoord,rX,rY,xKoords[i],yKoords[i])) ignore = true;
-            else
-            {
-                if(segIntersect(xKoords[i-1],yKoords[i-1],xKoords[i],yKoords[i],
-                                xKoord,yKoord,rX,rY)) ++count;
-                ignore = false;
-            }
+            // Falls ja, neuen zufälligen Strahl
+            dX = (double) qrand() / RAND_MAX + 1; //Zufallszahl zwischen 1 und 2 damit der Strahl den Rand erreicht
+            dY = (double) qrand() / RAND_MAX * 2 - 1;
+            std::cout << "Neuer Strahl muss ausgewaehlt werden, Count : " << ++misscount << std::endl;
         }
     }
+    while(hit);
+
+    // Wenn gültiger Strahl gefunden, zählen wie oft der Strahl die Kanten schneidet
+    int count = 0;
+    for(int i = 0; i < xKoords.size()-1; ++i)
+        if(segIntersect(xKoords[i],yKoords[i],xKoords[i+1],yKoords[i+1],xKoord,yKoord,xKoord+dX,yKoord+dY))
+            ++count;
     return count % 2 == 1;
 }
 
@@ -160,7 +161,9 @@ double model::Area::direction(double const pX, double const pY,
                               double const qX, double const qY,
                               double const rX, double const rY)
 {
-    return det(qX-pX,qY-pY,rX-qX,rY-qY);
+    double d = det(qX-pX,qY-pY,rX-qX,rY-qY);
+    d = qAbs(d) < 1e-10 ? 0 : d;
+    return d;
 }
 
 //Testet ob x auf pq liegt:
@@ -168,7 +171,9 @@ bool model::Area::onLine(double const pX, double const pY,
                          double const qX, double const qY,
                          double const xX, double const xY)
 {
-    return direction(pX,pY,qX,qY,xX,xY) == 0 && onSegment(pX,pY,qX,qY,xX,xY);
+    double d = direction(pX,pY,qX,qY,xX,xY);
+    bool o = onSegment(pX,pY,qX,qY,xX,xY);
+    return d == 0 && o;
 }
 
 // Vorbedingung: x liegt auf (der Verlängerung von) pq

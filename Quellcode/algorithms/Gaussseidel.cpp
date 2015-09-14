@@ -30,7 +30,7 @@ void algorithms::GaussSeidel::solve(QVector<double> &result, CRS const &matrix, 
                     sum += matrix.getValue(i,j) * result[j];
                 }
             }
-            result[i] = 1/matrix.getValue(i,i) * (rhs[i]-sum);
+            result[i] = 1./matrix.getValue(i,i) * (rhs[i]-sum);
         }
         res = matrix*result;
         res = algorithms::addQVectors(res,(-1.) * rhs);

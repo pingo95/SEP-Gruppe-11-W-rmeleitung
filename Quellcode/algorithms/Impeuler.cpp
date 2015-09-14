@@ -5,8 +5,7 @@ algorithms::ImpEuler::ImpEuler() {
 }
 
 void algorithms::ImpEuler::calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources) const {
-    QVector<double> heatSources1 = *(heatSources[0]);
-    QVector<double> rhs = algorithms::addQVectors(last,this->deltaT * heatSources1);
+    QVector<double> rhs = algorithms::addQVectors(last,this->deltaT * *(heatSources[0]));
     this->activeIterativeSolver->solve(next,this->itMatrix,rhs);
 }
 

@@ -14,6 +14,11 @@ int main(int argc, char *argv[])
     algorithms::TesterIterativeSolver testerIterativeSolver;
     TesterArea testerArea;
 
+    int mainTabCount = -1;
+
+    w.addMainTab("CRS Tests");
+    ++mainTabCount;
+
     QWidget * crsTest1 = testerCRS.testA1();
     QWidget * crsTest2 = testerCRS.testDiag();
     QWidget * crsTest3 = testerCRS.testDiffCRS();
@@ -24,23 +29,36 @@ int main(int argc, char *argv[])
     QWidget * crsTest8 = testerCRS.testScalarQVector();
     QWidget * crsTest9 = testerCRS.testSumCRS();
     QWidget * crsTest10 = testerCRS.testSumQVector();
+
+    w.addSubTab(crsTest1,"A1",mainTabCount);
+    w.addSubTab(crsTest2,"Diag",mainTabCount);
+    w.addSubTab(crsTest3,"DiffCRS",mainTabCount);
+    w.addSubTab(crsTest4,"Eye",mainTabCount);
+    w.addSubTab(crsTest5,"MultCRSCRS",mainTabCount);
+    w.addSubTab(crsTest6,"MultCRSQVector",mainTabCount);
+    w.addSubTab(crsTest7,"ScalarCRS",mainTabCount);
+    w.addSubTab(crsTest8,"ScalarQVector",mainTabCount);
+    w.addSubTab(crsTest9,"SumCRS",mainTabCount);
+    w.addSubTab(crsTest10,"SumQVector",mainTabCount);
+
+
+    w.addMainTab("Solver Tests");
+    ++mainTabCount;
+
     QWidget * solverTest1 = testerIterativeSolver.testSolveJacobi();
     QWidget * solverTest2 = testerIterativeSolver.testSolveGaussSeidel();
-    QWidget * areaTest1 = testerArea.robustnessWorstCaseTesterInsidePoint();
 
-    w.addNewTab(crsTest1,"A1");
-    w.addNewTab(crsTest2,"Diag");
-    w.addNewTab(crsTest3,"DiffCRS");
-    w.addNewTab(crsTest4,"Eye");
-    w.addNewTab(crsTest5,"MultCRSCRS");
-    w.addNewTab(crsTest6,"MultCRSQVector");
-    w.addNewTab(crsTest7,"ScalarCRS");
-    w.addNewTab(crsTest8,"ScalarQVector");
-    w.addNewTab(crsTest9,"SumCRS");
-    w.addNewTab(crsTest10,"SumQVector");
-    w.addNewTab(solverTest1,"Jacobi");
-    w.addNewTab(solverTest2,"GaussSeidel");
-    w.addNewTab(areaTest1,"InsidePointTest1");
+    w.addSubTab(solverTest1,"Jacobi",mainTabCount);
+    w.addSubTab(solverTest2,"GaussSeidel",mainTabCount);
+
+    w.addMainTab("Area Tests");
+    ++mainTabCount;
+
+    QWidget * areaTest1 = testerArea.robustnessWorstCaseTesterInsidePoint();
+    QWidget * areaTest2 = testerArea.robustnessWorstCaseTesterOnLine();
+
+    w.addSubTab(areaTest1,"InsidePointTest1",mainTabCount);
+    w.addSubTab(areaTest2,"OnLineTest1",mainTabCount);
 
     w.show();
 

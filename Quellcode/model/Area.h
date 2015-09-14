@@ -25,7 +25,7 @@ namespace model {
         bool insidePoint(double const xKoord, double const yKoord) const;
         void setValue(double const value);
 
-    private:
+    public:
         explicit Area();
         static double det(double const pX, double const pY,
                           double const qX, double const qY);
@@ -53,6 +53,7 @@ namespace model {
         double value;
         QVector<double> const xKoords;
         QVector<double> const yKoords;
+
     };
 
 }

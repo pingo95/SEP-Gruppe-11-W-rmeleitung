@@ -12,8 +12,14 @@ TestWindow::~TestWindow()
 
 }
 
-void TestWindow::addNewTab(QWidget* text, QString name) {
-    tabWidget->addTab(text,name);
+void TestWindow::addMainTab(QString name) {
+    subTabs.append(new QTabWidget(tabWidget));
+    tabWidget->addTab(subTabs.last(),name);
+}
+
+void TestWindow::addSubTab(QWidget *newTab, QString name, int index)
+{
+    subTabs[index]->addTab(newTab,name);
 }
 
 QString algorithms::printCRS(algorithms::CRS const &matrix) {

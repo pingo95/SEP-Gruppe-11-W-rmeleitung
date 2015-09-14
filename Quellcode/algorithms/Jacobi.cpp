@@ -30,7 +30,7 @@ void algorithms::Jacobi::solve(QVector<double> &result, CRS const &matrix, QVect
                     sum += matrix.getValue(i,j) * old[j];
                 }
             }
-            result[i] = 1/matrix.getValue(i,i) * (rhs[i]-sum);
+            result[i] = 1./matrix.getValue(i,i) * (rhs[i]-sum);
         }
         old = result;
         res = matrix*result;

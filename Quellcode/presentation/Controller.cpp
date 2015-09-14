@@ -352,7 +352,7 @@ void presentation::Controller::playVideoSlot()
         // Schrittanzahl aus dem Modell
         int end = model->getResultM();
         // Video als Serie von einzel Bildern visualisieren
-        for(int i = start; i <= end; ++i)
+        for(int i = start; i < end; ++i)
             ui->visualizeState(i);
     }
     else
@@ -364,6 +364,8 @@ void presentation::Controller::playVideoSlot()
         errorMessages->setDetailedText("");
         errorMessages->exec();
     }
+//    for(int i=0;i<700;++i)
+//        ui->visualizeState(i);
 }
 
 // Dieser Slot updatet die gewählte Integrationsmethode, dies ist aber nur

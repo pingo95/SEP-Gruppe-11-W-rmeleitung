@@ -19,7 +19,8 @@ public:
     TestWindow(QWidget *parent = 0);
     ~TestWindow();
 
-    void addNewTab(QWidget *newTab, QString name);
+    void addMainTab(QString name);
+    void addSubTab(QWidget *newTab, QString name, int index);
 
 private:
     QWidget* centralWidget;
@@ -27,6 +28,7 @@ private:
     QVBoxLayout* mainLayout;
     QGridLayout* subGridLayout;
     QTabWidget* tabWidget;
+    QVector<QTabWidget*> subTabs;
 };
 
 namespace algorithms {

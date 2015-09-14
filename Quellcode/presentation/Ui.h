@@ -92,7 +92,8 @@ class Controller;
         QColor valueToColour(double const value, model::Model::AreaTyp type);
 
     private slots:
-        void transformTabID(int targetTab);
+        void transformTabIDSlot(int targetTab);
+        void updateLcdSlot(int value);
 
     signals:
         void subTabChange(int targetTab);
@@ -174,13 +175,17 @@ class Controller;
         QLabel * labelTopThermalConductivity;
         QLabel * labelTopVisualization;
 
-        //Plate
-        QCustomPlot * colorBarHeatSource;
-        QCustomPlot * colorBarThermalConductivity;
-        QCustomPlot * colorBarVisualization;
+        //Plots + Plottables
         QCustomPlot * plateHeatSource;
         QCustomPlot * plateThermalConductivity;
         QCustomPlot * plateVideo;
+
+        QCPColorMap * colorMapVideo;
+
+        QCPColorScale * colorScaleHeatSource;
+        QCPColorScale * colorScaleThermalConductivity;
+        QCPColorScale * colorScaleVideo;
+
 
         //Slider
         QSlider * sliderVideo;

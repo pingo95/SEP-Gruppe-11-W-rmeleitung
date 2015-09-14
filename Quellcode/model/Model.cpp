@@ -5,9 +5,9 @@
 #include "../algorithms/Gaussseidel.h"
 #include "../presentation/Ui.h"
 
-model::Model::Model() : bottomBoundary(100), heatSourcesCount(0), initialValue(500),
-    leftBoundary(200), m(2), n(3), result(NULL), resultM(0), resultN(0), resultT(0.),
-    rightBoundary(400), selectedIntMethod(NULL), selectedIterativeSolver("Jacobi"),
+model::Model::Model() : bottomBoundary(300), heatSourcesCount(0), initialValue(100),
+    leftBoundary(300), m(2), n(3), result(NULL), resultM(0), resultN(0), resultT(0.),
+    rightBoundary(300), selectedIntMethod(NULL), selectedIterativeSolver("Jacobi"),
     simulated(false), simulating(false), T(1.), thermalConductivitesCount(0),
     topBoundary(300), ui(NULL)
 {
@@ -289,15 +289,15 @@ void model::Model::setUI(presentation::UI *ui)
 void model::Model::simulate()
 {
     simulating = true;
-
+    ui->updateNotification();
     //altes ergebniss löschen
     if(simulated)
         delete consecutiveTempArray;
 
 
     // Deltas
-    double deltaX = (double) 1 / (double) (n); // <--- Besprechen das -1
-//    double deltaT = T / (double) (m);
+    double deltaX = (double) 1 / (double) (n-1); // <--- Besprechen das -1
+//    double deltaT = T / (double) (m-1);
 
     // konsekutives Anlegen
     consecutiveTempArray = new double [m*n*n];
@@ -330,7 +330,7 @@ void model::Model::simulate()
             result[i][n-1][k] = topBoundary;
     }
 
-    QString vorher = printResult("Vorher");
+//    QString vorher = printResult("Vorher");
 
     bool reusable;
     QVector<double> neededTimeSteps;
@@ -391,10 +391,10 @@ void model::Model::simulate()
         }
     }
 
-    QString koeff = "\nAusgabe der Koeffizienten:\nm = " + QString::number(m)
-            + "\nn = " + QString::number(n) + "\nT = " + QString::number(T)
-            + "\ndeltaX = " + QString::number(1./(double)n) + "\ndeltaT = "
-            + QString::number(T/(double)m) + "\n Werte:\n" + printVector(thermalConductivitiesGrid, "Koeffizienten:");
+//    QString koeff = "\nAusgabe der Koeffizienten:\nm = " + QString::number(m)
+//            + "\nn = " + QString::number(n) + "\nT = " + QString::number(T)
+//            + "\ndeltaX = " + QString::number(1./(double)n) + "\ndeltaT = "
+//            + QString::number(T/(double)m) + "\nWerte:\n" + printVector(thermalConductivitiesGrid, "Koeffizienten:");
 
     // Intialisieren der Int-Methode
     selectedIntMethod->setUp(n,m,T,thermalConductivitiesGrid);
@@ -418,16 +418,16 @@ void model::Model::simulate()
             }
         }
     }
-    for(int i = 0; i < neededTimeStepsCount; ++i)
-        koeff += printVector((*(heatSourcesGrid[i])),"Quelle Nr." + QString::number(i));
+//    for(int i = 0; i < neededTimeStepsCount; ++i)
+//        koeff += printVector((*(heatSourcesGrid[i])),"Quelle Nr." + QString::number(i));
 
     // Iterationsvektoren
     QVector<double> * step1 = new QVector<double>(n*n,0);
-    QVector<double> * step2 = new QVector<double>(n*n,0);
     QVector<double> * swapTmp;
     for(long i = 0; i < n; ++i)
         for(long j = 0; j < n; ++j)
             (*step1)[i+j*n] = result[0][i][j];
+    QVector<double> * step2 = new QVector<double>(*step1);
 
     // Berechnen der Zeitschritte
     for(long i = 1; i < m; ++i)
@@ -489,14 +489,14 @@ void model::Model::simulate()
         }
     }
 
-    QString nachher = printResult("Nachher");
+//    QString nachher = printResult("Nachher");
 
-    QDialog diag;
-    QGridLayout layout(&diag);
-    layout.addWidget(new QLabel(koeff,&diag),0,0);
-    layout.addWidget(new QLabel(vorher,&diag),0,1);
-    layout.addWidget(new QLabel(nachher,&diag),0,2);
-    diag.exec();
+//    QDialog diag;
+//    QGridLayout layout(&diag);
+//    layout.addWidget(new QLabel(koeff,&diag),0,0);
+//    layout.addWidget(new QLabel(vorher,&diag),0,1);
+//    layout.addWidget(new QLabel(nachher,&diag),0,2);
+//    diag.exec();
 
     resultM = m;
     resultN = n;
@@ -532,7 +532,9 @@ void model::Model::updateThermalConductivityValue(int pos, double newValue)
 QString model::Model::printResult(QString title)
 {
     QString output(title);
-    output += "\nAusgabe der Ergebnis-Matrix:\n";
+    output += "\nAusgabe der Ergebnis-Matrix:\nIntMethode: "
+            + intMethods.key(selectedIntMethod) + "\nLöser: "
+            + selectedIterativeSolver + "\n\n";
     for(long i = 0; i < m; ++i)
     {
         output += "m = " + QString::number(i) + "\n";

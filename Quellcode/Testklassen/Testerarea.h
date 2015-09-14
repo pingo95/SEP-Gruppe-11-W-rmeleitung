@@ -13,7 +13,9 @@ public:
     TesterArea();
     ~TesterArea();
 
+    void rotateKoords(QVector<double> & x, QVector<double> & y, int angle);
     QWidget *robustnessWorstCaseTesterInsidePoint();
+    QWidget *robustnessWorstCaseTesterOnLine();
 private :
     QTabWidget * tabs;
     QVector<QWidget *> ptr;
