@@ -38,7 +38,7 @@ presentation::UI::~UI()
 void presentation::UI::drawPartialHeatSource(QVector<double> const & partialAreaX,
                                              QVector<double> const & partialAreaY)
 {
-    if(plateHeatSource->graphCount() <= tableWidgetHeatSources->rowCount())
+    if(plateHeatSource->graphCount() <= tableWidgetHeatSources->rowCount()-1)
         plateHeatSource->addGraph();
     plateHeatSource->graph(plateHeatSource->graphCount()-1)->setData(partialAreaX,partialAreaY);
     QCPScatterStyle myScatter;
@@ -57,7 +57,7 @@ void presentation::UI::drawPartialHeatSource(QVector<double> const & partialArea
 void presentation::UI::drawPartialThermalConductivity(QVector<double> const & partialAreaX,
                                                       QVector<double> const & partialAreaY)
 {
-    if(plateThermalConductivity->graphCount() <= tableWidgetThermalConductivities->rowCount())
+    if(plateThermalConductivity->graphCount() <= tableWidgetThermalConductivities->rowCount()-1)
         plateThermalConductivity->addGraph();
     plateThermalConductivity->graph(plateThermalConductivity->graphCount()-1)->setData(partialAreaX,partialAreaY);
     QCPScatterStyle myScatter;
@@ -270,11 +270,11 @@ void presentation::UI::updateHeatSources()
 {   
     int hSCount = model->getHeatSourcesCount();
     int rowCount = tableWidgetHeatSources->rowCount();
-    tableWidgetHeatSources->setRowCount(hSCount);
-    int tmpBound = hSCount <= rowCount ? hSCount : rowCount;
+    tableWidgetHeatSources->setRowCount(hSCount+1);
+    int tmpBound = hSCount+1 <= rowCount ? hSCount+1 : rowCount;
     QList<model::Area*> const & heatSources = model->getHeatSources();
     QList<model::Area*>::const_iterator it = heatSources.begin();
-    int i = 0;
+    int i = 1;
     for(; i < tmpBound; ++i, ++it)
     {
         tableWidgetHeatSources->item(i,UI::ColumnID)->
@@ -284,9 +284,9 @@ void presentation::UI::updateHeatSources()
         tableWidgetHeatSources->item(i,UI::ColumnVisibility)->
                 setCheckState(visibilityHeatSources.value((*it)->getID(),true) ? Qt::Checked : Qt::Unchecked);
     }
-    if(hSCount >= rowCount)
+    if(hSCount+1 >= rowCount)
     {
-        for(; i < hSCount; ++i, ++it)
+        for(; i < hSCount+1; ++i, ++it)
         {
             QTableWidgetItem * tmpItemPtr = new
                     QTableWidgetItem(QString::number((*it)->getID()));
@@ -315,9 +315,9 @@ void presentation::UI::updateHeatSources()
 
     QCPRange range(0,MaxTemperature);
 
-    for(int j = 0; j < rowCount; ++j)
+    for(int j = 0; j < rowCount-1; ++j)
         plateHeatSource->graph(j)->setVisible(false);
-    for(int j = rowCount+1; j < hSCount; ++j)
+    for(int j = rowCount; j < hSCount; ++j)
         plateHeatSource->addGraph();
     it = heatSources.begin();
     for(int j = 0; j < hSCount; ++j,++it)
@@ -382,11 +382,11 @@ void presentation::UI::updateThermalConductivties()
 {
     int tCCount = model->getThermalConductivitiesCount();
     int rowCount = tableWidgetThermalConductivities->rowCount();
-    tableWidgetThermalConductivities->setRowCount(tCCount);
-    int tmpBound = tCCount <= rowCount ? tCCount : rowCount;
+    tableWidgetThermalConductivities->setRowCount(tCCount+1);
+    int tmpBound = tCCount+1 <= rowCount ? tCCount+1 : rowCount;
     QList<model::Area*> const & thermalConductivities = model->getThermalConductivities();
     QList<model::Area*>::const_iterator it = thermalConductivities.begin();
-    int i = 0;
+    int i = 1;
     for (; i < tmpBound; ++i, ++it)
     {
         double value = (*it)->getValue();
@@ -397,9 +397,9 @@ void presentation::UI::updateThermalConductivties()
         tableWidgetThermalConductivities->item(i,UI::ColumnVisibility)->
                 setCheckState(visibilityThermalConductivities.value((*it)->getID(),true) ? Qt::Checked : Qt::Unchecked);
     }
-    if (tCCount >= rowCount)
+    if (tCCount+1 >= rowCount)
     {
-        for(; i < tCCount; ++i, ++it)
+        for(; i < tCCount+1; ++i, ++it)
         {
             QTableWidgetItem * tmpItemPtr = new
                     QTableWidgetItem(QString::number((*it)->getID()));
@@ -429,9 +429,9 @@ void presentation::UI::updateThermalConductivties()
     QCPRange range(0,MaxConductivity);
 //    colorScaleThermalConductivity->setDataRange(range);
 
-    for(int j = 0; j < rowCount; ++j)
+    for(int j = 0; j < rowCount-1; ++j)
         plateThermalConductivity->graph(j)->setVisible(false);
-    for(int j = rowCount+1; j < tCCount; ++j)
+    for(int j = rowCount; j < tCCount; ++j)
         plateThermalConductivity->addGraph();
     it = thermalConductivities.begin();
     for(int j = 0; j < tCCount; ++j,++it)
