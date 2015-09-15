@@ -150,8 +150,8 @@ class Controller;
         QPushButton * buttonDownAllHeatSource;
         QPushButton * buttonDiscardHeatSource;
         QPushButton * buttonDeleteHeatSource;
-        QPushButton * buttonSaveHeatSource;
-        QPushButton * buttonLoadHeatSource;
+        QPushButton * buttonSave;
+        QPushButton * buttonLoad;
 
         //DoubleSpinBoxes
         QDoubleSpinBox * doubleSpinBoxBottomBoundary;
@@ -164,10 +164,12 @@ class Controller;
         QDoubleSpinBox * doubleSpinBoxYValueHeatSource;
         QDoubleSpinBox * doubleSpinBoxXValueThermalConductivity;
         QDoubleSpinBox * doubleSpinBoxYValueThermalConductivity;
+        QDoubleSpinBox * doubleSpinBoxEpsilon;
 
         //SpinBoxes
         QSpinBox * spinBoxM;
         QSpinBox * spinBoxN;
+        QSpinBox * spinBoxMaxIt;
 
         //RadioButtons
         QGroupBox * groupBoxAuswaehlenHeatSource;
@@ -206,6 +208,8 @@ class Controller;
         QLabel * labelKeyboardThermalConductivity;
         QLabel * labelKeyboardHeatSourceXValue;
         QLabel * labelKeyboardHeatSourceYValue;
+        QLabel * labelMaxIt;
+        QLabel * labelEpsilon;
 
         //Plots + Plottables
         QCustomPlot * plateHeatSource;
@@ -248,8 +252,6 @@ class Controller;
         //Spaceritem
         QSpacerItem * spacerItemTabIBVHorizontal;
         QSpacerItem * spacerItemTabIBVVertical;
-        QSpacerItem * spacerItemTabSimulationHorizontal;
-        QSpacerItem * spacerItemTabSimulationVertical;
         QSpacerItem * spacerItemTabVisualisation;
         QSpacerItem * spacerItemTabHelp;
         QSpacerItem * spaceritemHeatSource;

@@ -7,5 +7,7 @@
         <file alias="redo">redoPfeil.png</file>
         <file alias="undo">undoPfeil.png</file>
         <file alias="play">play.png</file>
+        <file alias="save">Download_icon.png</file>
+        <file alias="load">Upload_icon.png</file>
     </qresource>
 </RCC>

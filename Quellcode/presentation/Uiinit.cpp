@@ -42,6 +42,7 @@ void presentation::UI::initHeatSources()
     buttonClearHeatSource = new QPushButton("Alle Gebiete löschen",widgetConfigurationHeatSources);
     buttonClearHeatSource->setEnabled(false);
     buttonConfirmHeatSource = new QPushButton("Bestätigen",widgetConfigurationHeatSources);
+
     buttonUpHeatSource = new QPushButton(widgetConfigurationHeatSources);
     buttonUpHeatSource->setIcon(QIcon(":/Icons/up"));
     buttonUpHeatSource->setIconSize(QSize(15,15));
@@ -54,12 +55,20 @@ void presentation::UI::initHeatSources()
     buttonDownAllHeatSource = new QPushButton(widgetConfigurationHeatSources);
     buttonDownAllHeatSource->setIcon(QIcon(":/Icons/2down"));
     buttonDownAllHeatSource->setIconSize(QSize(15,15));
-    buttonDiscardHeatSource = new QPushButton("Verwerfen",widgetConfigurationHeatSources);
+    QVBoxLayout * vboxButtonHeatSource = new QVBoxLayout();
+    vboxButtonHeatSource->addWidget(buttonUpAllHeatSource);
+    vboxButtonHeatSource->addWidget(buttonUpHeatSource);
+    vboxButtonHeatSource->addWidget(buttonDownHeatSource);
+    vboxButtonHeatSource->addWidget(buttonDownAllHeatSource);
+    QGroupBox * groupBoxButtonHeatSource = new QGroupBox(widgetConfigurationHeatSources);
+    groupBoxButtonHeatSource->setLayout(vboxButtonHeatSource);
+    groupBoxButtonHeatSource->setFixedHeight(200);
+
+
+    buttonDiscardHeatSource = new QPushButton("Gebiet abbrechen",widgetConfigurationHeatSources);
     buttonDiscardHeatSource->setEnabled(false);
     buttonDeleteHeatSource = new QPushButton("Gebiet löschen",widgetConfigurationHeatSources);
     buttonDeleteHeatSource->setEnabled(false);
-    buttonSaveHeatSource = new QPushButton("Speichern",widgetConfigurationHeatSources);
-    buttonLoadHeatSource = new QPushButton("Laden",widgetConfigurationHeatSources);
         //Double Spin Boxes
     doubleSpinBoxXValueHeatSource = new QDoubleSpinBox(widgetConfigurationHeatSources);
     doubleSpinBoxYValueHeatSource = new QDoubleSpinBox(widgetConfigurationHeatSources);
@@ -166,11 +175,10 @@ void presentation::UI::initHeatSources()
     plateHeatSource->yAxis2->setRange(0,1);
     plateHeatSource->yAxis2->grid()->setSubGridVisible(true);
 
-
     // Color Scale
     colorScaleHeatSource = new QCPColorScale(plateHeatSource);
     plateHeatSource->plotLayout()->addElement(0,1,colorScaleHeatSource);
-    colorScaleHeatSource->setLabel("Conductivity");
+    colorScaleHeatSource->setLabel("Wärmequellen");
 
     QCPMarginGroup * group = new QCPMarginGroup(plateHeatSource);
     colorScaleHeatSource->setMarginGroup(QCP::msTop|QCP::msBottom, group);
@@ -191,37 +199,30 @@ void presentation::UI::initHeatSources()
     tableWidgetHeatSources->setMaximumWidth(142);
     spaceritemHeatSource = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
     spaceritem2HeatSource = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
-    spaceritem3HeatSource = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
-    spaceritem4HeatSource = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
 
     subGridLayoutKonfigurationHeatSources->addWidget(labelTopHeatSource,0,0,1,3);
     subGridLayoutKonfigurationHeatSources->addWidget(tableWidgetHeatSources,1,0,6,1);
-    subGridLayoutKonfigurationHeatSources->addWidget(buttonUpAllHeatSource,2,1);
-    subGridLayoutKonfigurationHeatSources->addWidget(buttonUpHeatSource,3,1);
-    subGridLayoutKonfigurationHeatSources->addWidget(buttonDownHeatSource,4,1);
-    subGridLayoutKonfigurationHeatSources->addWidget(buttonDownAllHeatSource,5,1);
-    subGridLayoutKonfigurationHeatSources->addItem(spaceritem2HeatSource,6,1);
+//    subGridLayoutKonfigurationHeatSources->addLayout(vboxButtonHeatSource,1,1,4,1);
+    subGridLayoutKonfigurationHeatSources->addWidget(groupBoxButtonHeatSource,1,1);
+    //subGridLayoutKonfigurationHeatSources->addItem(spaceritem2HeatSource,6,1);
     subGridLayoutKonfigurationHeatSources->addWidget(plateHeatSource,1,2,6,1);
 
     subGridLayoutKonfigurationHeatSources->addLayout(subsubGridLayoutHeatSource,1,4);
-    //subsubGridLayoutHeatSource->addItem(spaceritem3HeatSource,0,0);
-    subsubGridLayoutHeatSource->addWidget(groupBoxAuswaehlenHeatSource,1,0,1,2);
-    subsubGridLayoutHeatSource->addWidget(labelKeyboardHeatSource,2,0,1,2);
-    subsubGridLayoutHeatSource->addWidget(labelKeyboardHeatSourceXValue,3,0);
-    subsubGridLayoutHeatSource->addWidget(doubleSpinBoxXValueHeatSource,3,1);
-    subsubGridLayoutHeatSource->addWidget(labelKeyboardHeatSourceYValue,4,0);
-    subsubGridLayoutHeatSource->addWidget(doubleSpinBoxYValueHeatSource,4,1);
-    subsubGridLayoutHeatSource->addWidget(buttonConfirmHeatSource,5,0,1,2);  
-    //subsubGridLayoutHeatSource->addItem(spaceritem4HeatSource,6,0);
-    subsubGridLayoutHeatSource->addWidget(groupBoxHeatSource,7,0,1,2);
-    subsubGridLayoutHeatSource->addWidget(buttonUndoHeatSource,8,0);
-    subsubGridLayoutHeatSource->addWidget(buttonRedoHeatSource,9,0);
-    subsubGridLayoutHeatSource->addWidget(buttonDiscardHeatSource,10,0);
-    subsubGridLayoutHeatSource->addWidget(buttonDeleteHeatSource,11,0);
-    subsubGridLayoutHeatSource->addWidget(buttonClearHeatSource,12,0);
-    subsubGridLayoutHeatSource->addItem(spaceritemHeatSource,13,0);
-    subsubGridLayoutHeatSource->addWidget(buttonSaveHeatSource,14,0);
-    subsubGridLayoutHeatSource->addWidget(buttonLoadHeatSource,15,0);
+    subsubGridLayoutHeatSource->addItem(spaceritemHeatSource,0,0);
+    subsubGridLayoutHeatSource->addWidget(groupBoxAuswaehlenHeatSource,1,0,2,2);
+    subsubGridLayoutHeatSource->addWidget(labelKeyboardHeatSource,3,0,1,2);
+    subsubGridLayoutHeatSource->addWidget(labelKeyboardHeatSourceXValue,4,0);
+    subsubGridLayoutHeatSource->addWidget(doubleSpinBoxXValueHeatSource,4,1);
+    subsubGridLayoutHeatSource->addWidget(labelKeyboardHeatSourceYValue,5,0);
+    subsubGridLayoutHeatSource->addWidget(doubleSpinBoxYValueHeatSource,5,1);
+    subsubGridLayoutHeatSource->addWidget(buttonConfirmHeatSource,6,0,1,2);
+    subsubGridLayoutHeatSource->addWidget(groupBoxHeatSource,8,0,2,2);
+    subsubGridLayoutHeatSource->addWidget(buttonUndoHeatSource,10,0,1,2);
+    subsubGridLayoutHeatSource->addWidget(buttonRedoHeatSource,11,0,1,2);
+    subsubGridLayoutHeatSource->addWidget(buttonDiscardHeatSource,12,0,1,2);
+    subsubGridLayoutHeatSource->addWidget(buttonDeleteHeatSource,13,0,1,2);
+    subsubGridLayoutHeatSource->addWidget(buttonClearHeatSource,14,0,1,2);
+    subsubGridLayoutHeatSource->addItem(spaceritem2HeatSource,15,0,1,2);
 
     subGridLayoutKonfigurationHeatSources->setColumnStretch(2,50);
     subsubGridLayoutHeatSource->setColumnStretch(0,120);
@@ -328,17 +329,22 @@ void presentation::UI::initSimulating()
 
     subGridLayoutSimulation = new QGridLayout(widgetSimulation);
 
-        //Layouts initialisieren
+        //Labels
     labelTopSimulation = new QLabel("",widgetSimulation);
     labelTopSimulation->setWordWrap(true);
-    labelN = new QLabel("N eingeben",widgetSimulation);
-    labelM = new QLabel("M eingeben",widgetSimulation);
-    labelT = new QLabel("T eingeben",widgetSimulation);
+    labelN = new QLabel("Stützstellen N eingeben",widgetSimulation);
+    labelM = new QLabel("Zeitschritte M eingeben",widgetSimulation);
+    labelT = new QLabel("Endzeitpunkt T eingeben",widgetSimulation);
     labelProgressBar = new QLabel("Fortschrittsbalken",widgetSimulation);
-    labelSelectIntMethod = new QLabel("IntMethod",widgetSimulation);
-    labelSelectSolver = new QLabel("Solver",widgetSimulation);
+    labelSelectIntMethod = new QLabel("Integrationsmethode auswählen",widgetSimulation);
+    labelSelectSolver = new QLabel("Löser auswählen",widgetSimulation);
+    labelEpsilon = new QLabel("Epsilon eingeben",widgetSimulation);
+    labelMaxIt = new QLabel("Maximale Iterationszahl eingeben",widgetSimulation);
         //Boxes
     doubleSpinBoxT = new QDoubleSpinBox(widgetSimulation);
+    doubleSpinBoxT->setDecimals(3);
+    doubleSpinBoxEpsilon = new QDoubleSpinBox(widgetSimulation);
+    spinBoxMaxIt = new QSpinBox(widgetSimulation);
     spinBoxM = new QSpinBox(widgetSimulation);
     spinBoxM->setMinimum(0);
     spinBoxM->setMaximum(800);
@@ -360,31 +366,52 @@ void presentation::UI::initSimulating()
     simulationLog->setReadOnly(true);
         //Buttons
     buttonSimulate = new QPushButton("Simulieren",widgetSimulation);
-    buttonSimulate->setMaximumWidth(150);
-        //Platzhalter
-    spacerItemTabSimulationHorizontal = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
-    spacerItemTabSimulationVertical = new QSpacerItem(0,0,QSizePolicy::Expanding,QSizePolicy::MinimumExpanding);
+    buttonSave = new QPushButton(widgetSimulation);
+    buttonSave->setIcon(QIcon(":/Icons/save"));
+    buttonSave->setText("Speichern");
+    buttonSave->setIconSize(QSize(15,15));
+    buttonLoad = new QPushButton(widgetSimulation);
+    buttonLoad->setIcon(QIcon(":/Icons/load"));
+    buttonLoad->setText("Laden");
+    buttonLoad->setIconSize(QSize(15,15));
+        //Gruppen
+    QGridLayout * vboxIntMethod = new QGridLayout();
+    vboxIntMethod->addWidget(labelSelectIntMethod,0,0);
+    vboxIntMethod->addWidget(comboBoxIntMethod,0,1);
+    vboxIntMethod->addWidget(labelM,1,0);
+    vboxIntMethod->addWidget(spinBoxM,1,1);
+    vboxIntMethod->addWidget(labelT,2,0);
+    vboxIntMethod->addWidget(doubleSpinBoxT,2,1);
+    QGroupBox * groupBoxIntMethod = new QGroupBox(widgetSimulation);
+    groupBoxIntMethod->setLayout(vboxIntMethod);
+    QGridLayout * vboxSolver = new QGridLayout();
+    vboxSolver->addWidget(labelSelectSolver,0,0);
+    vboxSolver->addWidget(comboBoxIterativeSolver,0,1);
+    vboxSolver->addWidget(labelEpsilon,1,0);
+    vboxSolver->addWidget(doubleSpinBoxEpsilon,1,1);
+    vboxSolver->addWidget(labelMaxIt,2,0);
+    vboxSolver->addWidget(spinBoxMaxIt,2,1);
+    QGroupBox * groupBoxSolver = new QGroupBox(widgetSimulation);
+    groupBoxSolver->setLayout(vboxSolver);
+    QGridLayout * vboxSimulieren = new QGridLayout();
+    vboxSimulieren->addWidget(buttonSave,0,0);
+    vboxSimulieren->addWidget(buttonLoad,1,0);
+    vboxSimulieren->addWidget(buttonSimulate,2,0);
+    QGroupBox * groupBoxSimulate = new QGroupBox(widgetSimulation);
+    groupBoxSimulate->setLayout(vboxSimulieren);
 
         //Layout
+    spinBoxN->setMaximumWidth(50);
+    labelN->setMaximumWidth(125);
     subGridLayoutSimulation->addWidget(labelTopSimulation,0,0,1,2);
-    subGridLayoutSimulation->addWidget(labelM,1,0);
-    subGridLayoutSimulation->addWidget(spinBoxM,1,1);
-    subGridLayoutSimulation->addWidget(labelN,2,0);
-    subGridLayoutSimulation->addWidget(spinBoxN,2,1);
-    subGridLayoutSimulation->addWidget(labelT,3,0);
-    subGridLayoutSimulation->addWidget(doubleSpinBoxT,3,1);
-    subGridLayoutSimulation->addWidget(labelSelectIntMethod,4,0);
-    subGridLayoutSimulation->addWidget(comboBoxIntMethod,4,1);
-    subGridLayoutSimulation->addWidget(labelSelectSolver,5,0);
-    subGridLayoutSimulation->addWidget(comboBoxIterativeSolver,5,1);
-    subGridLayoutSimulation->addWidget(buttonSimulate,6,1);
-    subGridLayoutSimulation->addWidget(simulationLog,7,0,1,3);
-    subGridLayoutSimulation->addItem(spacerItemTabSimulationHorizontal,7,0);
-    subGridLayoutSimulation->addItem(spacerItemTabSimulationVertical,1,2,7,1);
-    subGridLayoutSimulation->addWidget(labelProgressBar,8,0);
-    subGridLayoutSimulation->addWidget(progressBarProgress,8,1,1,2);
-    subGridLayoutSimulation->setColumnMinimumWidth(0,200);
-    subGridLayoutSimulation->setColumnMinimumWidth(1,150);
+    subGridLayoutSimulation->addWidget(groupBoxIntMethod,1,0,3,1);
+    subGridLayoutSimulation->addWidget(groupBoxSolver,1,1,3,1);
+    subGridLayoutSimulation->addWidget(labelN,2,2);
+    subGridLayoutSimulation->addWidget(spinBoxN,2,3);
+    subGridLayoutSimulation->addWidget(groupBoxSimulate,1,4,3,1);
+    subGridLayoutSimulation->addWidget(simulationLog,4,0,1,6);
+    subGridLayoutSimulation->addWidget(labelProgressBar,5,0);
+    subGridLayoutSimulation->addWidget(progressBarProgress,5,1,1,5);
 }
 
 void presentation::UI::initThermalConductivities()
