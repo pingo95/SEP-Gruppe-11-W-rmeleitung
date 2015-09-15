@@ -513,7 +513,9 @@ void model::Model::simulate()
             }
         }
         emit finishedStep(i+1);
-        emit simulationUpdate(QString::number(i+1) + ". Zeitschritt beendet\n");
+        message = QString::number(i+1) + ". Zeitschritt beendet\nBenötigte Iterationen des Lösers: "
+                + QString::number(selectedIntMethod->getItCount()) + "\n";
+        emit simulationUpdate(message);
     }
 
     resultM = m;
