@@ -255,6 +255,8 @@ void presentation::UI::visualizeState(int frame)
 
 void presentation::UI::updateHeatSources()
 {   
+    tableWidgetHeatSources->item(0,UI::ColumnValue)->setText(
+        QString::number(model->getAreaBackroundValue(model::Model::AreaHeatSource)));
     int hSCount = model->getAreaCount(model::Model::AreaHeatSource);
     int rowCount = tableWidgetHeatSources->rowCount();
     tableWidgetHeatSources->setRowCount(hSCount+1);
@@ -348,6 +350,8 @@ void presentation::UI::updateSimulating()
     spinBoxM->setValue(model->getM());
     spinBoxN->setValue(model->getN());
     doubleSpinBoxT->setValue(model->getT());
+    doubleSpinBoxEpsilon->setValue(model->getSolverMaxError());
+    spinBoxMaxIt->setValue(model->getSolverMaxIt());
     if(model->getSimulating())
     {
         buttonSimulate->setEnabled(false);
@@ -368,6 +372,8 @@ void presentation::UI::updateSimulating()
 
 void presentation::UI::updateThermalConductivties()
 {
+    tableWidgetThermalConductivities->item(0,UI::ColumnValue)->setText(
+        QString::number(model->getAreaBackroundValue(model::Model::AreaThermalConductivity)));
     int tCCount = model->getAreaCount(model::Model::AreaThermalConductivity);
     int rowCount = tableWidgetThermalConductivities->rowCount();
     tableWidgetThermalConductivities->setRowCount(tCCount+1);

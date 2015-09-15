@@ -103,18 +103,20 @@ void presentation::UI::initHeatSources()
     tableWidgetHeatSources->setColumnWidth(2,60);
     tableWidgetHeatSources->setShowGrid(true);
     tableWidgetHeatSources->verticalHeader()->setVisible(false);
+    tableWidgetHeatSources->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     tableWidgetHeatSources->horizontalHeader()->setSectionsClickable(false);
     tableWidgetHeatSources->setRowCount(1);
     QTableWidgetItem * tmpItemPtr = new QTableWidgetItem("0");
-    tmpItemPtr->setFlags(Qt::ItemIsEnabled);
+    tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     tableWidgetHeatSources->setItem(0,UI::ColumnID,tmpItemPtr);
     tmpItemPtr = new QTableWidgetItem("0");
-    tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable ); //| Qt::ItemIsEditable
+    tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
     tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     tableWidgetHeatSources->setItem(0,UI::ColumnValue,tmpItemPtr);
     tmpItemPtr = new QTableWidgetItem("-");
+    tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     tableWidgetHeatSources->setItem(0,UI::ColumnVisibility,tmpItemPtr);
 
@@ -438,19 +440,21 @@ void presentation::UI::initThermalConductivities()
     tableWidgetThermalConductivities->setColumnWidth(2,60);
     tableWidgetThermalConductivities->setShowGrid(true);
     tableWidgetThermalConductivities->verticalHeader()->setVisible(false);
+    tableWidgetHeatSources->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     //    tableWidgetThermalConductivities->horizontalHeader()->setSelectionBehavior(QAbstractItemView::SelectItems);
     tableWidgetThermalConductivities->horizontalHeader()->setSectionsClickable(false);
     tableWidgetThermalConductivities->setRowCount(1);
     QTableWidgetItem * tmpItemPtr = new QTableWidgetItem("0");
-    tmpItemPtr->setFlags(Qt::ItemIsEnabled);
+    tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     tableWidgetThermalConductivities->setItem(0,UI::ColumnID,tmpItemPtr);
     tmpItemPtr = new QTableWidgetItem("0.01");
-    tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable ); //| Qt::ItemIsEditable
+    tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
     tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     tableWidgetThermalConductivities->setItem(0,UI::ColumnValue,tmpItemPtr);
     tmpItemPtr = new QTableWidgetItem("-");
+    tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     tableWidgetThermalConductivities->setItem(0,UI::ColumnVisibility,tmpItemPtr);
 
