@@ -196,15 +196,15 @@ void algorithms::CRS::eye(int const n)
     ptr[n*n] = nnz;
 }
 
-int algorithms::CRS::getIndex(int i) const {
+int algorithms::CRS::getIndex(int const i) const {
     return this->index[i];
 }
 
-int algorithms::CRS::getRowsNumElem(int i) const {
+int algorithms::CRS::getRowsNumElem(int const i) const {
     return this->ptr[i];
 }
 
-double algorithms::CRS::getValue(int i, int j) const {
+double algorithms::CRS::getValue(int const i, int const j) const {
     for(int k=this->ptr[i]; k<this->ptr[i+1]; ++k) {
         if(this->index[k]==j) return this->value[k];
     }
@@ -223,6 +223,14 @@ algorithms::CRS algorithms::CRS::multCRSCRS(CRS const &rMat) const {
     }
     mult.ptr[mult.size] = mult.value.size();
     return mult;
+}
+
+double algorithms::CRS::multRowQVector(int const i, QVector<double> const vec) const {
+    double res=0;
+    for(int j=this->ptr[i]; j<this->ptr[i+1]; ++j) {
+        res += this->value[j] * vec[this->index[j]];
+    }
+    return res;
 }
 
 algorithms::CRS algorithms::operator *(double const &scalar, algorithms::CRS const &Mat) {

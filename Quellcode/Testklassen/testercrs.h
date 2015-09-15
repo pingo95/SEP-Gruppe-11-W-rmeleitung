@@ -20,6 +20,7 @@ namespace algorithms {
             QLabel* testEye();
             QLabel* testMultCRSCRS();
             QLabel* testMultCRSQVector();
+            QLabel* testMultRowQVector();
             QLabel* testScalarCRS();
             QLabel* testScalarQVector();
             QLabel* testSumCRS();

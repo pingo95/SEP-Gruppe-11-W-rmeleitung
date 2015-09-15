@@ -95,6 +95,20 @@ QLabel* algorithms::TesterCRS::testMultCRSQVector() {
     return text;
 }
 
+QLabel* algorithms::TesterCRS::testMultRowQVector() {
+    QLabel* text = new QLabel();
+    QString testString;
+    int testSize=3;
+
+    QVector<double> testVec(testSize*testSize);
+    for(int i=0;i<testSize*testSize;++i) testVec[i]=(i+1)*(i+1);
+
+    testMatrix.A1(testSize);
+
+    text->setText(QString::number(testMatrix.multRowQVector(4,testVec)));
+    return text;
+}
+
 QLabel* algorithms::TesterCRS::testScalarCRS() {
     QLabel* text = new QLabel();
     QString testString;

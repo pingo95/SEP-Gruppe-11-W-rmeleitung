@@ -25,10 +25,11 @@ int main(int argc, char *argv[])
     QWidget * crsTest4 = testerCRS.testEye();
     QWidget * crsTest5 = testerCRS.testMultCRSCRS();
     QWidget * crsTest6 = testerCRS.testMultCRSQVector();
-    QWidget * crsTest7 = testerCRS.testScalarCRS();
-    QWidget * crsTest8 = testerCRS.testScalarQVector();
-    QWidget * crsTest9 = testerCRS.testSumCRS();
-    QWidget * crsTest10 = testerCRS.testSumQVector();
+    QWidget * crsTest7 = testerCRS.testMultRowQVector();
+    QWidget * crsTest8 = testerCRS.testScalarCRS();
+    QWidget * crsTest9 = testerCRS.testScalarQVector();
+    QWidget * crsTest10 = testerCRS.testSumCRS();
+    QWidget * crsTest11 = testerCRS.testSumQVector();
 
     w.addSubTab(crsTest1,"A1",mainTabCount);
     w.addSubTab(crsTest2,"Diag",mainTabCount);
@@ -36,10 +37,11 @@ int main(int argc, char *argv[])
     w.addSubTab(crsTest4,"Eye",mainTabCount);
     w.addSubTab(crsTest5,"MultCRSCRS",mainTabCount);
     w.addSubTab(crsTest6,"MultCRSQVector",mainTabCount);
-    w.addSubTab(crsTest7,"ScalarCRS",mainTabCount);
-    w.addSubTab(crsTest8,"ScalarQVector",mainTabCount);
-    w.addSubTab(crsTest9,"SumCRS",mainTabCount);
-    w.addSubTab(crsTest10,"SumQVector",mainTabCount);
+    w.addSubTab(crsTest7,"MultRowQVector",mainTabCount);
+    w.addSubTab(crsTest8,"ScalarCRS",mainTabCount);
+    w.addSubTab(crsTest9,"ScalarQVector",mainTabCount);
+    w.addSubTab(crsTest10,"SumCRS",mainTabCount);
+    w.addSubTab(crsTest11,"SumQVector",mainTabCount);
 
 
     w.addMainTab("Solver Tests");

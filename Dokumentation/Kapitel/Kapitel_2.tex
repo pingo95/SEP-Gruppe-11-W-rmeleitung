@@ -22,7 +22,7 @@ Das Anwendungsfalldiagramm zeigt die Abbildung \ref{Use Case Diagramm}.
 \subsubsection{Beschreibungen der Anwendungsfälle}
 Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen eingeben} - \ref{Beschreibung Use Case Zustand anzeigen}) zeigen die Beschreibungen der Anwendungsfälle.
 
-%Anfangsbedingungen_eingeben
+%Anfangsbedingungen eingeben
 \begin{table} [H]
 	\centering
 	%\hspace{-1cm}
@@ -32,7 +32,7 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 		\hline
 		\textbf{Ziel} 			& \multicolumn{2}{|l|}{Der Benutzer möchte Anfangsbedingungen vorgeben. }\\ 
 		\hline
-		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Hauptfunktion}\\
+		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Basisfunktion}\\
 		\hline
 		\textbf{Vorbedingung}	& \multicolumn{2}{|l|}{Die Software wird korrekt ausgeführt.} \\
 		\hline
@@ -71,7 +71,7 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 	\label{Beschreibung Use Case Anfangsbedingungen eingeben}
 \end{table}
 
-%Diskretisierungsgrößen_eingeben
+%Diskretisierungsgrößen eingeben
 \begin{table} [H]
 	\centering
 	%\hspace{-1cm}
@@ -81,7 +81,7 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 		\hline
 		\textbf{Ziel} 			& \multicolumn{2}{|l|}{Der Benutzer möchte Diskretisierungsgrößen eingeben. }\\ 
 		\hline
-		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Hauptfunktion}\\
+		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Basisfunktion}\\
 		\hline
 		\textbf{Vorbedingung}	& \multicolumn{2}{|l|}{Die Software wird korrekt ausgeführt.} \\
 		\hline
@@ -124,7 +124,105 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 	\label{Beschreibung Use Case Diskretisierungsgrössen eingeben}
 \end{table}
 
-%Randbedingungen_eingeben
+%Messungen eingeben
+\begin{table} [H]
+	\centering
+	%\hspace{-1cm}
+	\begin{tabular}{|l|l|l|}
+		\hline
+		\textbf{Name} 			& \multicolumn{2}{|l|}{Messungen eingeben}  \\
+		\hline
+		\textbf{Ziel} 			& \multicolumn{2}{|l|}{Der Benutzer möchte experimentelle Daten eingeben. }\\ 
+		\hline
+		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Basistfunktion}\\
+		\hline
+		\textbf{Vorbedingung}	& \multicolumn{2}{|l|}{Die Software wird korrekt ausgeführt.} \\
+		\hline
+		\textbf{Nachbedingung}	& \multicolumn{2}{|l|}{Die eingegebenen Daten wurden gespeichert.}\\
+		\hline
+		\textbf{Nachbedingung} 	& \multicolumn{2}{|l|}{Die Daten wurden nicht geändert und}\\
+		\textbf{im Fehlerfall}	& \multicolumn{2}{|l|}{entsprechende Fehlermeldungen wurden ausgegeben.}\\
+		\hline
+		\textbf{Haupt-} 		& \multicolumn{2}{|l|}{Benutzer}\\
+		\textbf{Neben-Akteur}	& \multicolumn{2}{|l|}{	}			\\
+		\hline
+		\textbf{Auslöser} 		& \multicolumn{2}{|l|}{Der Benutzer möchte Messdaten eingeben.} \\
+		\hline 
+		\textbf{Standardfluss} & \textbf{Schritt} & \textbf{Aktion} \\
+		\hline
+		&	1	& Der Benutzer wählt den Menüpunkt \emph{Optimierung} aus. \\
+		\cline{2-3}
+		&	2	& Die Software wechselt zu dem entsprechenden Menü.\\
+		\cline{2-3}
+		&	3	& Der Benutzer gibt die Messungen ein.\\
+		\cline{2-3}
+		&	4	& Die Software prüft die eingegebenen Messwerte.\\
+		\cline{2-3}
+		&	5	& Die Software speichert die Daten.\\
+		\hline
+		\textbf{Nebenfluss} & \textbf{Schritt} & \textbf{Aktion}\\
+		\hline
+		Randbedingungen  & 5a.1 & Eine Fehlermeldung wird angezeigt.\\
+		\cline{2-3}
+		nicht akzeptiert 	& 5a.2	& Der Benutzer korrigiert seine Eingabe.\\
+		\cline{2-3}
+		& 5a.3 	& $\rightarrow$ Schritt 4\\
+		\hline
+	\end{tabular}
+	\caption{Beschreibung Use Case Messungen eingeben}
+	\label{Beschreibung Use Case Messungen eingeben}
+\end{table}
+
+%Messungen importieren
+\begin{table} [H]
+	\centering
+	%\hspace{-1cm}
+	\begin{tabular}{|l|l|l|}
+		\hline
+		\textbf{Name} 			& \multicolumn{2}{|l|}{Messungen importieren}  \\
+		\hline
+		\textbf{Ziel} 			& \multicolumn{2}{|l|}{Der Benutzer möchte experimentelle Daten importieren. }\\ 
+		\hline
+		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Basisfunktion}\\
+		\hline
+		\textbf{Vorbedingung}	& \multicolumn{2}{|l|}{Die Software wird korrekt ausgeführt.} \\
+		\hline
+		\textbf{Nachbedingung}	& \multicolumn{2}{|l|}{Die ausgewählten Daten wurden geladen.}\\
+		\hline
+		\textbf{Nachbedingung} 	& \multicolumn{2}{|l|}{Die Daten wurden nicht geändert und}\\
+		\textbf{im Fehlerfall}	& \multicolumn{2}{|l|}{entsprechende Fehlermeldungen wurden ausgegeben.}\\
+		\hline
+		\textbf{Haupt-} 		& \multicolumn{2}{|l|}{Benutzer}\\
+		\textbf{Neben-Akteur}	& \multicolumn{2}{|l|}{	}			\\
+		\hline
+		\textbf{Auslöser} 		& \multicolumn{2}{|l|}{Der Benutzer möchte Messdaten importieren.} \\
+		\hline 
+		\textbf{Standardfluss} & \textbf{Schritt} & \textbf{Aktion} \\
+		\hline
+		&	1	& Der Benutzer wählt den Menüpunkt \emph{Optimierung} aus. \\
+		\cline{2-3}
+		&	2	& Die Software wechselt zu dem entsprechenden Menü.\\
+		\cline{2-3}
+		&	3	& Der Benutzer wählt die entsprechende Datei aus.\\
+		\cline{2-3}
+		&	4	& Die Software prüft die angegebene Datei.\\
+		\cline{2-3}
+		&	5	& Die Software wertet die Datei aus.\\
+		\hline
+		\textbf{Nebenfluss} & \textbf{Schritt} & \textbf{Aktion}\\
+		\hline
+		Randbedingungen  & 5a.1 & Eine Fehlermeldung wird angezeigt.\\
+		\cline{2-3}
+		nicht akzeptiert 	& 5a.2	& Der Benutzer korrigiert seine Eingabe.\\
+		\cline{2-3}
+		& 5a.3 	& $\rightarrow$ Schritt 4\\
+		\hline
+	\end{tabular}
+	\caption{Beschreibung Use Case Messungen importieren}
+	\label{Beschreibung Use Case Messungen importieren}
+\end{table}
+
+%Randbedingungen eingeben
 \begin{table} [H]
 	\centering
 	%\hspace{-1cm}
@@ -134,7 +232,7 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 		\hline
 		\textbf{Ziel} 			& \multicolumn{2}{|l|}{Der Benutzer möchte Randbedingungen vorgeben. }\\ 
 		\hline
-		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Hauptfunktion}\\
+		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Basisfunktion}\\
 		\hline
 		\textbf{Vorbedingung}	& \multicolumn{2}{|l|}{Die Software wird korrekt ausgeführt.} \\
 		\hline
@@ -143,7 +241,7 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 		\textbf{Nachbedingung} 	& \multicolumn{2}{|l|}{Die Randbedingungen wurden nicht geändert und}\\
 		\textbf{im Fehlerfall}	& \multicolumn{2}{|l|}{entsprechende Fehlermeldungen wurden ausgegeben.}\\
 		\hline
-		\textbf{Haupt-} 			& \multicolumn{2}{|l|}{Benutzer}\\
+		\textbf{Haupt-} 		& \multicolumn{2}{|l|}{Benutzer}\\
 		\textbf{Neben-Akteur}	& \multicolumn{2}{|l|}{	}			\\
 		\hline
 		\textbf{Auslöser} 		& \multicolumn{2}{|l|}{Der Benutzer möchte Randbedingungen vorgeben.} \\
@@ -171,6 +269,46 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 	\end{tabular}
 	\caption{Beschreibung Use Case Randbedingungen eingeben}
 	\label{Beschreibung Use Case Randbedingungen eingeben}
+\end{table}
+
+%Parameter optimieren
+\begin{table} [H]
+	\centering
+	%\hspace{-1cm}
+	\begin{tabular}{|l|l|l|}
+		\hline
+		\textbf{Name} 			& \multicolumn{2}{|l|}{Parameter optimieren}  \\
+		\hline
+		\textbf{Ziel} 			& \multicolumn{2}{|l|}{Der Benutzer möchte die Wärmeleitkoeffizienten optimal im Sinne}\\
+								& \multicolumn{2}{|l|}{kleinster Fehlerquadrate an experimentelle Daten anpassen lassen.}\\
+		\hline
+		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Hauptfunktion}\\
+		\hline
+		\textbf{Vorbedingung}	& \multicolumn{2}{|l|}{Die Software wird korrekt ausgeführt.} \\
+		\hline
+		\textbf{Nachbedingung}	& \multicolumn{2}{|l|}{Die Parameter wurden optimiert.}\\
+		\hline
+		\textbf{Nachbedingung} 	& \multicolumn{2}{|l|}{Die Daten wurden nicht geändert und}\\
+		\textbf{im Fehlerfall}	& \multicolumn{2}{|l|}{entsprechende Fehlermeldungen wurden ausgegeben.}\\
+		\hline
+		\textbf{Haupt-} 		& \multicolumn{2}{|l|}{Benutzer}\\
+		\textbf{Neben-Akteur}	& \multicolumn{2}{|l|}{	}			\\
+		\hline
+		\textbf{Auslöser} 		& \multicolumn{2}{|l|}{Der Benutzer möchte die Wärmeleitkoeffizieten optimieren lassen.} \\
+		\hline 
+		\textbf{Standardfluss} & \textbf{Schritt} & \textbf{Aktion} \\
+		\hline
+		&	1	& Der Benutzer wählt den Menüpunkt \emph{Optimierung} aus. \\
+		\cline{2-3}
+		&	2	& Die Software wechselt zu dem entsprechenden Menü.\\
+		\cline{2-3}
+		&	3	& Der Benutzer startet die Optimierung.\\
+		\cline{2-3}
+		&	4	& Die Software setzt das Ergebnis als aktuelle Wärmeleitkoeffizienten.\\
+		\hline
+	\end{tabular}
+	\caption{Beschreibung Use Case Parameter optimieren}
+	\label{Beschreibung Use Case Parameter optimieren}
 \end{table}
 
 %Simulieren
@@ -216,7 +354,7 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
         \label{Beschreibung Use Case Simulieren}
 \end{table}
 
-%Video_abspielen
+%Video abspielen
 \begin{table} [H]
 	\centering
 	%\hspace{-1cm}
@@ -258,7 +396,7 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 	\label{Beschreibung Use Case Video abspielen}
 \end{table}
 
-%Wärmeleitkoeffizienten_eingeben
+%Wärmeleitkoeffizienten eingeben
 \begin{table} [H]
 	\centering
 	%\hspace{-1cm}
@@ -268,7 +406,7 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 		\hline
 		\textbf{Ziel} 			& \multicolumn{2}{|l|}{Der Benutzer möchte Wärmeleitkoeffizienten eingeben. }\\ 
 		\hline
-		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Hauptfunktion}\\
+		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Basisfunktion}\\
 		\hline
 		\textbf{Vorbedingung}	& \multicolumn{2}{|l|}{Die Software wird korrekt ausgeführt.} \\
 		\hline
@@ -318,7 +456,7 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 	\label{Beschreibung Use Case Wärmeleitkoeffizienten eingeben}
 \end{table}
 
-%Wärmequellen_eingeben
+%Wärmequellen eingeben
 \begin{table} [H]
 	\centering
 	%\hspace{-1cm}
@@ -328,7 +466,7 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 		\hline
 		\textbf{Ziel} 			& \multicolumn{2}{|l|}{Der Benutzer möchte Wärmequellen eingeben. }\\ 
 		\hline
-		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Hauptfunktion}\\
+		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Basisfunktion}\\
 		\hline
 		\textbf{Vorbedingung}	& \multicolumn{2}{|l|}{Die Software wird korrekt ausgeführt.} \\
 		\hline
@@ -378,7 +516,7 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 	\label{Beschreibung Use Case Wärmequellen eingeben}
 \end{table}
 
-%Zustand_anzeigen
+%Zustand anzeigen
 \begin{table} [H]
 	\centering
 	%\hspace{-1cm}
@@ -440,6 +578,24 @@ Die folgenden Abbildungen (Abb. \ref{Aktivitätsdiagramm Use Case Anfangsbedingu
 	\label{Aktivitätsdiagramm Use Case Diskretisierungsgroessen eingeben}
 \end{figure}
 
+%Messungen eingeben
+\begin{figure}[H]
+	\centering
+	%\hspace{-1.75cm}
+	\includegraphics[scale=.5]{Bilder/Messungen_eingeben.jpg}\\
+	\caption{Aktivitätsdiagramm Use Case Messungen eingeben}
+	\label{Aktivitätsdiagramm Use Case Messungen eingeben}
+\end{figure}
+
+%Messungen importieren
+\begin{figure}[H]
+	\centering
+	%\hspace{-1.75cm}
+	\includegraphics[scale=.5]{Bilder/Messungen_importieren.jpg}\\
+	\caption{Aktivitätsdiagramm Use Case Messungen importieren}
+	\label{Aktivitätsdiagramm Use Case Messungen importieren}
+\end{figure}
+
 %Randbedingungen eingeben
 \begin{figure}[H]
 	\centering
@@ -447,6 +603,24 @@ Die folgenden Abbildungen (Abb. \ref{Aktivitätsdiagramm Use Case Anfangsbedingu
 	\includegraphics[scale=.5]{Bilder/Randbedingungen_eingeben.jpg}\\
 	\caption{Aktivitätsdiagramm Use Case Randbedingungen eingeben}
 	\label{Aktivitätsdiagramm Use Case Randbedingungen eingeben}
+\end{figure}
+
+%Parameter optimieren
+\begin{figure}[H]
+	\centering
+	%\hspace{-1.75cm}
+	\includegraphics[scale=.5]{Bilder/Parameter_optimieren.jpg}\\
+	\caption{Aktivitätsdiagramm Use Case Parameter optimieren}
+	\label{Aktivitätsdiagramm Use Case Parameter optimieren}
+\end{figure}
+
+%Simulationsexperiment speichern
+\begin{figure}[H]
+	\centering
+	%\hspace{-1.75cm}
+	\includegraphics[scale=.5]{Bilder/Simulationsexperiment_speichern.jpg}\\
+	\caption{Aktivitätsdiagramm Use Case Simulationsexperiment speichern}
+	\label{Aktivitätsdiagramm Use Case Simulationsexperiment speichern}
 \end{figure}
 
 %Simulieren
