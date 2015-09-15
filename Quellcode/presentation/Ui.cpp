@@ -255,11 +255,12 @@ void presentation::UI::visualizeState(int frame)
 
 void presentation::UI::updateHeatSources()
 {   
-    int hSCount = model->getHeatSourcesCount();
+    int hSCount = model->getAreaCount(model::Model::AreaHeatSource);
     int rowCount = tableWidgetHeatSources->rowCount();
     tableWidgetHeatSources->setRowCount(hSCount+1);
     int tmpBound = hSCount+1 <= rowCount ? hSCount+1 : rowCount;
-    QList<model::Area*> const & heatSources = model->getHeatSources();
+    QList<model::Area*> const & heatSources = model->getAreas(
+                model::Model::AreaHeatSource);
     QList<model::Area*>::const_iterator it = heatSources.begin();
     int i = 1;
     for(; i < tmpBound; ++i, ++it)
@@ -333,11 +334,11 @@ void presentation::UI::updateHeatSources()
 
 void presentation::UI::updateIBVs()
 {
-    doubleSpinBoxBottomBoundary->setValue(model->getBottomBoundary());
+    doubleSpinBoxBottomBoundary->setValue(model->getBoundaryBottom());
     doubleSpinBoxInitialValue->setValue(model->getInitialValue());
-    doubleSpinBoxLeftBoundary->setValue(model->getLeftBoundary());
-    doubleSpinBoxRightBoundary->setValue(model->getRightBoundary());
-    doubleSpinBoxTopBoundary->setValue(model->getTopBoundary());
+    doubleSpinBoxLeftBoundary->setValue(model->getBoundaryLeft());
+    doubleSpinBoxRightBoundary->setValue(model->getBoundaryRight());
+    doubleSpinBoxTopBoundary->setValue(model->getBoundaryTop());
 }
 
 
@@ -367,11 +368,12 @@ void presentation::UI::updateSimulating()
 
 void presentation::UI::updateThermalConductivties()
 {
-    int tCCount = model->getThermalConductivitiesCount();
+    int tCCount = model->getAreaCount(model::Model::AreaThermalConductivity);
     int rowCount = tableWidgetThermalConductivities->rowCount();
     tableWidgetThermalConductivities->setRowCount(tCCount+1);
     int tmpBound = tCCount+1 <= rowCount ? tCCount+1 : rowCount;
-    QList<model::Area*> const & thermalConductivities = model->getThermalConductivities();
+    QList<model::Area*> const & thermalConductivities = model->getAreas(
+                model::Model::AreaThermalConductivity);
     QList<model::Area*>::const_iterator it = thermalConductivities.begin();
     int i = 1;
     for (; i < tmpBound; ++i, ++it)

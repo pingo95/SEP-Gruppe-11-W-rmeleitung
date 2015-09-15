@@ -5,11 +5,12 @@
 #include "../algorithms/Gaussseidel.h"
 #include "../presentation/Ui.h"
 
-model::Model::Model() : QWidget(NULL), bottomBoundary(300), heatSourcesCount(0), initialValue(300),
-    leftBoundary(300), m(2), n(3), result(NULL), resultM(0), resultN(0), resultT(0.),
-    rightBoundary(300), selectedIntMethod(NULL), selectedIterativeSolver("Jacobi"),
-    simulated(false), simulating(false), T(1.), thermalConductivitesCount(0),
-    topBoundary(300), ui(NULL)
+model::Model::Model() : QWidget(NULL), boundaryBottom(300), boundaryLeft(300),
+    boundaryRight(300), boundaryTop(300), heatSourcesCount(0), initialValue(300),
+    m(1), n(3), selectedIntMethod(NULL), selectedIterativeSolver("Jacobi"),
+    simulated(false), T(1.), thermalConductivitesCount(0), ui(NULL),
+    consecutiveTempArray(NULL), result(NULL), resultM(0), resultN(0), resultT(0.),
+    simulating(false)
 {
     // Registrieren der Integrationsmethoden
     intMethods.insert("Impliziter Euler",new algorithms::ImpEuler());
@@ -40,7 +41,7 @@ model::Model::~Model()
     if(simulated)
     {
         delete consecutiveTempArray;
-        for(long i = 0; i < resultM; ++i)
+        for(long i = 0; i < resultM+1; ++i)
             delete result[i];
         delete result;
     }
@@ -48,48 +49,67 @@ model::Model::~Model()
 
 // Vorbedingung: Das übergebene Gebiet wurde vorher mit Area::validateArea auf
 // Gültigkeit überprüft
-// Diese Funktion fügt dem Modell ein neues Wärmequellen-Gebiet hinzu
-void model::Model::addHeatSource(Area *newHeatSource)
+// Diese Funktion fügt dem Modell ein neues Wärmequellen oder Wärmeleitkoeffizienten
+// -Gebiet hinzu
+void model::Model::addNewArea(const QVector<double> &xKoords,
+                              const QVector<double> &yKoords, double value,
+                              Model::AreaType type)
 {
-    heatSources.append(newHeatSource);
-    ++heatSourcesCount;
+    if(type == Model::AreaHeatSource)
+    {
+        heatSources.append(new Area(xKoords,yKoords,value,type));
+        ++heatSourcesCount;
+    }
+    else
+    {
+        thermalConductivites.append(new Area(xKoords,yKoords,value,type));
+        ++thermalConductivitesCount;
+    }
     ui->updateNotification();
-}
-
-// Vorbedingung: Das übergebene Gebiet wurde vorher mit Area::validateArea auf
-// Gültigkeit überprüft
-// Diese Funktion fügt dem Modell ein neues Wärmeleitkoeffizienten-Gebiet hinzu
-void model::Model::addThermalConductivity(Area *newThermalConductivity)
-{
-    thermalConductivites.append(newThermalConductivity);
-    ++thermalConductivitesCount;
-    ui->updateNotification();
-}
-
-
-double model::Model::getBottomBoundary() const
-{
-    return bottomBoundary;
 }
 
 // Vorbedingung: ID ist die gültige ID eines Gebietes im Modell
-model::Area* const & model::Model::getHeatSource(int const id) const
+model::Area * const & model::Model::getArea(const int id, Model::AreaType type) const
 {
-    QList<Area*>::const_iterator it = heatSources.begin();
-    for(; it != heatSources.end(); ++it)
+    QList<Area*> const & currentList = type == Model::AreaHeatSource ?
+                heatSources : thermalConductivites;
+    QList<Area*>::const_iterator it = currentList.begin();
+    for(; it != currentList.end(); ++it)
         if((*it)->getID() == id)
             return (*it);
     return NULL;
 }
 
-QList<model::Area*> const & model::Model::getHeatSources() const
+QList<model::Area*> const & model::Model::getAreas(Model::AreaType type) const
 {
-    return heatSources;
+    return type == Model::AreaHeatSource ? heatSources: thermalConductivites;
 }
 
-int model::Model::getHeatSourcesCount() const
+int model::Model::getAreaCount(Model::AreaType type) const
 {
-    return heatSourcesCount;
+    return type == Model::AreaHeatSource ?
+                heatSourcesCount : thermalConductivitesCount;
+}
+
+
+double model::Model::getBoundaryBottom() const
+{
+    return boundaryBottom;
+}
+
+double model::Model::getBoundaryLeft() const
+{
+    return boundaryLeft;
+}
+
+double model::Model::getBoundaryRight() const
+{
+    return boundaryRight;
+}
+
+double model::Model::getBoundaryTop() const
+{
+    return boundaryTop;
 }
 
 double model::Model::getInitialValue() const
@@ -105,11 +125,6 @@ QList<QString> const model::Model::getIntMethodNames() const
 QList<QString> const model::Model::getIterativeSolverNames() const
 {
     return iterativeSolvers.keys();
-}
-
-double model::Model::getLeftBoundary() const
-{
-    return leftBoundary;
 }
 
 long model::Model::getM() const
@@ -142,11 +157,6 @@ double model::Model::getResultT() const
     return resultT;
 }
 
-double model::Model::getRightBoundary() const
-{
-    return rightBoundary;
-}
-
 QString model::Model::getSelectedIntMethod() const
 {
     return intMethods.key(selectedIntMethod);
@@ -167,58 +177,37 @@ bool model::Model::getSimulating() const
     return simulating;
 }
 
+double model::Model::getSolverMaxError() const
+{
+    return selectedIntMethod->getIterativeSolver()->getEps();
+}
+
+int model::Model::getSolverMaxIt() const
+{
+    return selectedIntMethod->getIterativeSolver()->getMaxIt();
+}
+
 double model::Model::getT() const
 {
     return T;
 }
 
-model::Area * const & model::Model::getThermalConductivity(int const id) const
-{
-    QList<Area*>::const_iterator it = thermalConductivites.begin();
-    for(; it != thermalConductivites.end(); ++it)
-        if((*it)->getID() == id)
-            return (*it);
-    return NULL;
-}
 
-QList<model::Area *> const & model::Model::getThermalConductivities() const
+void model::Model::removeLastArea(Model::AreaType type)
 {
-    return thermalConductivites;
-}
-
-int model::Model::getThermalConductivitiesCount() const
-{
-    return thermalConductivitesCount;
-}
-
-double model::Model::getTopBoundary() const
-{
-    return topBoundary;
-}
-
-// Entfernt das zuletzt hinzugefügte Wärmequellen-Gebiet, falls
-// Modell mindestens eins enthält
-void model::Model::removeLastHeatSource()
-{
-    if(heatSourcesCount > 0)
+    if(type == Model::AreaHeatSource)
     {
         delete heatSources.takeLast();
         --heatSourcesCount;
-        ui->updateNotification();
     }
-}
-
-// Entfernt das zuletzt hinzugefügte Wärmeleitkoeffizienten-Gebiet, falls
-// Modell mindestens eins enthält
-void model::Model::removeLastThermalConductivity()
-{
-    if(thermalConductivitesCount > 0 )
+    else
     {
         delete thermalConductivites.takeLast();
         --thermalConductivitesCount;
-        ui->updateNotification();
     }
+    ui->updateNotification();
 }
+
 
 // Updatet die gewählte Integrationsmethode
 void model::Model::selectIntMethod(QString intMethod)
@@ -236,21 +225,33 @@ void model::Model::selectIterativeSolver(QString newIterativeSolver)
     ui->updateNotification();
 }
 
-void model::Model::setBottomBoundary(double const newBottomBoundary)
+void model::Model::setBoundaryBottom(double const newBottomBoundary)
 {
-    bottomBoundary = newBottomBoundary;
+    boundaryBottom = newBottomBoundary;
+    ui->updateNotification();
+}
+
+void model::Model::setBoundaryRight(double const newRightBoundary)
+{
+    boundaryRight = newRightBoundary;
+    ui->updateNotification();
+}
+
+void model::Model::setBoundaryLeft(double const newLeftBoundary)
+{
+    boundaryLeft = newLeftBoundary;
+    ui->updateNotification();
+}
+
+void model::Model::setBoundaryTop(double const newTopBoundary)
+{
+    boundaryTop = newTopBoundary;
     ui->updateNotification();
 }
 
 void model::Model::setInitialValue(double const newInitialValue)
 {
     initialValue = newInitialValue;
-    ui->updateNotification();
-}
-
-void model::Model::setLeftBoundary(double const newLeftBoundary)
-{
-    leftBoundary = newLeftBoundary;
     ui->updateNotification();
 }
 
@@ -266,10 +267,14 @@ void model::Model::setN(int const newN)
     ui->updateNotification();
 }
 
-void model::Model::setRightBoundary(double const newRightBoundary)
+void model::Model::setSolverMaxError(double const maxError)
 {
-    rightBoundary = newRightBoundary;
-    ui->updateNotification();
+    selectedIntMethod->getIterativeSolver()->setEps(maxError);
+}
+
+void model::Model::setSolverMaxIt(double const maxIt)
+{
+    selectedIntMethod->getIterativeSolver()->setMaxIt(maxIt);
 }
 
 void model::Model::setT(double const newT)
@@ -278,16 +283,11 @@ void model::Model::setT(double const newT)
     ui->updateNotification();
 }
 
-void model::Model::setTopBoundary(double const newTopBoundary)
-{
-    topBoundary = newTopBoundary;
-    ui->updateNotification();
-}
-
 void model::Model::setUI(presentation::UI *ui)
 {
     this->ui = ui;
 }
+
 
 void model::Model::simulate()
 {
@@ -300,7 +300,7 @@ void model::Model::simulate()
 
     // Deltas
     double deltaX = (double) 1 / (double) (n-1);
-    double deltaT = T / (double) (m-1);
+    double deltaT = T / (double) (m);
 
     QString message = "Beginne neue Simulation\n\nKonfiguration:\nZeitdiskretisierung\n\tm = "
             + QString::number(m) + "\n\tdeltaT = "+ QString::number(deltaT) + "\n\tT = " + QString::number(T)
@@ -309,25 +309,25 @@ void model::Model::simulate()
     emit simulationUpdate(message);
 
     // konsekutives Anlegen
-    consecutiveTempArray = new double [m*n*n];
+    consecutiveTempArray = new double [(m+1)*n*n];
     // umwandeln in die Ergebnismatrix
     result = new double**[m];
-    for(long i = 0; i < m; ++i)
+    for(long i = 0; i < m+1; ++i)
     {
         result[i] = new double *[n];
 
         // Erste Zeilen mit unterem Randwert
         result[i][0] = &(consecutiveTempArray[i*n*n]);
         for(long k = 0; k < n; ++k)
-            result[i][0][k] = bottomBoundary;
+            result[i][0][k] = boundaryBottom;
 
         for(long j = 1; j < n-1; ++j)
         {
             result[i][j] = &(consecutiveTempArray[i*n*n + j*n]);
 
             // Erste und letzter Punkt mit linkem bzw rechtem Randwert
-            result[i][j][0] = leftBoundary;
-            result[i][j][n-1] = rightBoundary;
+            result[i][j][0] = boundaryLeft;
+            result[i][j][n-1] = boundaryRight;
             // Inneren Punkt initialisiert mit  initialValue
             for(long k = 1; k < n-1; ++k)
                 result[i][j][k] = initialValue;
@@ -336,7 +336,7 @@ void model::Model::simulate()
         // Letzte Zeilen mit oberem Randwert
         result[i][n-1] = &(consecutiveTempArray[i*n*n + (n-1)*n]);
         for(long k = 0; k < n; ++k)
-            result[i][n-1][k] = topBoundary;
+            result[i][n-1][k] = boundaryTop;
     }
     message = "Speicher alloziert.\n\nBerechne Wärmeleitkoeffizienten\nAnzahl Gebiete : "
             + QString::number(thermalConductivitesCount);
@@ -453,9 +453,9 @@ void model::Model::simulate()
     QVector<double> * step2 = new QVector<double>(*step1);
 
     // Berechnen der Zeitschritte
-    emit beginningStage("Zeitschritte berechnen:",m);
-    emit simulationUpdate("Zeitschritte berechnen\n");
-    for(long i = 1; i < m; ++i)
+    emit beginningStage("Zeitschritte berechnen:",m+1);
+    emit simulationUpdate("Zeitschritte berechnen\n1. Zeitschritt beendet\n");
+    for(long i = 1; i < m+1; ++i)
     {
         selectedIntMethod->calcNextStep(*step1,*step2,heatSourcesGrid);
         for(long j = 1; j < n-1; ++j)       //<-- Achtung fall Ränder nicht mehr const
@@ -512,9 +512,9 @@ void model::Model::simulate()
                 }
             }
         }
-        emit finishedStep(i+1);
-        message = QString::number(i+1) + ". Zeitschritt beendet\nBenötigte Iterationen des Lösers: "
-                + QString::number(selectedIntMethod->getItCount()) + "\n";
+        emit finishedStep(i);
+        message = QString::number(i) + ". Zeitschritt beendet\nBenötigte Iterationen des Lösers: "
+                + QString::number(selectedIntMethod->getIterativeSolver()->getItCount()) + "\n";
         emit simulationUpdate(message);
     }
 
@@ -541,15 +541,12 @@ void model::Model::simulate()
     ui->updateNotification();
 }
 
-void model::Model::updateHeatSourceValue(int pos, double newValue)
+void model::Model::updateAreaValue(int const pos, double const value,
+                              Model::AreaType type)
 {
-    heatSources.at(pos)->setValue(newValue);
-    ui->updateNotification();
-}
-
-void model::Model::updateThermalConductivityValue(int pos, double newValue)
-{
-    thermalConductivites.at(pos)->setValue(newValue);
+    QList<Area*> const & currentList = type == Model::AreaHeatSource ?
+                heatSources : thermalConductivites;
+    currentList.at(pos)->setValue(value);
     ui->updateNotification();
 }
 
@@ -559,7 +556,7 @@ QString model::Model::printResult()
     output += "\nAusgabe der Ergebnis-Matrix:\nIntMethode: "
             + intMethods.key(selectedIntMethod) + "\nLöser: "
             + selectedIterativeSolver + "\n\n";
-    for(long i = 0; i < m; ++i)
+    for(long i = 0; i < m+1; ++i)
     {
         output += "m = " + QString::number(i) + "\n";
         for(long k = 0; k < n; ++k)

@@ -18,10 +18,10 @@ namespace model {
 
     // Enum:
     public:
-        enum AreaTyp
+        enum AreaType
         {
-            HeatSourceArea,
-            ThermalConductivityArea,
+            AreaHeatSource,
+            AreaThermalConductivity,
         };
 
     //Funktionen:
@@ -29,48 +29,53 @@ namespace model {
         Model();
         ~Model();
 
-        void addHeatSource(Area * newHeatSource);
-        void addThermalConductivity(Area * newThermalConductivity);
-        double getBottomBoundary() const;
-        Area * const & getHeatSource(int const id) const;
-        QList<Area *> const& getHeatSources() const;
-        int getHeatSourcesCount() const;
+        void addNewArea(QVector<double> const & xKoords,
+                        QVector<double> const & yKoords, double value,
+                        Model::AreaType type);
+        Area * const & getArea(int const id, Model::AreaType type) const;
+        QList<Area*> const & getAreas(Model::AreaType type) const;
+        int getAreaCount(Model::AreaType type) const;
+
+        double getBoundaryBottom() const;
+        double getBoundaryLeft() const;
+        double getBoundaryRight() const;
+        double getBoundaryTop() const;
         double getInitialValue() const;
         QList<QString> const getIntMethodNames() const;
         QList<QString> const getIterativeSolverNames() const;
-        double getLeftBoundary() const;
         long getM() const;
         long getN() const;
         double*** const & getResult() const;
         long getResultM() const;
         long getResultN() const;
         double getResultT() const;
-        double getRightBoundary() const;
         QString getSelectedIntMethod() const;
         QString getSelectedIterativeSolver() const;
         bool getSimulated() const;
         bool getSimulating() const;
+        double getSolverMaxError() const;
+        int getSolverMaxIt() const;
         double getT() const;
-        QList<Area *> const & getThermalConductivities() const;
-        int getThermalConductivitiesCount() const;
-        Area * const & getThermalConductivity(int const id) const;
-        double getTopBoundary() const;
-        void removeLastHeatSource();
-        void removeLastThermalConductivity();
+
+        void removeLastArea(Model::AreaType type);
+
         void selectIntMethod(QString const intMethod);
         void selectIterativeSolver(QString const newIterativeSolver);
-        void setBottomBoundary(double const newBottomBoundary);
+        void setBoundaryBottom(double const newBottomBoundary);
+        void setBoundaryTop(double const newTopBoundary);
+        void setBoundaryLeft(double const newLeftBoundary);
+        void setBoundaryRight(double const newRightBoundary);
         void setInitialValue(double const newInitialValue);
-        void setLeftBoundary(double const newLeftBoundary);
         void setM(int const newM);
         void setN(int const newN);
-        void setRightBoundary(double const newRightBoundary);
+        void setSolverMaxError(double const maxError);
+        void setSolverMaxIt(double const maxIt);
         void setT(double const T);
-        void setTopBoundary(double const topBoundary);
         void setUI(presentation::UI * ui);
+
         void simulate();
-        void updateHeatSourceValue(int const pos, double const value);
-        void updateThermalConductivityValue(int const pos, double const newValue);
+
+        void updateAreaValue(int const pos, double const value, Model::AreaType type);
 
     signals:
         void beginningStage(QString stage, int stepCount);
@@ -83,30 +88,33 @@ namespace model {
 
     //Attribute:
     private:
-        double bottomBoundary;
-        double * consecutiveTempArray;
+        double boundaryBottom;
+        double boundaryLeft;
+        double boundaryRight;
+        double boundaryTop;
         QList<Area*> heatSources;
         int heatSourcesCount;
         double initialValue;
         QMap<QString,algorithms::IntMethod*> intMethods;
         QMap<QString,algorithms::IterativeSolver*> iterativeSolvers;
-        double leftBoundary;
         long m;
         long n;
+        algorithms::IntMethod * selectedIntMethod;
+        QString selectedIterativeSolver;
+        bool simulated;
+        double T;
+        QList<Area*> thermalConductivites;
+        int thermalConductivitesCount;
+        presentation::UI * ui;
+
+        double * consecutiveTempArray;
         double *** result;
         long resultM;
         long resultN;
         double resultT;
-        double rightBoundary;
-        algorithms::IntMethod * selectedIntMethod;
-        QString selectedIterativeSolver;
-        bool simulated;
+
         bool simulating;
-        double T;
-        QList<Area*> thermalConductivites;
-        int thermalConductivitesCount;
-        double topBoundary;
-        presentation::UI * ui;
+
 
     };
 

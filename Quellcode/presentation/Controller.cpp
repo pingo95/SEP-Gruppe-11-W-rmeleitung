@@ -103,8 +103,8 @@ void presentation::Controller::heatSourcesClickSlot(QMouseEvent *event)
                 // Gebiet zum Modell hinzufügen
                 startedNewHeatSource = false;
                 loopBack = true;
-                model->addHeatSource(new model::Area(partialAreaX, partialAreaY,
-                                    ok ? value : 0, model::Model::HeatSourceArea));
+                model->addNewArea(partialAreaX, partialAreaY, ok ? value : 0,
+                                  model::Model::AreaHeatSource);
                 // Temporäres Gebiet zurücksetzen
                 partialAreaX.clear();
                 partialAreaY.clear();
@@ -166,7 +166,7 @@ void presentation::Controller::heatSourceValueChangedSlot(int pos, int column)
         // Temperatur in Kelvin
         if(value >= 0 && value <= ui->MaxTemperature && ok)
             // Wert updaten
-            model->updateHeatSourceValue(pos-1,value);
+            model->updateAreaValue(pos-1,value,model::Model::AreaHeatSource);
         else
         {
             // Fehlermeldung ausgeben:
@@ -188,7 +188,7 @@ void presentation::Controller::newBottomBoundarySlot(double newBottomBoundary)
     // Temperatur in Kelvin
     if(newBottomBoundary >= 0 && newBottomBoundary <= ui->MaxTemperature)
         // Wert updaten
-        model->setBottomBoundary(newBottomBoundary);
+        model->setBoundaryBottom(newBottomBoundary);
     else
     {
         ui->updateNotification();
@@ -228,7 +228,7 @@ void presentation::Controller::newLeftBoundarySlot(double newLeftBoundary)
     // Temperatur in Kelvin
     if(newLeftBoundary >= 0 && newLeftBoundary <= ui->MaxTemperature)
         // Wert updaten
-        model->setLeftBoundary(newLeftBoundary);
+        model->setBoundaryLeft(newLeftBoundary);
     else
     {
         ui->updateNotification();
@@ -246,7 +246,7 @@ void presentation::Controller::newLeftBoundarySlot(double newLeftBoundary)
 // gültig ist
 void presentation::Controller::newMSlot(int newM)
 {
-    if ((newM <= 800) && (newM > 1))
+    if ((newM <= 800) && (newM > 0))
         // Wert updaten
         model->setM(newM);
     else
@@ -286,7 +286,7 @@ void presentation::Controller::newRightBoundarySlot(double newRightBoundary)
     // Temperatur in Kelvin
     if(newRightBoundary >= 0 && newRightBoundary <= ui->MaxTemperature)
         // Wert updaten
-        model->setRightBoundary(newRightBoundary);
+        model->setBoundaryRight(newRightBoundary);
     else
     {
         ui->updateNotification();
@@ -306,7 +306,7 @@ void presentation::Controller::newTopBoundarySlot(double newTopBoundary)
     // Temperatur in Kelvin
     if(newTopBoundary >= 0 && newTopBoundary <= ui->MaxTemperature)
         // Wert updaten
-        model->setTopBoundary(newTopBoundary);
+        model->setBoundaryTop(newTopBoundary);
     else
     {
         ui->updateNotification();
@@ -352,7 +352,7 @@ void presentation::Controller::playVideoSlot()
         // Schrittanzahl aus dem Modell
         int end = model->getResultM();
         // Video als Serie von einzel Bildern visualisieren
-        for(int i = start; i < end; ++i)
+        for(int i = start; i < end+1; ++i)
             ui->visualizeState(i);
     }
     else
@@ -515,8 +515,8 @@ void presentation::Controller::thermalConductivitiesClickSlot(QMouseEvent *event
                 // Gebiet zum Modell hinzufügen
                 loopBack = true;
                 startedNewThermalConductivity = false;
-                model->addThermalConductivity(new model::Area(partialAreaX, partialAreaY,
-                                    ok ? value : 0, model::Model::ThermalConductivityArea));
+                model->addNewArea(partialAreaX, partialAreaY, ok ? value : 0,
+                                  model::Model::AreaThermalConductivity);
 
                 // Temporäres Gebiet zurücksetzen
                 partialAreaX.clear();
@@ -578,7 +578,8 @@ void presentation::Controller::thermalConductivityValueChangedSlot(int pos, int 
         double value = text.toDouble(&ok);
         // Temperatur in Kelvin
         if(value > 0 && value <= ui->MaxConductivity && ok)
-            model->updateThermalConductivityValue(pos-1,value);
+            model->updateAreaValue(pos-1,value,
+                                   model::Model::AreaThermalConductivity);
         else
         {
             // Fehlermeldung ausgeben:
@@ -597,8 +598,8 @@ void presentation::Controller::thermalConductivityValueChangedSlot(int pos, int 
 // bereits mindestens eins erstellt wurde
 void presentation::Controller::undoHeatSourceSlot()
 {
-    if(model->getHeatSourcesCount() > 0)
-        model->removeLastHeatSource();
+    if(model->getAreaCount(model::Model::AreaHeatSource) > 0)
+        model->removeLastArea(model::Model::AreaHeatSource);
     else
     {
         // Fehlermeldung ausgeben:
@@ -612,8 +613,8 @@ void presentation::Controller::undoHeatSourceSlot()
 // bereits mindestens eins erstellt wurde
 void presentation::Controller::undoThermalConductivitySlot()
 {
-    if(model->getThermalConductivitiesCount() > 0)
-        model->removeLastThermalConductivity();
+    if(model->getAreaCount(model::Model::AreaThermalConductivity) > 0)
+        model->removeLastArea(model::Model::AreaThermalConductivity);
     else
     {
         // Fehlermeldung ausgeben:
