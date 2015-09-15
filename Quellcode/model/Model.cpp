@@ -6,9 +6,10 @@
 #include "../presentation/Ui.h"
 
 model::Model::Model() : QWidget(NULL), boundaryBottom(300), boundaryLeft(300),
-    boundaryRight(300), boundaryTop(300), heatSourcesCount(0), initialValue(300),
-    m(1), n(3), selectedIntMethod(NULL), selectedIterativeSolver("Jacobi"),
-    simulated(false), T(1.), thermalConductivitesCount(0), ui(NULL),
+    boundaryRight(300), boundaryTop(300), heatSourcesBackgroundValue(0),
+    heatSourcesCount(0), initialValue(300), m(1), n(3), selectedIntMethod(NULL),
+    selectedIterativeSolver("Jacobi"), simulated(false), T(1.),
+    thermalConductivitesBackgroundValue(0.01), thermalConductivitesCount(0), ui(NULL),
     consecutiveTempArray(NULL), result(NULL), resultM(0), resultN(0), resultT(0.),
     simulating(false)
 {
@@ -78,6 +79,12 @@ model::Area * const & model::Model::getArea(const int id, Model::AreaType type) 
         if((*it)->getID() == id)
             return (*it);
     return NULL;
+}
+
+double model::Model::getAreaBackgroundValue(Model::AreaType type) const
+{
+  return type == Model::AreaHeatSource ? heatSourcesBackgroundValue
+                                       : thermalConductivitesBackgroundValue;
 }
 
 QList<model::Area*> const & model::Model::getAreas(Model::AreaType type) const
@@ -222,6 +229,19 @@ void model::Model::selectIterativeSolver(QString newIterativeSolver)
 {
     selectedIterativeSolver = newIterativeSolver;
     selectedIntMethod->selectIterativeSolver(iterativeSolvers[selectedIterativeSolver]);
+    ui->updateNotification();
+}
+
+void model::Model::setAreaBackground(const double newValue, Model::AreaType type)
+{
+    if(type == Model::AreaHeatSource)
+    {
+        heatSourcesBackgroundValue = newValue;
+    }
+    else
+    {
+        thermalConductivitesBackgroundValue = newValue;
+    }
     ui->updateNotification();
 }
 
@@ -453,7 +473,7 @@ void model::Model::simulate()
     QVector<double> * step2 = new QVector<double>(*step1);
 
     // Berechnen der Zeitschritte
-    emit beginningStage("Zeitschritte berechnen:",m+1);
+    emit beginningStage("Zeitschritte berechnen:",m);
     emit simulationUpdate("Zeitschritte berechnen\n1. Zeitschritt beendet\n");
     for(long i = 1; i < m+1; ++i)
     {

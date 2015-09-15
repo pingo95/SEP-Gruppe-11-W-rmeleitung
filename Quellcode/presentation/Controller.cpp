@@ -165,10 +165,14 @@ void presentation::Controller::heatSourceValueChangedSlot(int pos, int column)
         double value = text.toDouble(&ok);
         // Temperatur in Kelvin
         if(value >= 0 && value <= ui->MaxTemperature && ok)
-            // Wert updaten
-            model->updateAreaValue(pos-1,value,model::Model::AreaHeatSource);
+            if(pos == 0)
+                model->setAreaBackground(value,model::Model::AreaHeatSource);
+            else
+                // Wert updaten
+                model->updateAreaValue(pos-1,value,model::Model::AreaHeatSource);
         else
         {
+            ui->updateNotification();
             // Fehlermeldung ausgeben:
             errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
                                    "ungültig. Bitte versuchen Sie es erneut.");
@@ -578,10 +582,15 @@ void presentation::Controller::thermalConductivityValueChangedSlot(int pos, int 
         double value = text.toDouble(&ok);
         // Temperatur in Kelvin
         if(value > 0 && value <= ui->MaxConductivity && ok)
-            model->updateAreaValue(pos-1,value,
-                                   model::Model::AreaThermalConductivity);
+            if(pos == 0)
+                model->setAreaBackground(value,model::Model::AreaThermalConductivity);
+            else
+                model->updateAreaValue(pos-1,value,
+                                       model::Model::AreaThermalConductivity);
         else
         {
+            ui->updateNotification();
+
             // Fehlermeldung ausgeben:
             errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
                                    "ungültig. Bitte versuchen Sie es erneut.");

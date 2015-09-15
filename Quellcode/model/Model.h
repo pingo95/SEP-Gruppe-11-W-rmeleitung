@@ -33,6 +33,7 @@ namespace model {
                         QVector<double> const & yKoords, double value,
                         Model::AreaType type);
         Area * const & getArea(int const id, Model::AreaType type) const;
+        double getAreaBackgroundValue(Model::AreaType type) const;
         QList<Area*> const & getAreas(Model::AreaType type) const;
         int getAreaCount(Model::AreaType type) const;
 
@@ -61,6 +62,7 @@ namespace model {
 
         void selectIntMethod(QString const intMethod);
         void selectIterativeSolver(QString const newIterativeSolver);
+        void setAreaBackground(double const newValue, Model::AreaType type);
         void setBoundaryBottom(double const newBottomBoundary);
         void setBoundaryTop(double const newTopBoundary);
         void setBoundaryLeft(double const newLeftBoundary);
@@ -92,6 +94,7 @@ namespace model {
         double boundaryLeft;
         double boundaryRight;
         double boundaryTop;
+        double heatSourcesBackgroundValue;
         QList<Area*> heatSources;
         int heatSourcesCount;
         double initialValue;
@@ -103,6 +106,7 @@ namespace model {
         QString selectedIterativeSolver;
         bool simulated;
         double T;
+        double thermalConductivitesBackgroundValue;
         QList<Area*> thermalConductivites;
         int thermalConductivitesCount;
         presentation::UI * ui;

@@ -255,8 +255,11 @@ void presentation::UI::visualizeState(int frame)
 
 void presentation::UI::updateHeatSources()
 {   
-    tableWidgetHeatSources->item(0,UI::ColumnValue)->setText(
-        QString::number(model->getAreaBackroundValue(model::Model::AreaHeatSource)));
+    double bgValue = model->getAreaBackgroundValue(model::Model::AreaHeatSource);
+    tableWidgetHeatSources->item(0,UI::ColumnValue)->setText(QString::number(bgValue));
+    plateHeatSource->axisRect()->setBackground(
+        QBrush(colorScaleHeatSource->gradient().color(bgValue,QCPRange(0,MaxTemperature),false)));
+
     int hSCount = model->getAreaCount(model::Model::AreaHeatSource);
     int rowCount = tableWidgetHeatSources->rowCount();
     tableWidgetHeatSources->setRowCount(hSCount+1);
@@ -280,7 +283,7 @@ void presentation::UI::updateHeatSources()
         {
             QTableWidgetItem * tmpItemPtr = new
                     QTableWidgetItem(QString::number((*it)->getID()));
-            tmpItemPtr->setFlags(Qt::ItemIsEnabled);
+            tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetHeatSources->setItem(i,UI::ColumnID,tmpItemPtr);
             tmpItemPtr = new
@@ -372,8 +375,10 @@ void presentation::UI::updateSimulating()
 
 void presentation::UI::updateThermalConductivties()
 {
-    tableWidgetThermalConductivities->item(0,UI::ColumnValue)->setText(
-        QString::number(model->getAreaBackroundValue(model::Model::AreaThermalConductivity)));
+    double bgValue = model->getAreaBackgroundValue(model::Model::AreaThermalConductivity);
+    tableWidgetThermalConductivities->item(0,UI::ColumnValue)->setText(QString::number(bgValue));
+    plateThermalConductivity->axisRect()->setBackground(
+        QBrush(colorScaleThermalConductivity->gradient().color(bgValue,QCPRange(0,MaxConductivity),false)));
     int tCCount = model->getAreaCount(model::Model::AreaThermalConductivity);
     int rowCount = tableWidgetThermalConductivities->rowCount();
     tableWidgetThermalConductivities->setRowCount(tCCount+1);
@@ -398,7 +403,7 @@ void presentation::UI::updateThermalConductivties()
         {
             QTableWidgetItem * tmpItemPtr = new
                     QTableWidgetItem(QString::number((*it)->getID()));
-            tmpItemPtr->setFlags(Qt::ItemIsEnabled);
+            tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             tableWidgetThermalConductivities->setItem(i,UI::ColumnID,tmpItemPtr);
             double value = (*it)->getValue();

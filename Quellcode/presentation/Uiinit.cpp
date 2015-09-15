@@ -440,7 +440,7 @@ void presentation::UI::initThermalConductivities()
     tableWidgetThermalConductivities->setColumnWidth(2,60);
     tableWidgetThermalConductivities->setShowGrid(true);
     tableWidgetThermalConductivities->verticalHeader()->setVisible(false);
-    tableWidgetHeatSources->setSelectionBehavior(QAbstractItemView::SelectRows);
+    tableWidgetThermalConductivities->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     //    tableWidgetThermalConductivities->horizontalHeader()->setSelectionBehavior(QAbstractItemView::SelectItems);
     tableWidgetThermalConductivities->horizontalHeader()->setSectionsClickable(false);
