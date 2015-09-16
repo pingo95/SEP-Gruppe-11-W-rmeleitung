@@ -3,7 +3,6 @@
 #include <QVector>
 #include <QString>
 #include <QMap>
-#include <QMetaType>
 
 namespace model {
 
@@ -58,5 +57,4 @@ namespace model {
     };
 
 }
-Q_DECLARE_METATYPE(QList<model::Area*>)
 #endif // AREA_H

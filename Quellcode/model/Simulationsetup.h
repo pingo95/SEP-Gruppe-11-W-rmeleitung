@@ -3,6 +3,7 @@
 #include <QList>
 #include <QString>
 #include "Area.h"
+#include <QMetaType>
 
 namespace model {
 
@@ -18,8 +19,8 @@ namespace model {
         };
     // Funktionen:
     public:
-        SimulationSetup();
-
+        explicit SimulationSetup();
+        explicit SimulationSetup(SimulationSetup const & rhs);
         void addNewArea(QVector<double> const & xKoords,
                         QVector<double> const & yKoords, double value,
                         SimulationSetup::AreaType type);
@@ -36,14 +37,15 @@ namespace model {
         long getM() const;
         long getN() const;
         QString getSelectedIntMethod() const;
-        QString getSelectedIterativeSolver() const;
+        QString getSelectedSolver() const;
         double getSolverMaxError() const;
         int getSolverMaxIt() const;
         double getT() const;
 
         void removeLastArea(SimulationSetup::AreaType type);
+
         void selectIntMethod(QString const intMethod);
-        void selectIterativeSolver(QString const newSolver);
+        void selectSolver(QString const newSolver);
         void setAreaBackground(double const newValue, SimulationSetup::AreaType type);
         void setBoundaryBottom(double const newBottomBoundary);
         void setBoundaryTop(double const newTopBoundary);
@@ -68,7 +70,7 @@ namespace model {
         long m;
         long n;
         QString selectedIntMethod;
-        QString selectedIterativeSolver;
+        QString selectedSolver;
         double solverMaxError;
         int solverMaxIt;
         double T;
@@ -78,5 +80,5 @@ namespace model {
     };
 
 }
-
+Q_DECLARE_METATYPE(model::SimulationSetup)
 #endif // SIMULATIONSETUP_H
