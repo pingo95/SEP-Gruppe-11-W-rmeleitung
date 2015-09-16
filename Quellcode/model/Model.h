@@ -2,6 +2,10 @@
 #define MODEL_H
 #include <QWidget>
 #include <QThread>
+#include <QString>
+#include <QMap> //<----obsolete
+#include "Area.h" //<---obsolete
+#include "../algorithms/Intmethod.h" //<----obsolete
 #include "Simulationworker.h"
 
 namespace presentation{
@@ -41,7 +45,7 @@ namespace model {
         double getBoundaryTop() const;
         double getInitialValue() const;
         QList<QString> const getIntMethodNames() const;
-        QList<QString> const getSolverNames() const;
+        QList<QString> const getIterativeSolverNames() const;
         long getM() const;
         long getN() const;
         double*** const & getResult() const;
@@ -49,7 +53,7 @@ namespace model {
         long getResultN() const;
         double getResultT() const;
         QString getSelectedIntMethod() const;
-        QString getSelectedSolver() const;
+        QString getSelectedIterativeSolver() const;
         bool getSimulated() const;
         bool getSimulating() const;
         double getSolverMaxError() const;
@@ -59,7 +63,7 @@ namespace model {
         void removeLastArea(Model::AreaType type);
 
         void selectIntMethod(QString const intMethod);
-        void selectSolver(QString const newSolver);
+        void selectIterativeSolver(QString const newIterativeSolver);
         void setAreaBackground(double const newValue, Model::AreaType type);
         void setBoundaryBottom(double const newBottomBoundary);
         void setBoundaryTop(double const newTopBoundary);
@@ -87,7 +91,7 @@ namespace model {
                              int const heatSourcesCount,
                              double const initialValue,
                              QString const intMethod,
-                             QString const solver,
+                             QString const iterativeSolver,
                              long const m, long const n,
                              double const solverMaxError,
                              int const solverMaxIt,
@@ -95,9 +99,16 @@ namespace model {
                              QList<model::Area*> const & thermalConductivitiesTemplate,
                              double const thermalConductivitiesBackgroundValue,
                              int const thermalConductivitiesCount);
+//        void beginningSimulationStage(QString stage, int stepCount);
+//        void finishedStep(int step);
+//        void simulationLogUpdate(QString message);
     private slots:
         void simulationStartedSlot();
         void simulationFinishedSlot();
+
+//    private:
+//        QString printResult();
+//        QString printVector(QVector<double> const & vec);
 
     //Attribute:
     private:
@@ -109,10 +120,12 @@ namespace model {
         double heatSourcesBackgroundValue;
         int heatSourcesCount;
         double initialValue;
+//        QMap<QString,algorithms::IntMethod*> intMethods;
+//        QMap<QString,algorithms::IterativeSolver*> iterativeSolvers;
         long m;
         long n;
         QString selectedIntMethod;
-        QString selectedSolver;
+        QString selectedIterativeSolver;
         bool simulated;
         double T;
         QList<Area*> thermalConductivities;

@@ -373,3 +373,66 @@ void model::SimulationWorker::startSimulationSlot(const double boundaryBottom,
     busy = false;
     emit finishedSimulation();
 }
+
+//QString model::SimulationWorker::printResult()
+//{
+//    QString output;
+//    output += "\nAusgabe der Ergebnis-Matrix:\n\n";
+//    for(long i = 0; i < m+1; ++i)
+//    {
+//        output += "m = " + QString::number(i) + "\n";
+//        for(long k = 0; k < n; ++k)
+//            output += "-------------";
+//        output += "\nj\\k\t| ";
+//        for(long k = 0; k < n-1; ++k)
+//            output += QString::number(k) + "\t| ";
+//        output += QString::number(n-1) + "\n";
+//        for(long k = 0; k < n; ++k)
+//            output += "-------------";
+//        output += "\n";
+//        for(long j = n-1; j >= 0; --j)
+//        {
+//            output += QString::number(j) + "\t| ";
+//            for(long k = 0; k < n-1; ++k)
+//            {
+//                output += QString::number(result[i][j][k]) + "\t| ";
+//            }
+//            output += QString::number(result[i][j][n-1]) + "\n";
+//            for(long k = 0; k < n; ++k)
+//                output += "-------------";
+//            output += "\n";
+//        }
+//        output += "\n";
+//    }
+//    output += "\n";
+//    return output;
+//}
+
+//QString model::SimulationWorker::printVector(const QVector<double> &vec)
+//{
+//    QString output;
+//    output += "\n";
+//    for(long k = 0; k <= n; ++k)
+//        output += "------";
+//    output += "\nj\\k| ";
+//    for(long k = 0; k < n-1; ++k)
+//        output += QString::number(k) + "| ";
+//    output += QString::number(n-1) + "\n";
+//    for(long k = 0; k <= n; ++k)
+//        output += "------";
+//    output += "\n";
+//    for(long j = n-1; j >= 0; --j)
+//    {
+//        output += QString::number(j) + "| ";
+//        for(long k = 0; k < n-1; ++k)
+//        {
+//            output += QString::number(vec[k + j*n]) + "| ";
+//        }
+//        output += QString::number(vec[n-1 + j*n]) + "\n";
+//        for(long k = 0; k <= n; ++k)
+//            output += "------";
+//        output += "\n";
+//    }
+//    output += "\n";
+//    return output;
+//}
