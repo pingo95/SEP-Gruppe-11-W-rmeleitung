@@ -116,9 +116,9 @@ QList<QString> const model::Model::getIntMethodNames() const
     return simWorker->getIntMethodNames();
 }
 
-QList<QString> const model::Model::getIterativeSolverNames() const
+QList<QString> const model::Model::getSolverNames() const
 {
-    return simWorker->getIterativeSolverNames();
+    return simWorker->getSolverNames();
 }
 
 long model::Model::getM() const
@@ -156,7 +156,7 @@ QString model::Model::getSelectedIntMethod() const
     return selectedIntMethod;
 }
 
-QString model::Model::getSelectedIterativeSolver() const
+QString model::Model::getSelectedSolver() const
 {
     return selectedSolver;
 }
@@ -212,9 +212,9 @@ void model::Model::selectIntMethod(QString intMethod)
 }
 
 // Updatet den gewählten iterativen Löser
-void model::Model::selectIterativeSolver(QString newIterativeSolver)
+void model::Model::selectSolver(QString newSolver)
 {
-    selectedSolver = newIterativeSolver;
+    selectedSolver = newSolver;
     ui->updateNotification();
 }
 

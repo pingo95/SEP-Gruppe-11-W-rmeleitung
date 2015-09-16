@@ -17,10 +17,10 @@ QList<QString> const model::SimulationWorker::getIntMethodNames() const
     return intMethods.keys();
 }
 
-QList<QString> const model::SimulationWorker::getIterativeSolverNames() const
+QList<QString> const model::SimulationWorker::getSolverNames() const
 {
     assert(mapsInitialized);
-    return iterativeSolvers.keys();
+    return solvers.keys();
 }
 
 
@@ -54,8 +54,8 @@ model::SimulationWorker::~SimulationWorker()
     QList<algorithms::IntMethod*>::iterator it2 = tmpList1.begin();
     for(; it2 != tmpList1.end(); ++it2)
         delete (*it2);
-    QList<algorithms::IterativeSolver*> tmpList2 = iterativeSolvers.values();
-    QList<algorithms::IterativeSolver*>::iterator it3 = tmpList2.begin();
+    QList<algorithms::Solver*> tmpList2 = solvers.values();
+    QList<algorithms::Solver*>::iterator it3 = tmpList2.begin();
     for(; it3 != tmpList2.end(); ++it3)
         delete (*it3);
     if(simulated)
@@ -75,8 +75,8 @@ void model::SimulationWorker::initializeMaps()
     intMethods.insert("Crank Nicolson", new algorithms::CrankNicolson());
 
     // Registrieren der iterativen Löser
-    iterativeSolvers.insert("Jacobi", new algorithms::Jacobi());
-    iterativeSolvers.insert("Gauss-Seidel", new algorithms::GaussSeidel());
+    solvers.insert("Jacobi", new algorithms::Jacobi());
+    solvers.insert("Gauss-Seidel", new algorithms::GaussSeidel());
     mapsInitialized = true;
 }
 
@@ -89,7 +89,7 @@ void model::SimulationWorker::startSimulationSlot(const double boundaryBottom,
                                                   const int heatSourcesCount,
                                                   const double initialValue,
                                                   const QString intMethod,
-                                                  const QString iterativeSolver,
+                                                  const QString solver,
                                                   const long m, long const n,
                                                   double const solverMaxError,
                                                   int const solverMaxIt,
@@ -202,9 +202,9 @@ void model::SimulationWorker::startSimulationSlot(const double boundaryBottom,
     QVector<double> neededTimeSteps;
 
     algorithms::IntMethod * selectedIntMethod = intMethods[intMethod];
-    selectedIntMethod->selectIterativeSolver(iterativeSolvers[iterativeSolver]);
-    selectedIntMethod->getIterativeSolver()->setEps(solverMaxError);
-    selectedIntMethod->getIterativeSolver()->setMaxIt(solverMaxIt);
+    selectedIntMethod->selectSolver(solvers[solver]);
+    selectedIntMethod->getSolver()->setEps(solverMaxError);
+    selectedIntMethod->getSolver()->setMaxIt(solverMaxIt);
 
     selectedIntMethod->getNeedetHeatSources(neededTimeSteps, reusable); // timesteps in vielfachen von deltaT, "neuester" zuerst
     int neededTimeStepsCount = neededTimeSteps.size();
@@ -339,7 +339,7 @@ void model::SimulationWorker::startSimulationSlot(const double boundaryBottom,
         }
         emit finishedStep(i);
         message = QString::number(i) + ". Zeitschritt beendet\nBenötigte Iterationen des Lösers: "
-                + QString::number(selectedIntMethod->getIterativeSolver()->getItCount()) + "\n";
+                + QString::number(selectedIntMethod->getSolver()->getItCount()) + "\n";
         emit simulationLogUpdate(message);
     }
 

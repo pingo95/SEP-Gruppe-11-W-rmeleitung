@@ -4,6 +4,10 @@ algorithms::IterativeSolver::IterativeSolver() {
 
 }
 
+algorithms::IterativeSolver::~IterativeSolver(){
+
+}
+
 double algorithms::IterativeSolver::getEps() const {
     return eps;
 }

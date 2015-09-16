@@ -379,7 +379,7 @@ void presentation::UI::initSimulating()
 
         //ComboBoxes
     comboBoxIntMethod = new QComboBox(widgetSimulation);
-    comboBoxIterativeSolver = new QComboBox(widgetSimulation);
+    comboBoxSolver = new QComboBox(widgetSimulation);
         //Progressbar
     progressBarProgress =  new QProgressBar(widgetSimulation);
     //TextEdit
@@ -407,7 +407,7 @@ void presentation::UI::initSimulating()
     groupBoxIntMethod->setLayout(vboxIntMethod);
     QGridLayout * vboxSolver = new QGridLayout();
     vboxSolver->addWidget(labelSelectSolver,0,0);
-    vboxSolver->addWidget(comboBoxIterativeSolver,0,1);
+    vboxSolver->addWidget(comboBoxSolver,0,1);
     vboxSolver->addWidget(labelEpsilon,1,0);
     vboxSolver->addWidget(doubleSpinBoxEpsilon,1,1);
     vboxSolver->addWidget(labelMaxIt,2,0);
