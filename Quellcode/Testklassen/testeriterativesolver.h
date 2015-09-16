@@ -3,9 +3,10 @@
 
 #include <QLabel>
 
-#include <../algorithms/Iterativesolver.h>
+#include <../algorithms/Solver.h>
 #include "../algorithms/Jacobi.h"
 #include "../algorithms/Gaussseidel.h"
+#include "../algorithms/LU.h"
 
 #include "Testwindow.h"
 
@@ -16,11 +17,12 @@ namespace algorithms {
     public:
         TesterIterativeSolver();
 
-        QLabel* testSolveJacobi();
         QLabel* testSolveGaussSeidel();
+        QLabel* testSolveJacobi();
+        QLabel* testSolveLU();
 
     private:
-        IterativeSolver* itSolver;
+        Solver* itSolver;
     };
 
 }

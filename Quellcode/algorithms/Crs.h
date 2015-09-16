@@ -2,7 +2,9 @@
 #define CRS_H
 
 #include <QVector>
+
 #include <cassert>
+#include <cmath>
 
 namespace algorithms {
 
@@ -27,6 +29,7 @@ namespace algorithms {
         double getValue(int const i, int const j) const; // Liefert Eintrag a_ij
         CRS multCRSCRS(CRS const &rMat) const; // Implementiert lediglich Diagonalmatrix * bel. Matrix
         double multRowQVector(int const i, QVector<double> const vec) const;
+        double multRowQVectorAbs(int const i, QVector<double> const vec) const;
 
     //Attribute:
     private:

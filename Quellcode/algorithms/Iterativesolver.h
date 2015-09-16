@@ -15,7 +15,7 @@ namespace algorithms {
         int getMaxIt() const;
         void setEps(double const eps);
         void setMaxIt(int const maxIt);
-        virtual void solve(QVector<double> & result, CRS const & matrix, QVector<double> const & rhs)=0;
+        virtual void solve(QVector<double> & result, CRS & matrix, QVector<double> & rhs)=0;
     };
 }
 

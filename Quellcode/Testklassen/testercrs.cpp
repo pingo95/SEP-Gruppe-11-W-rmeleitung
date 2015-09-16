@@ -62,6 +62,21 @@ QLabel* algorithms::TesterCRS::testEye() {
     return text;
 }
 
+QLabel* algorithms::TesterCRS::testFull() {
+    QLabel* text = new QLabel();
+    QString testString;
+    int testSize=5;
+
+    testMatrix.A1(testSize);
+    QVector<QVector<double> > tmp;
+    testMatrix.full(tmp);
+
+    testString = printFull(tmp);
+    text->setText(testString);
+    return text;
+}
+
+
 QLabel* algorithms::TesterCRS::testMultCRSCRS() {
     QLabel* text = new QLabel();
     QString testString;

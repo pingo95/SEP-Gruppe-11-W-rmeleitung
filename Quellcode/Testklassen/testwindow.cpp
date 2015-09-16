@@ -50,6 +50,18 @@ QString algorithms::printCRS(algorithms::CRS const &matrix) {
     return string;
 }
 
+QString algorithms::printFull(QVector<QVector<double> > const & matrix) {
+    QString string;
+
+    for(int i=0; i<matrix.size(); ++i) {
+        for(int j=0; j<matrix.size(); ++j)
+            string.append(QString::number(matrix[i][j])+"\t");
+        string.append("\n");
+    }
+    return string;
+}
+
+
 QString algorithms::printQVector(QVector<double> const &vector) {
     QString string;
 

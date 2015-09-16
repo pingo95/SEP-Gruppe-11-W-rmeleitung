@@ -8,8 +8,24 @@ algorithms::Solver::~Solver() {
 
 }
 
-void algorithms::Solver::decompose(CRS const & matrix) {
+void algorithms::Solver::decompose(CRS & matrix) {
 
+}
+
+void algorithms::Solver::equilibrate(CRS & matrix, QVector<double> & rhs) {
+    double sum;
+    QVector<double> ones(matrix.getSize()), diag(matrix.getSize());
+    CRS equi;
+    for(int i=0; i<matrix.getSize(); ++i)
+        ones[i]=1;
+
+    for(int i=0; i<matrix.getSize(); ++i) {
+        sum = matrix.multRowQVectorAbs(i,ones);
+        diag[i] = 1/sum;
+        rhs[i] *= 1/sum;
+    }
+    equi.diag(diag);
+    matrix = equi.multCRSCRS(matrix);
 }
 
 double algorithms::Solver::getEps() const {

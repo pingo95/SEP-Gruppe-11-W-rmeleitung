@@ -10,10 +10,11 @@ namespace algorithms {
     public:
         LU();
 
-        void decompose(CRS const & matrix);
-        void solve(QVector<double> & result, CRS const & matrix, QVector<double> const & rhs);
+        void decompose(CRS & matrix);
+        void solve(QVector<double> & result, CRS & matrix, QVector<double> & rhs);
 
     private:
+        QVector<double> equi;
         QVector<QVector<double> > L;
         QVector<QVector<double> > U;
 

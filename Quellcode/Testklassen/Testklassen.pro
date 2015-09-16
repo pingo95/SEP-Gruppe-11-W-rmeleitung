@@ -14,38 +14,48 @@ TEMPLATE = app
 
 SOURCES += \
     ../algorithms/Crs.cpp \
-    ../model/Area.cpp \
     ../presentation/Qcustomplot.cpp \
+    ../algorithms/Solver.cpp \
     ../algorithms/Iterativesolver.cpp \
     ../algorithms/Jacobi.cpp \
     ../algorithms/Gaussseidel.cpp \
+    ../algorithms/LU.cpp \
     ../algorithms/Intmethod.cpp \
     ../algorithms/Impeuler.cpp \
     ../algorithms/Cranknicolson.cpp \
+    ../model/Area.cpp \
+    ../model/Simulationsetup.cpp \
+    ../model/Simulationworker.cpp \
     ../model/Model.cpp \
+    ../presentation/Optimizationwidget.cpp \
     ../presentation/Uiinit.cpp \
     ../presentation/Ui.cpp\
     ../presentation/Controller.cpp \
     Testerarea.cpp \
-    Main.cpp \
     Testercrs.cpp \
     Testeriterativesolver.cpp \
-    Testwindow.cpp
+    Testwindow.cpp \
+    Main.cpp
 
 HEADERS  += \
     ../algorithms/Crs.h \
-    ../model/Area.h \
+    ../algorithms/Solver.h \
     ../presentation/Qcustomplot.h \
     ../algorithms/Iterativesolver.h \
     ../algorithms/Jacobi.h \
     ../algorithms/Gaussseidel.h \
+    ../algorithms/LU.h \
     ../algorithms/Intmethod.h \
     ../algorithms/Impeuler.h \
     ../algorithms/Cranknicolson.h \
+    Testwindow.h \
+    ../model/Area.h \
+    ../model/Simulationsetup.h \
+    ../model/Simulationworker.h \
     ../model/Model.h \
+    ../presentation/Optimizationwidget.h \
     ../presentation/Ui.h \
     ../presentation/Controller.h \
     Testerarea.h \
     Testercrs.h \
-    Testeriterativesolver.h \
-    Testwindow.h
+    Testeriterativesolver.h

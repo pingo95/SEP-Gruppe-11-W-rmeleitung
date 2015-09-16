@@ -4,7 +4,7 @@ algorithms::GaussSeidel::GaussSeidel() {
 
 }
 
-void algorithms::GaussSeidel::solve(QVector<double> &result, CRS const &matrix, QVector<double> const &rhs) {
+void algorithms::GaussSeidel::solve(QVector<double> &result, CRS & matrix, QVector<double> & rhs) {
     double rel=1, sum;
     itCount = 0;
     QVector<double> res(result.size());

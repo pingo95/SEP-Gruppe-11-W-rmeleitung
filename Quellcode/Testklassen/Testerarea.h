@@ -4,8 +4,10 @@
 #include <QTabWidget>
 #include <QVector>
 #include <QGridLayout>
-#include "../presentation/Qcustomplot.h"
 #include <QTextEdit>
+
+#include "../presentation/Qcustomplot.h"
+#include "../model/Area.h"
 
 class TesterArea
 {

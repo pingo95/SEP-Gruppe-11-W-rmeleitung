@@ -14,7 +14,7 @@ namespace algorithms {
         IntMethod();
         virtual ~IntMethod();
 
-        virtual void calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources) const=0;
+        virtual void calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources)=0;
         Solver * const & getSolver() const;
         virtual void getNeedetHeatSources(QVector<double> &neededTimeSteps, bool &reusable) const=0;
         void selectSolver(Solver* solver);
@@ -29,6 +29,7 @@ namespace algorithms {
         CRS itMatrix;
         int n;
     };
+
 }
 
 #endif // INTMETHOD_H

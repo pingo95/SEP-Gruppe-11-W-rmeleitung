@@ -1,3 +1,5 @@
+#define ___TESTING
+
 #ifndef TESTWINDOW_H
 #define TESTWINDOW_H
 
@@ -32,8 +34,9 @@ private:
 };
 
 namespace algorithms {
-    QString printCRS(CRS const &matrix);
-    QString printQVector(QVector<double> const &vector);
+    QString printCRS(CRS const & matrix);
+    QString printFull(QVector<QVector<double> > const & matrix);
+    QString printQVector(QVector<double> const & vector);
 }
 
 #endif // TESTWINDOW_H

@@ -205,7 +205,7 @@ void algorithms::CRS::full(QVector<QVector<double> > & full) const {
         }
     }
 
-    for(int i=0; i<ptr.size(); ++i) {
+    for(int i=0; i<size; ++i) {
         for(int j=ptr[i]; j<ptr[i+1]; ++j) {
             full[i][index[j]] = value[j];
         }
@@ -249,6 +249,14 @@ double algorithms::CRS::multRowQVector(int const i, QVector<double> const vec) c
     double res=0;
     for(int j=this->ptr[i]; j<this->ptr[i+1]; ++j) {
         res += this->value[j] * vec[this->index[j]];
+    }
+    return res;
+}
+
+double algorithms::CRS::multRowQVectorAbs(int const i, QVector<double> const vec) const {
+    double res=0;
+    for(int j=this->ptr[i]; j<this->ptr[i+1]; ++j) {
+        res += fabs(this->value[j] * vec[this->index[j]]);
     }
     return res;
 }

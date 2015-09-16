@@ -14,13 +14,14 @@ namespace algorithms {
         Solver();
         virtual ~Solver();
 
-        virtual void decompose(CRS const & matrix);
+        virtual void decompose(CRS & matrix);
+        void equilibrate(CRS & matrix, QVector<double> & rhs);
         virtual double getEps() const;
         virtual int getItCount() const;
         virtual int getMaxIt() const;
         virtual void setEps(double const eps);
         virtual void setMaxIt(int const maxIt);
-        virtual void solve(QVector<double> & result, CRS const & matrix, QVector<double> const & rhs)=0;
+        virtual void solve(QVector<double> & result, CRS & matrix, QVector<double> & rhs)=0;
 
     protected:
         double eps;

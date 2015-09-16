@@ -17,6 +17,7 @@ namespace algorithms {
             QLabel* testA1();
             QLabel* testDiag();
             QLabel* testDiffCRS();
+            QLabel* testFull();
             QLabel* testEye();
             QLabel* testMultCRSCRS();
             QLabel* testMultCRSQVector();

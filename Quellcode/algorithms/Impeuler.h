@@ -9,7 +9,7 @@ namespace algorithms {
     public:
         ImpEuler();
 
-        void calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources) const;
+        void calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources);
         void getNeedetHeatSources(QVector<double> &neededTimeSteps, bool &reusable) const;
         void setUpSpecific(QVector<double> const &thermalConductivities);
     };
