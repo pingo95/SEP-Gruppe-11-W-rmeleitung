@@ -16,6 +16,8 @@ presentation::UI::UI(QWidget *parent)
     this->setMinimumSize(1360,765);
     setCentralWidget(tabWidgetMain);
 
+    widgetOptimization = new OptimizationWidget(this);
+
     //initFunktionen
     initConfiguration();
 
@@ -25,6 +27,7 @@ presentation::UI::UI(QWidget *parent)
 
     initSimulating();
     initVisualization();
+    tabWidgetMain->addTab(widgetOptimization,"Optimierung");
     initHelp();
 
 
@@ -155,7 +158,7 @@ void presentation::UI::setController(Controller *controller)
     connect(doubleSpinBoxT,SIGNAL(valueChanged(double)),controller,SLOT(newTSlot(double)));
     connect(buttonPlayVideo,SIGNAL(pressed()),controller,SLOT(playVideoSlot()));
     connect(comboBoxIntMethod,SIGNAL(activated(QString)),controller,SLOT(selectIntMethodSlot(QString)));
-    connect(comboBoxIterativeSolver,SIGNAL(activated(QString)),controller,SLOT(selectIterativeSolverSlot(QString)));
+    connect(comboBoxSolver,SIGNAL(activated(QString)),controller,SLOT(selectSolverSlot(QString)));
     connect(buttonSimulate,SIGNAL(clicked(bool)),controller,SLOT(simulateSlot()));
     connect(tabWidgetMain,SIGNAL(currentChanged(int)),controller,SLOT(tabChangedSlot(int)));
     connect(this,SIGNAL(subTabChange(int)),controller,SLOT(tabChangedSlot(int)));
@@ -173,10 +176,10 @@ void presentation::UI::setModel(model::Model *model)
     QList<QString>::const_iterator it = tmpList.begin();
     for(; it < tmpList.end(); ++it)
         comboBoxIntMethod->addItem((*it));
-    tmpList = model->getIterativeSolverNames();
+    tmpList = model->getSolverNames();
     it = tmpList.begin();
     for(; it < tmpList.end(); ++it)
-        comboBoxIterativeSolver->addItem((*it));
+        comboBoxSolver->addItem((*it));
 
     // Initialen Tab laden/updaten
     updateNotification();
@@ -366,7 +369,7 @@ void presentation::UI::updateSimulating()
 
     }
     comboBoxIntMethod->setCurrentText(model->getSelectedIntMethod());
-    comboBoxIterativeSolver->setCurrentText(model->getSelectedIterativeSolver());
+    comboBoxSolver->setCurrentText(model->getSelectedSolver());
 }
 
 void presentation::UI::updateThermalConductivties()

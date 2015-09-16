@@ -20,6 +20,7 @@
 #include "../model/Area.h"
 #include "Qcustomplot.h"
 #include "../model/Model.h"
+#include "Optimizationwidget.h"
 
 namespace presentation {
 class Controller;
@@ -127,6 +128,8 @@ class Controller;
         QWidget * widgetConfigurationThermalConductivities;
         QWidget * widgetSimulation;
         QWidget * widgetVisualisation;
+
+        OptimizationWidget * widgetOptimization;
 
         //Layouts
         //subGridLayouts
@@ -241,7 +244,7 @@ class Controller;
 
         //ComboBoxes
         QComboBox * comboBoxIntMethod;
-        QComboBox * comboBoxIterativeSolver;
+        QComboBox * comboBoxSolver;
 
         //TableWidgets
         QTableWidget * tableWidgetHeatSources;
