@@ -10,11 +10,10 @@ presentation::UI::UI(QWidget *parent)
 
     //TabBar initialisieren
     tabWidgetMain = new QTabWidget(this);
-    widgetOptimization = new OptimizationWidget(this);
+    widgetOptimization = new OptimizationWidget(tabWidgetMain);
 //    tabWidgetMain->setMinimumSize(350,250);
 
     //Layout anwenden
-    this->setMinimumSize(1360,765);
     setCentralWidget(tabWidgetMain);
 
 
@@ -30,6 +29,7 @@ presentation::UI::UI(QWidget *parent)
     tabWidgetMain->addTab(widgetOptimization,"Optimierung");
     initHelp();
 
+    this->setMinimumSize(1360,765);
 
 }
 

@@ -9,6 +9,10 @@
 #include <QCheckBox>
 #include <QDoubleSpinBox>
 #include <QSpinBox>
+#include <QGroupBox>
+#include <QProgressBar>
+
+#include "Qcustomplot.h"
 
 namespace presentation {
 
@@ -17,6 +21,8 @@ namespace presentation {
         Q_OBJECT
     public:
         explicit OptimizationWidget(QWidget *parent = 0);
+
+        double const MaxTemperature;
 
     signals:
 
@@ -30,7 +36,6 @@ namespace presentation {
 
         //Widgets
         QWidget * widgetCentral;
-        QWidget * widgetData;
         QWidget * widgetSolution;
         QWidget * widgetConfiguration;
 
@@ -38,6 +43,7 @@ namespace presentation {
         QGridLayout * layoutDataTab;
         QGridLayout * layoutSolutionTab;
         QGridLayout * layoutConfigurationTab;
+        QGridLayout * layoutWidgetCentral;
 
         //Buttons
         QPushButton * buttonLoad;
@@ -47,6 +53,14 @@ namespace presentation {
         QLabel * labelData;
         QLabel * labelSolution;
         QLabel * labelConfiguration;
+        QLabel * labelSpinBoxN;
+        QLabel * labelInitialValue;
+        QLabel * labelSettings;
+        QLabel * labelM;
+        QLabel * labelT;
+        QLabel * labelEpsilon;
+        QLabel * labelMaxIt;
+        QLabel * labelProgressBar;
 
         //Table
         QTableWidget * tableWidgetData;
@@ -56,6 +70,25 @@ namespace presentation {
         QCheckBox * checkBoxN;
         QCheckBox * checkBoxHeatSources;
         QCheckBox * checkBoxThermalConductivities;
+
+        //SpinBoxes
+        QSpinBox * spinBoxN;
+        QSpinBox * spinBoxM;
+        QSpinBox * spinBoxMaxIt;
+
+        //doubleSpinBoxes
+        QDoubleSpinBox * doubleSpinBoxInitialValue;
+        QDoubleSpinBox * doubleSpinBoxEpsilon;
+        QDoubleSpinBox * doubleSpinBoxT;
+
+        //Platte
+        QCustomPlot * plateOptimization;
+        QCPColorMap * colorMap;
+        QCPColorScale * colorScale;
+
+        //Progressbar
+        QProgressBar * progressBar;
+
     };
 
 }
