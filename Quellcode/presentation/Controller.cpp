@@ -397,7 +397,7 @@ void presentation::Controller::selectIntMethodSlot(QString newIntMethod)
 
 // Dieser Slot updatet den gewählten iterativen Löser, dies ist aber nur
 // möglich falls gerade nicht simuliert wird
-void presentation::Controller::selectIterativeSolverSlot(QString newIterativeSolver)
+void presentation::Controller::selectSolverSlot(QString newSolver)
 {
     if(model->getSimulating())
     {
@@ -413,7 +413,7 @@ void presentation::Controller::selectIterativeSolverSlot(QString newIterativeSol
     else
     {
         // Keine Simulation, Update des Wertes
-        model->selectIterativeSolver(newIterativeSolver);
+        model->selectSolver(newSolver);
     }
 }
 

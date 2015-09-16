@@ -35,7 +35,7 @@ namespace presentation {
         void newTSlot(double newT);
         void playVideoSlot();
         void selectIntMethodSlot(QString newIntMethod);
-        void selectIterativeSolverSlot(QString newIterativeSolver);
+        void selectSolverSlot(QString newIterativeSolver);
         void simulateSlot();
         void tabChangedSlot(int newTab);
         void thermalConductivitiesClickSlot(QMouseEvent * event);
