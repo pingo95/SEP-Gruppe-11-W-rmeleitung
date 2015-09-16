@@ -173,7 +173,7 @@ void presentation::UI::setModel(model::Model *model)
     QList<QString>::const_iterator it = tmpList.begin();
     for(; it < tmpList.end(); ++it)
         comboBoxIntMethod->addItem((*it));
-    tmpList = model->getIterativeSolverNames();
+    tmpList = model->getSolverNames();
     it = tmpList.begin();
     for(; it < tmpList.end(); ++it)
         comboBoxIterativeSolver->addItem((*it));
@@ -366,7 +366,7 @@ void presentation::UI::updateSimulating()
 
     }
     comboBoxIntMethod->setCurrentText(model->getSelectedIntMethod());
-    comboBoxIterativeSolver->setCurrentText(model->getSelectedIterativeSolver());
+    comboBoxIterativeSolver->setCurrentText(model->getSelectedSolver());
 }
 
 void presentation::UI::updateThermalConductivties()

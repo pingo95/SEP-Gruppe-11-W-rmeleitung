@@ -3,9 +3,8 @@
 
 #include <QObject>
 #include <QMap>
-#include <QString>
-#include "Area.h"
 #include "../algorithms/Intmethod.h"
+#include "Simulationsetup.h"
 
 namespace model {
 
@@ -20,7 +19,7 @@ namespace model {
         ~SimulationWorker();
 
         QList<QString> const getIntMethodNames() const;
-        QList<QString> const getIterativeSolverNames() const;
+        QList<QString> const getSolverNames() const;
         double*** const & getResult() const;
         long getM() const;
         long getN() const;
@@ -44,7 +43,7 @@ namespace model {
                                  int const heatSourcesCount,
                                  double const initialValue,
                                  QString const intMethod,
-                                 QString const iterativeSolver,
+                                 QString const solver,
                                  long const m, long const n,
                                  double const solverMaxError,
                                  int const solverMaxIt,
@@ -52,17 +51,12 @@ namespace model {
                                  QList<model::Area*> const & thermalConductivitiesTemplate,
                                  double const thermalConductivitiesBackgroundValue,
                                  int const thermalConductivitiesCount);
-
-//    private:
-//        QString printResult();
-//        QString printVector(QVector<double> const & vec);
-
     // Attribute:
     private:
         bool busy;
         double * consecutiveTempArray;
         QMap<QString,algorithms::IntMethod*> intMethods;
-        QMap<QString,algorithms::IterativeSolver*> iterativeSolvers;
+        QMap<QString,algorithms::Solver*> solvers;
         long m;
         bool mapsInitialized;
         long n;
