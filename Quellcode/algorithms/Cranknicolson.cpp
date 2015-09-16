@@ -6,7 +6,7 @@ algorithms::CrankNicolson::CrankNicolson() {
 
 void algorithms::CrankNicolson::calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources) const {
     QVector<double> rhs = algorithms::addQVectors(rhsMatrix * last,this->deltaT/2 * (algorithms::addQVectors(*(heatSources[1]),*(heatSources[0]))));
-    this->activeIterativeSolver->solve(next,this->itMatrix,rhs);
+    this->activeSolver->solve(next,this->itMatrix,rhs);
 }
 
 void algorithms::CrankNicolson::getNeedetHeatSources(QVector<double> &neededTimeSteps, bool &reusable) const {

@@ -1,11 +1,11 @@
 #ifndef IMPEULER_H
 #define IMPEULER_H
+
 #include "Intmethod.h"
 
 namespace algorithms {
 
-    class ImpEuler : public IntMethod
-    {
+    class ImpEuler : public IntMethod {
     public:
         ImpEuler();
 

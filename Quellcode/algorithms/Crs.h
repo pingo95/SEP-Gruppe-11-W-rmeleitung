@@ -6,8 +6,6 @@
 
 namespace algorithms {
 
-    class TesterCRS;
-
     class CRS
     {
     //Funktionen:
@@ -21,9 +19,11 @@ namespace algorithms {
 
         void A1(int const n); // 2D-Diskretisierungsmatrix Laplace-Operator
         void diag(QVector<double> const &diag); // Diagonalmatrix mit Vektoreinträgen auf der Diagonalen
+        void full(QVector<QVector<double> > & full) const;
         void eye(int const n); // Einheitsmatrix der Größe n*n
         int getIndex(int const i) const;
         int getRowsNumElem(int const i) const;
+        int getSize() const;
         double getValue(int const i, int const j) const; // Liefert Eintrag a_ij
         CRS multCRSCRS(CRS const &rMat) const; // Implementiert lediglich Diagonalmatrix * bel. Matrix
         double multRowQVector(int const i, QVector<double> const vec) const;

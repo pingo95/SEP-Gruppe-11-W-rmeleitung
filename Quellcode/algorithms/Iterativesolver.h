@@ -1,17 +1,11 @@
 #ifndef ITERATIVESOLVER_H
 #define ITERATIVESOLVER_H
 
-#include <math.h>
-#include <cassert>
-
-#include <QVector>
-
-#include "Crs.h"
+#include "Solver.h"
 
 namespace algorithms {
 
-    class IterativeSolver
-    {
+    class IterativeSolver : public Solver {
     public:
         IterativeSolver();
         virtual ~IterativeSolver();
@@ -19,18 +13,10 @@ namespace algorithms {
         double getEps() const;
         int getItCount() const;
         int getMaxIt() const;
-        void setEps(double eps);
-        void setMaxIt(int maxIt);
-        virtual void solve(QVector<double>& result, CRS const &matrix, QVector<double> const &rhs)=0;
-
-    protected:
-        double eps;
-        int itCount;
-        int maxIt;
+        void setEps(double const eps);
+        void setMaxIt(int const maxIt);
+        virtual void solve(QVector<double> & result, CRS const & matrix, QVector<double> const & rhs)=0;
     };
-
-    double norm2(QVector<double> const &vec);
-
 }
 
 #endif // ITERATIVESOLVER_H

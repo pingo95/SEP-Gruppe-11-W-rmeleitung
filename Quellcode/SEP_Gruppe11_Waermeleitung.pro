@@ -16,12 +16,15 @@ SOURCES += \
     algorithms/Crs.cpp \
     model/Area.cpp \
     presentation/Qcustomplot.cpp \
+    algorithms/Solver.cpp \
     algorithms/Iterativesolver.cpp \
     algorithms/Jacobi.cpp \
     algorithms/Gaussseidel.cpp \
+    algorithms/LU.cpp \
     algorithms/Intmethod.cpp \
     algorithms/Impeuler.cpp \
     algorithms/Cranknicolson.cpp \
+    model/Simulationsetup.cpp \
     model/Simulationworker.cpp \
     model/Model.cpp \
     presentation/Optimizationwidget.cpp \
@@ -34,14 +37,17 @@ SOURCES += \
 
 HEADERS  += \
     algorithms/Crs.h \
-    model/Area.h \
-    presentation/Qcustomplot.h \
+    algorithms/Solver.h \
     algorithms/Iterativesolver.h \
     algorithms/Jacobi.h \
     algorithms/Gaussseidel.h \
+    algorithms/LU.h \
     algorithms/Intmethod.h \
     algorithms/Impeuler.h \
     algorithms/Cranknicolson.h \
+    presentation/Qcustomplot.h \
+    model/Area.h \
+    model/Simulationsetup.h \
     model/Simulationworker.h \
     model/Model.h \
     presentation/Optimizationwidget.h \

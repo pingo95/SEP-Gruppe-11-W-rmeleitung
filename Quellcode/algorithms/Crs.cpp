@@ -196,12 +196,32 @@ void algorithms::CRS::eye(int const n)
     ptr[n*n] = nnz;
 }
 
+void algorithms::CRS::full(QVector<QVector<double> > & full) const {
+    full.resize(size);
+    for(int i=0; i<size; ++i) {
+        full[i].resize(size);
+        for(int j=0; j<size; j++) {
+            full[i][j] = 0;
+        }
+    }
+
+    for(int i=0; i<ptr.size(); ++i) {
+        for(int j=ptr[i]; j<ptr[i+1]; ++j) {
+            full[i][index[j]] = value[j];
+        }
+    }
+}
+
 int algorithms::CRS::getIndex(int const i) const {
-    return this->index[i];
+    return index[i];
 }
 
 int algorithms::CRS::getRowsNumElem(int const i) const {
-    return this->ptr[i];
+    return ptr[i];
+}
+
+int algorithms::CRS::getSize() const {
+    return size;
 }
 
 double algorithms::CRS::getValue(int const i, int const j) const {

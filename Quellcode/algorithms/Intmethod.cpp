@@ -8,18 +8,19 @@ algorithms::IntMethod::~IntMethod() {
 
 }
 
-algorithms::IterativeSolver * const & algorithms::IntMethod::getIterativeSolver() const
+algorithms::Solver * const & algorithms::IntMethod::getSolver() const
 {
-    return activeIterativeSolver;
+    return activeSolver;
 }
 
-void algorithms::IntMethod::selectIterativeSolver(IterativeSolver *iterativeSolver) {
-    activeIterativeSolver = iterativeSolver;
+void algorithms::IntMethod::selectSolver(Solver* solver) {
+    activeSolver = solver;
 }
 
 void algorithms::IntMethod::setUp(int const n, int const m, double const T, QVector<double> const &thermalConductivities) {
     this->n = n;
-    this->deltaX = (1./(double)(n-1));
-    this->deltaT = (T/(double)m);
-    this->setUpSpecific(thermalConductivities);
+    deltaX = (1./(double)(n-1));
+    deltaT = (T/(double)m);
+    setUpSpecific(thermalConductivities);
+    activeSolver->decompose(itMatrix);
 }
