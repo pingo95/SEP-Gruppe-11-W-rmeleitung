@@ -11,6 +11,8 @@ int main(int argc, char *argv[])
     translator.load("qt_de_DE", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     application.installTranslator(&translator);
 
+     qRegisterMetaType<QList<model::Area*> >();
+
     //Anlegen der MVC Objekte
     model::Model * model = new model::Model();
     presentation::UI * ui = new presentation::UI();

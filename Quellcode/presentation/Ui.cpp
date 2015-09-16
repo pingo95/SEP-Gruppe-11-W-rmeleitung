@@ -178,10 +178,6 @@ void presentation::UI::setModel(model::Model *model)
     for(; it < tmpList.end(); ++it)
         comboBoxIterativeSolver->addItem((*it));
 
-    connect(model,SIGNAL(beginningStage(QString,int)),this,SLOT(nextProgresseStage(QString,int)));
-    connect(model,SIGNAL(finishedStep(int)),progressBarProgress,SLOT(setValue(int)));
-    connect(model,SIGNAL(simulationUpdate(QString)),simulationLog,SLOT(append(QString)));
-
     // Initialen Tab laden/updaten
     updateNotification();
 }
@@ -489,6 +485,24 @@ void presentation::UI::updateVisualization()
     }
 }
 
+void presentation::UI::appendToSimulationLogSlot(QString text)
+{
+    simulationLog->append(text);
+}
+
+void presentation::UI::nextProgresseStageSlot(QString stage, int maximum)
+{
+    progressBarProgress->setMaximum(maximum);
+    progressBarProgress->setMinimum(0);
+    progressBarProgress->setValue(0);
+    labelProgressBar->setText(stage);
+}
+
+void presentation::UI::updateSimulationProgressSlot(int step)
+{
+    progressBarProgress->setValue(step);
+}
+
 void presentation::UI::transformTabIDSlot(int targetTab)
 {
     emit subTabChange(targetTab + tabMainCount);
@@ -496,13 +510,5 @@ void presentation::UI::transformTabIDSlot(int targetTab)
 
 void presentation::UI::updateLcdSlot(int value)
 {
-    lcdNumberVideoTimestep->display((double) value * resultT/(double)(resultM-1));
-}
-
-void presentation::UI::nextProgresseStage(QString stage, int maximum)
-{
-    progressBarProgress->setMaximum(maximum);
-    progressBarProgress->setMinimum(0);
-    progressBarProgress->setValue(0);
-    labelProgressBar->setText(stage);
+    lcdNumberVideoTimestep->display((double) value * resultT/(double)(resultM));
 }

@@ -3,6 +3,7 @@
 #include <QVector>
 #include <QString>
 #include <QMap>
+#include <QMetaType>
 
 namespace model {
 
@@ -12,6 +13,7 @@ namespace model {
     public:
         explicit Area(QVector<double> const & xKoords,
              QVector<double> const & yKoords, double value, int const type);
+        explicit Area(Area const &rhs);
         ~Area();
         static bool validateArea(QVector<double> const & xKoords,
                                  QVector<double> const & yKoords);
@@ -25,7 +27,7 @@ namespace model {
         bool insidePoint(double const xKoord, double const yKoord) const;
         void setValue(double const value);
 
-    public:
+    private:
         explicit Area();
         static double det(double const pX, double const pY,
                           double const qX, double const qY);
@@ -45,7 +47,6 @@ namespace model {
 
     //Attribute:
     private:
-        explicit Area(Area const &);
         static QMap<int,int> idCounters;
 
         int const id;
@@ -57,5 +58,5 @@ namespace model {
     };
 
 }
-
+Q_DECLARE_METATYPE(QList<model::Area*>)
 #endif // AREA_H

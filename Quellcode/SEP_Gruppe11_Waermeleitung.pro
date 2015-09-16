@@ -22,7 +22,9 @@ SOURCES += \
     algorithms/Intmethod.cpp \
     algorithms/Impeuler.cpp \
     algorithms/Cranknicolson.cpp \
+    model/Simulationworker.cpp \
     model/Model.cpp \
+    presentation/Optimizationwidget.cpp \
     presentation/Uiinit.cpp \
     presentation/Ui.cpp \
     presentation/Controller.cpp \
@@ -40,7 +42,9 @@ HEADERS  += \
     algorithms/Intmethod.h \
     algorithms/Impeuler.h \
     algorithms/Cranknicolson.h \
+    model/Simulationworker.h \
     model/Model.h \
+    presentation/Optimizationwidget.h \
     presentation/Ui.h \
     presentation/Controller.h
 

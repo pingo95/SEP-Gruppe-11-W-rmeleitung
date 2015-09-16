@@ -1,10 +1,12 @@
 #ifndef MODEL_H
 #define MODEL_H
 #include <QWidget>
+#include <QThread>
 #include <QString>
-#include <QMap>
-#include "Area.h"
-#include "../algorithms/Intmethod.h"
+#include <QMap> //<----obsolete
+#include "Area.h" //<---obsolete
+#include "../algorithms/Intmethod.h" //<----obsolete
+#include "Simulationworker.h"
 
 namespace presentation{
     class UI;
@@ -24,9 +26,9 @@ namespace model {
             AreaThermalConductivity,
         };
 
-    //Funktionen:
+    // Funktionen:
     public:
-        Model();
+        explicit Model();
         ~Model();
 
         void addNewArea(QVector<double> const & xKoords,
@@ -80,13 +82,33 @@ namespace model {
         void updateAreaValue(int const pos, double const value, Model::AreaType type);
 
     signals:
-        void beginningStage(QString stage, int stepCount);
-        void finishedStep(int step);
-        void simulationUpdate(QString message);
+        void startSimulation(double const boundaryBottom,
+                             double const boundaryLeft,
+                             double const boundaryRight,
+                             double const boundaryTop,
+                             QList<model::Area*> const & heatSourcesTemplate,
+                             double const heatSourceBackgroundValue,
+                             int const heatSourcesCount,
+                             double const initialValue,
+                             QString const intMethod,
+                             QString const iterativeSolver,
+                             long const m, long const n,
+                             double const solverMaxError,
+                             int const solverMaxIt,
+                             double const T,
+                             QList<model::Area*> const & thermalConductivitiesTemplate,
+                             double const thermalConductivitiesBackgroundValue,
+                             int const thermalConductivitiesCount);
+//        void beginningSimulationStage(QString stage, int stepCount);
+//        void finishedStep(int step);
+//        void simulationLogUpdate(QString message);
+    private slots:
+        void simulationStartedSlot();
+        void simulationFinishedSlot();
 
-    private:
-        QString printResult();
-        QString printVector(QVector<double> const & vec);
+//    private:
+//        QString printResult();
+//        QString printVector(QVector<double> const & vec);
 
     //Attribute:
     private:
@@ -94,31 +116,30 @@ namespace model {
         double boundaryLeft;
         double boundaryRight;
         double boundaryTop;
-        double heatSourcesBackgroundValue;
         QList<Area*> heatSources;
+        double heatSourcesBackgroundValue;
         int heatSourcesCount;
         double initialValue;
-        QMap<QString,algorithms::IntMethod*> intMethods;
-        QMap<QString,algorithms::IterativeSolver*> iterativeSolvers;
+//        QMap<QString,algorithms::IntMethod*> intMethods;
+//        QMap<QString,algorithms::IterativeSolver*> iterativeSolvers;
         long m;
         long n;
-        algorithms::IntMethod * selectedIntMethod;
+        QString selectedIntMethod;
         QString selectedIterativeSolver;
         bool simulated;
         double T;
-        double thermalConductivitesBackgroundValue;
-        QList<Area*> thermalConductivites;
-        int thermalConductivitesCount;
+        QList<Area*> thermalConductivities;
+        double thermalConductivitiesBackgroundValue;
+        int thermalConductivitiesCount;
         presentation::UI * ui;
 
-        double * consecutiveTempArray;
-        double *** result;
-        long resultM;
-        long resultN;
-        double resultT;
-
         bool simulating;
+        bool blocking;
+        SimulationWorker * simWorker;
+        QThread workerThread;
 
+        double solverMaxError;
+        int solverMaxIt;
 
     };
 

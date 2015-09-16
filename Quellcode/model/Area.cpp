@@ -14,6 +14,12 @@ model::Area::Area(QVector<double> const & xKoords,
         idCounters.insert(type,2);
 }
 
+model::Area::Area(const Area & rhs) : id(++idCounters[rhs.type]), type(rhs.type),
+    value(rhs.value), xKoords(rhs.xKoords), yKoords(rhs.yKoords)
+{
+
+}
+
 model::Area::~Area(){
     --idCounters[type];
 }

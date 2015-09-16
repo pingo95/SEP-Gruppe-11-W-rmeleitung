@@ -93,10 +93,14 @@ class Controller;
         void updateThermalConductivties();
         void updateVisualization();
 
+    public slots:
+        void appendToSimulationLogSlot(QString text);
+        void nextProgresseStageSlot(QString stage, int maximum);
+        void updateSimulationProgressSlot(int step);
+
     private slots:
         void transformTabIDSlot(int targetTab);
         void updateLcdSlot(int value);
-        void nextProgresseStage(QString stage, int maximum);
 
 
 
