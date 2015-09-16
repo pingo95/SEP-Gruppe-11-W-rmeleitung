@@ -20,28 +20,28 @@ void presentation::UI::initHeatSources()
     subsubGridLayoutHeatSource = new QGridLayout();
 
         //Labels
-    labelTopHeatSource = new QLabel("Dies ist der Tab zur Einstellung der Wärmequellen. \n"
+    labelTopHeatSource = new QLabel("Dies ist der Tab zur Eingabe der Wärmequellen. \n"
                                     "Sie können hier die Gebiete der Wärmequellen markieren "
-                                    "und dessen Wert eingeben."
-                                    "Für weitere Informationen wechseln Sie in den Hilfe-Tab",widgetConfigurationHeatSources);
+                                    "und deren Wert eingeben. "
+                                    "Für weitere Informationen wechseln Sie bitte in den Hilfe-Tab.",widgetConfigurationHeatSources);
     labelTopHeatSource->setWordWrap(true);
     labelKeyboardHeatSource = new QLabel("Punkte per Tastatur eingeben",widgetConfigurationHeatSources);
-    labelKeyboardHeatSourceXValue = new QLabel("x-Wert eingeben",widgetConfigurationHeatSources);
-    labelKeyboardHeatSourceYValue = new QLabel("y-Wert eingeben",widgetConfigurationHeatSources);
+    labelKeyboardHeatSourceXValue = new QLabel("x-Koordinate",widgetConfigurationHeatSources);
+    labelKeyboardHeatSourceYValue = new QLabel("y-Koordinate",widgetConfigurationHeatSources);
         //Push buttons
     buttonUndoHeatSource = new QPushButton(widgetConfigurationHeatSources);
     buttonUndoHeatSource->setIcon(QIcon(":/Icons/undo"));
-    buttonUndoHeatSource->setText("Zurück");
+    buttonUndoHeatSource->setText("Rückgängig");
     buttonUndoHeatSource->setIconSize(QSize(15,15));
     buttonUndoHeatSource->setEnabled(false);
     buttonRedoHeatSource = new QPushButton(widgetConfigurationHeatSources);
     buttonRedoHeatSource->setIcon(QIcon(":/Icons/redo"));
-    buttonRedoHeatSource->setText("Vor");
+    buttonRedoHeatSource->setText("Wiederholen");
     buttonRedoHeatSource->setIconSize(QSize(15,15));
     buttonRedoHeatSource->setEnabled(false);
     buttonClearHeatSource = new QPushButton("Alle Gebiete löschen",widgetConfigurationHeatSources);
     buttonClearHeatSource->setEnabled(false);
-    buttonConfirmHeatSource = new QPushButton("Bestätigen",widgetConfigurationHeatSources);
+    buttonConfirmHeatSource = new QPushButton("Punkt hinzufügen",widgetConfigurationHeatSources);
 
     buttonUpHeatSource = new QPushButton(widgetConfigurationHeatSources);
     buttonUpHeatSource->setIcon(QIcon(":/Icons/up"));
@@ -74,7 +74,7 @@ void presentation::UI::initHeatSources()
     doubleSpinBoxYValueHeatSource = new QDoubleSpinBox(widgetConfigurationHeatSources);
         //Radio Buttons
     groupBoxAuswaehlenHeatSource = new QGroupBox(widgetConfigurationHeatSources);
-    radioButtonAuswahl = new QRadioButton("Auswählen",widgetConfigurationHeatSources);
+    radioButtonAuswahl = new QRadioButton("Gebiet auswählen",widgetConfigurationHeatSources);
     radioButtonNeuesGebiet = new QRadioButton("Neues Gebiet",widgetConfigurationHeatSources);
     radioButtonNeuesGebiet->setChecked(true);
     QVBoxLayout *vbox = new QVBoxLayout;
@@ -86,17 +86,21 @@ void presentation::UI::initHeatSources()
     groupBoxHeatSource = new QGroupBox(widgetConfigurationHeatSources);
     radioButtonPunktweise = new QRadioButton("Punktweise",widgetConfigurationHeatSources);
     radioButtonGebietsweise = new QRadioButton("Gebietsweise",widgetConfigurationHeatSources);
+    radioButtonGebietsweise->setEnabled(false);
+    radioButtonPunktweise->setEnabled(false);
     radioButtonGebietsweise->setChecked(true);
     QVBoxLayout *vbox2 = new QVBoxLayout;
     vbox2->addWidget(radioButtonGebietsweise);
     vbox2->addWidget(radioButtonPunktweise);
+    vbox2->addWidget(buttonUndoHeatSource);
+    vbox2->addWidget(buttonRedoHeatSource);
     vbox2->addStretch(1);
     groupBoxHeatSource->setLayout(vbox2);
 
         //Tabelle
     tableWidgetHeatSources = new QTableWidget(widgetConfigurationHeatSources);
     tableWidgetHeatSources->setColumnCount(3);
-    listHeaderHeatSource <<"ID"<<"Wert"<<"Sichtbar";
+    listHeaderHeatSource <<"ID"<<"Wert [K]"<<"Sichtbar";
     tableWidgetHeatSources->setHorizontalHeaderLabels(listHeaderHeatSource);
     tableWidgetHeatSources->setColumnWidth(0,20);
     tableWidgetHeatSources->setColumnWidth(1,60);
@@ -218,9 +222,9 @@ void presentation::UI::initHeatSources()
     subsubGridLayoutHeatSource->addWidget(labelKeyboardHeatSourceYValue,5,0);
     subsubGridLayoutHeatSource->addWidget(doubleSpinBoxYValueHeatSource,5,1);
     subsubGridLayoutHeatSource->addWidget(buttonConfirmHeatSource,6,0,1,2);
-    subsubGridLayoutHeatSource->addWidget(groupBoxHeatSource,8,0,2,2);
-    subsubGridLayoutHeatSource->addWidget(buttonUndoHeatSource,10,0,1,2);
-    subsubGridLayoutHeatSource->addWidget(buttonRedoHeatSource,11,0,1,2);
+    subsubGridLayoutHeatSource->addWidget(groupBoxHeatSource,8,0,4,2);
+//    subsubGridLayoutHeatSource->addWidget(buttonUndoHeatSource,10,0,1,2);
+//    subsubGridLayoutHeatSource->addWidget(buttonRedoHeatSource,11,0,1,2);
     subsubGridLayoutHeatSource->addWidget(buttonDiscardHeatSource,12,0,1,2);
     subsubGridLayoutHeatSource->addWidget(buttonDeleteHeatSource,13,0,1,2);
     subsubGridLayoutHeatSource->addWidget(buttonClearHeatSource,14,0,1,2);
@@ -271,8 +275,8 @@ void presentation::UI::initIBVs()
     subGridLayoutKonfigurationIBVs = new QGridLayout(widgetConfigurationIBVs);
 
         //Labels
-    labelTopIBV = new QLabel("Dies ist der Tab zur Einstellung der Anfangs- und Randwerte."
-            "Für weitere Informationen wechseln Sie in den Hifle-Tab",widgetConfigurationIBVs);
+    labelTopIBV = new QLabel("Dies ist der Tab zur Einstellung der Anfangs- und Randwerte.\n"
+            "Für weitere Informationen wechseln Sie bitte in den Hilfe-Tab.",widgetConfigurationIBVs);
     labelTopIBV->setWordWrap(true);
     labelBottomBoundary = new QLabel("unteren Randwert eingeben",widgetConfigurationIBVs);
     labelInitialValue = new QLabel("Anfangswert eingeben",widgetConfigurationIBVs);
@@ -294,14 +298,19 @@ void presentation::UI::initIBVs()
 
     doubleSpinBoxBottomBoundary->setMinimum(0);
     doubleSpinBoxBottomBoundary->setMaximum(MaxTemperature);
+    doubleSpinBoxBottomBoundary->setSuffix("K");
     doubleSpinBoxInitialValue->setMinimum(0);
     doubleSpinBoxInitialValue->setMaximum(MaxTemperature);
+    doubleSpinBoxInitialValue->setSuffix("K");
     doubleSpinBoxLeftBoundary->setMinimum(0);
     doubleSpinBoxLeftBoundary->setMaximum(MaxTemperature);
+    doubleSpinBoxLeftBoundary->setSuffix("K");
     doubleSpinBoxRightBoundary->setMinimum(0);
     doubleSpinBoxRightBoundary->setMaximum(MaxTemperature);
+    doubleSpinBoxRightBoundary->setSuffix("K");
     doubleSpinBoxTopBoundary->setMinimum(0);
     doubleSpinBoxTopBoundary->setMaximum(MaxTemperature);
+    doubleSpinBoxTopBoundary->setSuffix("K");
 
         //Platzhalter
     spacerItemTabIBVHorizontal = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
@@ -345,8 +354,16 @@ void presentation::UI::initSimulating()
         //Boxes
     doubleSpinBoxT = new QDoubleSpinBox(widgetSimulation);
     doubleSpinBoxT->setDecimals(3);
+    doubleSpinBoxT->setMinimum(0);
+    doubleSpinBoxT->setMaximum(1000);
+    doubleSpinBoxT->setSuffix("s");
     doubleSpinBoxEpsilon = new QDoubleSpinBox(widgetSimulation);
+    doubleSpinBoxEpsilon->setDecimals(10);
+    doubleSpinBoxEpsilon->setMinimum(1e-10);
+    doubleSpinBoxEpsilon->setMaximum(1e-5);
     spinBoxMaxIt = new QSpinBox(widgetSimulation);
+    spinBoxMaxIt->setMinimum(0);
+    spinBoxMaxIt->setMaximum(1000);
     spinBoxM = new QSpinBox(widgetSimulation);
     spinBoxM->setMinimum(0);
     spinBoxM->setMaximum(800);
@@ -357,6 +374,8 @@ void presentation::UI::initSimulating()
     doubleSpinBoxT->setKeyboardTracking(false);
     spinBoxM->setKeyboardTracking(false);
     spinBoxN->setKeyboardTracking(false);
+    doubleSpinBoxEpsilon->setKeyboardTracking(false);
+    spinBoxMaxIt->setKeyboardTracking(false);
 
         //ComboBoxes
     comboBoxIntMethod = new QComboBox(widgetSimulation);
@@ -404,7 +423,7 @@ void presentation::UI::initSimulating()
 
         //Layout
     spinBoxN->setMaximumWidth(50);
-    labelN->setMaximumWidth(125);
+    labelN->setMaximumWidth(175);
     subGridLayoutSimulation->addWidget(labelTopSimulation,0,0,1,2);
     subGridLayoutSimulation->addWidget(groupBoxIntMethod,1,0,3,1);
     subGridLayoutSimulation->addWidget(groupBoxSolver,1,1,3,1);
@@ -425,10 +444,10 @@ void presentation::UI::initThermalConductivities()
     subGridLayoutKonfigurationThermalConductivities = new QGridLayout(widgetConfigurationThermalConductivities);
 
         //Labels
-    labelTopThermalConductivity = new QLabel("Dies ist der Tab zur Einstellung der Wärmeleitkoeffizienten.\n"
-                                             "Sie können hier die Gebiete der einzelnen Schrottkomponenten festlegen "
-                                             "sowie den zugehörigen Wärmeleitkoeffizienten eingeben."
-                                             "Für weitere Informationen wechseln Sie in den Hilfs-Tab.",widgetConfigurationThermalConductivities);
+    labelTopThermalConductivity = new QLabel("Dies ist der Tab zur Vorabe der Wärmeleitkoeffizienten.\n"
+                                             "Sie können hier die Gebiete der einzelnen Schrottkomponenten festlegen, "
+                                             "sowie die zugehörigen Wärmeleitkoeffizienten eingeben."
+                                             "Für weitere Informationen wechseln Sie bitte in den Hilfe-Tab.",widgetConfigurationThermalConductivities);
     labelTopThermalConductivity->setWordWrap(true);
         //Tabelle
     tableWidgetThermalConductivities = new QTableWidget(widgetConfigurationThermalConductivities);
@@ -521,7 +540,7 @@ void presentation::UI::initThermalConductivities()
     // Color Scale
     colorScaleThermalConductivity = new QCPColorScale(plateThermalConductivity);
     plateThermalConductivity->plotLayout()->addElement(0,1,colorScaleThermalConductivity);
-    colorScaleThermalConductivity->setLabel("Conductivity");
+    colorScaleThermalConductivity->setLabel("Wärmeleitkoeffizienten");
 
     QCPMarginGroup * group = new QCPMarginGroup(plateThermalConductivity);
     colorScaleThermalConductivity->setMarginGroup(QCP::msTop|QCP::msBottom, group);
@@ -633,7 +652,7 @@ void presentation::UI::initVisualization()
     // Color Scale
     colorScaleVideo = new QCPColorScale(plateVideo);
     plateVideo->plotLayout()->addElement(0,1,colorScaleVideo);
-    colorScaleVideo->setLabel("Temperatur (in K)");
+    colorScaleVideo->setLabel("Temperatur [K]");
 
     QCPMarginGroup * group = new QCPMarginGroup(plateVideo);
     plateVideo->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, group);
