@@ -172,7 +172,7 @@ void presentation::UI::setController(Controller *controller)
 void presentation::UI::setModel(model::Model *model)
 {
     this->model = model;
-    QList<QString> tmpList = model->getIntMethodNames();
+    QList<QString> tmpList = model->getIntMethodsNames();
     QList<QString>::const_iterator it = tmpList.begin();
     for(; it < tmpList.end(); ++it)
         comboBoxIntMethod->addItem((*it));
@@ -254,17 +254,17 @@ void presentation::UI::visualizeState(int frame)
 
 void presentation::UI::updateHeatSources()
 {   
-    double bgValue = model->getAreaBackgroundValue(model::Model::AreaHeatSource);
+    double bgValue = model->getSimulationSetup()->getAreaBackgroundValue(model::SimulationSetup::AreaHeatSource);
     tableWidgetHeatSources->item(0,UI::ColumnValue)->setText(QString::number(bgValue));
     plateHeatSource->axisRect()->setBackground(
         QBrush(colorScaleHeatSource->gradient().color(bgValue,QCPRange(0,MaxTemperature),false)));
 
-    int hSCount = model->getAreaCount(model::Model::AreaHeatSource);
+    int hSCount = model->getSimulationSetup()->getAreaCount(model::SimulationSetup::AreaHeatSource);
     int rowCount = tableWidgetHeatSources->rowCount();
     tableWidgetHeatSources->setRowCount(hSCount+1);
     int tmpBound = hSCount+1 <= rowCount ? hSCount+1 : rowCount;
-    QList<model::Area*> const & heatSources = model->getAreas(
-                model::Model::AreaHeatSource);
+    QList<model::Area*> const & heatSources = model->getSimulationSetup()->getAreas(
+                model::SimulationSetup::AreaHeatSource);
     QList<model::Area*>::const_iterator it = heatSources.begin();
     int i = 1;
     for(; i < tmpBound; ++i, ++it)
@@ -338,22 +338,22 @@ void presentation::UI::updateHeatSources()
 
 void presentation::UI::updateIBVs()
 {
-    doubleSpinBoxBottomBoundary->setValue(model->getBoundaryBottom());
-    doubleSpinBoxInitialValue->setValue(model->getInitialValue());
-    doubleSpinBoxLeftBoundary->setValue(model->getBoundaryLeft());
-    doubleSpinBoxRightBoundary->setValue(model->getBoundaryRight());
-    doubleSpinBoxTopBoundary->setValue(model->getBoundaryTop());
+    doubleSpinBoxBottomBoundary->setValue(model->getSimulationSetup()->getBoundaryBottom());
+    doubleSpinBoxInitialValue->setValue(model->getSimulationSetup()->getInitialValue());
+    doubleSpinBoxLeftBoundary->setValue(model->getSimulationSetup()->getBoundaryLeft());
+    doubleSpinBoxRightBoundary->setValue(model->getSimulationSetup()->getBoundaryRight());
+    doubleSpinBoxTopBoundary->setValue(model->getSimulationSetup()->getBoundaryTop());
 }
 
 
 void presentation::UI::updateSimulating()
 {
-    doubleSpinBoxT->setValue(model->getT());
-    spinBoxM->setValue(model->getM());
-    spinBoxN->setValue(model->getN());
-    doubleSpinBoxT->setValue(model->getT());
-    doubleSpinBoxEpsilon->setValue(model->getSolverMaxError());
-    spinBoxMaxIt->setValue(model->getSolverMaxIt());
+    doubleSpinBoxT->setValue(model->getSimulationSetup()->getT());
+    spinBoxM->setValue(model->getSimulationSetup()->getM());
+    spinBoxN->setValue(model->getSimulationSetup()->getN());
+    doubleSpinBoxT->setValue(model->getSimulationSetup()->getT());
+    doubleSpinBoxEpsilon->setValue(model->getSimulationSetup()->getSolverMaxError());
+    spinBoxMaxIt->setValue(model->getSimulationSetup()->getSolverMaxIt());
     if(model->getSimulating())
     {
         buttonSimulate->setEnabled(false);
@@ -368,22 +368,22 @@ void presentation::UI::updateSimulating()
            labelProgressBar->setText("Simulation beendet");
 
     }
-    comboBoxIntMethod->setCurrentText(model->getSelectedIntMethod());
-    comboBoxSolver->setCurrentText(model->getSelectedSolver());
+    comboBoxIntMethod->setCurrentText(model->getSimulationSetup()->getSelectedIntMethod());
+    comboBoxSolver->setCurrentText(model->getSimulationSetup()->getSelectedSolver());
 }
 
 void presentation::UI::updateThermalConductivties()
 {
-    double bgValue = model->getAreaBackgroundValue(model::Model::AreaThermalConductivity);
+    double bgValue = model->getSimulationSetup()->getAreaBackgroundValue(model::SimulationSetup::AreaThermalConductivity);
     tableWidgetThermalConductivities->item(0,UI::ColumnValue)->setText(QString::number(bgValue));
     plateThermalConductivity->axisRect()->setBackground(
         QBrush(colorScaleThermalConductivity->gradient().color(bgValue,QCPRange(0,MaxConductivity),false)));
-    int tCCount = model->getAreaCount(model::Model::AreaThermalConductivity);
+    int tCCount = model->getSimulationSetup()->getAreaCount(model::SimulationSetup::AreaThermalConductivity);
     int rowCount = tableWidgetThermalConductivities->rowCount();
     tableWidgetThermalConductivities->setRowCount(tCCount+1);
     int tmpBound = tCCount+1 <= rowCount ? tCCount+1 : rowCount;
-    QList<model::Area*> const & thermalConductivities = model->getAreas(
-                model::Model::AreaThermalConductivity);
+    QList<model::Area*> const & thermalConductivities = model->getSimulationSetup()->getAreas(
+                model::SimulationSetup::AreaThermalConductivity);
     QList<model::Area*>::const_iterator it = thermalConductivities.begin();
     int i = 1;
     for (; i < tmpBound; ++i, ++it)

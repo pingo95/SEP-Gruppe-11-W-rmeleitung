@@ -3,6 +3,7 @@
 #include "../algorithms/Cranknicolson.h"
 #include "../algorithms/Jacobi.h"
 #include "../algorithms/Gaussseidel.h"
+#include <QTime>
 
 model::SimulationWorker::SimulationWorker(QObject * parent): QObject(parent),
     busy(false), consecutiveTempArray(NULL), m(1), mapsInitialized(false), n(3),
@@ -80,35 +81,13 @@ void model::SimulationWorker::initializeMaps()
     mapsInitialized = true;
 }
 
-void model::SimulationWorker::startSimulationSlot(const double boundaryBottom,
-                                                  const double boundaryLeft,
-                                                  const double boundaryRight,
-                                                  const double boundaryTop,
-                                                  const QList<Area *> &heatSourcesTemplate,
-                                                  const double heatSourceBackgroundValue,
-                                                  const int heatSourcesCount,
-                                                  const double initialValue,
-                                                  const QString intMethod,
-                                                  const QString solver,
-                                                  const long m, long const n,
-                                                  double const solverMaxError,
-                                                  int const solverMaxIt,
-                                                  const double T,
-                                                  const QList<Area *> &thermalConductivitiesTemplate,
-                                                  const double thermalConductivitiesBackgroundValue,
-                                                  const int thermalConductivitiesCount)
+void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemplate)
 {
     if(!mapsInitialized || busy) return;
     busy = true;
-
-    // Areas kopieren:
-    QList<Area*> heatSources,thermalConductivities;
-    QList<Area*>::const_iterator itCopy = heatSourcesTemplate.begin();
-    for(; itCopy != heatSourcesTemplate.end(); ++itCopy)
-        heatSources.append(new Area(*(*itCopy)));
-    itCopy = thermalConductivitiesTemplate.begin();
-    for(; itCopy != thermalConductivitiesTemplate.end(); ++itCopy)
-        thermalConductivities.append(new Area(*(*itCopy)));
+    QTime timer;
+    timer.start();
+    SimulationSetup  simSetup(*simSetupTemplate);
 
     emit startedSimulation();
 
@@ -116,11 +95,14 @@ void model::SimulationWorker::startSimulationSlot(const double boundaryBottom,
     if(simulated)
     {
         delete consecutiveTempArray;
-        for(long i = 0; i < this->m+1; ++i)
+        for(long i = 0; i < m+1; ++i)
             delete result[i];
         delete result;
     }
 
+    this->m = simSetup.getM();
+    this->n = simSetup.getN();
+    this->T = simSetup.getT();
 
     // Deltas
     double deltaX = (double) 1 / (double) (n-1);
@@ -143,39 +125,39 @@ void model::SimulationWorker::startSimulationSlot(const double boundaryBottom,
         // Erste Zeilen mit unterem Randwert
         result[i][0] = &(consecutiveTempArray[i*n*n]);
         for(long k = 0; k < n; ++k)
-            result[i][0][k] = boundaryBottom;
+            result[i][0][k] = simSetup.getBoundaryBottom();
 
         for(long j = 1; j < n-1; ++j)
         {
             result[i][j] = &(consecutiveTempArray[i*n*n + j*n]);
 
             // Erste und letzter Punkt mit linkem bzw rechtem Randwert
-            result[i][j][0] = boundaryLeft;
-            result[i][j][n-1] = boundaryRight;
+            result[i][j][0] = simSetup.getBoundaryLeft();
+            result[i][j][n-1] = simSetup.getBoundaryRight();
             // Inneren Punkt initialisiert mit  initialValue
             for(long k = 1; k < n-1; ++k)
-                result[i][j][k] = initialValue;
+                result[i][j][k] = simSetup.getInitialValue();
         }
 
         // Letzte Zeilen mit oberem Randwert
         result[i][n-1] = &(consecutiveTempArray[i*n*n + (n-1)*n]);
         for(long k = 0; k < n; ++k)
-            result[i][n-1][k] = boundaryTop;
+            result[i][n-1][k] = simSetup.getBoundaryTop();
     }
     message = "Speicher alloziert.\n\nBerechne Wärmeleitkoeffizienten\nAnzahl Gebiete : "
-            + QString::number(thermalConductivitiesCount);
+            + QString::number(simSetup.getAreaCount(SimulationSetup::AreaThermalConductivity));
     emit simulationLogUpdate(message);
 
     // Anlegen der Vektoren für Wärmeleitkoeffizienten
-    QVector<double> thermalConductivitiesGrid(n*n,thermalConductivitiesBackgroundValue);
+    QVector<double> thermalConductivitiesGrid(n*n,simSetup.getAreaBackgroundValue(SimulationSetup::AreaThermalConductivity));
 
     // Berechnen welche Punkte von welchem Wärmeleitkoeffizienten-Gebiet
     // abgedeckt werden, dabei überschreiben neure Gebiete ältere
-    emit beginningSimulationStage("Wärmeleitkoeffizienten:",thermalConductivitiesCount);
-    if(thermalConductivitiesCount > 0)
+    emit beginningSimulationStage("Wärmeleitkoeffizienten:",simSetup.getAreaCount(SimulationSetup::AreaThermalConductivity));
+    if(simSetup.getAreaCount(SimulationSetup::AreaThermalConductivity) > 0)
     {
-        QList<Area*>::const_iterator it = thermalConductivities.begin();
-        for(; it != thermalConductivities.end(); ++it)
+        QList<Area*>::const_iterator it = simSetup.getAreas(SimulationSetup::AreaThermalConductivity).begin();
+        for(; it != simSetup.getAreas(SimulationSetup::AreaThermalConductivity).end(); ++it)
         {
             int count = 0;
             Area* thermalConductivity = *it;
@@ -195,16 +177,16 @@ void model::SimulationWorker::startSimulationSlot(const double boundaryBottom,
         }
     }
     message = "Wärmeleitkoeffizienten abgeschlossen\n\n Berechne Wärmequellen\nAnzahl Gebiete: "
-            + QString::number(heatSourcesCount) + "\n";
+            + QString::number(simSetup.getAreaCount(SimulationSetup::AreaHeatSource)) + "\n";
     emit simulationLogUpdate(message);
 
     bool reusable;
     QVector<double> neededTimeSteps;
 
-    algorithms::IntMethod * selectedIntMethod = intMethods[intMethod];
-    selectedIntMethod->selectSolver(solvers[solver]);
-    selectedIntMethod->getSolver()->setEps(solverMaxError);
-    selectedIntMethod->getSolver()->setMaxIt(solverMaxIt);
+    algorithms::IntMethod * selectedIntMethod = intMethods[simSetup.getSelectedIntMethod()];
+    selectedIntMethod->selectSolver(solvers[simSetup.getSelectedSolver()]);
+    selectedIntMethod->getSolver()->setEps(simSetup.getSolverMaxError());
+    selectedIntMethod->getSolver()->setMaxIt(simSetup.getSolverMaxIt());
 
     selectedIntMethod->getNeedetHeatSources(neededTimeSteps, reusable); // timesteps in vielfachen von deltaT, "neuester" zuerst
     int neededTimeStepsCount = neededTimeSteps.size();
@@ -213,13 +195,13 @@ void model::SimulationWorker::startSimulationSlot(const double boundaryBottom,
 
     // Berechnen welche Punkte von welcher Wärmequelle abgedeckt werden,
     // zwischenspeichern als Indizes
-    emit beginningSimulationStage("Wärmequellen", heatSourcesCount);
+    emit beginningSimulationStage("Wärmequellen", simSetup.getAreaCount(SimulationSetup::AreaHeatSource));
     QList<QList<double> *> heatSourceIndices;
-    if(heatSourcesCount > 0)
+    if(simSetup.getAreaCount(SimulationSetup::AreaHeatSource) > 0)
     {
         int count = 0;
-        QList<Area*>::const_iterator it = heatSources.begin();
-        for(; it != heatSources.end(); ++it)
+        QList<Area*>::const_iterator it = simSetup.getAreas(SimulationSetup::AreaHeatSource).begin();
+        for(; it != simSetup.getAreas(SimulationSetup::AreaHeatSource).end(); ++it)
         {
             QList<double> * tmpListPtr = new QList<double>;
             Area* heatSource = *it;
@@ -240,18 +222,18 @@ void model::SimulationWorker::startSimulationSlot(const double boundaryBottom,
     }
 
     for(int i = 0; i < neededTimeStepsCount; ++i)
-        heatSourcesGrid[i] = new QVector<double>(n*n,heatSourceBackgroundValue);
+        heatSourcesGrid[i] = new QVector<double>(n*n,simSetup.getAreaBackgroundValue(SimulationSetup::AreaHeatSource));
 
     emit simulationLogUpdate("Initiales Auswerten der Wärmequellen\n");
     // Initiales Auswerten der Wärmequellenvektoren
-    if(heatSourcesCount > 0)
+    if(simSetup.getAreaCount(SimulationSetup::AreaHeatSource) > 0)
     {
         for(int i = 0; i < neededTimeStepsCount; ++i)
         {
     //        currentT = deltaT * neededTimeSteps[i];
-            QList<Area*>::const_iterator it = heatSources.begin();
+            QList<Area*>::const_iterator it = simSetup.getAreas(SimulationSetup::AreaHeatSource).begin();
             QList<QList<double> *>::const_iterator it2 = heatSourceIndices.begin();
-            for(; it != heatSources.end(); ++it,++it2)
+            for(; it != simSetup.getAreas(SimulationSetup::AreaHeatSource).end(); ++it,++it2)
             {
                 QList<double>::const_iterator it3 = (*it2)->begin();
                 for(; it3 != (*it2)->end(); ++it3)
@@ -298,12 +280,12 @@ void model::SimulationWorker::startSimulationSlot(const double boundaryBottom,
             heatSourcesGrid[0] = swapTmp;
 
             // neusten aktualisieren
-            if(heatSourcesCount > 0)
+            if(simSetup.getAreaCount(SimulationSetup::AreaHeatSource) > 0)
             {
         //        currentT = deltaT * neededTimeSteps[0] + i * deltaT;
-                QList<Area*>::const_iterator it = heatSources.begin();
+                QList<Area*>::const_iterator it = simSetup.getAreas(SimulationSetup::AreaHeatSource).begin();
                 QList<QList<double> *>::const_iterator it2 = heatSourceIndices.begin();
-                for(; it != heatSources.end(); ++it,++it2)
+                for(; it != simSetup.getAreas(SimulationSetup::AreaHeatSource).end(); ++it,++it2)
                 {
                     QList<double>::const_iterator it3 = (*it2)->begin();
                     for(; it3 != (*it2)->end(); ++it3)
@@ -318,14 +300,14 @@ void model::SimulationWorker::startSimulationSlot(const double boundaryBottom,
         else
         {
             // nicht wiederverwertbar -> alle neu berechnen
-            if(heatSourcesCount > 0)
+            if(simSetup.getAreaCount(SimulationSetup::AreaHeatSource) > 0)
             {
                 for(int k = 0; k < neededTimeStepsCount; ++k)
                 {
             //        currentT = deltaT * neededTimeSteps[k] + i * deltaT;
-                    QList<Area*>::const_iterator it = heatSources.begin();
+                    QList<Area*>::const_iterator it = simSetup.getAreas(SimulationSetup::AreaHeatSource).begin();
                     QList<QList<double> *>::const_iterator it2 = heatSourceIndices.begin();
-                    for(; it != heatSources.end(); ++it,++it2)
+                    for(; it != simSetup.getAreas(SimulationSetup::AreaHeatSource).end(); ++it,++it2)
                     {
                         QList<double>::const_iterator it3 = (*it2)->begin();
                         for(; it3 != (*it2)->end(); ++it3)
@@ -343,19 +325,8 @@ void model::SimulationWorker::startSimulationSlot(const double boundaryBottom,
         emit simulationLogUpdate(message);
     }
 
-    this->m = m;
-    this->n = n;
-    this->T = T;
-
     message = "\nBerechnungen beendet\n\nAufräumen des Hauptspeichers\n\n"; //\nErgebnis:" + printResult()
     emit simulationLogUpdate(message);
-
-    QList<Area*>::iterator it = heatSources.begin();
-    for(; it != heatSources.end(); ++it)
-        delete (*it);
-    it = thermalConductivities.begin();
-    for(; it != thermalConductivities.end(); ++it)
-        delete (*it);
 
     QList<QList<double> *>::iterator it2 = heatSourceIndices.begin();
     for(; it2 != heatSourceIndices.end(); ++it2)
@@ -367,7 +338,7 @@ void model::SimulationWorker::startSimulationSlot(const double boundaryBottom,
     delete step1;
     delete step2;
 
-    emit simulationLogUpdate("Simulation abgeschlossen\n\n");
+    emit simulationLogUpdate("Simulation abgeschlossen\nBenötigte Zeit: " + QString::number(round(timer.elapsed()/1000)) + "s\n\n");
     simulated = true;
 
     busy = false;

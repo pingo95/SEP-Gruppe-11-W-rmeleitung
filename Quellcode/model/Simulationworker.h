@@ -34,23 +34,8 @@ namespace model {
         void simulationLogUpdate(QString message);
 
     public slots:
-        void startSimulationSlot(double const boundaryBottom,
-                                 double const boundaryLeft,
-                                 double const boundaryRight,
-                                 double const boundaryTop,
-                                 QList<model::Area*> const & heatSourcesTemplate,
-                                 double const heatSourceBackgroundValue,
-                                 int const heatSourcesCount,
-                                 double const initialValue,
-                                 QString const intMethod,
-                                 QString const solver,
-                                 long const m, long const n,
-                                 double const solverMaxError,
-                                 int const solverMaxIt,
-                                 double const T,
-                                 QList<model::Area*> const & thermalConductivitiesTemplate,
-                                 double const thermalConductivitiesBackgroundValue,
-                                 int const thermalConductivitiesCount);
+        void startSimulationSlot(SimulationSetup * simSetupTemplate);
+
     // Attribute:
     private:
         bool busy;

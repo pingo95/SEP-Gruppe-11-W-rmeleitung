@@ -1,19 +1,13 @@
 #include "Model.h"
 #include "../presentation/Ui.h"
 
-model::Model::Model() : QWidget(NULL), boundaryBottom(300), boundaryLeft(300),
-    boundaryRight(300), boundaryTop(300), heatSourcesBackgroundValue(0),
-    heatSourcesCount(0), initialValue(300), m(1), n(3), selectedIntMethod("Impliziter Euler"),
-    selectedSolver("Jacobi"), simulated(false), T(1.),
-    thermalConductivitiesBackgroundValue(0.01), thermalConductivitiesCount(0), ui(NULL),
-    simulating(false), blocking(false), simWorker(new SimulationWorker()),
-    workerThread(this), solverMaxError(1e-10), solverMaxIt(1000)
+model::Model::Model() : QWidget(NULL), blocking(false), simSetup(new SimulationSetup()), simulated(false),
+    simulating(false),  simWorker(new SimulationWorker()), ui(NULL), workerThread(this)
 {
     simWorker->moveToThread(&workerThread);
     simWorker->initializeMaps();
     connect(&workerThread, &QThread::finished, simWorker, &QObject::deleteLater);
-    connect(this,SIGNAL(startSimulation(double,double,double,double,QList<model::Area*>,double,int,double,QString,QString,long,long,double,int,double,QList<model::Area*>,double,int)),
-            simWorker,SLOT(startSimulationSlot(double,double,double,double,QList<model::Area*>,double,int,double,QString,QString,long,long,double,int,double,QList<model::Area*>,double,int)));
+    connect(this,SIGNAL(startSimulation(SimulationSetup*)),simWorker,SLOT(startSimulationSlot(SimulationSetup*)));
     connect(simWorker,SIGNAL(startedSimulation()),this,SLOT(simulationStartedSlot()));
     connect(simWorker,SIGNAL(finishedSimulation()),this,SLOT(simulationFinishedSlot()));
     workerThread.start();
@@ -21,13 +15,7 @@ model::Model::Model() : QWidget(NULL), boundaryBottom(300), boundaryLeft(300),
 
 model::Model::~Model()
 {
-    QList<Area*>::iterator it = heatSources.begin();
-    for(; it != heatSources.end(); ++it)
-        delete (*it);
-    it = thermalConductivities.begin();
-    for(; it != thermalConductivities.end(); ++it)
-        delete (*it);
-
+    delete simSetup;
     workerThread.quit();
     workerThread.wait();
 }
@@ -38,97 +26,11 @@ model::Model::~Model()
 // -Gebiet hinzu
 void model::Model::addNewArea(const QVector<double> &xKoords,
                               const QVector<double> &yKoords, double value,
-                              Model::AreaType type)
+                              SimulationSetup::AreaType type)
 {
     assert(!blocking);
-    if(type == Model::AreaHeatSource)
-    {
-        heatSources.append(new Area(xKoords,yKoords,value,type));
-        ++heatSourcesCount;
-    }
-    else
-    {
-        thermalConductivities.append(new Area(xKoords,yKoords,value,type));
-        ++thermalConductivitiesCount;
-    }
+    simSetup->addNewArea(xKoords,yKoords,value,type);
     ui->updateNotification();
-}
-
-// Vorbedingung: ID ist die gültige ID eines Gebietes im Modell
-model::Area * const & model::Model::getArea(const int id, Model::AreaType type) const
-{
-    assert(!blocking);
-    QList<Area*> const & currentList = type == Model::AreaHeatSource ?
-                heatSources : thermalConductivities;
-    QList<Area*>::const_iterator it = currentList.begin();
-    for(; it != currentList.end(); ++it)
-        if((*it)->getID() == id)
-            return (*it);
-    return NULL;
-}
-
-double model::Model::getAreaBackgroundValue(Model::AreaType type) const
-{
-  return type == Model::AreaHeatSource ? heatSourcesBackgroundValue
-                                       : thermalConductivitiesBackgroundValue;
-}
-
-QList<model::Area*> const & model::Model::getAreas(Model::AreaType type) const
-{
-    assert(!blocking);
-    return type == Model::AreaHeatSource ? heatSources: thermalConductivities;
-}
-
-int model::Model::getAreaCount(Model::AreaType type) const
-{
-    return type == Model::AreaHeatSource ?
-                heatSourcesCount : thermalConductivitiesCount;
-}
-
-
-double model::Model::getBoundaryBottom() const
-{
-    return boundaryBottom;
-}
-
-double model::Model::getBoundaryLeft() const
-{
-    return boundaryLeft;
-}
-
-double model::Model::getBoundaryRight() const
-{
-    return boundaryRight;
-}
-
-double model::Model::getBoundaryTop() const
-{
-    return boundaryTop;
-}
-
-double model::Model::getInitialValue() const
-{
-    return initialValue;
-}
-
-QList<QString> const model::Model::getIntMethodNames() const
-{
-    return simWorker->getIntMethodNames();
-}
-
-QList<QString> const model::Model::getSolverNames() const
-{
-    return simWorker->getSolverNames();
-}
-
-long model::Model::getM() const
-{
-    return m;
-}
-
-long model::Model::getN() const
-{
-    return n;
 }
 
 double*** const & model::Model::getResult() const
@@ -151,14 +53,14 @@ double model::Model::getResultT() const
     return simWorker->getT();
 }
 
-QString model::Model::getSelectedIntMethod() const
+QList<QString> const model::Model::getIntMethodsNames() const
 {
-    return selectedIntMethod;
+    return simWorker->getIntMethodNames();
 }
 
-QString model::Model::getSelectedSolver() const
+QList<QString> const model::Model::getSolverNames() const
 {
-    return selectedSolver;
+    return simWorker->getSolverNames();
 }
 
 bool model::Model::getSimulated() const
@@ -171,35 +73,15 @@ bool model::Model::getSimulating() const
     return simulating;
 }
 
-double model::Model::getSolverMaxError() const
+model::SimulationSetup * const & model::Model::getSimulationSetup() const
 {
-    return solverMaxError;
+    return simSetup;
 }
 
-int model::Model::getSolverMaxIt() const
-{
-    return solverMaxIt;
-}
-
-double model::Model::getT() const
-{
-    return T;
-}
-
-
-void model::Model::removeLastArea(Model::AreaType type)
+void model::Model::removeLastArea(SimulationSetup::AreaType type)
 {
     assert(!blocking);
-    if(type == Model::AreaHeatSource)
-    {
-        delete heatSources.takeLast();
-        --heatSourcesCount;
-    }
-    else
-    {
-        delete thermalConductivities.takeLast();
-        --thermalConductivitiesCount;
-    }
+    simSetup->removeLastArea(type);
     ui->updateNotification();
 }
 
@@ -207,85 +89,93 @@ void model::Model::removeLastArea(Model::AreaType type)
 // Updatet die gewählte Integrationsmethode
 void model::Model::selectIntMethod(QString intMethod)
 {
-    selectedIntMethod = intMethod;
+    assert(!blocking);
+    simSetup->selectIntMethod(intMethod);
     ui->updateNotification();
 }
 
 // Updatet den gewählten iterativen Löser
 void model::Model::selectSolver(QString newSolver)
 {
-    selectedSolver = newSolver;
+    assert(!blocking);
+    simSetup->selectSolver(newSolver);
     ui->updateNotification();
 }
 
-void model::Model::setAreaBackground(const double newValue, Model::AreaType type)
+void model::Model::setAreaBackground(const double newValue, SimulationSetup::AreaType type)
 {
-    if(type == Model::AreaHeatSource)
-    {
-        heatSourcesBackgroundValue = newValue;
-    }
-    else
-    {
-        thermalConductivitiesBackgroundValue = newValue;
-    }
+    assert(!blocking);
+    simSetup->setAreaBackground(newValue,type);
     ui->updateNotification();
 }
 
 void model::Model::setBoundaryBottom(double const newBottomBoundary)
 {
-    boundaryBottom = newBottomBoundary;
-    ui->updateNotification();
-}
-
-void model::Model::setBoundaryRight(double const newRightBoundary)
-{
-    boundaryRight = newRightBoundary;
+    assert(!blocking);
+    simSetup->setBoundaryBottom(newBottomBoundary);
     ui->updateNotification();
 }
 
 void model::Model::setBoundaryLeft(double const newLeftBoundary)
 {
-    boundaryLeft = newLeftBoundary;
+    assert(!blocking);
+    simSetup->setBoundaryLeft(newLeftBoundary);
+    ui->updateNotification();
+}
+
+void model::Model::setBoundaryRight(double const newRightBoundary)
+{
+    assert(!blocking);
+    simSetup->setBoundaryRight(newRightBoundary);
     ui->updateNotification();
 }
 
 void model::Model::setBoundaryTop(double const newTopBoundary)
 {
-    boundaryTop = newTopBoundary;
+    assert(!blocking);
+    simSetup->setBoundaryTop(newTopBoundary);
     ui->updateNotification();
 }
 
 void model::Model::setInitialValue(double const newInitialValue)
 {
-    initialValue = newInitialValue;
+    assert(!blocking);
+    simSetup->setInitialValue(newInitialValue);
     ui->updateNotification();
 }
 
 void model::Model::setM(int const newM)
 {
-    m = newM;
+    assert(!blocking);
+    simSetup->setM(newM);
     ui->updateNotification();
 }
 
 void model::Model::setN(int const newN)
 {
-    n = newN;
+    assert(!blocking);
+    simSetup->setN(newN);
     ui->updateNotification();
 }
 
 void model::Model::setSolverMaxError(double const maxError)
 {
-    solverMaxError = maxError;
+    assert(!blocking);
+    simSetup->setSolverMaxError(maxError);
+    ui->updateNotification();
 }
 
 void model::Model::setSolverMaxIt(double const maxIt)
 {
-    solverMaxIt = maxIt;
+    assert(!blocking);
+    simSetup->setSolverMaxIt(maxIt);
+    ui->updateNotification();
 }
 
 void model::Model::setT(double const newT)
 {
-    T = newT;
+    assert(!blocking);
+    simSetup->setT(newT);
     ui->updateNotification();
 }
 
@@ -302,34 +192,27 @@ void model::Model::setUI(presentation::UI *ui)
 void model::Model::simulate()
 {
     blocking = true;
-    emit startSimulation(boundaryBottom,boundaryLeft,boundaryRight,boundaryTop,
-                         heatSources,heatSourcesBackgroundValue,heatSourcesCount,initialValue,
-                         selectedIntMethod,selectedSolver,m,n,solverMaxError,solverMaxIt,
-                         T,thermalConductivities,thermalConductivitiesBackgroundValue,
-                         thermalConductivitiesCount);
+    emit startSimulation(simSetup);
+    simulating = true;
+    ui->updateNotification();
 }
 
 void model::Model::updateAreaValue(int const pos, double const value,
-                              Model::AreaType type)
+                              SimulationSetup::AreaType type)
 {
-    QList<Area*> const & currentList = type == Model::AreaHeatSource ?
-                heatSources : thermalConductivities;
-    currentList.at(pos)->setValue(value);
+    assert(!blocking);
+    simSetup->updateAreaValue(pos,value,type);
     ui->updateNotification();
 }
 
 void model::Model::simulationStartedSlot()
 {
     blocking = false;
-    simulating = true;
-
-    ui->updateNotification();
 }
 
 void model::Model::simulationFinishedSlot()
 {
     simulated = true;
     simulating = false;
-
     ui->updateNotification();
 }

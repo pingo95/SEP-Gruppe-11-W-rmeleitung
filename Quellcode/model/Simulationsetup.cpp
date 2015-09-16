@@ -26,6 +26,17 @@ model::SimulationSetup::SimulationSetup(const SimulationSetup &rhs) :
         thermalConductivities.append(new Area(*(*it)));
 }
 
+model::SimulationSetup::~SimulationSetup()
+{
+    QList<Area*>::iterator it = heatSources.begin();
+    for(; it != heatSources.end(); ++it)
+        delete (*it);
+    it = thermalConductivities.begin();
+    for(; it != thermalConductivities.end(); ++it)
+        delete (*it);
+}
+
+
 
 
 void model::SimulationSetup::addNewArea(const QVector<double> &xKoords,
@@ -98,6 +109,16 @@ double model::SimulationSetup::getBoundaryTop() const
 double model::SimulationSetup::getInitialValue() const
 {
     return initialValue;
+}
+
+long model::SimulationSetup::getM() const
+{
+    return m;
+}
+
+long model::SimulationSetup::getN() const
+{
+    return n;
 }
 
 QString model::SimulationSetup::getSelectedIntMethod() const
@@ -213,4 +234,16 @@ void model::SimulationSetup::setSolverMaxIt(double const maxIt)
 void model::SimulationSetup::setT(double const newT)
 {
     T = newT;
+}
+
+void model::SimulationSetup::updateAreaValue(const int pos, const double value, SimulationSetup::AreaType type)
+{
+    if(type == SimulationSetup::AreaHeatSource)
+    {
+        heatSources.at(pos)->setValue(value);
+    }
+    else
+    {
+        thermalConductivities.at(pos)->setValue(value);
+    }
 }

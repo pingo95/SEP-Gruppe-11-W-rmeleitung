@@ -21,6 +21,8 @@ namespace model {
     public:
         explicit SimulationSetup();
         explicit SimulationSetup(SimulationSetup const & rhs);
+        ~SimulationSetup();
+
         void addNewArea(QVector<double> const & xKoords,
                         QVector<double> const & yKoords, double value,
                         SimulationSetup::AreaType type);
@@ -80,5 +82,5 @@ namespace model {
     };
 
 }
-Q_DECLARE_METATYPE(model::SimulationSetup)
+Q_DECLARE_METATYPE(model::SimulationSetup *)
 #endif // SIMULATIONSETUP_H
