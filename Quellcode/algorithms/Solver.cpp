@@ -12,22 +12,6 @@ void algorithms::Solver::decompose(CRS & matrix) {
 
 }
 
-void algorithms::Solver::equilibrate(CRS & matrix, QVector<double> & rhs) {
-    double sum;
-    QVector<double> ones(matrix.getSize()), diag(matrix.getSize());
-    CRS equi;
-    for(int i=0; i<matrix.getSize(); ++i)
-        ones[i]=1;
-
-    for(int i=0; i<matrix.getSize(); ++i) {
-        sum = matrix.multRowQVectorAbs(i,ones);
-        diag[i] = 1/sum;
-        rhs[i] *= 1/sum;
-    }
-    equi.diag(diag);
-    matrix = equi.multCRSCRS(matrix);
-}
-
 double algorithms::Solver::getEps() const {
     return 0;
 }
@@ -55,4 +39,13 @@ double algorithms::norm2(QVector<double> const &vec) {
     }
     sum = sqrt(sum);
     return sum;
+}
+
+double algorithms::normInf(QVector<double> const &vec) {
+    double max=0;
+    for(int i=0; i<vec.size(); ++i) {
+        if(max<vec[i])
+            max= vec[i];
+    }
+    return max;
 }

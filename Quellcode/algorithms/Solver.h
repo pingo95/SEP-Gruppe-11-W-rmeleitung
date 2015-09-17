@@ -15,7 +15,6 @@ namespace algorithms {
         virtual ~Solver();
 
         virtual void decompose(CRS & matrix);
-        void equilibrate(CRS & matrix, QVector<double> & rhs);
         virtual double getEps() const;
         virtual int getItCount() const;
         virtual int getMaxIt() const;
@@ -30,6 +29,7 @@ namespace algorithms {
     };
 
     double norm2(QVector<double> const &vec);
+    double normInf(QVector<double> const &vec);
 
 }
 

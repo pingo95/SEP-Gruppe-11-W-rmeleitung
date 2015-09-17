@@ -41,7 +41,6 @@ QLabel* algorithms::TesterIterativeSolver::testSolveGaussSeidel() {
 
     itSolver = new GaussSeidel;
 
-    itSolver->equilibrate(matrix,rhs);
     itSolver->solve(result,matrix,rhs);
     testString = algorithms::printQVector(result);
     text->setText(testString);
@@ -84,7 +83,6 @@ QLabel* algorithms::TesterIterativeSolver::testSolveJacobi() {
     rhs = algorithms::addQVectors(last,deltaT * heatSources);
 
     itSolver = new Jacobi;
-    itSolver->equilibrate(matrix,rhs);
     itSolver->solve(result,matrix,rhs);
     testString = algorithms::printQVector(result);
     text->setText(testString);
@@ -128,8 +126,6 @@ QLabel* algorithms::TesterIterativeSolver::testSolveLU() {
 
     itSolver = new LU;
 
-
-    itSolver->equilibrate(matrix,rhs);
     itSolver->decompose(matrix);
     itSolver->solve(result,matrix,rhs);
     testString = algorithms::printQVector(result);
