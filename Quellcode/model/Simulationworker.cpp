@@ -147,7 +147,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
             result[i][n-1][k] = simSetup.getBoundaryTop();
     }
     message = "Speicher alloziert.\n\nBerechne Wärmeleitkoeffizienten\nAnzahl Gebiete : "
-            + QString::number(simSetup.getAreaCount(SimulationSetup::AreaThermalConductivity));
+            + QString::number(simSetup.getAreaCount(SimulationSetup::AreaThermalConductivity)) + "\n";
     emit simulationLogUpdate(message);
 
     // Anlegen der Vektoren für Wärmeleitkoeffizienten
@@ -174,11 +174,11 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
                 for(long j = yLBound; j <= yUBound; ++j)
                     if(thermalConductivity->insidePoint(i*deltaX,j*deltaX))
                         thermalConductivitiesGrid[i+j*n] = conductivity;    //thermalConductivity.getValue(i*deltaX,j*deltaX);
-            emit simulationLogUpdate(QString::number(++count) + ". Gebiet abgeschlossen");
+            emit simulationLogUpdate(QString::number(++count) + ". Gebiet abgeschlossen\n");
             emit finishedStep(count);
         }
     }
-    message = "Wärmeleitkoeffizienten abgeschlossen\n\n Berechne Wärmequellen\nAnzahl Gebiete: "
+    message = "Wärmeleitkoeffizienten abgeschlossen\n\nBerechne Wärmequellen\nAnzahl Gebiete: "
             + QString::number(simSetup.getAreaCount(SimulationSetup::AreaHeatSource)) + "\n";
     emit simulationLogUpdate(message);
 
@@ -250,6 +250,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
     message = "Wärmequellen abgeschlossen\n\n Initialisieren der Integrationsmethode und des Lösers\n\n";
     emit simulationLogUpdate(message);
 
+    emit beginningSimulationStage("Zeitschritte berechnen:",m);
     // Intialisieren der Int-Methode
     selectedIntMethod->setUp(n,m,T,thermalConductivitiesGrid);
 
@@ -262,7 +263,6 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
     QVector<double> * step2 = new QVector<double>(*step1);
 
     // Berechnen der Zeitschritte
-    emit beginningSimulationStage("Zeitschritte berechnen:",m);
     emit simulationLogUpdate("Zeitschritte berechnen\n");
     for(long i = 1; i < m+1; ++i)
     {
@@ -339,10 +339,42 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
 
     delete step1;
     delete step2;
-
-    emit simulationLogUpdate("Simulation abgeschlossen\nBenötigte Zeit: " + QString::number(round(timer.elapsed()/1000)) + "s\n\n");
+    int time = timer.elapsed();
+    emit simulationLogUpdate("Simulation abgeschlossen\nBenötigte Zeit: "
+                             + QString::number(round(time/(60*1000)))       + " min "
+                             + QString::number(round(time%(60*1000)/1000))  + " s "
+                             + QString::number(time%(60*1000)%1000)         + " ms\n\n");
     simulated = true;
 
     busy = false;
     emit finishedSimulation();
 }
+
+//QString model::SimulationWorker::printVector(const QVector<double> &vec)
+//{
+//    QString output;
+//    output += "\n";
+//    for(long k = 0; k <= n; ++k)
+//        output += "------";
+//    output += "\nj\\k| ";
+//    for(long k = 0; k < n-1; ++k)
+//        output += QString::number(k) + "| ";
+//    output += QString::number(n-1) + "\n";
+//    for(long k = 0; k <= n; ++k)
+//        output += "------";
+//    output += "\n";
+//    for(long j = n-1; j >= 0; --j)
+//    {
+//        output += QString::number(j) + "| ";
+//        for(long k = 0; k < n-1; ++k)
+//        {
+//            output += QString::number(vec[k + j*n]) + "| ";
+//        }
+//        output += QString::number(vec[n-1 + j*n]) + "\n";
+//        for(long k = 0; k <= n; ++k)
+//            output += "------";
+//        output += "\n";
+//    }
+//    output += "\n";
+//    return output;
+//}

@@ -1,8 +1,8 @@
 #ifndef OPTIMIZATIONWIDGET_H
 #define OPTIMIZATIONWIDGET_H
-#include <QWidget>
 #include <QTabWidget>
 #include <QGridLayout>
+#include <QVBoxLayout>
 #include <QPushButton>
 #include <QLabel>
 #include <QTableWidget>
@@ -16,7 +16,7 @@
 
 namespace presentation {
 
-    class OptimizationWidget : public QWidget
+    class OptimizationWidget : public QTabWidget
     {
         Q_OBJECT
     public:
@@ -31,19 +31,19 @@ namespace presentation {
 
     //Attribute
     private:
-        //Tabs
-        QTabWidget * tabWidget;
-
         //Widgets
-        QWidget * widgetCentral;
         QWidget * widgetSolution;
         QWidget * widgetConfiguration;
 
-        //Layout
-        QGridLayout * layoutDataTab;
-        QGridLayout * layoutSolutionTab;
+        //Layouts
+        QVBoxLayout * layoutSolutionTab;
         QGridLayout * layoutConfigurationTab;
-        QGridLayout * layoutWidgetCentral;
+        QGridLayout * gridBoxUserSettings;
+        QGridLayout * gridBoxSettings;
+
+        //Group Boxen
+        QGroupBox * groupBoxUserSettings;
+        QGroupBox * groupBoxSettings;
 
         //Buttons
         QPushButton * buttonLoad;

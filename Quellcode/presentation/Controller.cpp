@@ -581,7 +581,7 @@ void presentation::Controller::thermalConductivityValueChangedSlot(int pos, int 
         bool ok;
         double value = text.toDouble(&ok);
         // Temperatur in Kelvin
-        if(value > 0 && value <= ui->MaxConductivity && ok)
+        if(value >= 1e-5 && value <= ui->MaxConductivity && ok)
             if(pos == 0)
                 model->setAreaBackground(value,model::SimulationSetup::AreaThermalConductivity);
             else

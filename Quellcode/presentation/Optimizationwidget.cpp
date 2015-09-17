@@ -2,20 +2,15 @@
 
 
 presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
-    : QWidget(parent) , MaxTemperature(1000)
+    : QTabWidget(parent) , MaxTemperature(1000)
 {
-    widgetCentral = new QWidget(this);
-    layoutWidgetCentral = new QGridLayout(widgetCentral);
-    tabWidget = new QTabWidget(widgetCentral);
-    layoutWidgetCentral->addWidget(tabWidget);
-
     widgetSolution = new QWidget(this);
     widgetConfiguration = new QWidget(this);
 
-    tabWidget->addTab(widgetConfiguration,"Konfiguration");
-    tabWidget->addTab(widgetSolution,"Ergebnis");
+    this->addTab(widgetConfiguration,"Konfiguration");
+    this->addTab(widgetSolution,"Ergebnis");
 
-    layoutSolutionTab = new QGridLayout(widgetSolution);
+    layoutSolutionTab = new QVBoxLayout(widgetSolution);
     layoutConfigurationTab = new QGridLayout(widgetConfiguration);
 
     //Tab Konfig
@@ -32,8 +27,8 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     labelT = new QLabel("T: ",widgetConfiguration);
     labelEpsilon = new QLabel("Epsilon: ",widgetConfiguration);
     labelMaxIt = new QLabel("Maximale Iterationsanzahl: ",widgetConfiguration);
-    labelData = new QLabel("Temperaturverteilung",widgetConfiguration);
-    labelProgressBar = new QLabel("Fortschrittsbalken",widgetConfiguration);
+    labelData = new QLabel("Temperaturverteilung:",widgetConfiguration);
+    labelProgressBar = new QLabel("Fortschrittsbalken:",widgetConfiguration);
 
         //CheckBoxes
     checkBoxN = new QCheckBox("Überschreibe Anzahl Messwerte",widgetConfiguration);
@@ -80,7 +75,7 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     doubleSpinBoxT->setButtonSymbols(QAbstractSpinBox::NoButtons);
 
         //Gruppen
-    QGridLayout * gridBoxUserSettings = new QGridLayout();
+    gridBoxUserSettings = new QGridLayout();
     gridBoxUserSettings->addWidget(checkBoxN,0,0,1,2);
     gridBoxUserSettings->addWidget(labelSpinBoxN,1,0);
     gridBoxUserSettings->addWidget(spinBoxN,1,1);
@@ -88,10 +83,10 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     gridBoxUserSettings->addWidget(checkBoxThermalConductivities,3,0,1,2);
     gridBoxUserSettings->addWidget(labelInitialValue,4,0);
     gridBoxUserSettings->addWidget(doubleSpinBoxInitialValue,4,1);
-    QGroupBox * groupBoxUserSettings = new QGroupBox(widgetConfiguration);
+    groupBoxUserSettings = new QGroupBox(widgetConfiguration);
     groupBoxUserSettings->setLayout(gridBoxUserSettings);
 
-    QGridLayout * gridBoxSettings = new QGridLayout();
+    gridBoxSettings = new QGridLayout();
     gridBoxSettings->addWidget(labelSettings,0,0);
     gridBoxSettings->addWidget(labelM,1,0);
     gridBoxSettings->addWidget(spinBoxM,1,1);
@@ -101,7 +96,7 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     gridBoxSettings->addWidget(doubleSpinBoxEpsilon,3,1);
     gridBoxSettings->addWidget(labelMaxIt,4,0);
     gridBoxSettings->addWidget(spinBoxMaxIt,4,1);
-    QGroupBox * groupBoxSettings = new QGroupBox(widgetConfiguration);
+    groupBoxSettings = new QGroupBox(widgetConfiguration);
     groupBoxSettings->setLayout(gridBoxSettings);
 
         //Buttons
@@ -166,7 +161,7 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
             //ColorScale
     colorScale = new QCPColorScale(plateOptimization);
     plateOptimization->plotLayout()->addElement(0,1,colorScale);
-    colorScale->setLabel("Robin Tim");
+    colorScale->setLabel("Christian stinkt");
 
     QCPMarginGroup * group = new QCPMarginGroup(plateOptimization);
     plateOptimization->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, group);
@@ -186,6 +181,7 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
 
 
     plateOptimization->setMinimumWidth(350);
+    plateOptimization->setMinimumHeight(350);
 
         //ProgressBar
     progressBar = new QProgressBar(widgetConfiguration);
@@ -198,25 +194,19 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     layoutConfigurationTab->addWidget(buttonLoad,1,0);
     layoutConfigurationTab->addWidget(buttonOptimization,1,1);
     layoutConfigurationTab->addWidget(groupBoxUserSettings,2,0,1,2);
-    layoutConfigurationTab->addWidget(groupBoxSettings,2,2,1,2);
-    layoutConfigurationTab->addWidget(plateOptimization,1,4,2,1);
+    layoutConfigurationTab->addWidget(groupBoxSettings,3,0,1,2);
+    layoutConfigurationTab->addWidget(plateOptimization,1,2,4,2);
 
-    layoutConfigurationTab->addWidget(labelData,3,0);
-    layoutConfigurationTab->addWidget(tableWidgetData,4,0,1,2);
+    layoutConfigurationTab->addWidget(labelData,4,0);
+    layoutConfigurationTab->addWidget(tableWidgetData,5,0,1,4);
 
-    layoutConfigurationTab->addWidget(labelProgressBar,3,2);
-    layoutConfigurationTab->addWidget(progressBar,3,3,1,2);
+    layoutConfigurationTab->addWidget(labelProgressBar,6,0);
+    layoutConfigurationTab->addWidget(progressBar,6,1,1,3);
 
-
-
-
-        //Labels
-
-
-
-
-
-
+    layoutConfigurationTab->setColumnStretch(0,0);
+    layoutConfigurationTab->setColumnStretch(1,0);
+    layoutConfigurationTab->setColumnStretch(2,1);
+    layoutConfigurationTab->setColumnStretch(3,1);
 
     //Tab Ergebnis
         //Label
@@ -225,9 +215,6 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     tableWidgetSolution = new QTableWidget(widgetSolution);
 
         //Layout anwenden
-    layoutSolutionTab->addWidget(tableWidgetSolution,0,0);
-    layoutSolutionTab->addWidget(tableWidgetSolution,1,0);
-
-
-
+    layoutSolutionTab->addWidget(labelSolution,0);
+    layoutSolutionTab->addWidget(tableWidgetSolution,1);
 }

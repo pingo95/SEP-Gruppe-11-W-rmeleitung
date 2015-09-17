@@ -21,7 +21,7 @@ model::SimulationSetup::SimulationSetup(const SimulationSetup &rhs) :
     QList<Area* >::const_iterator it = rhs.heatSources.begin();
     for(; it != rhs.heatSources.end(); ++it)
         heatSources.append(new Area(*(*it)));
-    it = rhs.thermalConductivities.end();
+    it = rhs.thermalConductivities.begin();
     for(; it != rhs.thermalConductivities.end(); ++it)
         thermalConductivities.append(new Area(*(*it)));
 }
@@ -191,14 +191,14 @@ void model::SimulationSetup::setBoundaryBottom(double const newBottomBoundary)
     boundaries[0] = newBottomBoundary;
 }
 
-void model::SimulationSetup::setBoundaryRight(double const newRightBoundary)
-{
-    boundaries[1] = newRightBoundary;
-}
-
 void model::SimulationSetup::setBoundaryLeft(double const newLeftBoundary)
 {
-    boundaries[2] = newLeftBoundary;
+    boundaries[1] = newLeftBoundary;
+}
+
+void model::SimulationSetup::setBoundaryRight(double const newRightBoundary)
+{
+    boundaries[2] = newRightBoundary;
 }
 
 void model::SimulationSetup::setBoundaryTop(double const newTopBoundary)

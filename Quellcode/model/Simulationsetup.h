@@ -14,8 +14,8 @@ namespace model {
     public:
         enum AreaType
         {
-            AreaHeatSource,
-            AreaThermalConductivity,
+            AreaHeatSource = 0,
+            AreaThermalConductivity = 1,
         };
     // Funktionen:
     public:

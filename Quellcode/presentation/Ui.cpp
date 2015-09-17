@@ -465,21 +465,32 @@ void presentation::UI::updateVisualization()
     // TODO: Regler und LCD einstellen
     if (model->getSimulated())
     {
-        sliderVideo->setEnabled(true);
-        buttonPlayVideo->setEnabled(true);
-        labelTopVisualization->setText("Dies ist der Tab zur Visualisierung der Simulationsergebnisse.\n"
-                                       "Hier können Sie sich, mit Hilfe des Schiebereglers, Einzelbilder oder ein Video anzeigen lassen."
-                                       "Für genauere Informationen wechseln Sie in den Hilfe-Tab.");
-        resultM = model->getResultM();
-        resultN = model->getResultN();
-        resultT = model->getResultT();
-        result = model->getResult();
-        sliderVideo->setRange(0,resultM);
-        sliderVideo->setValue(0);
+        if(model->getSimulating())
+        {
+            labelTopVisualization->setText("Es wird zurzeit simuliert, "
+                                           "Ergebnisse können erst nach Ende "
+                                           "der Simulation angezeigt werden.");
+            colorMapVideo->data()->setSize(1,1);
+            colorMapVideo->data()->setCell(0,0,0);
+        }
+        else
+        {
+            sliderVideo->setEnabled(true);
+            buttonPlayVideo->setEnabled(true);
+            labelTopVisualization->setText("Dies ist der Tab zur Visualisierung der Simulationsergebnisse.\n"
+                                           "Hier können Sie sich, mit Hilfe des Schiebereglers, Einzelbilder oder ein Video anzeigen lassen."
+                                           "Für genauere Informationen wechseln Sie in den Hilfe-Tab.");
+            resultM = model->getResultM();
+            resultN = model->getResultN();
+            resultT = model->getResultT();
+            result = model->getResult();
+            sliderVideo->setRange(0,resultM);
+            sliderVideo->setValue(0);
 
-        colorMapVideo->data()->setSize(resultN,resultN);
+            colorMapVideo->data()->setSize(resultN,resultN);
 
-        visualizeState(0);
+            visualizeState(0);
+        }
     }
     else
     {

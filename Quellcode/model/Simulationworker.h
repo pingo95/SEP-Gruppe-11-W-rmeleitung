@@ -36,6 +36,8 @@ namespace model {
     public slots:
         void startSimulationSlot(SimulationSetup * simSetupTemplate);
 
+//    private:
+//        QString printVector(const QVector<double> &vec);
     // Attribute:
     private:
         bool busy;
@@ -47,7 +49,7 @@ namespace model {
         long n;
         double *** result;
         bool simulated;
-        long T;
+        double T;
     };
 
 }
