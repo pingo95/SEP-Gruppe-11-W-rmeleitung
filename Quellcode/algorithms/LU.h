@@ -14,7 +14,6 @@ namespace algorithms {
         void solve(QVector<double> & result, CRS & matrix, QVector<double> & rhs);
 
     private:
-        QVector<double> equi;
         QVector<QVector<double> > L;
         QVector<QVector<double> > U;
 

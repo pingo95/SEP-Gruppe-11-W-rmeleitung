@@ -7,7 +7,8 @@ algorithms::Jacobi::Jacobi() {
 void algorithms::Jacobi::solve(QVector<double> &result, CRS & matrix, QVector<double> & rhs) {
     double rel=1, sum;
     itCount = 0;
-    QVector<double> res(result.size()), old = result;
+
+    QVector<double> old = result;
     while(rel-eps>0 && itCount < maxIt) {
         for(int i=0; i<result.size(); ++i) {
             assert(matrix.getValue(i,i)!=0);

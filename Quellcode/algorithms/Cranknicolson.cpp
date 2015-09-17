@@ -6,6 +6,10 @@ algorithms::CrankNicolson::CrankNicolson() {
 
 void algorithms::CrankNicolson::calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources) {
     QVector<double> rhs = algorithms::addQVectors(rhsMatrix * last,this->deltaT/2 * (algorithms::addQVectors(*(heatSources[1]),*(heatSources[0]))));
+
+    for(int i=0; i<rhs.size(); ++i)
+        rhs[i] *= equi[i];
+
     this->activeSolver->solve(next,this->itMatrix,rhs);
 }
 

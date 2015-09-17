@@ -24,6 +24,8 @@ namespace algorithms {
     //Attribute:
     protected:
         Solver* activeSolver;
+        QVector<double> equi;
+        bool equilibrating;
         double deltaT;
         double deltaX;
         CRS itMatrix;

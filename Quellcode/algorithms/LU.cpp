@@ -6,8 +6,7 @@ algorithms::LU::LU() {
 
 void algorithms::LU::decompose(CRS & matrix) {
     QVector<QVector<double> > full;
-    equi.resize(matrix.getSize());
-    //equilibrate(matrix,equi);
+
     matrix.full(full);
     L.resize(matrix.getSize());
     for(int i=0; i<L.size(); ++i) {
@@ -28,12 +27,6 @@ void algorithms::LU::decompose(CRS & matrix) {
 }
 
 void algorithms::LU::solve(QVector<double> & result, CRS & matrix, QVector<double> & rhs) {
-    equi.resize(rhs.size());
-    for(int i=0; i<equi.size(); ++i)
-        equi[i]=1;
-
-    for(int i=0; i<rhs.size(); ++i)
-        rhs[i] *= equi[i];
 
     QVector<double> tmp;
     tmp.resize(result.size());

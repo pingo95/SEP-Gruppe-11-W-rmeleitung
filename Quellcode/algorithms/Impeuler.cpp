@@ -6,6 +6,10 @@ algorithms::ImpEuler::ImpEuler() {
 
 void algorithms::ImpEuler::calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources) {
     QVector<double> rhs = algorithms::addQVectors(last,this->deltaT * *(heatSources[0]));
+
+    for(int i=0; i<rhs.size(); ++i)
+        rhs[i] *= equi[i];
+
     this->activeSolver->solve(next,this->itMatrix,rhs);
 }
 
