@@ -14,10 +14,11 @@ void algorithms::Jacobi::solve(QVector<double> &result, CRS & matrix, QVector<do
             assert(matrix.getValue(i,i)!=0);
             sum=0;
             sum=matrix.multRowQVector(i,old);
-            result[i] += 1./matrix.getValue(i,i) * (rhs[i]-sum);
+            result[i] += 1./matrix.getValue(i,i) * (rhs[i] - sum);
         }
         old = result;
-        rel = norm2(algorithms::addQVectors(matrix*result,(-1.) * rhs))/norm2(rhs);
+//        rel = norm2(algorithms::addQVectors(matrix*result,(-1.) * rhs))/norm2(rhs);
+        rel = normInf(algorithms::addQVectors(matrix*result,(-1.) * rhs))/normInf(rhs);
         ++itCount;
     }
 }

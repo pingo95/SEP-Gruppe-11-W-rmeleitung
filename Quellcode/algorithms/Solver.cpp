@@ -44,8 +44,8 @@ double algorithms::norm2(QVector<double> const &vec) {
 double algorithms::normInf(QVector<double> const &vec) {
     double max=0;
     for(int i=0; i<vec.size(); ++i) {
-        if(max<vec[i])
-            max= vec[i];
+        if(max<fabs(vec[i]))
+            max = fabs(vec[i]);
     }
     return max;
 }

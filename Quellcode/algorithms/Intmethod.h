@@ -18,13 +18,12 @@ namespace algorithms {
         Solver * const & getSolver() const;
         virtual void getNeedetHeatSources(QVector<double> &neededTimeSteps, bool &reusable) const=0;
         void selectSolver(Solver* solver);
-        void setUp(int const n, int const m, double const T, QVector<double> const &thermalConductivities);
-        virtual void setUpSpecific(QVector<double> const &thermalConductivities)=0;
+        void setUp(int const n, int const m, double const T, QVector<double> const &thermalDiffusivities);
+        virtual void setUpSpecific(QVector<double> const &thermalDiffusivities)=0;
 
     //Attribute:
     protected:
         Solver* activeSolver;
-        bool equilibrating;
         double deltaT;
         double deltaX;
         CRS itMatrix;
