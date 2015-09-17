@@ -474,7 +474,7 @@ void presentation::UI::updateVisualization()
         resultN = model->getResultN();
         resultT = model->getResultT();
         result = model->getResult();
-        sliderVideo->setRange(0,resultM-1);
+        sliderVideo->setRange(0,resultM);
         sliderVideo->setValue(0);
 
         colorMapVideo->data()->setSize(resultN,resultN);

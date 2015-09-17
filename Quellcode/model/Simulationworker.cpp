@@ -3,6 +3,7 @@
 #include "../algorithms/Cranknicolson.h"
 #include "../algorithms/Jacobi.h"
 #include "../algorithms/Gaussseidel.h"
+#include "../algorithms/LU.h"
 #include <QTime>
 
 model::SimulationWorker::SimulationWorker(QObject * parent): QObject(parent),
@@ -78,6 +79,7 @@ void model::SimulationWorker::initializeMaps()
     // Registrieren der iterativen Löser
     solvers.insert("Jacobi", new algorithms::Jacobi());
     solvers.insert("Gauss-Seidel", new algorithms::GaussSeidel());
+    solvers.insert("Gauss (LU)",new algorithms::LU());
     mapsInitialized = true;
 }
 
