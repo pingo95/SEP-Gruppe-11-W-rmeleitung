@@ -11,7 +11,7 @@ algorithms::TesterCRS::~TesterCRS() {
 QLabel* algorithms::TesterCRS::testA1() {
     QLabel* text = new QLabel();
     QString testString;
-    int testSize=4;
+    int testSize=3;
 
     testMatrix.A1(testSize);
 
@@ -112,7 +112,6 @@ QLabel* algorithms::TesterCRS::testMultCRSQVector() {
 
 QLabel* algorithms::TesterCRS::testMultRowQVector() {
     QLabel* text = new QLabel();
-    QString testString;
     int testSize=3;
 
     QVector<double> testVec(testSize*testSize);
@@ -121,6 +120,19 @@ QLabel* algorithms::TesterCRS::testMultRowQVector() {
     testMatrix.A1(testSize);
 
     text->setText(QString::number(testMatrix.multRowQVector(4,testVec)));
+    return text;
+}
+
+QLabel* algorithms::TesterCRS::testMultRowQVectorAbs() {
+    QLabel* text = new QLabel();
+    int testSize=3;
+
+    QVector<double> testVec(testSize*testSize);
+    for(int i=0;i<testSize*testSize;++i) testVec[i]=(i+1)*(i+1);
+
+    testMatrix.A1(testSize);
+
+    text->setText(QString::number(testMatrix.multRowQVectorAbs(4,testVec)));
     return text;
 }
 

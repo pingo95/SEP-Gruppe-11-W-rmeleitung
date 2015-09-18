@@ -4,15 +4,15 @@ algorithms::LU::LU() {
 
 }
 
-void algorithms::LU::decompose(CRS & matrix) {
-    QVector<QVector<double> > full;
-
-    matrix.full(full);
+void algorithms::LU::decompose(CRS const & matrix) {
     L.resize(matrix.getSize());
     for(int i=0; i<L.size(); ++i) {
         L[i].resize(L.size());
         L[i][i] = 1;
     }
+
+    QVector<QVector<double> > full;
+    matrix.full(full);
     U = full;
 
     for(int i=0; i<L.size()-1; ++i) {
@@ -26,24 +26,23 @@ void algorithms::LU::decompose(CRS & matrix) {
 
 }
 
-void algorithms::LU::solve(QVector<double> & result, CRS & matrix, QVector<double> & rhs) {
-
-    QVector<double> tmp;
-    tmp.resize(result.size());
+void algorithms::LU::solve(QVector<double> & result, CRS const & matrix, QVector<double> const & rhs) {
+    QVector<double> y;
+    y.resize(result.size());
     double sum;
-    for(int i=0; i<tmp.size(); ++i) {
+    for(int i=0; i<y.size(); ++i) {
         sum=0;
         for(int j=0; j<i; ++j) {
-            sum += L[i][j] * tmp[j];
+            sum += L[i][j]*y[j];
         }
-        tmp[i] = 1/L[i][i] * (rhs[i]-sum);
+        double tmp = rhs[i]-sum;
+        y[i] = 1/L[i][i]*(tmp);
     }
-    for(int i=tmp.size()-1; i>=0; --i) {
+    for(int i=y.size()-1; i>=0; --i) {
         sum=0;
-        for(int j=i+1; j<tmp.size(); ++j) {
-            sum += U[i][j] * result[j];
+        for(int j=i+1; j<y.size(); ++j) {
+            sum += U[i][j]*result[j];
         }
-        result[i] = 1/U[i][i] * (tmp[i]-sum);
+        result[i] = 1/U[i][i]*(y[i]-sum);
     }
-
 }

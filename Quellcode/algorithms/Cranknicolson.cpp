@@ -4,19 +4,19 @@ algorithms::CrankNicolson::CrankNicolson() {
 
 }
 
-void algorithms::CrankNicolson::calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources) {
-    QVector<double> rhs = algorithms::addQVectors(rhsMatrix * last,this->deltaT/2 * (algorithms::addQVectors(*(heatSources[1]),*(heatSources[0]))));
-    this->activeSolver->solve(next,this->itMatrix,rhs);
+void algorithms::CrankNicolson::calcNextStep(QVector<double> const & last, QVector<double> & next, QVector< QVector<double>* > const & heatSources) const {
+    QVector<double> rhs = algorithms::addQVectors(rhsMatrix*last,deltaT/2*(algorithms::addQVectors(*(heatSources[1]),*(heatSources[0]))));
+    activeSolver->solve(next,itMatrix,rhs);
 }
 
-void algorithms::CrankNicolson::getNeedetHeatSources(QVector<double> &neededTimeSteps, bool &reusable) const {
+void algorithms::CrankNicolson::getNeedetHeatSources(QVector<double> & neededTimeSteps, bool & reusable) const {
     reusable = true;
     neededTimeSteps.resize(2);
     neededTimeSteps[0]=1;
     neededTimeSteps[1]=0;
 }
 
-void algorithms::CrankNicolson::setUpSpecific(QVector<double> const &thermalDiffusivities) {
+void algorithms::CrankNicolson::setUpSpecific(QVector<double> const & thermalDiffusivities) {
     algorithms::CRS A1, diag;
     A1.A1(n);
     diag.diag(thermalDiffusivities);

@@ -4,19 +4,19 @@ algorithms::ImpEuler::ImpEuler() {
 
 }
 
-void algorithms::ImpEuler::calcNextStep(QVector<double> const &last, QVector<double>& next, QVector< QVector<double>* > const &heatSources) {
-    QVector<double> rhs = algorithms::addQVectors(last,deltaT * *(heatSources[0]));
+void algorithms::ImpEuler::calcNextStep(QVector<double> const & last, QVector<double> & next, QVector< QVector<double>* > const & heatSources) const {
+    QVector<double> rhs = addQVectors(last,deltaT*(*(heatSources[0])));
     activeSolver->solve(next,itMatrix,rhs);
 }
 
-void algorithms::ImpEuler::getNeedetHeatSources(QVector<double> &neededTimeSteps, bool &reusable) const {
+void algorithms::ImpEuler::getNeedetHeatSources(QVector<double> & neededTimeSteps, bool & reusable) const {
     reusable = true;
     neededTimeSteps.resize(1);
     neededTimeSteps[0]=1;
 }
 
-void algorithms::ImpEuler::setUpSpecific(QVector<double> const &thermalDiffusivities) {
-    algorithms::CRS A1, diag;
+void algorithms::ImpEuler::setUpSpecific(QVector<double> const & thermalDiffusivities) {
+    CRS A1, diag;
     A1.A1(n);
     diag.diag(thermalDiffusivities);
     diag = diag.multCRSCRS(A1);

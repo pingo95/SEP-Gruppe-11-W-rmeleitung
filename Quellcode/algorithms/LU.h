@@ -7,12 +7,14 @@
 namespace algorithms {
 
     class LU : public Solver {
+    //Funktionen:
     public:
         LU();
 
-        void decompose(CRS & matrix);
-        void solve(QVector<double> & result, CRS & matrix, QVector<double> & rhs);
+        void decompose(CRS const & matrix);
+        void solve(QVector<double> & result, CRS const & matrix, QVector<double> const & rhs);
 
+    //Attribute:
     private:
         QVector<QVector<double> > L;
         QVector<QVector<double> > U;

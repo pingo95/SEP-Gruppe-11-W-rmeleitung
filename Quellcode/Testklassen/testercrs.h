@@ -22,6 +22,7 @@ namespace algorithms {
             QLabel* testMultCRSCRS();
             QLabel* testMultCRSQVector();
             QLabel* testMultRowQVector();
+            QLabel* testMultRowQVectorAbs();
             QLabel* testScalarCRS();
             QLabel* testScalarQVector();
             QLabel* testSumCRS();

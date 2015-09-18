@@ -8,8 +8,7 @@ algorithms::IntMethod::~IntMethod() {
 
 }
 
-algorithms::Solver * const & algorithms::IntMethod::getSolver() const
-{
+algorithms::Solver* const & algorithms::IntMethod::getSolver() const {
     return activeSolver;
 }
 
@@ -17,7 +16,7 @@ void algorithms::IntMethod::selectSolver(Solver* solver) {
     activeSolver = solver;
 }
 
-void algorithms::IntMethod::setUp(int const n, int const m, double const T, QVector<double> const &thermalDiffusivities) {
+void algorithms::IntMethod::setUp(int const n, int const m, double const T, QVector<double> const & thermalDiffusivities) {
     this->n = n;
     deltaX = (1./(double)(n-1));
     deltaT = (T/(double)m);
