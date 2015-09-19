@@ -119,7 +119,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
     // konsekutives Anlegen
     consecutiveTempArray = new double [(m+1)*n*n];
     // umwandeln in die Ergebnismatrix
-    result = new double**[m];
+    result = new double**[m+1];
     for(long i = 0; i < m+1; ++i)
     {
         result[i] = new double *[n];
@@ -127,53 +127,53 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
         // Erste Zeilen mit unterem Randwert
         result[i][0] = &(consecutiveTempArray[i*n*n]);
         for(long k = 0; k < n; ++k)
-            result[i][0][k] = simSetup.getBoundaryBottom();
+            result[i][0][k] = simSetup.getIBV(SimulationSetup::BottomBoundary);
 
         for(long j = 1; j < n-1; ++j)
         {
             result[i][j] = &(consecutiveTempArray[i*n*n + j*n]);
 
             // Erste und letzter Punkt mit linkem bzw rechtem Randwert
-            result[i][j][0] = simSetup.getBoundaryLeft();
-            result[i][j][n-1] = simSetup.getBoundaryRight();
+            result[i][j][0] = simSetup.getIBV(SimulationSetup::LeftBoundary);
+            result[i][j][n-1] = simSetup.getIBV(SimulationSetup::RightBoundary);
             // Inneren Punkt initialisiert mit  initialValue
             for(long k = 1; k < n-1; ++k)
-                result[i][j][k] = simSetup.getInitialValue();
+                result[i][j][k] = simSetup.getIBV(SimulationSetup::InitialValue);
         }
 
         // Letzte Zeilen mit oberem Randwert
         result[i][n-1] = &(consecutiveTempArray[i*n*n + (n-1)*n]);
         for(long k = 0; k < n; ++k)
-            result[i][n-1][k] = simSetup.getBoundaryTop();
+            result[i][n-1][k] = simSetup.getIBV(SimulationSetup::TopBoundary);
     }
     message = "Speicher alloziert.\n\nBerechne Wärmeleitkoeffizienten\nAnzahl Gebiete : "
-            + QString::number(simSetup.getAreaCount(SimulationSetup::AreaThermalConductivity)) + "\n";
+            + QString::number(simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity)) + "\n";
     emit simulationLogUpdate(message);
 
     // Anlegen der Vektoren für Wärmeleitkoeffizienten
-    QVector<double> thermalConductivitiesGrid(n*n,simSetup.getAreaBackgroundValue(SimulationSetup::AreaThermalConductivity));
+    QVector<double> thermalDiffusivitiesGrid(n*n,simSetup.getAreaBackgroundValue(SimulationSetup::AreaThermalDiffusivity));
 
     // Berechnen welche Punkte von welchem Wärmeleitkoeffizienten-Gebiet
     // abgedeckt werden, dabei überschreiben neure Gebiete ältere
-    emit beginningSimulationStage("Wärmeleitkoeffizienten:",simSetup.getAreaCount(SimulationSetup::AreaThermalConductivity));
-    if(simSetup.getAreaCount(SimulationSetup::AreaThermalConductivity) > 0)
+    emit beginningSimulationStage("Wärmeleitkoeffizienten:",simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity));
+    if(simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity) > 0)
     {
-        QList<Area*>::const_iterator it = simSetup.getAreas(SimulationSetup::AreaThermalConductivity).begin();
-        for(; it != simSetup.getAreas(SimulationSetup::AreaThermalConductivity).end(); ++it)
+        QList<Area*>::const_iterator it = simSetup.getAreas(SimulationSetup::AreaThermalDiffusivity).begin();
+        for(; it != simSetup.getAreas(SimulationSetup::AreaThermalDiffusivity).end(); ++it)
         {
             int count = 0;
-            Area* thermalConductivity = *it;
-            double conductivity = thermalConductivity->getValue();
+            Area* thermalDiffusivity = *it;
+            double diffusivity = thermalDiffusivity->getValue();
             double xMin, xMax, yMin, yMax;
-            thermalConductivity->getTransitiveRectangle(xMin,xMax,yMin,yMax);
+            thermalDiffusivity->getTransitiveRectangle(xMin,xMax,yMin,yMax);
             long xLBound = ceil(xMin/deltaX),
                     xUBound = floor(xMax/deltaX),
                     yLBound = ceil(yMin/deltaX),
                     yUBound = floor(yMax/deltaX);
             for(long i = xLBound; i <= xUBound; ++i)
                 for(long j = yLBound; j <= yUBound; ++j)
-                    if(thermalConductivity->insidePoint(i*deltaX,j*deltaX))
-                        thermalConductivitiesGrid[i+j*n] = conductivity;    //thermalConductivity.getValue(i*deltaX,j*deltaX);
+                    if(thermalDiffusivity->insidePoint(i*deltaX,j*deltaX))
+                        thermalDiffusivitiesGrid[i+j*n] = diffusivity;    //thermalDiffusivity.getValue(i*deltaX,j*deltaX);
             emit simulationLogUpdate(QString::number(++count) + ". Gebiet abgeschlossen\n");
             emit finishedStep(count);
         }
@@ -252,7 +252,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
 
     emit beginningSimulationStage("Zeitschritte berechnen:",m);
     // Intialisieren der Int-Methode
-    selectedIntMethod->setUp(n,m,T,thermalConductivitiesGrid);
+    selectedIntMethod->setUp(n,m,T,thermalDiffusivitiesGrid);
 
     // Iterationsvektoren
     QVector<double> * step1 = new QVector<double>(n*n,0);
@@ -347,34 +347,6 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
     simulated = true;
 
     busy = false;
+    emit beginningSimulationStage("Simulation beendet",0);
     emit finishedSimulation();
 }
-
-//QString model::SimulationWorker::printVector(const QVector<double> &vec)
-//{
-//    QString output;
-//    output += "\n";
-//    for(long k = 0; k <= n; ++k)
-//        output += "------";
-//    output += "\nj\\k| ";
-//    for(long k = 0; k < n-1; ++k)
-//        output += QString::number(k) + "| ";
-//    output += QString::number(n-1) + "\n";
-//    for(long k = 0; k <= n; ++k)
-//        output += "------";
-//    output += "\n";
-//    for(long j = n-1; j >= 0; --j)
-//    {
-//        output += QString::number(j) + "| ";
-//        for(long k = 0; k < n-1; ++k)
-//        {
-//            output += QString::number(vec[k + j*n]) + "| ";
-//        }
-//        output += QString::number(vec[n-1 + j*n]) + "\n";
-//        for(long k = 0; k <= n; ++k)
-//            output += "------";
-//        output += "\n";
-//    }
-//    output += "\n";
-//    return output;
-//}

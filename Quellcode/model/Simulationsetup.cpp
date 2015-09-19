@@ -1,29 +1,44 @@
 #include "Simulationsetup.h"
 
-model::SimulationSetup::SimulationSetup() : boundaries(4,300),
-    heatSourcesBackgroundValue(0), heatSourcesCount(0), initialValue(300),
-    m(1), n(3), selectedIntMethod("Impliziter Euler"),  selectedSolver("Jacobi"),
-    solverMaxError(1e-10),solverMaxIt(1000), T(1.0),
-    thermalConductivitiesBackgroundValue(0.01), thermalConductivitiesCount(0)
-{
+double const model::SimulationSetup::AreaMaxValue[2] = {1000,200e-6};
+double const model::SimulationSetup::AreaMinValue[2] = {0,1e-6};
 
+double const model::SimulationSetup::MaxTemperature = 1000;
+double const model::SimulationSetup::MinTemperature = 0;
+
+model::SimulationSetup::SimulationSetup() : heatSourcesBackgroundValue(0),
+    heatSourcesCount(0), m(1), n(3),
+    selectedIntMethod("Impliziter Euler"),  selectedSolver("Jacobi"),
+    solverMaxError(1e-10),solverMaxIt(1000), T(1.0),
+    thermalDiffusivitiesBackgroundValue(1e-4), thermalDiffusiivitiesCount(0)
+{
+    iBVs[SimulationSetup::InitialValue] = 300;
+    iBVs[SimulationSetup::BottomBoundary] = 300;
+    iBVs[SimulationSetup::LeftBoundary] = 300;
+    iBVs[SimulationSetup::RightBoundary] = 300;
+    iBVs[SimulationSetup::TopBoundary] = 300;
 }
 
 model::SimulationSetup::SimulationSetup(const SimulationSetup &rhs) :
-    boundaries(rhs.boundaries), heatSourcesBackgroundValue(rhs.heatSourcesBackgroundValue),
-    heatSourcesCount(rhs.heatSourcesCount), initialValue(rhs.initialValue),
+    heatSourcesBackgroundValue(rhs.heatSourcesBackgroundValue),
+    heatSourcesCount(rhs.heatSourcesCount),
     m(rhs.m), n(rhs.n), selectedIntMethod(rhs.selectedIntMethod),
     selectedSolver(rhs.selectedSolver), solverMaxError(rhs.solverMaxError),
     solverMaxIt(rhs.solverMaxIt), T(rhs.T),
-    thermalConductivitiesBackgroundValue(rhs.thermalConductivitiesBackgroundValue),
-    thermalConductivitiesCount(rhs.thermalConductivitiesCount)
+    thermalDiffusivitiesBackgroundValue(rhs.thermalDiffusivitiesBackgroundValue),
+    thermalDiffusiivitiesCount(rhs.thermalDiffusiivitiesCount)
 {
+    iBVs[SimulationSetup::InitialValue] = rhs.iBVs[SimulationSetup::InitialValue];
+    iBVs[SimulationSetup::BottomBoundary] = rhs.iBVs[SimulationSetup::BottomBoundary];
+    iBVs[SimulationSetup::LeftBoundary] = rhs.iBVs[SimulationSetup::LeftBoundary];
+    iBVs[SimulationSetup::RightBoundary] = rhs.iBVs[SimulationSetup::RightBoundary];
+    iBVs[SimulationSetup::TopBoundary] = rhs.iBVs[SimulationSetup::TopBoundary];
     QList<Area* >::const_iterator it = rhs.heatSources.begin();
     for(; it != rhs.heatSources.end(); ++it)
         heatSources.append(new Area(*(*it)));
-    it = rhs.thermalConductivities.begin();
-    for(; it != rhs.thermalConductivities.end(); ++it)
-        thermalConductivities.append(new Area(*(*it)));
+    it = rhs.thermalDiffusivities.begin();
+    for(; it != rhs.thermalDiffusivities.end(); ++it)
+        thermalDiffusivities.append(new Area(*(*it)));
 }
 
 model::SimulationSetup::~SimulationSetup()
@@ -31,13 +46,10 @@ model::SimulationSetup::~SimulationSetup()
     QList<Area*>::iterator it = heatSources.begin();
     for(; it != heatSources.end(); ++it)
         delete (*it);
-    it = thermalConductivities.begin();
-    for(; it != thermalConductivities.end(); ++it)
+    it = thermalDiffusivities.begin();
+    for(; it != thermalDiffusivities.end(); ++it)
         delete (*it);
 }
-
-
-
 
 void model::SimulationSetup::addNewArea(const QVector<double> &xKoords,
                               const QVector<double> &yKoords, double value,
@@ -50,8 +62,8 @@ void model::SimulationSetup::addNewArea(const QVector<double> &xKoords,
     }
     else
     {
-        thermalConductivities.append(new Area(xKoords,yKoords,value,type));
-        ++thermalConductivitiesCount;
+        thermalDiffusivities.append(new Area(xKoords,yKoords,value,type));
+        ++thermalDiffusiivitiesCount;
     }
 }
 
@@ -60,7 +72,7 @@ model::Area * const & model::SimulationSetup::getArea(const int id,
                                                       SimulationSetup::AreaType type) const
 {
     QList<Area*> const & currentList = type == SimulationSetup::AreaHeatSource ?
-                heatSources : thermalConductivities;
+                heatSources : thermalDiffusivities;
     QList<Area*>::const_iterator it = currentList.begin();
     for(; it != currentList.end(); ++it)
         if((*it)->getID() == id)
@@ -71,44 +83,23 @@ model::Area * const & model::SimulationSetup::getArea(const int id,
 double model::SimulationSetup::getAreaBackgroundValue(SimulationSetup::AreaType type) const
 {
   return type == SimulationSetup::AreaHeatSource ? heatSourcesBackgroundValue
-                                       : thermalConductivitiesBackgroundValue;
+                                       : thermalDiffusivitiesBackgroundValue;
 }
 
 QList<model::Area*> const & model::SimulationSetup::getAreas(SimulationSetup::AreaType type) const
 {
-    return type == SimulationSetup::AreaHeatSource ? heatSources: thermalConductivities;
+    return type == SimulationSetup::AreaHeatSource ? heatSources: thermalDiffusivities;
 }
 
 int model::SimulationSetup::getAreaCount(SimulationSetup::AreaType type) const
 {
     return type == SimulationSetup::AreaHeatSource ?
-                heatSourcesCount : thermalConductivitiesCount;
+                heatSourcesCount : thermalDiffusiivitiesCount;
 }
 
-
-double model::SimulationSetup::getBoundaryBottom() const
+double model::SimulationSetup::getIBV(SimulationSetup::IBV ibv)
 {
-    return boundaries[0];
-}
-
-double model::SimulationSetup::getBoundaryLeft() const
-{
-    return boundaries[1];
-}
-
-double model::SimulationSetup::getBoundaryRight() const
-{
-    return boundaries[2];
-}
-
-double model::SimulationSetup::getBoundaryTop() const
-{
-    return boundaries[3];
-}
-
-double model::SimulationSetup::getInitialValue() const
-{
-    return initialValue;
+    return iBVs[ibv];
 }
 
 long model::SimulationSetup::getM() const
@@ -156,8 +147,8 @@ void model::SimulationSetup::removeLastArea(SimulationSetup::AreaType type)
     }
     else
     {
-        delete thermalConductivities.takeLast();
-        --thermalConductivitiesCount;
+        delete thermalDiffusivities.takeLast();
+        --thermalDiffusiivitiesCount;
     }
 }
 
@@ -182,33 +173,13 @@ void model::SimulationSetup::setAreaBackground(const double newValue, Simulation
     }
     else
     {
-        thermalConductivitiesBackgroundValue = newValue;
+        thermalDiffusivitiesBackgroundValue = newValue;
     }
 }
 
-void model::SimulationSetup::setBoundaryBottom(double const newBottomBoundary)
+void model::SimulationSetup::setIBV(double const newValue, SimulationSetup::IBV ibv)
 {
-    boundaries[0] = newBottomBoundary;
-}
-
-void model::SimulationSetup::setBoundaryLeft(double const newLeftBoundary)
-{
-    boundaries[1] = newLeftBoundary;
-}
-
-void model::SimulationSetup::setBoundaryRight(double const newRightBoundary)
-{
-    boundaries[2] = newRightBoundary;
-}
-
-void model::SimulationSetup::setBoundaryTop(double const newTopBoundary)
-{
-    boundaries[3] = newTopBoundary;
-}
-
-void model::SimulationSetup::setInitialValue(double const newInitialValue)
-{
-    initialValue = newInitialValue;
+    iBVs[ibv] = newValue;
 }
 
 void model::SimulationSetup::setM(int const newM)
@@ -244,6 +215,6 @@ void model::SimulationSetup::updateAreaValue(const int pos, const double value, 
     }
     else
     {
-        thermalConductivities.at(pos)->setValue(value);
+        thermalDiffusivities.at(pos)->setValue(value);
     }
 }

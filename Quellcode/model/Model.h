@@ -41,11 +41,7 @@ namespace model {
         void selectIntMethod(QString const intMethod);
         void selectSolver(QString const newSolver);
         void setAreaBackground(double const newValue, SimulationSetup::AreaType type);
-        void setBoundaryBottom(double const newBottomBoundary);
-        void setBoundaryTop(double const newTopBoundary);
-        void setBoundaryLeft(double const newLeftBoundary);
-        void setBoundaryRight(double const newRightBoundary);
-        void setInitialValue(double const newInitialValue);
+        void setIBV(double const newValue, SimulationSetup::IBV ibv);
         void setM(int const newM);
         void setN(int const newN);
         void setSolverMaxError(double const maxError);

@@ -15,8 +15,22 @@ namespace model {
         enum AreaType
         {
             AreaHeatSource = 0,
-            AreaThermalConductivity = 1,
+            AreaThermalDiffusivity = 1,
         };
+        enum IBV
+        {
+            InitialValue = 0,
+            BottomBoundary = 1,
+            LeftBoundary = 2,
+            RightBoundary = 3,
+            TopBoundary = 4
+        };
+        static double const AreaMaxValue[2];
+        static double const AreaMinValue[2];
+
+        static double const MaxTemperature;
+        static double const MinTemperature;
+
     // Funktionen:
     public:
         explicit SimulationSetup();
@@ -31,10 +45,7 @@ namespace model {
         QList<Area*> const & getAreas(SimulationSetup::AreaType type) const;
         int getAreaCount(SimulationSetup::AreaType type) const;
 
-        double getBoundaryBottom() const;
-        double getBoundaryLeft() const;
-        double getBoundaryRight() const;
-        double getBoundaryTop() const;
+        double getIBV(SimulationSetup::IBV ibv);
         double getInitialValue() const;
         long getM() const;
         long getN() const;
@@ -49,10 +60,7 @@ namespace model {
         void selectIntMethod(QString const intMethod);
         void selectSolver(QString const newSolver);
         void setAreaBackground(double const newValue, SimulationSetup::AreaType type);
-        void setBoundaryBottom(double const newBottomBoundary);
-        void setBoundaryTop(double const newTopBoundary);
-        void setBoundaryLeft(double const newLeftBoundary);
-        void setBoundaryRight(double const newRightBoundary);
+        void setIBV(double const newValue, SimulationSetup::IBV ibv);
         void setInitialValue(double const newInitialValue);
         void setM(int const newM);
         void setN(int const newN);
@@ -64,11 +72,10 @@ namespace model {
 
     // Attribute:
     private:
-        QVector<double> boundaries;
+        double iBVs[5];
         QList<Area*> heatSources;
         double heatSourcesBackgroundValue;
         int heatSourcesCount;
-        double initialValue;
         long m;
         long n;
         QString selectedIntMethod;
@@ -76,9 +83,9 @@ namespace model {
         double solverMaxError;
         int solverMaxIt;
         double T;
-        QList<Area*> thermalConductivities;
-        double thermalConductivitiesBackgroundValue;
-        int thermalConductivitiesCount;
+        QList<Area*> thermalDiffusivities;
+        double thermalDiffusivitiesBackgroundValue;
+        int thermalDiffusiivitiesCount;
     };
 
 }

@@ -19,29 +19,26 @@ namespace presentation {
 
         void setModel(model::Model * model);
         void setUI(UI * ui);
-        void testPartialHeatSource();
-        void testPartialThermalConductivity();
+
+        void testPartialArea(model::SimulationSetup::AreaType type);
 
     public slots:
-        void heatSourcesClickSlot(QMouseEvent * event);
-        void heatSourceValueChangedSlot(int pos, int column);
-        void newBottomBoundarySlot(double newBottomBoundary);
-        void newInitialValueSlot(double newInitialValue);
-        void newLeftBoundarySlot(double newLeftBoundary);
+        void areaClickSlot(double xKoord, double yKoord, QSize plateSize,
+                           double valueShift, model::SimulationSetup::AreaType type);
+        void areaValueChangedSlot(int pos, double newValue, bool ok,
+                                  model::SimulationSetup::AreaType type);
+        void newIBVValueSlot(double newValue, model::SimulationSetup::IBV side);
         void newMSlot(int newM);
+        void newMaxErrorSlot(double newMaxErrorSlot);
+        void newMaxItSlot(int newMaxItSlot);
         void newNSlot(int newN);
-        void newRightBoundarySlot(double newRightBoundary);
-        void newTopBoundarySlot(double newTopBoundary);
         void newTSlot(double newT);
         void playVideoSlot();
         void selectIntMethodSlot(QString newIntMethod);
         void selectSolverSlot(QString newIterativeSolver);
         void simulateSlot();
         void tabChangedSlot(int newTab);
-        void thermalConductivitiesClickSlot(QMouseEvent * event);
-        void thermalConductivityValueChangedSlot(int pos, int column);
-        void undoHeatSourceSlot();
-        void undoThermalConductivitySlot();
+        void undoAreaSlot(model::SimulationSetup::AreaType type);
         void visualizeStateSlot(int frame);
 
     //Attribute:
@@ -50,8 +47,7 @@ namespace presentation {
         model::Model * model;
         QVector<double> partialAreaX;
         QVector<double> partialAreaY;
-        bool startedNewHeatSource;
-        bool startedNewThermalConductivity;
+        bool started[2];
         UI * ui;
         QInputDialog * userInput;
         QMessageBox * errorMessages;

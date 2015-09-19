@@ -27,11 +27,15 @@ SOURCES += \
     model/Simulationsetup.cpp \
     model/Simulationworker.cpp \
     model/Model.cpp \
+    presentation/Areawidget.cpp \
+    presentation/Simulationwidget.cpp \
+    presentation/Visualizationwidget.cpp \
     presentation/Optimizationwidget.cpp \
-    presentation/Uiinit.cpp \
+    presentation/Helpwidget.cpp \
     presentation/Ui.cpp \
     presentation/Controller.cpp \
-    Main.cpp
+    Main.cpp \
+    presentation/Ibvswidget.cpp
 
 
 
@@ -50,9 +54,14 @@ HEADERS  += \
     model/Simulationsetup.h \
     model/Simulationworker.h \
     model/Model.h \
+    presentation/Areawidget.h \
+    presentation/Simulationwidget.h \
+    presentation/Visualizationwidget.h \
     presentation/Optimizationwidget.h \
+    presentation/Helpwidget.h \
     presentation/Ui.h \
-    presentation/Controller.h
+    presentation/Controller.h \
+    presentation/Ibvswidget.h
 
 RESOURCES += \
     presentation/uiicons.qrc

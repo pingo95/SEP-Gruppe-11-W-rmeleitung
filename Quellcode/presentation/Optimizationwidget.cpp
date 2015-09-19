@@ -4,14 +4,14 @@
 presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     : QTabWidget(parent) , MaxTemperature(1000)
 {
-    widgetSolution = new QWidget(this);
     widgetConfiguration = new QWidget(this);
+    widgetSolution = new QWidget(this);
+
+    layoutConfigurationTab = new QGridLayout(widgetConfiguration);
+    layoutSolutionTab = new QVBoxLayout(widgetSolution);
 
     this->addTab(widgetConfiguration,"Konfiguration");
     this->addTab(widgetSolution,"Ergebnis");
-
-    layoutSolutionTab = new QVBoxLayout(widgetSolution);
-    layoutConfigurationTab = new QGridLayout(widgetConfiguration);
 
     //Tab Konfig
         //Labels
@@ -22,7 +22,7 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     labelInitialValue = new QLabel("Manueller Anfangswert",widgetConfiguration);
     labelInitialValue->setAlignment(Qt::AlignRight);
     labelInitialValue->setEnabled(false);
-    labelSettings = new QLabel("Simulationseinstellungen",widgetConfiguration);
+    labelSettings = new QLabel("Simulationseinstellungen (Änderbar im Tab \"Simulation\")",widgetConfiguration);
     labelM = new QLabel("M: ",widgetConfiguration);
     labelT = new QLabel("T: ",widgetConfiguration);
     labelEpsilon = new QLabel("Epsilon: ",widgetConfiguration);
@@ -30,11 +30,14 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     labelData = new QLabel("Temperaturverteilung:",widgetConfiguration);
     labelProgressBar = new QLabel("Fortschrittsbalken:",widgetConfiguration);
 
+        //Buttons
+    buttonLoad = new QPushButton("Laden",widgetConfiguration);
+    buttonOptimization = new QPushButton("Optimieren starten",widgetConfiguration);
+
         //CheckBoxes
     checkBoxN = new QCheckBox("Überschreibe Anzahl Messwerte",widgetConfiguration);
     checkBoxHeatSources = new QCheckBox("Nutze bereits vorhandene Wärmequellen zur Simulation",widgetConfiguration);
-    checkBoxThermalConductivities = new QCheckBox("Überschreibe bereits vorhandene Wärmeleitkoeffizienten zur Simulation",widgetConfiguration);
-
+    checkBoxThermalDiffusivities = new QCheckBox("Überschreibe bereits vorhandene Wärmeleitkoeffizienten zur Simulation",widgetConfiguration);
 
         //spinBoxes
     spinBoxN = new QSpinBox(widgetConfiguration);
@@ -80,7 +83,7 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     gridBoxUserSettings->addWidget(labelSpinBoxN,1,0);
     gridBoxUserSettings->addWidget(spinBoxN,1,1);
     gridBoxUserSettings->addWidget(checkBoxHeatSources,2,0,1,2);
-    gridBoxUserSettings->addWidget(checkBoxThermalConductivities,3,0,1,2);
+    gridBoxUserSettings->addWidget(checkBoxThermalDiffusivities,3,0,1,2);
     gridBoxUserSettings->addWidget(labelInitialValue,4,0);
     gridBoxUserSettings->addWidget(doubleSpinBoxInitialValue,4,1);
     groupBoxUserSettings = new QGroupBox(widgetConfiguration);
@@ -98,10 +101,6 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     gridBoxSettings->addWidget(spinBoxMaxIt,4,1);
     groupBoxSettings = new QGroupBox(widgetConfiguration);
     groupBoxSettings->setLayout(gridBoxSettings);
-
-        //Buttons
-    buttonLoad = new QPushButton("Laden",widgetConfiguration);
-    buttonOptimization = new QPushButton("Optimieren starten",widgetConfiguration);
 
     QVector<double> ticks,ticksColorBar;
     QVector<QString> labels,labelsColorBar;
@@ -177,43 +176,50 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     colorMap = new QCPColorMap(plateOptimization->yAxis,plateOptimization->xAxis);
     colorMap->data()->setRange(QCPRange(0,1),QCPRange(0,1));
     colorMap->setColorScale(colorScale);
+
     plateOptimization->addPlottable(colorMap);
-
-
-    plateOptimization->setMinimumWidth(350);
-    plateOptimization->setMinimumHeight(350);
+    plateOptimization->setMinimumWidth(300);
+    plateOptimization->setMinimumHeight(300);
 
         //ProgressBar
     progressBar = new QProgressBar(widgetConfiguration);
 
         //Tabelle
     tableWidgetData = new QTableWidget(widgetConfiguration);
+    spacerItem = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
 
         //Layout anwenden
     layoutConfigurationTab->addWidget(labelConfiguration,0,0);
     layoutConfigurationTab->addWidget(buttonLoad,1,0);
     layoutConfigurationTab->addWidget(buttonOptimization,1,1);
+    layoutConfigurationTab->addWidget(labelData,1,2);
     layoutConfigurationTab->addWidget(groupBoxUserSettings,2,0,1,2);
+    layoutConfigurationTab->addWidget(tableWidgetData,2,2,3,2);
     layoutConfigurationTab->addWidget(groupBoxSettings,3,0,1,2);
-    layoutConfigurationTab->addWidget(plateOptimization,1,2,4,2);
-
-    layoutConfigurationTab->addWidget(labelData,4,0);
-    layoutConfigurationTab->addWidget(tableWidgetData,5,0,1,4);
-
-    layoutConfigurationTab->addWidget(labelProgressBar,6,0);
-    layoutConfigurationTab->addWidget(progressBar,6,1,1,3);
+    layoutConfigurationTab->addWidget(plateOptimization,4,0,2,2);
+    layoutConfigurationTab->addWidget(labelProgressBar,5,2);
+    layoutConfigurationTab->addWidget(progressBar,5,3);
+    layoutConfigurationTab->addItem(spacerItem,6,0);
 
     layoutConfigurationTab->setColumnStretch(0,0);
     layoutConfigurationTab->setColumnStretch(1,0);
-    layoutConfigurationTab->setColumnStretch(2,1);
+    layoutConfigurationTab->setColumnStretch(2,0);
     layoutConfigurationTab->setColumnStretch(3,1);
+
+    layoutConfigurationTab->setRowStretch(0,0);
+    layoutConfigurationTab->setRowStretch(1,0);
+    layoutConfigurationTab->setRowStretch(2,0);
+    layoutConfigurationTab->setRowStretch(3,0);
+    layoutConfigurationTab->setRowStretch(4,0);
+    layoutConfigurationTab->setRowStretch(5,0);
+    layoutConfigurationTab->setRowStretch(6,1);
+//    layoutConfigurationTab->setRowMinimumHeight(4,300);
 
     //Tab Ergebnis
         //Label
     labelSolution = new QLabel("Gefittete Wärmeleitkoeffizienten",widgetSolution);
         //Table
     tableWidgetSolution = new QTableWidget(widgetSolution);
-
         //Layout anwenden
     layoutSolutionTab->addWidget(labelSolution,0);
     layoutSolutionTab->addWidget(tableWidgetSolution,1);

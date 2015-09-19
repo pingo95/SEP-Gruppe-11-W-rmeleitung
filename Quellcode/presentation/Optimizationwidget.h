@@ -1,18 +1,19 @@
 #ifndef OPTIMIZATIONWIDGET_H
 #define OPTIMIZATIONWIDGET_H
 #include <QTabWidget>
-#include <QGridLayout>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QLabel>
-#include <QTableWidget>
-#include <QCheckBox>
-#include <QDoubleSpinBox>
-#include <QSpinBox>
-#include <QGroupBox>
-#include <QProgressBar>
 
+#include <QCheckBox>
 #include "Qcustomplot.h"
+#include <QDoubleSpinBox>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QLabel>
+#include <QProgressBar>
+#include <QPushButton>
+#include <QSpinBox>
+#include <QTableWidget>
+#include <QVBoxLayout>
+
 
 namespace presentation {
 
@@ -28,6 +29,9 @@ namespace presentation {
 
     public slots:
 
+    private:
+        explicit OptimizationWidget();
+        //~OptimizationWidget();
 
     //Attribute
     private:
@@ -69,7 +73,7 @@ namespace presentation {
         //CheckBox
         QCheckBox * checkBoxN;
         QCheckBox * checkBoxHeatSources;
-        QCheckBox * checkBoxThermalConductivities;
+        QCheckBox * checkBoxThermalDiffusivities;
 
         //SpinBoxes
         QSpinBox * spinBoxN;
@@ -89,6 +93,8 @@ namespace presentation {
         //Progressbar
         QProgressBar * progressBar;
 
+        //SpacerItem
+        QSpacerItem * spacerItem;
     };
 
 }

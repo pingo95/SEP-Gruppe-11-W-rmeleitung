@@ -109,38 +109,10 @@ void model::Model::setAreaBackground(const double newValue, SimulationSetup::Are
     ui->updateNotification();
 }
 
-void model::Model::setBoundaryBottom(double const newBottomBoundary)
+void model::Model::setIBV(const double newValue, SimulationSetup::IBV ibv)
 {
     assert(!blocking);
-    simSetup->setBoundaryBottom(newBottomBoundary);
-    ui->updateNotification();
-}
-
-void model::Model::setBoundaryLeft(double const newLeftBoundary)
-{
-    assert(!blocking);
-    simSetup->setBoundaryLeft(newLeftBoundary);
-    ui->updateNotification();
-}
-
-void model::Model::setBoundaryRight(double const newRightBoundary)
-{
-    assert(!blocking);
-    simSetup->setBoundaryRight(newRightBoundary);
-    ui->updateNotification();
-}
-
-void model::Model::setBoundaryTop(double const newTopBoundary)
-{
-    assert(!blocking);
-    simSetup->setBoundaryTop(newTopBoundary);
-    ui->updateNotification();
-}
-
-void model::Model::setInitialValue(double const newInitialValue)
-{
-    assert(!blocking);
-    simSetup->setInitialValue(newInitialValue);
+    simSetup->setIBV(newValue,ibv);
     ui->updateNotification();
 }
 
@@ -183,7 +155,7 @@ void model::Model::setUI(presentation::UI *ui)
 {
     this->ui = ui;
 
-    connect(simWorker,SIGNAL(beginningSimulationStage(QString,int)),ui,SLOT(nextProgresseStageSlot(QString,int)));
+    connect(simWorker,SIGNAL(beginningSimulationStage(QString,int)),ui,SLOT(nextSimulationStageSlot(QString,int)));
     connect(simWorker,SIGNAL(finishedStep(int)),ui,SLOT(updateSimulationProgressSlot(int)));
     connect(simWorker,SIGNAL(simulationLogUpdate(QString)),ui,SLOT(appendToSimulationLogSlot(QString)));
 }

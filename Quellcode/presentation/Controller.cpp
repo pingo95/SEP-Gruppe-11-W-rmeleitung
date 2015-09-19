@@ -1,10 +1,11 @@
 #include "Controller.h"
 
 presentation::Controller::Controller(QObject * parent)
-    : QObject(parent), loopBack(false), model(NULL), startedNewHeatSource(false),
-      startedNewThermalConductivity(false), ui(NULL),
+    : QObject(parent), loopBack(false), model(NULL), ui(NULL),
       userInput(new QInputDialog), errorMessages(new QMessageBox)
 {
+    started[0] = false;
+    started[1] = false;
     errorMessages->setWindowTitle("Fehlermeldung");
     errorMessages->setIcon(QMessageBox::Critical);
     errorMessages->setStandardButtons(QMessageBox::Ok);
@@ -37,50 +38,49 @@ void presentation::Controller::setUI(UI *ui)
 // zeichnet diese im UI. (Für den Fall, dass das Modell eine Update-Benachrichtigung
 // an das UI schickt (z.B. aufgrund einer abgeschlossen Simulation), während der
 // Benutzer gerade ein neues Gebiet erstellt)
-void presentation::Controller::testPartialHeatSource()
+void presentation::Controller::testPartialArea(model::SimulationSetup::AreaType type)
 {
-    if(startedNewHeatSource)
-        ui->drawPartialHeatSource(partialAreaX,partialAreaY);
+    if(started[type])
+        ui->drawPartialArea(partialAreaX,partialAreaY,type);
 }
 
-// Diese Funktion überprüft, ob ein neues Wärmeleitkoeffizienten-Gebiet begonnen wurde
-// und zeichnet diese im UI. (Für den Fall, dass das Modell eine Update-Benachrichtigung
-// an das UI schickt (z.B. aufgrund einer abgeschlossen Simulation), während der
-// Benutzer gerade ein neues Gebiet erstellt)
-void presentation::Controller::testPartialThermalConductivity()
-{
-    if(startedNewThermalConductivity)
-        ui->drawPartialThermalConductivity(partialAreaX,partialAreaY);
-}
+//// Diese Funktion überprüft, ob ein neues Wärmeleitkoeffizienten-Gebiet begonnen wurde
+//// und zeichnet diese im UI. (Für den Fall, dass das Modell eine Update-Benachrichtigung
+//// an das UI schickt (z.B. aufgrund einer abgeschlossen Simulation), während der
+//// Benutzer gerade ein neues Gebiet erstellt)
+//void presentation::Controller::testPartialThermalDiffusivity()
+//{
+//    if(started[model::SimulationSetup::AreaThermalDiffusivity])
+//        ui->drawPartialThermalDiffusivity(partialAreaX,partialAreaY);
+//}
 
 // Dieser Slot verwaltet Mausklicks auf die Fläche zum Erstellen neuer
 // Gebiete für Wärmequellen
-void presentation::Controller::heatSourcesClickSlot(QMouseEvent *event)
+void presentation::Controller::areaClickSlot(double xKoord, double yKoord, QSize plateSize,
+                                             double valueShift, model::SimulationSetup::AreaType type)
 {
-    // Umwandeln von Pixeln in Koordinaten:
-    double x,y;
-    ui->heatSourcePixelToCoords(event->x(),event->y(),x,y);
-    if(x < 0)
-        x = 0;
+    // QCustomPlots sind etwas neben dem Rand klickbar, dies wird hier abgefangen
+    if(xKoord < 0)
+        xKoord = 0;
     else
-        if(x > 1)
-            x = 1;
-    if(y < 0)
-        y = 0;
+        if(xKoord > 1)
+            xKoord = 1;
+    if(yKoord < 0)
+        yKoord = 0;
     else
-        if(y > 1)
-            y = 1;
+        if(yKoord > 1)
+            yKoord = 1;
+
     // Falls ein neues Gebiet bereits angefangen wurde:
-    if(startedNewHeatSource)
+    if(started[type])
     {
         // Überprüfen, ob der Punkt nahe an dem ersten Punkt liegt
         // (Schließbedingung)
-        double diffX = fabs(x - partialAreaX.first());
-        double diffY = fabs(y - partialAreaY.first());
-        QSize plotSize = ui->getHeatSourcePlotSize();
+        double diffX = fabs(xKoord - partialAreaX.first());
+        double diffY = fabs(yKoord - partialAreaY.first());
         // (x,y) € [0,1] x [0,1], Radius von 10 Pixeln:
-        double epsilonX = 10./plotSize.width();
-        double epsilonY = 10./plotSize.height();
+        double epsilonX = 10./plateSize.width();
+        double epsilonY = 10./plateSize.height();
         if((diffX <= epsilonX) && (diffY <= epsilonY))
         {
             // Den ersten Punkt als neuen (letzten) Punkt hinzufügen
@@ -90,21 +90,23 @@ void presentation::Controller::heatSourcesClickSlot(QMouseEvent *event)
             // einfach wegzusammenhängend
             if(model::Area::validateArea(partialAreaX,partialAreaY))
             {
-                ui->drawPartialHeatSource(partialAreaX,partialAreaY);
+                ui->drawPartialArea(partialAreaX,partialAreaY,type);
                 // Wert für das neue Gebiet vom Benutzer abfragen
-                QString title = "Eingabe Wert Waermequellen",
-                       text = "Bitte geben Sie nun den Wert für die "
-                              "neue Wärmequelle ein:";
+                QString title = "Eingabe Gebietswert",
+                       text = "Bitte geben Sie nun den Wert für das "
+                              "neue Gebiet ein:";
                 bool ok;
-                double value = userInput->getDouble(ui,title,text,0,0,
-                                                    ui->MaxTemperature,2,&ok);
 
+                double value = userInput->getDouble(ui,title,text,model::SimulationSetup::AreaMinValue[type]/valueShift,
+                                                    model::SimulationSetup::AreaMinValue[type]/valueShift,
+                                                    model::SimulationSetup::AreaMaxValue[type]/valueShift,
+                                                    0,&ok);
 
                 // Gebiet zum Modell hinzufügen
-                startedNewHeatSource = false;
+                started[type] = false;
                 loopBack = true;
-                model->addNewArea(partialAreaX, partialAreaY, ok ? value : 0,
-                                  model::SimulationSetup::AreaHeatSource);
+                model->addNewArea(partialAreaX, partialAreaY, ok ? value * valueShift
+                                        : model::SimulationSetup::AreaMinValue[type],type);
                 // Temporäres Gebiet zurücksetzen
                 partialAreaX.clear();
                 partialAreaY.clear();
@@ -124,115 +126,67 @@ void presentation::Controller::heatSourcesClickSlot(QMouseEvent *event)
                 // Temporäres Gebiet zurücksetzen
                 partialAreaX.clear();
                 partialAreaY.clear();
-                startedNewHeatSource = false;
+                started[type] = false;
             }
         }
         else
         {
             // Neuen Punkt hinzufügen
-            partialAreaX.append(x);
-            partialAreaY.append(y);
+            partialAreaX.append(xKoord);
+            partialAreaY.append(yKoord);
         }
     }
     else
     {
         // Neues Gebiet anfangen
-        startedNewHeatSource = true;
-        partialAreaX.append(x);
-        partialAreaY.append(y);
+        started[type] = true;
+        partialAreaX.append(xKoord);
+        partialAreaY.append(yKoord);
     }
     // Temporäres Gebiet zeichnen (ggf. ersetzt ein Leeres das Vorherige)
-    ui->drawPartialHeatSource(partialAreaX,partialAreaY);
+    ui->drawPartialArea(partialAreaX,partialAreaY,type);
 }
 
 // Dieser Slot updatet den Wert für ein Wärmequellengebiet, falls der neue
 // gültig ist
-void presentation::Controller::heatSourceValueChangedSlot(int pos, int column)
+void presentation::Controller::areaValueChangedSlot(int pos, double newValue, bool ok,
+                                                    model::SimulationSetup::AreaType type)
 {
-    // Testen ob auch wirklich Gebietswert geändert wurde, da das Signal bei
-    // Änderungen in allen Felder des Tabellen Widgets ausgelöst wird
-    if((column != UI::ColumnValue) && (column != UI::ColumnVisibility))
-        return;
     if(loopBack)
     {
         loopBack = false;
         return;
     }
-    if(column == UI::ColumnValue)
-    {
-        QString text = ui->getNewHeatSourceValue(pos);
-        bool ok;
-        double value = text.toDouble(&ok);
-        // Temperatur in Kelvin
-        if(value >= 0 && value <= ui->MaxTemperature && ok)
-            if(pos == 0)
-                model->setAreaBackground(value,model::SimulationSetup::AreaHeatSource);
-            else
-                // Wert updaten
-                model->updateAreaValue(pos-1,value,model::SimulationSetup::AreaHeatSource);
+    // Temperatur in Kelvin
+    if(newValue >= model::SimulationSetup::AreaMinValue[type] &&
+            newValue <= model::SimulationSetup::AreaMaxValue[type] && ok)
+        if(pos == 0)
+            model->setAreaBackground(newValue,type);
         else
-        {
-            ui->updateNotification();
-            // Fehlermeldung ausgeben:
-            errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
-                                   "ungültig. Bitte versuchen Sie es erneut.");
-            errorMessages->setDetailedText("Das Programm nutzt für Temperaturen"
-                                           " die Kelvin Skala, daher sind nur W"
-                                           "erte größer gleich null zulässig.");
-            errorMessages->exec();
-        }
-    }
-    else
-        ui->updateVisibilityHeatSource(pos);
-}
-
-// Dieser Slot updatet den Wert für den unteren Rand, falls der neue gültig ist
-void presentation::Controller::newBottomBoundarySlot(double newBottomBoundary)
-{
-    // Temperatur in Kelvin
-    if(newBottomBoundary >= 0 && newBottomBoundary <= ui->MaxTemperature)
-        // Wert updaten
-        model->setBoundaryBottom(newBottomBoundary);
+            // Wert updaten
+            model->updateAreaValue(pos-1,newValue,type);
     else
     {
         ui->updateNotification();
         // Fehlermeldung ausgeben:
         errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
                                "ungültig. Bitte versuchen Sie es erneut.");
-        errorMessages->setDetailedText("Das Programm nutzt für Temperaturen"
-                                       " die Kelvin Skala, daher sind nur W"
-                                       "erte größer gleich null zulässig.");
+        errorMessages->setDetailedText("Im Hilfe-Tab finden Sie die gültigen Werte"
+                                       "bereiche für die beiden Gebietsarten.");
         errorMessages->exec();
     }
 }
 
-// Dieser Slot updatet den Anfangswert, falls der neue gültig ist
-void presentation::Controller::newInitialValueSlot(double newInitialValue)
-{
-    // Temperatur in Kelvin
-    if(newInitialValue >= 0 && newInitialValue <= ui->MaxTemperature)
-        // Wert updaten
-        model->setInitialValue(newInitialValue);
-    else
-    {
-        ui->updateNotification();
-        // Fehlermeldung ausgeben:
-        errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
-                               "ungültig. Bitte versuchen Sie es erneut.");
-        errorMessages->setDetailedText("Das Programm nutzt für Temperaturen"
-                                       " die Kelvin Skala, daher sind nur W"
-                                       "erte größer gleich null zulässig.");
-        errorMessages->exec();
-    }
-}
 
-// Dieser Slot updatet den Wert für den linken Rand, falls der neue gültig ist
-void presentation::Controller::newLeftBoundarySlot(double newLeftBoundary)
+
+
+// Dieser Slot updatet den Wert für den Rand side, falls der neue gültig ist
+void presentation::Controller::newIBVValueSlot(double newValue, model::SimulationSetup::IBV side)
 {
     // Temperatur in Kelvin
-    if(newLeftBoundary >= 0 && newLeftBoundary <= ui->MaxTemperature)
+    if(newValue >= model::SimulationSetup::MinTemperature && newValue <= model::SimulationSetup::MaxTemperature)
         // Wert updaten
-        model->setBoundaryLeft(newLeftBoundary);
+        model->setIBV(newValue,side);
     else
     {
         ui->updateNotification();
@@ -265,6 +219,42 @@ void presentation::Controller::newMSlot(int newM)
     }
 }
 
+void presentation::Controller::newMaxErrorSlot(double newMaxError)
+{
+    if ((newMaxError >= 1e-10) && (newMaxError <= 1e-5))
+        // Wert updaten
+        model->setSolverMaxError(newMaxError);
+    else
+    {
+        ui->updateNotification();
+        // Fehlermeldung ausgeben:
+        errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
+                               "ungültig. Bitte versuchen Sie es erneut.");
+        errorMessages->setDetailedText("Der zulässige Wertebereich für den"
+                                       " maximalen Fehler des Lösers ist"
+                                       " [1e-10,1e-5].");
+        errorMessages->exec();
+    }
+}
+
+void presentation::Controller::newMaxItSlot(int newMaxIt)
+{
+    if ((newMaxIt >= 1) && (newMaxIt <= 1000))
+        // Wert updaten
+        model->setSolverMaxIt(newMaxIt);
+    else
+    {
+        ui->updateNotification();
+        // Fehlermeldung ausgeben:
+        errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
+                               "ungültig. Bitte versuchen Sie es erneut.");
+        errorMessages->setDetailedText("Der zulässige Wertebereich für die"
+                                       " maximale Iterationanzahl des Lösers ist"
+                                       " [1,1000].");
+        errorMessages->exec();
+    }
+}
+
 // Dieser Slot updatet den Wert für die Ortdiskretisierung, falls der neue
 // gültig ist
 void presentation::Controller::newNSlot(int newN)
@@ -280,46 +270,6 @@ void presentation::Controller::newNSlot(int newN)
                                "ungültig. Bitte versuchen Sie es erneut.");
         errorMessages->setDetailedText("Der zulässige Wertebereich für die"
                                        " Ortsdiskretisierungsgröße n ist (2,500].");
-        errorMessages->exec();
-    }
-}
-
-// Dieser Slot updatet den Wert für den rechten Rand, falls der neue gültig ist
-void presentation::Controller::newRightBoundarySlot(double newRightBoundary)
-{
-    // Temperatur in Kelvin
-    if(newRightBoundary >= 0 && newRightBoundary <= ui->MaxTemperature)
-        // Wert updaten
-        model->setBoundaryRight(newRightBoundary);
-    else
-    {
-        ui->updateNotification();
-        // Fehlermeldung ausgeben:
-        errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
-                               "ungültig. Bitte versuchen Sie es erneut.");
-        errorMessages->setDetailedText("Das Programm nutzt für Temperaturen"
-                                       " die Kelvin Skala, daher sind nur W"
-                                       "erte größer gleich null zulässig.");
-        errorMessages->exec();
-    }
-}
-
-// Dieser Slot updatet den Wert für den oberen Rand, falls der neue gültig ist
-void presentation::Controller::newTopBoundarySlot(double newTopBoundary)
-{
-    // Temperatur in Kelvin
-    if(newTopBoundary >= 0 && newTopBoundary <= ui->MaxTemperature)
-        // Wert updaten
-        model->setBoundaryTop(newTopBoundary);
-    else
-    {
-        ui->updateNotification();
-        // Fehlermeldung ausgeben:
-        errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
-                               "ungültig. Bitte versuchen Sie es erneut.");
-        errorMessages->setDetailedText("Das Programm nutzt für Temperaturen"
-                                       " die Kelvin Skala, daher sind nur W"
-                                       "erte größer gleich null zulässig.");
         errorMessages->exec();
     }
 }
@@ -351,13 +301,25 @@ void presentation::Controller::playVideoSlot()
     // Überprüfen, ob schon simuliert wurde
     if(model->getSimulated())
     {
-        // Startbild Nr. aus dem UI
-        int start = ui->getInitialFrame();
-        // Schrittanzahl aus dem Modell
-        int end = model->getResultM();
-        // Video als Serie von einzel Bildern visualisieren
-        for(int i = start; i < end+1; ++i)
-            ui->visualizeState(i);
+        if(model->getSimulating())
+        {
+            // Fehlermeldung ausgeben:
+            errorMessages->setText("Es wird zurzeit simuliert, "
+                                   "Ergebnisse können erst nach Ende "
+                                   "der Simulation angezeigt werden.");
+            errorMessages->setDetailedText("");
+            errorMessages->exec();
+        }
+        else
+        {
+            // Startbild Nr. aus dem UI
+            int start = ui->getInitialFrame();
+            // Schrittanzahl aus dem Modell
+            int end = model->getResultM();
+            // Video als Serie von einzel Bildern visualisieren
+            for(int i = start; i < end+1; ++i)
+                ui->visualizeState(i);
+        }
     }
     else
     {
@@ -439,8 +401,8 @@ void presentation::Controller::tabChangedSlot(int newTab)
     // Falls gerade ein neues Wärmequellen-Gebiet erstellt wird
     // und der entsprechende Tab nicht mehr geöffnet ist, in diesen
     // zurücksetzen
-    if(startedNewHeatSource && !(newTab == UI::TabConfiguration
-                                 || newTab == UI::TabHeatSources))
+    if(started[model::SimulationSetup::AreaHeatSource] &&
+            !(newTab == UI::TabConfiguration || newTab == UI::TabHeatSources))
     {
         ui->revertTabChange(UI::TabHeatSources);
         // Fehlermeldung ausgeben:
@@ -453,10 +415,10 @@ void presentation::Controller::tabChangedSlot(int newTab)
     }
 
     // Analog für den Fall, dass ein Wärmeleitkoeffizienten-Gebiet begonnen wurde
-    if(startedNewThermalConductivity && !(newTab == UI::TabConfiguration
-                                         || newTab == UI::TabThermalConductivity))
+    if(started[model::SimulationSetup::AreaThermalDiffusivity] &&
+            !(newTab == UI::TabConfiguration || newTab == UI::TabThermalDiffusivities))
     {
-        ui->revertTabChange(UI::TabThermalConductivity);
+        ui->revertTabChange(UI::TabThermalDiffusivities);
         // Fehlermeldung ausgeben:
         errorMessages->setText("Das von Ihnen angefangen Gebiet muss entweder "
                                "abgeschlossen oder abgebrochen werden, bevor Sie"
@@ -470,160 +432,12 @@ void presentation::Controller::tabChangedSlot(int newTab)
     ui->setActiveTab(newTab);
 }
 
-// Dieser Slot verwaltet Mausklicks auf die Fläche zum Erstellen neuer
-// Gebiete für Wärmeleitkoeffizienten
-void presentation::Controller::thermalConductivitiesClickSlot(QMouseEvent *event)
-{
-    // Umwandeln von Pixeln in Koordinaten:
-    double x,y;
-    ui->thermalConductivityPixelToCoords(event->x(),event->y(),x,y);
-    if(x < 0)
-        x = 0;
-    else
-        if(x > 1)
-            x = 1;
-    if(y < 0)
-        y = 0;
-    else
-        if(y > 1)
-            y = 1;
-    // Falls ein neues Gebiet bereits angefangen wurde:
-    if(startedNewThermalConductivity)
-    {
-        // Überprüfen, ob der Punkt nahe an dem ersten Punkt liegt
-        // (Schließbedingung)
-        double diffX = fabs(x - partialAreaX.first());
-        double diffY = fabs(y - partialAreaY.first());
-        QSize plotSize = ui->getThermalConductivityPlotSize();
-        // (x,y) € [0,1] x [0,1], Radius von 10 Pixeln:
-        double epsilonX = 10./plotSize.width();
-        double epsilonY = 10./plotSize.height();
-        if((diffX <= epsilonX) && (diffY <= epsilonY))
-        {
-            // Den ersten Punkt als neuen (letzten) Punkt hinzufügen
-            partialAreaX.append(partialAreaX.first());
-            partialAreaY.append(partialAreaY.first());
-            // Überprüfen, ob das neue Gebiet ein gültiges ist, d.h.
-            // einfach wegzusammenhängend
-            if(model::Area::validateArea(partialAreaX,partialAreaY))
-            {
-                ui->drawPartialThermalConductivity(partialAreaX,partialAreaY);
-                // Den Wert für das neue Gebiet vom Benuter abfragen
-                QString title = "Eingabe Wert Waermeleitkoeffizient",
-                       text = "Bitte geben Sie nun den Wert für das "
-                              "neue Wärmeleitkoeffizienten-Gebiet ein:";
-                bool ok;
-                double value = userInput->getDouble(ui,title,text,0,0,
-                                                    ui->MaxConductivity,5,&ok);
-
-                // Gebiet zum Modell hinzufügen
-                loopBack = true;
-                startedNewThermalConductivity = false;
-                model->addNewArea(partialAreaX, partialAreaY, ok ? value : 0,
-                                  model::SimulationSetup::AreaThermalConductivity);
-
-                // Temporäres Gebiet zurücksetzen
-                partialAreaX.clear();
-                partialAreaY.clear();
-            }
-            else
-            {
-                // Fehlermeldung ausgeben:
-                errorMessages->setText("Das Gebiet, dass Sie gezeichnet haben ist "
-                                       "ungültig. Bitte versuchen Sie es erneut.");
-                errorMessages->setDetailedText("Damit ein Gebiet gültig ist, muss es"
-                                               " geschlossen einfach wegzusammenhängend"
-                                               " sein. D.h. es dürfen sich keine Kanten"
-                                               " schneiden oder doppelt vorkommen und es"
-                                               "muss aus mindestens drei Punkten bestehen.");
-                errorMessages->exec();
-
-                // Temporäres Gebiet zurücksetzen
-                partialAreaX.clear();
-                partialAreaY.clear();
-                startedNewThermalConductivity = false;
-            }
-        }
-        else
-        {
-            // Neuen Punkt hinzufügen
-            partialAreaX.append(x);
-            partialAreaY.append(y);
-        }
-    }
-    else
-    {
-        // Neues Gebiet anfangen
-        startedNewThermalConductivity = true;
-        partialAreaX.append(x);
-        partialAreaY.append(y);
-    }
-    // Temporäres Gebiet zeichnen (ggf. ersetzt ein Leeres das Vorherige)
-    ui->drawPartialThermalConductivity(partialAreaX,partialAreaY);
-}
-
-// Dieser Slot updatet den Wert für ein Wärmeleitkoeffizienten-Gebiet,
-// falls der neue gültig ist
-void presentation::Controller::thermalConductivityValueChangedSlot(int pos, int column)
-{
-    // Testen ob auch wirklich Gebietswert geändert wurde, da das Signal bei
-    // Änderungen in allen Felder des Tabellen Widgets ausgelöst wird
-    if((column != UI::ColumnValue) && (column != UI::ColumnVisibility))
-            return;
-    if(loopBack)
-    {
-        loopBack = false;
-        return;
-    }
-    if(column == UI::ColumnValue)
-    {
-        QString text = ui->getNewThermalConductivityValue(pos);
-        bool ok;
-        double value = text.toDouble(&ok);
-        // Temperatur in Kelvin
-        if(value >= 1e-5 && value <= ui->MaxConductivity && ok)
-            if(pos == 0)
-                model->setAreaBackground(value,model::SimulationSetup::AreaThermalConductivity);
-            else
-                model->updateAreaValue(pos-1,value,
-                                       model::SimulationSetup::AreaThermalConductivity);
-        else
-        {
-            ui->updateNotification();
-
-            // Fehlermeldung ausgeben:
-            errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
-                                   "ungültig. Bitte versuchen Sie es erneut.");
-            errorMessages->setDetailedText("Es sind nur Werte größer gleich "
-                                           "Null zulässig.");
-            errorMessages->exec();
-        }
-    }
-    else
-        ui->updateVisibilityThermalConductivity(pos);
-}
-
-// Dieser Slot löscht das zuletzt erstellte Wärmequellen-Gebiet, falls
+// Dieser Slot löscht das zuletzt erstellte Gebiet vom Typ type, falls
 // bereits mindestens eins erstellt wurde
-void presentation::Controller::undoHeatSourceSlot()
+void presentation::Controller::undoAreaSlot(model::SimulationSetup::AreaType type)
 {
-    if(model->getSimulationSetup()->getAreaCount(model::SimulationSetup::AreaHeatSource) > 0)
-        model->removeLastArea(model::SimulationSetup::AreaHeatSource);
-    else
-    {
-        // Fehlermeldung ausgeben:
-        errorMessages->setText("Es wurde noch kein Gebiet hinzugefügt.");
-        errorMessages->setDetailedText("");
-        errorMessages->exec();
-    }
-}
-
-// Dieser Slot löscht das zuletzt erstellte Wärmequellen-Gebiet, falls
-// bereits mindestens eins erstellt wurde
-void presentation::Controller::undoThermalConductivitySlot()
-{
-    if(model->getSimulationSetup()->getAreaCount(model::SimulationSetup::AreaThermalConductivity) > 0)
-        model->removeLastArea(model::SimulationSetup::AreaThermalConductivity);
+    if(model->getSimulationSetup()->getAreaCount(type) > 0)
+        model->removeLastArea(type);
     else
     {
         // Fehlermeldung ausgeben:
