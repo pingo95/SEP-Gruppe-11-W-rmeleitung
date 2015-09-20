@@ -7,7 +7,6 @@
 
 #include <QGridLayout>
 #include <QLabel>
-#include <QVBoxLayout>
 #include <QGroupBox>
 #include <QComboBox>
 #include <QSpinBox>
@@ -69,13 +68,10 @@ class Controller;
         QLabel * labelMaxIt;
         QSpinBox * inputMaxIt;
 
+        QGroupBox * boxSimulate;
+        QGridLayout * boxSimulateLayout;
         QLabel * labelN;
         QSpinBox * inputN;
-
-        QGroupBox * boxSimulate;
-        QVBoxLayout * boxSimulateLayout;
-        QPushButton * saveButton;
-        QPushButton * loadButton;
         QPushButton * simulateButton;
 
         QTextEdit * simulationLog;

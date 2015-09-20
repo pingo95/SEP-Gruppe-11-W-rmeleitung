@@ -33,6 +33,20 @@ void model::Model::addNewArea(const QVector<double> &xKoords,
     ui->updateNotification();
 }
 
+void model::Model::addNewArea(Area *area, SimulationSetup::AreaType type)
+{
+    assert(!blocking);
+    simSetup->addNewArea(area,type);
+    ui->updateNotification();
+}
+
+void model::Model::deleteArea(const int pos, SimulationSetup::AreaType type)
+{
+    assert(!blocking);
+    simSetup->deleteArea(pos,type);
+    ui->updateNotification();
+}
+
 double*** const & model::Model::getResult() const
 {
     return simWorker->getResult();
@@ -78,13 +92,21 @@ model::SimulationSetup * const & model::Model::getSimulationSetup() const
     return simSetup;
 }
 
-void model::Model::removeLastArea(SimulationSetup::AreaType type)
+model::Area * model::Model::removeLastArea(SimulationSetup::AreaType type)
 {
     assert(!blocking);
-    simSetup->removeLastArea(type);
+    Area * ptr = simSetup->removeLastArea(type);
     ui->updateNotification();
+    return ptr;
 }
 
+void model::Model::reorderArea(int const pos, int const dir,
+                               model::SimulationSetup::AreaType type)
+{
+    assert(!blocking);
+    simSetup->reorderArea(pos,dir,type);
+    ui->updateNotification();
+}
 
 // Updatet die gewählte Integrationsmethode
 void model::Model::selectIntMethod(QString intMethod)

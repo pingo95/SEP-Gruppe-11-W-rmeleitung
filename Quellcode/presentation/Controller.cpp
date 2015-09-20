@@ -4,8 +4,10 @@ presentation::Controller::Controller(QObject * parent)
     : QObject(parent), loopBack(false), model(NULL), ui(NULL),
       userInput(new QInputDialog), errorMessages(new QMessageBox)
 {
-    started[0] = false;
-    started[1] = false;
+    redoPossible[model::SimulationSetup::AreaHeatSource] = false;
+    redoPossible[model::SimulationSetup::AreaThermalDiffusivity] = false;
+    started[model::SimulationSetup::AreaHeatSource] = false;
+    started[model::SimulationSetup::AreaThermalDiffusivity] = false;
     errorMessages->setWindowTitle("Fehlermeldung");
     errorMessages->setIcon(QMessageBox::Critical);
     errorMessages->setStandardButtons(QMessageBox::Ok);
@@ -13,8 +15,14 @@ presentation::Controller::Controller(QObject * parent)
 
 presentation::Controller::~Controller()
 {
+    clearRedo();
     delete userInput;
     delete errorMessages;
+}
+
+bool presentation::Controller::getRedoPossible(model::SimulationSetup::AreaType type) const
+{
+    return redoPossible[type];
 }
 
 // Diese Funktion setzt die Referenz (als Zeiger) auf das mit dem Controller
@@ -38,7 +46,7 @@ void presentation::Controller::setUI(UI *ui)
 // zeichnet diese im UI. (Für den Fall, dass das Modell eine Update-Benachrichtigung
 // an das UI schickt (z.B. aufgrund einer abgeschlossen Simulation), während der
 // Benutzer gerade ein neues Gebiet erstellt)
-void presentation::Controller::testPartialArea(model::SimulationSetup::AreaType type)
+void presentation::Controller::testPartialArea(model::SimulationSetup::AreaType type) const
 {
     if(started[type])
         ui->drawPartialArea(partialAreaX,partialAreaY,type);
@@ -59,17 +67,7 @@ void presentation::Controller::testPartialArea(model::SimulationSetup::AreaType 
 void presentation::Controller::areaClickSlot(double xKoord, double yKoord, QSize plateSize,
                                              double valueShift, model::SimulationSetup::AreaType type)
 {
-    // QCustomPlots sind etwas neben dem Rand klickbar, dies wird hier abgefangen
-    if(xKoord < 0)
-        xKoord = 0;
-    else
-        if(xKoord > 1)
-            xKoord = 1;
-    if(yKoord < 0)
-        yKoord = 0;
-    else
-        if(yKoord > 1)
-            yKoord = 1;
+    clearRedo();
 
     // Falls ein neues Gebiet bereits angefangen wurde:
     if(started[type])
@@ -177,16 +175,41 @@ void presentation::Controller::areaValueChangedSlot(int pos, double newValue, bo
     }
 }
 
+void presentation::Controller::clearAreasSlot(model::SimulationSetup::AreaType type)
+{
+    if(!started[type])
+    {
+        while(model->getSimulationSetup()->getAreaCount(type))
+            delete model->removeLastArea(type);
+        clearRedo();
+    }
+}
 
+void presentation::Controller::deleteAreaSlot(int pos, model::SimulationSetup::AreaType type)
+{
+    if(pos >= 0 && pos < model->getSimulationSetup()->getAreaCount(type))
+        model->deleteArea(pos,type);
+}
 
+void presentation::Controller::discardAreaSlot(model::SimulationSetup::AreaType type)
+{
+    if(started[type])
+    {
+        partialAreaX.clear();
+        partialAreaY.clear();
+        started[type] = false;
+        clearRedo();
+        ui->drawPartialArea(partialAreaX,partialAreaY,type);
+    }
+}
 
 // Dieser Slot updatet den Wert für den Rand side, falls der neue gültig ist
-void presentation::Controller::newIBVValueSlot(double newValue, model::SimulationSetup::IBV side)
+void presentation::Controller::newIBVValueSlot(double newValue, model::SimulationSetup::IBV ibv)
 {
     // Temperatur in Kelvin
     if(newValue >= model::SimulationSetup::MinTemperature && newValue <= model::SimulationSetup::MaxTemperature)
         // Wert updaten
-        model->setIBV(newValue,side);
+        model->setIBV(newValue,ibv);
     else
     {
         ui->updateNotification();
@@ -334,6 +357,59 @@ void presentation::Controller::playVideoSlot()
 //        ui->visualizeState(i);
 }
 
+void presentation::Controller::redoAreaSlot(model::SimulationSetup::AreaType type)
+{
+    if(redoPossible[type])
+    {
+        if(redoPointXStack.size() > 0)
+        {
+            assert(redoAreaStack.size() == 0);
+            partialAreaX.append(redoPointXStack.takeLast());
+            partialAreaY.append(redoPointYStack.takeLast());
+            started[type] = true;
+            if(redoPointXStack.size() == 0)
+                redoPossible[type] = false;
+            ui->drawPartialArea(partialAreaX,partialAreaY,type);
+        }
+        else
+        {
+            assert(redoAreaStack.size() > 0 && redoPointXStack.size() == 0);
+            assert(started[type] == false);
+            if(redoAreaStack.size() == 1)
+                redoPossible[type] = false;
+            model->addNewArea(redoAreaStack.takeLast(),type);
+        }
+    }
+    else
+    {
+        // Fehlermeldung ausgeben:
+        errorMessages->setText("Es wurde noch kein Gebiet bzw. Punkt rückgängig gemacht.");
+        errorMessages->setDetailedText("");
+        errorMessages->exec();
+    }
+}
+
+void presentation::Controller::reorderAreaSlot(int pos, int dir,
+                                               model::SimulationSetup::AreaType type)
+{
+    int count = model->getSimulationSetup()->getAreaCount(type);
+    if(count > 0)
+    {
+        if((dir > 0 && pos > 0 && pos <= count-1)
+                || (dir < 0 && pos >= 0 && pos < count-1))
+            model->reorderArea(pos,dir,type);
+    }
+    else
+    {
+        // Fehlermeldung ausgeben:
+        errorMessages->setText("Es wurden noch keine Gebiete hinzugefügt bzw. "
+                               "das Gebiet kann nicht weiter in die gewünschte "
+                               "Richtung verschoben werden.");
+        errorMessages->setDetailedText("");
+        errorMessages->exec();
+    }
+}
+
 // Dieser Slot updatet die gewählte Integrationsmethode, dies ist aber nur
 // möglich falls gerade nicht simuliert wird
 void presentation::Controller::selectIntMethodSlot(QString newIntMethod)
@@ -427,7 +503,7 @@ void presentation::Controller::tabChangedSlot(int newTab)
         errorMessages->exec();
         return;
     }
-
+    clearRedo();
     // Aktiven Tab im UI ändern und UI updaten
     ui->setActiveTab(newTab);
 }
@@ -436,15 +512,28 @@ void presentation::Controller::tabChangedSlot(int newTab)
 // bereits mindestens eins erstellt wurde
 void presentation::Controller::undoAreaSlot(model::SimulationSetup::AreaType type)
 {
-    if(model->getSimulationSetup()->getAreaCount(type) > 0)
-        model->removeLastArea(type);
-    else
+    if(started[type])
     {
-        // Fehlermeldung ausgeben:
-        errorMessages->setText("Es wurde noch kein Gebiet hinzugefügt.");
-        errorMessages->setDetailedText("");
-        errorMessages->exec();
+        redoPointXStack.append(partialAreaX.takeLast());
+        redoPointYStack.append(partialAreaY.takeLast());
+        redoPossible[type] = true;
+        if(partialAreaX.size() == 0)
+            started[type] = false;
+        ui->drawPartialArea(partialAreaX,partialAreaY,type);
     }
+    else
+        if(model->getSimulationSetup()->getAreaCount(type) > 0)
+        {
+            redoPossible[type] = true;
+            redoAreaStack.append(model->removeLastArea(type));
+        }
+        else
+        {
+            // Fehlermeldung ausgeben:
+            errorMessages->setText("Es wurde noch kein Gebiet hinzugefügt bzw angefangen.");
+            errorMessages->setDetailedText("");
+            errorMessages->exec();
+        }
 }
 
 // Dieser Slot visualiziert einen einzelnen Zeitpunkt der letzen Simulation,
@@ -461,5 +550,19 @@ void presentation::Controller::visualizeStateSlot(int frame)
                                "Ergebnis visualiziert werden kann.");
         errorMessages->setDetailedText("");
         errorMessages->exec();
+    }
+}
+
+void presentation::Controller::clearRedo()
+{
+    if(redoPossible[model::SimulationSetup::AreaHeatSource]
+            || redoPossible[model::SimulationSetup::AreaThermalDiffusivity])
+    {
+        redoPossible[model::SimulationSetup::AreaHeatSource] = false;
+        redoPossible[model::SimulationSetup::AreaThermalDiffusivity] = false;
+        redoPointXStack.clear();
+        redoPointYStack.clear();
+        while(!redoAreaStack.empty())
+            delete redoAreaStack.takeLast();
     }
 }

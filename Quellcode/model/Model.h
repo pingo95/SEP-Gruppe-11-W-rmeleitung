@@ -22,6 +22,8 @@ namespace model {
         void addNewArea(QVector<double> const & xKoords,
                         QVector<double> const & yKoords, double value,
                         SimulationSetup::AreaType type);
+        void addNewArea(Area * area, SimulationSetup::AreaType type);
+        void deleteArea(int const pos, SimulationSetup::AreaType type);
 
         double*** const & getResult() const;
         long getResultM() const;
@@ -36,7 +38,9 @@ namespace model {
 
         SimulationSetup * const & getSimulationSetup() const;
 
-        void removeLastArea(SimulationSetup::AreaType type);
+        Area * removeLastArea(SimulationSetup::AreaType type);
+        void reorderArea(int const pos, int const dir,
+                         model::SimulationSetup::AreaType type);
 
         void selectIntMethod(QString const intMethod);
         void selectSolver(QString const newSolver);

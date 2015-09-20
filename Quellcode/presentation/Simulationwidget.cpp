@@ -65,7 +65,7 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     boxSolverLayout->addWidget(inputMaxIt,2,1);
     boxSolver->setLayout(boxSolverLayout);
 
-        //Ortsdiskretisierung
+        //Simulate-Box
     labelN = new QLabel("Stützstellen N eingeben",this);
     labelN->setMaximumWidth(175);
     inputN = new QSpinBox(this);
@@ -73,26 +73,15 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     inputN->setMaximum(800);
     inputN->setKeyboardTracking(false);
     inputN->setMaximumWidth(50);
-
-        //Simulate-Box
-    saveButton = new QPushButton(this);
-    saveButton->setIcon(QIcon(":/Icons/save"));
-    saveButton->setText("Speichern");
-    saveButton->setIconSize(QSize(15,15));
-    saveButton->setEnabled(false);
-    loadButton = new QPushButton(this);
-    loadButton->setIcon(QIcon(":/Icons/load"));
-    loadButton->setText("Laden");
-    loadButton->setIconSize(QSize(15,15));
-    loadButton->setEnabled(false);
     simulateButton = new QPushButton("Simulieren",this);
 
     boxSimulate = new QGroupBox(this);
-    boxSimulateLayout = new QVBoxLayout();
-    boxSimulateLayout->addWidget(saveButton);
-    boxSimulateLayout->addWidget(loadButton);
-    boxSimulateLayout->addWidget(simulateButton);
+    boxSimulateLayout = new QGridLayout();
+    boxSimulateLayout->addWidget(labelN,0,0);
+    boxSimulateLayout->addWidget(inputN,0,1);
+    boxSimulateLayout->addWidget(simulateButton,1,0,1,2);
     boxSimulate->setLayout(boxSimulateLayout);
+//    boxSimulate->
 
         //SimulationLog
     simulationLog = new QTextEdit(this);
@@ -108,12 +97,15 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     layout->addWidget(topLabel,0,0,1,2);
     layout->addWidget(boxIntMethod,1,0,3,1);
     layout->addWidget(boxSolver,1,1,3,1);
-    layout->addWidget(labelN,2,2);
-    layout->addWidget(inputN,2,3);
-    layout->addWidget(boxSimulate,1,4,3,1);
-    layout->addWidget(simulationLog,4,0,1,6);
+    layout->addWidget(boxSimulate,1,2,2,1);
+    layout->addWidget(simulationLog,4,0,1,4);
     layout->addWidget(labelProgressBar,5,0);
-    layout->addWidget(progressBar,5,1,1,5);
+    layout->addWidget(progressBar,5,1,1,3);
+
+    layout->setColumnStretch(0,0);
+    layout->setColumnStretch(1,0);
+    layout->setColumnStretch(2,0);
+    layout->setColumnStretch(3,1);
 }
 
 void presentation::SimulationWidget::setController(Controller *controller)
@@ -130,9 +122,6 @@ void presentation::SimulationWidget::setController(Controller *controller)
     connect(inputMaxIt,SIGNAL(valueChanged(int)),controller,SLOT(newMaxItSlot(int)));
 
     connect(inputN,SIGNAL(valueChanged(int)),controller,SLOT(newNSlot(int)));
-
-    connect(saveButton,SIGNAL(clicked(bool)),controller,SLOT(saveSetupSlot()));
-    connect(loadButton,SIGNAL(clicked(bool)),controller,SLOT(loadSetupSlot()));
     connect(simulateButton,SIGNAL(clicked(bool)),controller,SLOT(simulateSlot()));
 }
 

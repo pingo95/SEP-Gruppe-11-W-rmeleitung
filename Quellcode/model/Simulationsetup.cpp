@@ -10,7 +10,7 @@ model::SimulationSetup::SimulationSetup() : heatSourcesBackgroundValue(0),
     heatSourcesCount(0), m(1), n(3),
     selectedIntMethod("Impliziter Euler"),  selectedSolver("Jacobi"),
     solverMaxError(1e-10),solverMaxIt(1000), T(1.0),
-    thermalDiffusivitiesBackgroundValue(1e-4), thermalDiffusiivitiesCount(0)
+    thermalDiffusivitiesBackgroundValue(1e-4), thermalDiffusivitiesCount(0)
 {
     iBVs[SimulationSetup::InitialValue] = 300;
     iBVs[SimulationSetup::BottomBoundary] = 300;
@@ -26,7 +26,7 @@ model::SimulationSetup::SimulationSetup(const SimulationSetup &rhs) :
     selectedSolver(rhs.selectedSolver), solverMaxError(rhs.solverMaxError),
     solverMaxIt(rhs.solverMaxIt), T(rhs.T),
     thermalDiffusivitiesBackgroundValue(rhs.thermalDiffusivitiesBackgroundValue),
-    thermalDiffusiivitiesCount(rhs.thermalDiffusiivitiesCount)
+    thermalDiffusivitiesCount(rhs.thermalDiffusivitiesCount)
 {
     iBVs[SimulationSetup::InitialValue] = rhs.iBVs[SimulationSetup::InitialValue];
     iBVs[SimulationSetup::BottomBoundary] = rhs.iBVs[SimulationSetup::BottomBoundary];
@@ -51,9 +51,9 @@ model::SimulationSetup::~SimulationSetup()
         delete (*it);
 }
 
-void model::SimulationSetup::addNewArea(const QVector<double> &xKoords,
-                              const QVector<double> &yKoords, double value,
-                              SimulationSetup::AreaType type)
+void model::SimulationSetup::addNewArea(QVector<double> const & xKoords,
+                                        QVector<double> const & yKoords,
+                                        double value, SimulationSetup::AreaType type)
 {
     if(type == SimulationSetup::AreaHeatSource)
     {
@@ -63,7 +63,36 @@ void model::SimulationSetup::addNewArea(const QVector<double> &xKoords,
     else
     {
         thermalDiffusivities.append(new Area(xKoords,yKoords,value,type));
-        ++thermalDiffusiivitiesCount;
+        ++thermalDiffusivitiesCount;
+    }
+}
+
+void model::SimulationSetup::addNewArea(Area * area,
+                              SimulationSetup::AreaType type)
+{
+    if(type == SimulationSetup::AreaHeatSource)
+    {
+        heatSources.append(area);
+        ++heatSourcesCount;
+    }
+    else
+    {
+        thermalDiffusivities.append(area);
+        ++thermalDiffusivitiesCount;
+    }
+}
+
+void model::SimulationSetup::deleteArea(const int pos, SimulationSetup::AreaType type)
+{
+    if(type == SimulationSetup::AreaHeatSource)
+    {
+        heatSources.removeAt(pos);
+        --heatSourcesCount;
+    }
+    else
+    {
+        thermalDiffusivities.removeAt(pos);
+        --thermalDiffusivitiesCount;
     }
 }
 
@@ -94,7 +123,26 @@ QList<model::Area*> const & model::SimulationSetup::getAreas(SimulationSetup::Ar
 int model::SimulationSetup::getAreaCount(SimulationSetup::AreaType type) const
 {
     return type == SimulationSetup::AreaHeatSource ?
-                heatSourcesCount : thermalDiffusiivitiesCount;
+                heatSourcesCount : thermalDiffusivitiesCount;
+}
+
+int model::SimulationSetup::getContainingAreaID(double const xKoord,
+                                                double const yKoord,
+                                                SimulationSetup::AreaType type)
+{
+    int & count = type == SimulationSetup::AreaHeatSource ?
+                heatSourcesCount : thermalDiffusivitiesCount;
+    int id = -1;
+    if(count > 0)
+    {
+        QList<Area*> & areas = type == SimulationSetup::AreaHeatSource ?
+                    heatSources : thermalDiffusivities;
+        QList<Area*>::const_iterator it = areas.begin();
+        for(; it != areas.end(); ++it)
+            if((*it)->insidePoint(xKoord,yKoord))
+                id = (*it)->getID();
+    }
+    return id;
 }
 
 double model::SimulationSetup::getIBV(SimulationSetup::IBV ibv)
@@ -138,20 +186,39 @@ double model::SimulationSetup::getT() const
 }
 
 
-void model::SimulationSetup::removeLastArea(SimulationSetup::AreaType type)
+model::Area * model::SimulationSetup::removeLastArea(SimulationSetup::AreaType type)
 {
     if(type == SimulationSetup::AreaHeatSource)
     {
-        delete heatSources.takeLast();
         --heatSourcesCount;
+        return heatSources.takeLast();
     }
     else
     {
-        delete thermalDiffusivities.takeLast();
-        --thermalDiffusiivitiesCount;
+        --thermalDiffusivitiesCount;
+        return thermalDiffusivities.takeLast();
     }
 }
 
+void model::SimulationSetup::reorderArea(int const pos, int const dir,
+                                         SimulationSetup::AreaType type)
+{
+    QList<Area*> & areas = type == SimulationSetup::AreaHeatSource ?
+                heatSources : thermalDiffusivities;
+    if(dir == 2)
+    {
+        areas.swap(0,pos);
+        return;
+    }
+    if(dir == -2)
+    {
+        int & count = type == SimulationSetup::AreaHeatSource ?
+                    heatSourcesCount : thermalDiffusivitiesCount;
+        areas.swap(pos,count-1);
+    }
+    else
+        areas.swap(pos,pos-dir);
+}
 
 // Updatet die gewählte Integrationsmethode
 void model::SimulationSetup::selectIntMethod(QString intMethod)

@@ -40,10 +40,14 @@ namespace model {
         void addNewArea(QVector<double> const & xKoords,
                         QVector<double> const & yKoords, double value,
                         SimulationSetup::AreaType type);
+        void addNewArea(Area * area, SimulationSetup::AreaType type);
+        void deleteArea(int const pos, SimulationSetup::AreaType type);
         Area * const & getArea(int const id, SimulationSetup::AreaType type) const;
         double getAreaBackgroundValue(SimulationSetup::AreaType type) const;
         QList<Area*> const & getAreas(SimulationSetup::AreaType type) const;
         int getAreaCount(SimulationSetup::AreaType type) const;
+        int getContainingAreaID(double const xKoord, double const yKoord,
+                                SimulationSetup::AreaType type);
 
         double getIBV(SimulationSetup::IBV ibv);
         double getInitialValue() const;
@@ -55,7 +59,8 @@ namespace model {
         int getSolverMaxIt() const;
         double getT() const;
 
-        void removeLastArea(SimulationSetup::AreaType type);
+        Area * removeLastArea(SimulationSetup::AreaType type);
+        void reorderArea(int const pos, int const dir, SimulationSetup::AreaType type);
 
         void selectIntMethod(QString const intMethod);
         void selectSolver(QString const newSolver);
@@ -85,7 +90,7 @@ namespace model {
         double T;
         QList<Area*> thermalDiffusivities;
         double thermalDiffusivitiesBackgroundValue;
-        int thermalDiffusiivitiesCount;
+        int thermalDiffusivitiesCount;
     };
 
 }

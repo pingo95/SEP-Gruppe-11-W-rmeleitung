@@ -25,13 +25,13 @@ class Controller;
         enum ActiveTab
         {
             TabConfiguration = 0,
-            TabHeatSources = 6,
-            TabHelp = 4,
-            TabIBVs = 7,
-            TabParameterFitting = 3,
-            TabSimulating = 1,
             TabThermalDiffusivities = 5,
-            TabVisualization = 2
+            TabHeatSources = 6,
+            TabIBVs = 7,
+            TabSimulating = 1,
+            TabVisualization = 2,
+            TabParameterFitting = 3,
+            TabHelp = 4
         };
 
     //Funktionen:
@@ -41,12 +41,15 @@ class Controller;
 
         void revertTabChange(UI::ActiveTab targetTab);
         void setActiveTab(int targetTab);
+
         void setController(Controller * controller);
         void setModel(model::Model * model);
+
         void updateNotification();
 
         // Weiterleitungen
-        void drawPartialArea(QVector<double> const & partialAreaX, QVector<double> const & partialAreaY,
+        void drawPartialArea(QVector<double> const & partialAreaX,
+                             QVector<double> const & partialAreaY,
                              model::SimulationSetup::AreaType type);
         int getInitialFrame() const;
         void visualizeState(int const frame);

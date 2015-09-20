@@ -4,7 +4,7 @@
 
 presentation::AreaWidget::AreaWidget(QWidget *parent, model::SimulationSetup::AreaType type,
                                      QString const name, QString const unit, double const valueShift)
-    : QWidget(parent), controller(NULL), model(NULL), name(name), type(type), unit(unit), valueShift(valueShift)
+    : QWidget(parent), controller(NULL), model(NULL), name(name), selectedAreaID(-1), type(type), unit(unit), valueShift(valueShift)
 {
         //Top-Label
     topLabel = new QLabel("Dies ist der Tab zur Eingabe der " + name + ". \n"
@@ -32,6 +32,7 @@ presentation::AreaWidget::AreaWidget(QWidget *parent, model::SimulationSetup::Ar
     table->horizontalHeader()->setSectionsClickable(false);
     table->verticalHeader()->setVisible(false);
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setSelectionMode(QAbstractItemView::SingleSelection);
     table->horizontalHeader()->setMinimumHeight(45);
 
     table->setColumnWidth(0,20);
@@ -257,14 +258,26 @@ presentation::AreaWidget::AreaWidget(QWidget *parent, model::SimulationSetup::Ar
 
     connect(table,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(tableItemChangeSlot(QTableWidgetItem*)));
     connect(table,SIGNAL(itemClicked(QTableWidgetItem*)),this,SLOT(tableItemClickSlot(QTableWidgetItem*)));
+    connect(table,SIGNAL(itemSelectionChanged()),this,SLOT(tableSelectionChangeSlot()));
 
     connect(clearAreasButton,SIGNAL(clicked(bool)),this,SLOT(buttonMapperSlot()));
     connect(confirmButton,SIGNAL(clicked(bool)),this,SLOT(buttonMapperSlot()));
+    connect(deleteAreaButton,SIGNAL(clicked(bool)),this,SLOT(buttonMapperSlot()));
+    connect(discardAreaButton,SIGNAL(clicked(bool)),this,SLOT(buttonMapperSlot()));
+    connect(redoButton,SIGNAL(clicked(bool)),this,SLOT(buttonMapperSlot()));
     connect(undoButton,SIGNAL(clicked(bool)),this,SLOT(buttonMapperSlot()));
+
+    connect(allUpButton,SIGNAL(clicked(bool)),this,SLOT(buttonMapperSlot()));
+    connect(upButton,SIGNAL(clicked(bool)),this,SLOT(buttonMapperSlot()));
+    connect(downButton,SIGNAL(clicked(bool)),this,SLOT(buttonMapperSlot()));
+    connect(allDownButton,SIGNAL(clicked(bool)),this,SLOT(buttonMapperSlot()));
+
+    connect(selectionModeButton,SIGNAL(clicked(bool)),this,SLOT(clickModeChangeSlot()));
+    connect(newAreaModeButton,SIGNAL(clicked(bool)),this,SLOT(clickModeChangeSlot()));
 }
 
 void presentation::AreaWidget::drawPartialArea(QVector<double> const & partialAreaX,
-                                          QVector<double> const & partialAreaY)
+                                               QVector<double> const & partialAreaY)
 {
     if(plate->graphCount() <= table->rowCount()-1)
         plate->addGraph();
@@ -280,6 +293,28 @@ void presentation::AreaWidget::drawPartialArea(QVector<double> const & partialAr
     plate->graph(plate->graphCount()-1)->setPen(myPen);
     plate->graph(plate->graphCount()-1)->setVisible(true);
     plate->replot();
+
+    if(partialAreaX.size() > 0)
+    {
+        clearAreasButton->setEnabled(false);
+        discardAreaButton->setEnabled(true);
+        pointModeButton->setChecked(true);
+        undoButton->setEnabled(true);
+
+        selectionModeButton->setEnabled(false);
+    }
+    else
+    {
+        if(table->rowCount() > 1)
+            clearAreasButton->setEnabled(true);
+        discardAreaButton->setEnabled(false);
+        areaModeButton->setChecked(true);
+        if(table->rowCount() == 1)
+            undoButton->setEnabled(false);
+
+        selectionModeButton->setEnabled(true);
+    }
+    redoButton->setEnabled(controller->getRedoPossible(type));
 }
 
 void presentation::AreaWidget::setController(Controller *controller)
@@ -290,10 +325,18 @@ void presentation::AreaWidget::setController(Controller *controller)
             controller,SLOT(areaClickSlot(double,double,QSize,double,model::SimulationSetup::AreaType)));
     connect(this,SIGNAL(areaValueChanged(int,double,bool,model::SimulationSetup::AreaType)),
             controller,SLOT(areaValueChangedSlot(int,double,bool,model::SimulationSetup::AreaType)));
-//    connect(this,SIGNAL(clearAreas(model::SimulationSetup::AreaType)),
-//            controller,SLOT(clearAreasSlot(model::SimulationSetup::AreaType)));
-    connect(this,SIGNAL(undoArea(model::SimulationSetup::AreaType)),controller,
-            SLOT(undoAreaSlot(model::SimulationSetup::AreaType)));
+    connect(this,SIGNAL(clearAreas(model::SimulationSetup::AreaType)),
+            controller,SLOT(clearAreasSlot(model::SimulationSetup::AreaType)));
+    connect(this,SIGNAL(deleteArea(int,model::SimulationSetup::AreaType)),
+            controller,SLOT(deleteAreaSlot(int,model::SimulationSetup::AreaType)));
+    connect(this,SIGNAL(discardNewArea(model::SimulationSetup::AreaType)),
+            controller,SLOT(discardAreaSlot(model::SimulationSetup::AreaType)));
+    connect(this,SIGNAL(redoArea(model::SimulationSetup::AreaType)),
+            controller,SLOT(redoAreaSlot(model::SimulationSetup::AreaType)));
+    connect(this,SIGNAL(reorderArea(int,int,model::SimulationSetup::AreaType)),
+            controller,SLOT(reorderAreaSlot(int,int,model::SimulationSetup::AreaType)));
+    connect(this,SIGNAL(undoArea(model::SimulationSetup::AreaType)),
+            controller,SLOT(undoAreaSlot(model::SimulationSetup::AreaType)));
 }
 
 void presentation::AreaWidget::setModel(model::Model *model)
@@ -311,6 +354,7 @@ void presentation::AreaWidget::setModel(model::Model *model)
 
 void presentation::AreaWidget::update()
 {
+//    unhighlightGraph();
     // colorScale Range
     QCPRange range(model::SimulationSetup::AreaMinValue[type]/valueShift,
                     model::SimulationSetup::AreaMaxValue[type]/valueShift);
@@ -321,11 +365,11 @@ void presentation::AreaWidget::update()
     table->item(0,AreaWidget::ColumnValue)->setText(QString::number(bgValue));
     plate->axisRect()->setBackground(QBrush(colorScale->gradient().color(bgValue,range,false)));
 
-    int hSCount = model->getSimulationSetup()->getAreaCount(type);
+    int areaCount = model->getSimulationSetup()->getAreaCount(type);
     int rowCount = table->rowCount();
-    int tmpBound = hSCount+1 <= rowCount ? hSCount+1 : rowCount;
+    int tmpBound = areaCount+1 <= rowCount ? areaCount+1 : rowCount;
 
-    table->setRowCount(hSCount+1);
+    table->setRowCount(areaCount+1);
 
     QList<model::Area*> const & areas = model->getSimulationSetup()->getAreas(type);
     QList<model::Area*>::const_iterator it = areas.begin();
@@ -342,9 +386,9 @@ void presentation::AreaWidget::update()
         table->item(i,AreaWidget::ColumnVisibility)->setCheckState(
                     visibilities.value((*it)->getID(),true) ? Qt::Checked : Qt::Unchecked);
     }
-    if(hSCount+1 >= rowCount)
+    if(areaCount+1 >= rowCount)
     {
-        for(; i < hSCount+1; ++i, ++it)
+        for(; i < areaCount+1; ++i, ++it)
         {
             QTableWidgetItem * tmpItemPtr = new QTableWidgetItem(QString::number((*it)->getID()));
             tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
@@ -376,11 +420,11 @@ void presentation::AreaWidget::update()
     for(int j = 0; j < rowCount-1; ++j)
         plate->graph(j)->setVisible(false);
 
-    for(int j = plate->graphCount(); j < hSCount; ++j)
+    for(int j = plate->graphCount(); j < areaCount; ++j)
         plate->addGraph();
 
     it = areas.begin();
-    for(int j = 0; j < hSCount; ++j,++it)
+    for(int j = 0; j < areaCount; ++j,++it)
     {
         QVector<double> x,y;
         (*it)->getPoints(x,y);
@@ -394,22 +438,48 @@ void presentation::AreaWidget::update()
     }
     plate->replot();
     controller->testPartialArea(type);
+    if(selectionModeButton->isChecked())
+        table->selectRow(findRow(selectedAreaID));
 
-    if(hSCount==0)
-    {
-        undoButton->setEnabled(false);
-        clearAreasButton->setEnabled(false);
-    }
     else
     {
-        undoButton->setEnabled(true);
-        clearAreasButton->setEnabled(false);
+        if(areaCount == 0)
+        {
+            clearAreasButton->setEnabled(false);
+            undoButton->setEnabled(false);
+        }
+        else
+        {
+            clearAreasButton->setEnabled(true);
+            undoButton->setEnabled(true);
+        }
+        redoButton->setEnabled(controller->getRedoPossible(type));
     }
 }
 
 void presentation::AreaWidget::buttonMapperSlot()
 {
     QObject * _sender = sender();
+    if(_sender == allUpButton)
+    {
+        emit reorderArea(findRow(selectedAreaID)-1,2,type);
+        return;
+    }
+    if(_sender == upButton)
+    {
+        emit reorderArea(findRow(selectedAreaID)-1,1,type);
+        return;
+    }
+    if(_sender == downButton)
+    {
+        emit reorderArea(findRow(selectedAreaID)-1,-1,type);
+        return;
+    }
+    if(_sender == allDownButton)
+    {
+        emit reorderArea(findRow(selectedAreaID)-1,-2,type);
+        return;
+    }
     if(_sender == clearAreasButton)
     {
         emit clearAreas(type);
@@ -419,11 +489,73 @@ void presentation::AreaWidget::buttonMapperSlot()
     {
         emit areaClicked(inputXValue->value(), inputYValue->value(),
                          plate->size(),valueShift,type);
+        return;
     }
-    if(_sender == undoButton)
+    if(_sender == deleteAreaButton)
+    {
+        assert(selectionModeButton->isChecked());
+        emit deleteArea(findRow(selectedAreaID)-1,type);
+        table->selectRow(0);
+        selectedAreaID = -1;
+        return;
+    }
+    if(_sender == discardAreaButton)
+    {
+        emit discardNewArea(type);
+        return;
+    }
+    if(_sender == redoButton)
+    {
+        emit redoArea(type);
+        return;
+    }
+    else
     {
         emit undoArea(type);
         return;
+    }
+}
+
+void presentation::AreaWidget::clickModeChangeSlot()
+{
+    if(selectionModeButton->isChecked())
+    {
+        tableSelectionChangeSlot();
+
+        clearAreasButton->setEnabled(false);
+        redoButton->setEnabled(false);
+        undoButton->setEnabled(false);
+
+        inputXValue->setEnabled(false);
+        inputYValue->setEnabled(false);
+        confirmButton->setEnabled(false);
+    }
+    else
+    {
+        unhighlightGraph();
+        selectedAreaID = -1;
+        table->selectRow(0);
+        deleteAreaButton->setEnabled(false);
+        allUpButton->setEnabled(false);
+        upButton->setEnabled(false);
+        allDownButton->setEnabled(false);
+        downButton->setEnabled(false);
+
+        if(model->getSimulationSetup()->getAreaCount(type) == 0)
+        {
+            clearAreasButton->setEnabled(false);
+            undoButton->setEnabled(false);
+        }
+        else
+        {
+            clearAreasButton->setEnabled(true);
+            undoButton->setEnabled(true);
+        }
+        redoButton->setEnabled(controller->getRedoPossible(type));
+
+        inputXValue->setEnabled(true);
+        inputYValue->setEnabled(true);
+        confirmButton->setEnabled(true);
     }
 }
 
@@ -431,7 +563,23 @@ void presentation::AreaWidget::mouseClickOnPlateSlot(QMouseEvent *event)
 {
     double x = plate->xAxis->pixelToCoord(event->x()),
             y = plate->yAxis->pixelToCoord(event->y());
-    emit areaClicked(x,y,plate->size(),valueShift,type);
+    // QCustomPlots sind etwas neben dem Rand klickbar, dies wird hier abgefangen
+    if(x < 0)
+        x = 0;
+    else
+        if(x > 1)
+            x = 1;
+    if(y < 0)
+        y = 0;
+    else
+        if(y > 1)
+            y = 1;
+    if(newAreaModeButton->isChecked())
+        emit areaClicked(x,y,plate->size(),valueShift,type);
+    else
+    {
+        table->selectRow(findRow(model->getSimulationSetup()->getContainingAreaID(x,y,type)));
+    }
 }
 
 void presentation::AreaWidget::tableItemChangeSlot(QTableWidgetItem *item)
@@ -464,5 +612,93 @@ void presentation::AreaWidget::tableItemClickSlot(QTableWidgetItem *item)
     assert(ok);
     visibilities[id] = visible;
     plate->graph(row-1)->setVisible(visible);
+    plate->replot();
+}
+
+void presentation::AreaWidget::tableSelectionChangeSlot()
+{
+    unhighlightGraph();
+    int selectedRow;
+    if(!selectionModeButton->isChecked() || table->selectedItems().isEmpty())
+        selectedRow = 0;
+    else
+        selectedRow = table->row(table->selectedItems().first());
+    if(selectedRow == 0)
+    {
+        selectedAreaID = -1;
+        deleteAreaButton->setEnabled(false);
+        allUpButton->setEnabled(false);
+        upButton->setEnabled(false);
+        allDownButton->setEnabled(false);
+        downButton->setEnabled(false);
+        return;
+    }
+
+    bool ok;
+    int id = table->item(selectedRow,AreaWidget::ColumnID)->text().toInt(&ok);
+    assert(ok);
+    selectedAreaID = id;
+    highlightGraph();
+
+    deleteAreaButton->setEnabled(true);
+    if(selectedRow > 1)
+    {
+        allUpButton->setEnabled(true);
+        upButton->setEnabled(true);
+    }
+    else
+    {
+        allUpButton->setEnabled(false);
+        upButton->setEnabled(false);
+    }
+    if(selectedRow < table->rowCount()-1)
+    {
+        allDownButton->setEnabled(true);
+        downButton->setEnabled(true);
+    }
+    else
+    {
+        allDownButton->setEnabled(false);
+        downButton->setEnabled(false);
+    }
+}
+
+int presentation::AreaWidget::findRow(int id)
+{
+    for(int i = 1; i < table->rowCount(); ++i)
+    {
+        bool ok;
+        int currentID = table->item(i,AreaWidget::ColumnID)->text().toInt(&ok);
+        assert(ok);
+        if(currentID == id)
+            return i;
+    }
+    return 0;
+}
+
+void presentation::AreaWidget::highlightGraph()
+{
+    int index = findRow(selectedAreaID)-1;
+    if(index == -1)
+        return;
+    QCPScatterStyle myScatter;
+    myScatter.setShape(QCPScatterStyle::ssCircle);
+    QPen myPen(Qt::cyan);
+    myScatter.setPen(myPen);
+    myScatter.setBrush(Qt::cyan);
+    myScatter.setSize(5);
+    plate->graph(index)->setScatterStyle(myScatter);
+    myPen.setWidth(2* myPen.width());
+    plate->graph(index)->setPen(myPen);
+    plate->replot();
+}
+
+void presentation::AreaWidget::unhighlightGraph()
+{
+    int index = findRow(selectedAreaID)-1;
+    if(index == -1)
+        return;
+    plate->graph(index)->setPen(QPen(Qt::black));
+    plate->graph(index)->setScatterStyle(QCPScatterStyle::ssNone);
     plate->replot();
 }

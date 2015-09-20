@@ -40,7 +40,7 @@ class Controller;
 //        ~AreaWidget();
 
         void drawPartialArea(QVector<double> const & partialAreaX,
-                        QVector<double> const & partialAreaY);
+                            QVector<double> const & partialAreaY);
 
         void setController(Controller * controller);
         void setModel(model::Model * model);
@@ -48,29 +48,38 @@ class Controller;
         void update();
 
     signals:
-        areaClicked(double xKoord, double yKoord, QSize plateSize,
-                    double valueShift, model::SimulationSetup::AreaType type);
-        areaValueChanged(int pos, double newValue, bool ok,
-                         model::SimulationSetup::AreaType type);
-        clearAreas(model::SimulationSetup::AreaType type);
-        undoArea(model::SimulationSetup::AreaType type);
+        void areaClicked(double xKoord, double yKoord, QSize plateSize,
+                         double valueShift, model::SimulationSetup::AreaType type);
+        void areaValueChanged(int pos, double newValue, bool ok,
+                              model::SimulationSetup::AreaType type);
+        void deleteArea(int pos, model::SimulationSetup::AreaType type);
+        void clearAreas(model::SimulationSetup::AreaType type);
+        void discardNewArea(model::SimulationSetup::AreaType type);
+        void redoArea(model::SimulationSetup::AreaType type);
+        void reorderArea(int pos, int dir, model::SimulationSetup::AreaType type);
+        void undoArea(model::SimulationSetup::AreaType type);
 
     public slots:
 
     private slots:
         void buttonMapperSlot();
+        void clickModeChangeSlot();
         void mouseClickOnPlateSlot(QMouseEvent * event);
         void tableItemChangeSlot(QTableWidgetItem * item);
         void tableItemClickSlot(QTableWidgetItem * item);
+        void tableSelectionChangeSlot();
 
     private:
-
+        int findRow(int id);
+        void highlightGraph();
+        void unhighlightGraph();
 
     //Attribute:
     private:
         Controller * controller;
         model::Model * model;
         QString const name;
+        int selectedAreaID;
         model::SimulationSetup::AreaType type;
         QString const unit;
         double const valueShift;
