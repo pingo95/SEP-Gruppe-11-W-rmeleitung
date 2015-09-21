@@ -16,7 +16,7 @@ Unsere Software gliedert sich in drei Pakete, deren Struktur in Abbildung \ref{P
 \section{Klassen}
 
 Nachfolgend sind die Klassen-/Sequenzdiagramme nach Paketen sortiert aufgelistet. \\
-Dabei werden keine Sequenzdiagramme gezeigt, falls es sich um Methoden ohne Kommunikation mit anderen Objekten handelt, insbesondere auch getter-Funktionen, Funktionen die Algorithmen implementieren.
+Dabei werden keine Sequenzdiagramme gezeigt, falls es sich um Methoden ohne Kommunikation mit anderen Objekten handelt, insbesondere auch getter-Funktionen oder Funktionen die Algorithmen implementieren.
 
 \subsection{Paket algorithms}
 
@@ -35,7 +35,7 @@ Das Klassendiagramm in Abbildung \ref{Klassendiagramm algorithms} zeigt alle im 
 
 \subsubsection*{calcNextStep}
 
-Das Sequenzdiagramm für \emph{calcNextStep} ist in \ref{Sequenzdiagramm calcNextStep} dargstellt. \emph{calcNextStep} berechnet die Approximation der Temperaturverteilung zum nächsten Zeitpunkt unter Verwendung der aktuellen Verteilung sowie der eingegebenen Wärmeleitkoeffizienten und Wärmequellen.
+Das Sequenzdiagramm für \emph{calcNextStep} ist in Abbildung \ref{Sequenzdiagramm calcNextStep} dargestellt. \emph{calcNextStep} berechnet die Approximation der Temperaturverteilung zum nächsten Zeitpunkt unter Verwendung der aktuellen Verteilung sowie der eingegebenen Temperaturleitkoeffizienten und Wärmequellen.
 
 %Sequenzdiagramm calcNextStep
 \begin{figure}[H]
@@ -46,51 +46,23 @@ Das Sequenzdiagramm für \emph{calcNextStep} ist in \ref{Sequenzdiagramm calcNex
 	\label{Sequenzdiagramm calcNextStep}
 \end{figure}
 
-\subsubsection*{selectIterativeSolver}
+\subsubsection*{selectSolver}
 
-Das Sequenzdiagramm für \emph{selectIterativeSolver} ist in \ref{Sequenzdiagramm selectIterativeSolverIntMethod} dargstellt.
-\emph{selectIterativeSolver} setzt den gewählten iterativen Löser.
+Das Sequenzdiagramm für \emph{selectSolver} ist in  Abbildung \ref{Sequenzdiagramm selectSolverIntMethod} dargestellt.
+\emph{selectSolver} setzt den gewählten Löser für lineare Gleichungssysteme.
 
-%Sequenzdiagramm selectIterativeSolver
+%Sequenzdiagramm selectSolver
 \begin{figure}[H]
 	\centering
 	%\hspace{-.5cm}
-	\includegraphics{Bilder/IntMethod__selectIterativeSolver().jpg}\\
-	\caption{Sequenzdiagramm selectIterativeSolver}
-	\label{Sequenzdiagramm selectIterativeSolverIntMethod}
-\end{figure}
-
-\subsubsection*{setEps}
-
-Das Sequenzdiagramm für \emph{setEps} ist in \ref{Sequenzdiagramm setEpsIntMethod} dargstellt.
-\emph{setEps} setzt die gewählte relative Fehlerschranke für den Löser.
-
-%Sequenzdiagramm setEps
-\begin{figure}[H]
-	\centering
-	%\hspace{-.5cm}
-	\includegraphics{Bilder/IntMethod__setEps().jpg}\\
-	\caption{Sequenzdiagramm setEps}
-	\label{Sequenzdiagramm setEpsIntMethod}
-\end{figure}
-
-\subsubsection*{setMaxIt}
-
-Das Sequenzdiagramm für \emph{setMaxIt} ist in \ref{Sequenzdiagramm setMaxItIntMethod} dargstellt.
-\emph{setMaxIts} setzt die gewählte maximale Iterationsanzahl für den Löser.
-
-%Sequenzdiagramm setMaxIt
-\begin{figure}[H]
-	\centering
-	%\hspace{-.5cm}
-	\includegraphics{Bilder/IntMethod__setMaxIt().jpg}\\
-	\caption{Sequenzdiagramm setMaxIt}
-	\label{Sequenzdiagramm setMaxItIntMethod}
+	\includegraphics{Bilder/IntMethod__selectSolver().jpg}\\
+	\caption{Sequenzdiagramm selectSolver}
+	\label{Sequenzdiagramm selectSolverIntMethod}
 \end{figure}
 
 \subsubsection*{setUp}
 
-Das Sequenzdiagramm für \emph{setUp} ist in \ref{Sequenzdiagramm setUp} dargstellt. \emph{setUp} bereitet die Simulationsberechnung vor.
+Das Sequenzdiagramm für \emph{setUp} ist in  Abbildung \ref{Sequenzdiagramm setUp} dargestellt. \emph{setUp} bereitet die Simulationsberechnung vor.
 
 %Sequenzdiagramm setUp
 \begin{figure}[H]
@@ -103,7 +75,7 @@ Das Sequenzdiagramm für \emph{setUp} ist in \ref{Sequenzdiagramm setUp} dargste
 
 \subsubsection*{setUpSpecific}
 
-Das Sequenzdiagramm für \emph{setUpSpecific} ist in \ref{Sequenzdiagramm setUpSpecific} dargstellt. \emph{setUpSpecific} trifft für die gewählte Integrationsmethode spezifische Vorbereitungen.
+Das Sequenzdiagramm für \emph{setUpSpecific} ist in Abbildung \ref{Sequenzdiagramm setUpSpecific} dargestellt. \emph{setUpSpecific} trifft für die gewählte Integrationsmethode spezifische Vorbereitungen.
 
 %Sequenzdiagramm setUpSpecific
 \begin{figure}[H]
@@ -118,7 +90,7 @@ Das Sequenzdiagramm für \emph{setUpSpecific} ist in \ref{Sequenzdiagramm setUpS
 
 \subsubsection*{setEps}
 
-Das Sequenzdiagramm für \emph{setEps} ist in \ref{Sequenzdiagramm setEps} dargstellt. \emph{setEps} setzt die gewählte relative Genauigkeit.
+Das Sequenzdiagramm für \emph{setEps} ist in  Abbildung \ref{Sequenzdiagramm setEps} dargestellt. \emph{setEps} setzt die gewählte relative Genauigkeit.
 
 %Sequenzdiagramm setEps
 \begin{figure}[H]
@@ -170,17 +142,17 @@ Das Sequenzdiagramm für \emph{addHeatSource} ist in \ref{Sequenzdiagramm addHea
 	\label{Sequenzdiagramm addHeatSource}
 \end{figure}
 
-\subsubsection*{addThermalConductivity}
+\subsubsection*{addThermalDiffusivity}
 
-Das Sequenzdiagramm für \emph{addThermalConductivity} ist in \ref{Sequenzdiagramm addThermalConductivity} dargstellt. \emph{addThermalConductivity} fügt ein durch den Nutzer gewähltes Gebiet mit zugehörigem Wärmeleitkoeffizienten hinzu.
+Das Sequenzdiagramm für \emph{addThermalDiffusivity} ist in \ref{Sequenzdiagramm addThermalDiffusivity} dargstellt. \emph{addThermalDiffusivity} fügt ein durch den Nutzer gewähltes Gebiet mit zugehörigem Temperaturleitkoeffizienten hinzu.
 
-%Sequenzdiagramm addThermalConductivity
+%Sequenzdiagramm addThermalDiffusivity
 \begin{figure}[H]
 	\centering
 	%\hspace{-.5cm}
-	\includegraphics[scale=.6]{Bilder/Model__addThermalConductivity().jpg}\\
-	\caption{Sequenzdiagramm addThermalConductivity}
-	\label{Sequenzdiagramm addThermalConductivity}
+	\includegraphics[scale=.6]{Bilder/Model__addThermalDiffusivity().jpg}\\
+	\caption{Sequenzdiagramm addThermalDiffusivity}
+	\label{Sequenzdiagramm addThermalDiffusivity}
 \end{figure}
 
 \subsubsection*{removeLastHeatSource}
@@ -196,17 +168,17 @@ Das Sequenzdiagramm für \emph{removeLastHeatSource} ist in \ref{Sequenzdiagramm
 	\label{Sequenzdiagramm removeLastHeatSource}
 \end{figure}
 
-\subsubsection*{removeLastThermalConductivity}
+\subsubsection*{removeLastThermalDiffusivity}
 
-Das Sequenzdiagramm für \emph{removeLastThermalConductivity} ist in \ref{Sequenzdiagramm removeLastThermalConductivity} dargstellt.
+Das Sequenzdiagramm für \emph{removeLastThermalDiffusivity} ist in \ref{Sequenzdiagramm removeLastThermalDiffusivity} dargstellt.
 
-%Sequenzdiagramm removeLastThermalConductivity
+%Sequenzdiagramm removeLastThermalDiffusivity
 \begin{figure}[H]
 	\centering
 	%\hspace{-.5cm}
-	\includegraphics[scale=.6]{Bilder/Model__removeLastThermalConductivity().jpg}\\
-	\caption{Sequenzdiagramm removeLastThermalConductivity}
-	\label{Sequenzdiagramm removeLastThermalConductivity}
+	\includegraphics[scale=.6]{Bilder/Model__removeLastThermalDiffusivity().jpg}\\
+	\caption{Sequenzdiagramm removeLastThermalDiffusivity}
+	\label{Sequenzdiagramm removeLastThermalDiffusivity}
 \end{figure}
 
 \subsubsection*{selectIntMethod}
@@ -222,17 +194,17 @@ Das Sequenzdiagramm für \emph{selectIntMethod} ist in \ref{Sequenzdiagramm sele
 	\label{Sequenzdiagramm selectIntMethod}
 \end{figure}
 
-\subsubsection*{selectIterativeSolver}
+\subsubsection*{selectSolver}
 
-Das Sequenzdiagramm für \emph{selectIterativeSolver} ist in \ref{Sequenzdiagramm selectIterativeSolver} dargstellt.
+Das Sequenzdiagramm für \emph{selectSolver} ist in \ref{Sequenzdiagramm selectSolver} dargstellt.
 
-%Sequenzdiagramm selectIterativeSolver
+%Sequenzdiagramm selectSolver
 \begin{figure}[H]
 	\centering
 	%\hspace{-.5cm}
-	\includegraphics[scale=.6]{Bilder/Model__selectIterativeSolver().jpg}\\
-	\caption{Sequenzdiagramm selectIterativeSolver}
-	\label{Sequenzdiagramm selectIterativeSolver}
+	\includegraphics[scale=.6]{Bilder/Model__selectSolver().jpg}\\
+	\caption{Sequenzdiagramm selectSolver}
+	\label{Sequenzdiagramm selectSolver}
 \end{figure}
 
 \subsubsection*{setBottomBoundary}

@@ -24,7 +24,7 @@ namespace algorithms {
         void eye(int const n); // Einheitsmatrix der Größe n*n
         void full(QVector<QVector<double> > & full) const;
         int getIndex(int const i) const;
-        int getRowsNumElem(int const i) const;
+        //int getRowsNumElem(int const i) const;
         int getSize() const;
         double getValue(int const i, int const j) const; // Liefert Eintrag a_ij
         CRS multCRSCRS(CRS const & rMat) const; // Implementiert lediglich Diagonalmatrix * bel. Matrix

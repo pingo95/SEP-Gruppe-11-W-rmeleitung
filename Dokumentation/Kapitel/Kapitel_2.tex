@@ -3,7 +3,7 @@
 
 \subsection{Benutzeranforderungen}
 
-Es soll eine Software zur Simulation der zeitlichen Entwicklung einer Temperaturverteilung in Metallplatten entwickelt werden. Diese sollen die Abmessungen 1 Meter x 1 Meter besitzen. Diese können weiterhin inhomogen sein und somit beliebig ortsabhängige Temperaturleitkoeffizienten besitzen. Außerdem ist es dem Benutzer möglich, sowohl die Start- und Randbedingungen des Wärmeleitungsproblems als auch den Endzeitpunkt der Simulation vorzugeben. Des Weiteren ist es dem Benutzer möglich Wärmequellen und deren Intensität ein- sowie weiterhin die Simulationsparameter der Orts- beziehungsweise Zeitdiskretisierung vorzugeben. Jegliche Benutzereingaben erfolgen über eine grafische Oberfläche. Nach Abschluss der Berechnung wird das Ergebnis visualisiert und die zeitliche Entwicklung der Temperaturverteilung kann in Form eines Videos untersucht werden.
+Es soll eine Software zur Simulation der zeitlichen Entwicklung einer Temperaturverteilung in Metallplatten entwickelt werden. Diese sollen die Abmessungen 1 Meter x 1 Meter besitzen und können weiterhin bezüglich der örtlichen Verteilung der Temperaturleitkoeffizienten inhomogen sein. Des Weiteren bietet sich dem Benutzer die Möglichkeit Wärmequellen und deren Intensität einzugeben. Außerdem ist es dem Benutzer möglich zur vollständigen Spezifikation eines Simulationsexperiments die Start- und Randbedingungen des Wärmeleitungsproblems, den Endzeitpunkt der Simulation sowie die Simulationsparameter der Orts- beziehungsweise Zeitdiskretisierung vorzugeben. Jegliche Benutzereingaben erfolgen über eine grafische Oberfläche. Nach Abschluss der Berechnung wird das Ergebnis visualisiert und die zeitliche Entwicklung der Temperaturverteilung kann in Form eines Videos untersucht werden.
 
 %Optional:	Minimierungsproblem „Parameter-Fitting der Wärmeleitkoeffizienten“ im Sinne kleinster Fehlerquadrate lösen, dabei finite Differenzen/automatisches Differenzieren (dco) benutzen.
 
@@ -279,7 +279,7 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 		\hline
 		\textbf{Name} 			& \multicolumn{2}{|l|}{Parameter optimieren}  \\
 		\hline
-		\textbf{Ziel} 			& \multicolumn{2}{|l|}{Der Benutzer möchte die Wärmeleitkoeffizienten optimal im Sinne}\\
+		\textbf{Ziel} 			& \multicolumn{2}{|l|}{Der Benutzer möchte die Temperaturleitkoeffizienten optimal im Sinne}\\
 								& \multicolumn{2}{|l|}{kleinster Fehlerquadrate an experimentelle Daten anpassen lassen.}\\
 		\hline
 		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Hauptfunktion}\\
@@ -294,7 +294,7 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 		\textbf{Haupt-} 		& \multicolumn{2}{|l|}{Benutzer}\\
 		\textbf{Neben-Akteur}	& \multicolumn{2}{|l|}{	}			\\
 		\hline
-		\textbf{Auslöser} 		& \multicolumn{2}{|l|}{Der Benutzer möchte die Wärmeleitkoeffizieten optimieren lassen.} \\
+		\textbf{Auslöser} 		& \multicolumn{2}{|l|}{Der Benutzer möchte die Temperaturleitkoeffizienten optimieren lassen.} \\
 		\hline 
 		\textbf{Standardfluss} & \textbf{Schritt} & \textbf{Aktion} \\
 		\hline
@@ -304,11 +304,60 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 		\cline{2-3}
 		&	3	& Der Benutzer startet die Optimierung.\\
 		\cline{2-3}
-		&	4	& Die Software setzt das Ergebnis als aktuelle Wärmeleitkoeffizienten.\\
+		&	4	& Die Software setzt das Ergebnis als aktuelle Temperaturleitkoeffizienten.\\
 		\hline
 	\end{tabular}
 	\caption{Beschreibung Use Case Parameter optimieren}
 	\label{Beschreibung Use Case Parameter optimieren}
+\end{table}
+
+%Simulationsexperiment laden/speichern
+\begin{table} [H]
+	\centering
+	%\hspace{-1cm}
+	\begin{tabular}{|l|l|l|}
+		\hline
+		\textbf{Name} 			& \multicolumn{2}{|l|}{Simulationsexperiment laden/speichern}  \\
+		\hline
+		\textbf{Ziel} 			& \multicolumn{2}{|l|}{Der Benutzer möchte ein Simulationsexperiment laden/spichern.}\\
+		\hline
+		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Hauptfunktion}\\
+		\hline
+		\textbf{Vorbedingung}	& \multicolumn{2}{|l|}{Die Software wird korrekt ausgeführt.} \\
+		\hline
+		\textbf{Nachbedingung}	& \multicolumn{2}{|l|}{Das eingegebene Simulationsexperiment wurde geladen/gespeichert.}\\
+		\hline
+		\textbf{Nachbedingung} 	& \multicolumn{2}{|l|}{Die Daten wurden nicht geändert und}\\
+		\textbf{im Fehlerfall}	& \multicolumn{2}{|l|}{entsprechende Fehlermeldungen wurden ausgegeben.}\\
+		\hline
+		\textbf{Haupt-} 		& \multicolumn{2}{|l|}{Benutzer}\\
+		\textbf{Neben-Akteur}	& \multicolumn{2}{|l|}{	}			\\
+		\hline
+		\textbf{Auslöser} 		& \multicolumn{2}{|l|}{Der Benutzer möchte ein Simulationsexperiment laden/speichern.} \\
+		\hline 
+		\textbf{Standardfluss} & \textbf{Schritt} & \textbf{Aktion} \\
+		\hline
+		&	1	& Der Benutzer wählt den Menüpunkt \emph{Simulation} aus. \\
+		\cline{2-3}
+		&	2	& Die Software wechselt zu dem entsprechenden Menü.\\
+		\cline{2-3}
+		&	3	& Der Benutzer wählt die gewünschte Datei aus.\\
+		\cline{2-3}
+		&	4	& Die Software prüft die angegebene Datei.\\
+		\cline{2-3}
+		&	5	& Die Software lädt/speichert das Simulationsexperiment.\\
+		\hline
+		\textbf{Nebenfluss} & \textbf{Schritt} & \textbf{Aktion}\\
+		\hline
+		Randbedingungen  & 5a.1 & Eine Fehlermeldung wird angezeigt.\\
+		\cline{2-3}
+		nicht akzeptiert & 5a.2	& Der Benutzer korrigiert seine Eingabe.\\
+		\cline{2-3}
+		& 5a.3 	& $\rightarrow$ Schritt 4\\
+		\hline
+	\end{tabular}
+	\caption{Beschreibung Use Case Simulationsexperiment laden/speichern}
+	\label{Beschreibung Use Case Simulationsexperiment laden/speichern}
 \end{table}
 
 %Simulieren
@@ -354,6 +403,66 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
         \label{Beschreibung Use Case Simulieren}
 \end{table}
 
+%Temperaturleitkoeffizienten eingeben
+\begin{table} [H]
+	\centering
+	%\hspace{-1cm}
+	\begin{tabular}{|l|l|l|}
+		\hline
+		\textbf{Name} 			& \multicolumn{2}{|l|}{Temperaturleitkoeffizienten eingeben}  \\
+		\hline
+		\textbf{Ziel} 			& \multicolumn{2}{|l|}{Der Benutzer möchte Temperaturleitkoeffizienten eingeben. }\\ 
+		\hline
+		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Basisfunktion}\\
+		\hline
+		\textbf{Vorbedingung}	& \multicolumn{2}{|l|}{Die Software wird korrekt ausgeführt.} \\
+		\hline
+		\textbf{Nachbedingung}	& \multicolumn{2}{|l|}{Die Temperaturleitkoeffizienten wurden eingegeben und gespeichert.}\\
+		\hline
+		\textbf{Nachbedingung} 	& \multicolumn{2}{|l|}{Die Temperaturleitkoeffizienten wurden nicht geändert und}\\
+		\textbf{im Fehlerfall}	& \multicolumn{2}{|l|}{entsprechende Fehlermeldungen wurden ausgegeben.}\\
+		\hline
+		\textbf{Haupt-} 			& \multicolumn{2}{|l|}{Benutzer}\\
+		\textbf{Neben-Akteur}	& \multicolumn{2}{|l|}{	}			\\
+		\hline
+		\textbf{Auslöser} 		& \multicolumn{2}{|l|}{Der Benutzer möchte Temperaturleitkoeffizienten eingeben.} \\
+		\hline 
+		\textbf{Standardfluss} & \textbf{Schritt} & \textbf{Aktion} \\
+		\hline
+		&	1	& Der Benutzer wählt den Menüpunkt \emph{Temperaturleitkoeffizienten} aus. \\
+		\cline{2-3}
+		&	2	& Die Software wechselt zu dem entsprechenden Menü.\\
+		\cline{2-3}
+		&	3	& Der Benutzer wählt auf der Darstellung der Platte die \\
+		&       & gewünschten Gebiete.\\
+		\cline{2-3}
+		&	4	& Die Software prüft die eingegebenen Gebiete.\\
+		\cline{2-3}
+		&	5	& Der Benutzer wählt die Werte für die einzelnen Gebiete.\\
+		\cline{2-3}
+		&	6	& Die Software prüft die eingegebenen Werte.\\
+		\cline{2-3}
+		&	7	& Die Software speichert die Gebiete und die Werte.\\
+		\hline
+		\textbf{Nebenfluss} & \textbf{Schritt} & \textbf{Aktion}\\
+		\hline
+		Gebiet nicht & 5a.1 & Eine Fehlermeldung wird angezeigt.\\
+		\cline{2-3}
+		akzeptiert 	& 5a.2	& Der Benutzer korrigiert seine Eingabe.\\
+		\cline{2-3}
+		& 5a.3 	& $\rightarrow$ Schritt 4\\
+		\hline
+		Werte nicht & 7a.1 	& Eine Fehlermeldung wird angezeigt.\\
+		\cline{2-3}
+		akzeptiert 	& 7a.2	& Der Benutzer korrigiert seine Eingabe.\\
+		\cline{2-3}
+		& 7a.3 	& $\rightarrow$ Schritt 6\\
+		\hline
+	\end{tabular}
+	\caption{Beschreibung Use Case Temperaturleitkoeffizienten eingeben}
+	\label{Beschreibung Use Case Temperaturleitkoeffizienten eingeben}
+\end{table}
+
 %Video abspielen
 \begin{table} [H]
 	\centering
@@ -394,66 +503,6 @@ Die folgenden Tabellen (Tab. \ref{Beschreibung Use Case Anfangsbedingungen einge
 	\end{tabular}
 	\caption{Beschreibung Use Case Video abspielen}
 	\label{Beschreibung Use Case Video abspielen}
-\end{table}
-
-%Wärmeleitkoeffizienten eingeben
-\begin{table} [H]
-	\centering
-	%\hspace{-1cm}
-	\begin{tabular}{|l|l|l|}
-		\hline
-		\textbf{Name} 			& \multicolumn{2}{|l|}{Wärmeleitkoeffizienten eingeben}  \\
-		\hline
-		\textbf{Ziel} 			& \multicolumn{2}{|l|}{Der Benutzer möchte Wärmeleitkoeffizienten eingeben. }\\ 
-		\hline
-		\textbf{Einordnung}		& \multicolumn{2}{|l|}{Basisfunktion}\\
-		\hline
-		\textbf{Vorbedingung}	& \multicolumn{2}{|l|}{Die Software wird korrekt ausgeführt.} \\
-		\hline
-		\textbf{Nachbedingung}	& \multicolumn{2}{|l|}{Die Wärmeleitkoeffizienten wurden eingegeben und gespeichert.}\\
-		\hline
-		\textbf{Nachbedingung} 	& \multicolumn{2}{|l|}{Die Wärmeleitkoeffizienten wurden nicht geändert und}\\
-		\textbf{im Fehlerfall}	& \multicolumn{2}{|l|}{entsprechende Fehlermeldungen wurden ausgegeben.}\\
-		\hline
-		\textbf{Haupt-} 			& \multicolumn{2}{|l|}{Benutzer}\\
-		\textbf{Neben-Akteur}	& \multicolumn{2}{|l|}{	}			\\
-		\hline
-		\textbf{Auslöser} 		& \multicolumn{2}{|l|}{Der Benutzer möchte Wärmeleitkoeffizienten eingeben.} \\
-		\hline 
-		\textbf{Standardfluss} & \textbf{Schritt} & \textbf{Aktion} \\
-		\hline
-		&	1	& Der Benutzer wählt den Menüpunkt \emph{Wärmeleitkoeffizienten} aus. \\
-		\cline{2-3}
-		&	2	& Die Software wechselt zu dem entsprechenden Menü.\\
-		\cline{2-3}
-		&	3	& Der Benutzer wählt auf der Darstellung der Platte die \\
-		&       & gewünschten Gebiete.\\
-		\cline{2-3}
-		&	4	& Die Software prüft die eingegebenen Gebiete.\\
-		\cline{2-3}
-		&	5	& Der Benutzer wählt die Werte für die einzelnen Gebiete.\\
-		\cline{2-3}
-		&	6	& Die Software prüft die eingegebenen Werte.\\
-		\cline{2-3}
-		&	7	& Die Software speichert die Gebiete und die Werte.\\
-		\hline
-		\textbf{Nebenfluss} & \textbf{Schritt} & \textbf{Aktion}\\
-		\hline
-		Gebiet nicht & 5a.1 & Eine Fehlermeldung wird angezeigt.\\
-		\cline{2-3}
-		akzeptiert 	& 5a.2	& Der Benutzer korrigiert seine Eingabe.\\
-		\cline{2-3}
-					& 5a.3 	& $\rightarrow$ Schritt 4\\
-		\hline
-		Werte nicht & 7a.1 	& Eine Fehlermeldung wird angezeigt.\\
-		\cline{2-3}
-		akzeptiert 	& 7a.2	& Der Benutzer korrigiert seine Eingabe.\\
-		\cline{2-3}
-					& 7a.3 	& $\rightarrow$ Schritt 6\\
-		\hline
-	\end{tabular}
-	\caption{Beschreibung Use Case Wärmeleitkoeffizienten eingeben}
-	\label{Beschreibung Use Case Wärmeleitkoeffizienten eingeben}
 \end{table}
 
 %Wärmequellen eingeben
@@ -614,13 +663,13 @@ Die folgenden Abbildungen (Abb. \ref{Aktivitätsdiagramm Use Case Anfangsbedingu
 	\label{Aktivitätsdiagramm Use Case Parameter optimieren}
 \end{figure}
 
-%Simulationsexperiment speichern
+%Simulationsexperiment laden/speichern
 \begin{figure}[H]
 	\centering
 	%\hspace{-1.75cm}
-	\includegraphics[scale=.5]{Bilder/Simulationsexperiment_speichern.jpg}\\
-	\caption{Aktivitätsdiagramm Use Case Simulationsexperiment speichern}
-	\label{Aktivitätsdiagramm Use Case Simulationsexperiment speichern}
+	\includegraphics[scale=.5]{Bilder/Simulationsexperiment_laden_speichern.jpg}\\
+	\caption{Aktivitätsdiagramm Use Case Simulationsexperiment laden/speichern}
+	\label{Aktivitätsdiagramm Use Case Simulationsexperiment laden/speichern}
 \end{figure}
 
 %Simulieren
@@ -632,6 +681,15 @@ Die folgenden Abbildungen (Abb. \ref{Aktivitätsdiagramm Use Case Anfangsbedingu
 	\label{Aktivitätsdiagramm Use Case Simulieren}
 \end{figure}
 
+%Temperaturleitkoeffizienten eingeben
+\begin{figure}[H]
+	\centering
+	%\hspace{-1.75cm}
+	\includegraphics[scale=.5]{Bilder/Temperaturleitkoeffizienten_eingeben.jpg}\\
+	\caption{Aktivitätsdiagramm Use Case Temperaturleitkoeffizienten eingeben}
+	\label{Aktivitätsdiagramm Use Case Temperaturleitkoeffizienten eingeben}
+\end{figure}
+
 %Video abspielen
 \begin{figure}[H]
 	\centering
@@ -639,15 +697,6 @@ Die folgenden Abbildungen (Abb. \ref{Aktivitätsdiagramm Use Case Anfangsbedingu
 	\includegraphics[scale=.5]{Bilder/Video_abspielen.jpg}\\
 	\caption{Aktivitätsdiagramm Use Case Video abspielen}
 	\label{Aktivitätsdiagramm Use Case Video abspielen}
-\end{figure}
-
-%Wärmeleitkoeffizienten eingeben
-\begin{figure}[H]
-	\centering
-	%\hspace{-1.75cm}
-	\includegraphics[scale=.5]{Bilder/Waermeleitkoeffizienten_eingeben.jpg}\\
-	\caption{Aktivitätsdiagramm Use Case Wärmeleitkoeffizienten eingeben}
-	\label{Aktivitätsdiagramm Use Case Wärmeleitkoeffizienten eingeben}
 \end{figure}
 
 %Wärmequellen eingeben
@@ -672,13 +721,13 @@ Die folgenden Abbildungen (Abb. \ref{Aktivitätsdiagramm Use Case Anfangsbedingu
 \subsubsection*{Funktionale Anforderungen}
 
 \begin{enumerate}
-	\item Der Benutzer kann mit linken Mausklicks Gebiete der Wärmeleitkoeffizienten eingeben und deren Werte per Tastatur festlegen.
+	\item Der Benutzer kann mit linken Mausklicks Gebiete der Temperaturleitkoeffizienten eingeben und deren Werte per Tastatur festlegen.
 	\item Der Benutzer kann mit linken Mausklicks Wärmequellen eingeben und deren Werte per Tastatur festlegen.
-	\item Um das Problem zu spezifizieren,kann der Benutzer Funktionen für die Anfangs- und Randbedingungen vorgeben.
-	\item Die Diskretisierungsparameter (Stützstellenzahlen der Orts- beziehungsweise Zeitdiskretisierungen sowie den Endzeitpunkt der Simulation) \& Simulationsparameter (Integrationsverfahren) können durch den Benutzer festgelegt werden.
+	\item Um das Problem zu spezifizieren, kann der Benutzer die Anfangs- und Randbedingungen vorgeben.
+	\item Die Diskretisierungsparameter (Stützstellenzahlen der Orts- beziehungsweise Zeitdiskretisierungen sowie den Endzeitpunkt der Simulation) \& Simulationsparameter (Integrationsverfahren, LGS-Löser) können durch den Benutzer festgelegt werden.
 	\item Die Simulation kann per Knopfdruck durch den Benutzer gestartet werden.
 	\item Der Benutzer kann sich die zeitliche Entwicklung der Temperaturverteilung als Video oder einen Zustand als Standbild anzeigen lassen.
-	\item Die Software kann durch den Benutzer per Knopfdruck auf den Ausgangszustand zurückgesetzt werden.
+	%\item Die Software kann durch den Benutzer per Knopfdruck auf den Ausgangszustand zurückgesetzt werden.
 	\item Der Benutzer kann sich eine Hilfe zur Benutzung der Software anzeigen lassen.
 \end{enumerate}
 
@@ -690,9 +739,8 @@ Die folgenden Abbildungen (Abb. \ref{Aktivitätsdiagramm Use Case Anfangsbedingu
 	\item Einfache Erweiterbarkeit um weitere Simulationsmethoden
 	\item Lauffähig unter Windows und Linux (insbesondere auf dem RWTH Aachen Cluster)
 	\item Grafische Oberfläche skaliert korrekt bei Veränderung der Fenstergröße
-	\item Die Berechnung im Laufe der Simulation soll innerhalb von maximal 45 Sekunden abgeschlossen sein.
+	%\item Die Berechnung im Laufe der Simulation soll innerhalb von maximal 45 Sekunden abgeschlossen sein.
 \end{enumerate}
-
 
 \section{Begriffsanalyse}
 
@@ -700,11 +748,11 @@ Die folgenden Abbildungen (Abb. \ref{Aktivitätsdiagramm Use Case Anfangsbedingu
 \begin{itemize}
 	\item Platte $\rightarrow$ Gitter
 	\item Temperaturverteilung
-	\item Temperaturkoeffizient ($\rightarrow$ durch \emph{Area} implementiert)
+	\item Temperaturleitkoeffizient ($\rightarrow$ durch \emph{Area} implementiert)
 	\item Wärmequellen ($\rightarrow$ durch \emph{Area} implementiert)
-	\item \textbf{Function}
-	\item Startbedingung ($\rightarrow$ durch \emph{Function} implementiert)
-	\item Randbedingung ($\rightarrow$ durch \emph{Function} implementiert)
+	%\item \textbf{Function}
+	\item Startbedingung %($\rightarrow$ durch \emph{Function} implementiert)
+	\item Randbedingung %($\rightarrow$ durch \emph{Function} implementiert)
 	\item Endzeitpunkt, Stützstellenzahl (Ort- \& Zeitdiskretisierung)
 	\item Simulation
 	\item Problem + Ergebnis $\rightarrow$ \textbf{Model}
@@ -712,7 +760,7 @@ Die folgenden Abbildungen (Abb. \ref{Aktivitätsdiagramm Use Case Anfangsbedingu
 	\item Fehlermeldung ($\rightarrow$ durch GUI implementiert)
 	\item \textbf{Area}
 	\item \textbf{IntMethod} $\rightarrow$ \textbf{ImpEuler}, ...
-	\item \textbf{IterativeSolver} $\rightarrow$ \textbf{Jacobi}, ...
+	\item \textbf{Solver} $\rightarrow$ \textbf{Jacobi}, ...
 \end{itemize}
 
 \subsection{Begriffsnetz}

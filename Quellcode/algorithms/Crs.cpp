@@ -163,9 +163,9 @@ int algorithms::CRS::getIndex(int const i) const {
     return index[i];
 }
 
-int algorithms::CRS::getRowsNumElem(int const i) const {
-    return ptr[i];
-}
+//int algorithms::CRS::getRowsNumElem(int const i) const {
+//    return ptr[i];
+//}
 
 int algorithms::CRS::getSize() const {
     return size;
