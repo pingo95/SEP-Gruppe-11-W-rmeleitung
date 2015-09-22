@@ -1,5 +1,9 @@
 #include "Controller.h"
 
+#include <QFileDialog>
+#include <QFile>
+#include <QTextStream>
+
 presentation::Controller::Controller(QObject * parent)
     : QObject(parent), loopBack(false), model(NULL), ui(NULL),
       userInput(new QInputDialog), errorMessages(new QMessageBox)
@@ -51,16 +55,6 @@ void presentation::Controller::testPartialArea(model::SimulationSetup::AreaType 
     if(started[type])
         ui->drawPartialArea(partialAreaX,partialAreaY,type);
 }
-
-//// Diese Funktion überprüft, ob ein neues Wärmeleitkoeffizienten-Gebiet begonnen wurde
-//// und zeichnet diese im UI. (Für den Fall, dass das Modell eine Update-Benachrichtigung
-//// an das UI schickt (z.B. aufgrund einer abgeschlossen Simulation), während der
-//// Benutzer gerade ein neues Gebiet erstellt)
-//void presentation::Controller::testPartialThermalDiffusivity()
-//{
-//    if(started[model::SimulationSetup::AreaThermalDiffusivity])
-//        ui->drawPartialThermalDiffusivity(partialAreaX,partialAreaY);
-//}
 
 // Dieser Slot verwaltet Mausklicks auf die Fläche zum Erstellen neuer
 // Gebiete für Wärmequellen
@@ -203,6 +197,46 @@ void presentation::Controller::discardAreaSlot(model::SimulationSetup::AreaType 
     }
 }
 
+void presentation::Controller::loadObservationsSlot()
+{
+    if(!model->isWorking())
+    {
+        QString filename = QFileDialog::getOpenFileName(ui,"Datei auswählen",
+                                                        "..","Text files (*.txt)");
+        if(filename.isEmpty())
+            return;
+        QFile file(filename);
+        if (file.open(QFile::ReadOnly | QFile::Truncate)) {
+            QTextStream in(&file);
+            long int obsCount = 0;
+            while(!in.atEnd())
+            {
+                double tmp;
+                in >> tmp;
+                ++obsCount;
+            }
+            long n = sqrt(obsCount);
+            if(n*n == obsCount)
+            {
+                model->readObservations(filename,obsCount);
+                return;
+            }
+            else
+            {
+                //TODO: anfrage an user ob ignorieren oder nicht
+            }
+        }
+    }
+    else
+    {
+        // Fehlermeldung ausgeben:
+        errorMessages->setText("Es wird gerade eine Simulation oder Optimierung "
+                               "durchgeführt. Bitte versuchen Sie es später erneut.");
+        errorMessages->setDetailedText("");
+        errorMessages->exec();
+    }
+}
+
 // Dieser Slot updatet den Wert für den Rand side, falls der neue gültig ist
 void presentation::Controller::newIBVValueSlot(double newValue, model::SimulationSetup::IBV ibv)
 {
@@ -324,7 +358,7 @@ void presentation::Controller::playVideoSlot()
     // Überprüfen, ob schon simuliert wurde
     if(model->getSimulated())
     {
-        if(model->getSimulating())
+        if(model->isWorking())
         {
             // Fehlermeldung ausgeben:
             errorMessages->setText("Es wird zurzeit simuliert, "
@@ -414,7 +448,7 @@ void presentation::Controller::reorderAreaSlot(int pos, int dir,
 // möglich falls gerade nicht simuliert wird
 void presentation::Controller::selectIntMethodSlot(QString newIntMethod)
 {
-    if(model->getSimulating())
+    if(model->isWorking())
     {
         // Es wird gerade simuliert, UI muss den Wert zurücksetzen
         ui->updateNotification();
@@ -437,7 +471,7 @@ void presentation::Controller::selectIntMethodSlot(QString newIntMethod)
 // möglich falls gerade nicht simuliert wird
 void presentation::Controller::selectSolverSlot(QString newSolver)
 {
-    if(model->getSimulating())
+    if(model->isWorking())
     {
         // Es wird gerade simuliert, UI muss den Wert zurücksetzen
         ui->updateNotification();
@@ -458,7 +492,7 @@ void presentation::Controller::selectSolverSlot(QString newSolver)
 // Dieser Slot startet die Simulation, falls diese nicht schon läuft
 void presentation::Controller::simulateSlot()
 {
-    if(model->getSimulating())
+    if(model->isWorking())
     {
         // Fehlermeldung ausgeben:
         errorMessages->setText("Es wird gerade eine Simulation durchgeführt,"

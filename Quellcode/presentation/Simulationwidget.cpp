@@ -23,7 +23,7 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     inputT = new QDoubleSpinBox(this);
     inputT->setDecimals(3);
     inputT->setMinimum(0);
-    inputT->setMaximum(1000);
+    inputT->setMaximum(3600);
     inputT->setSuffix("s");
     inputT->setKeyboardTracking(false);
 
@@ -150,7 +150,7 @@ void presentation::SimulationWidget::update()
 
     inputN->setValue(model->getSimulationSetup()->getN());
 
-    if(model->getSimulating())
+    if(model->isWorking())
     {
         topLabel->setText("Es wird zur Zeit simuliert.");
         simulateButton->setEnabled(false);
@@ -171,7 +171,7 @@ void presentation::SimulationWidget::appendToSimulationLog(QString text)
     simulationLog->append(text);
 }
 
-void presentation::SimulationWidget::nextSimulationStage(QString stage, int maximum)
+void presentation::SimulationWidget::nextStage(QString stage, int maximum)
 {
     progressBar->setMaximum(maximum);
     progressBar->setMinimum(0);
@@ -179,7 +179,7 @@ void presentation::SimulationWidget::nextSimulationStage(QString stage, int maxi
     labelProgressBar->setText(stage);
 }
 
-void presentation::SimulationWidget::updateSimulationProgress(int step)
+void presentation::SimulationWidget::updateProgress(int step)
 {
     progressBar->setValue(step);
 }

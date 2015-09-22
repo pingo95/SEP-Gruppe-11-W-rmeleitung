@@ -74,12 +74,14 @@ presentation::VisualizationWidget::VisualizationWidget(QWidget *parent)
     plate->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, group);
     colorScale->setMarginGroup(QCP::msBottom | QCP::msTop, group);
     colorScale->setGradient(QCPColorGradient::gpThermal);
-    colorScale->setDataRange(QCPRange(model::SimulationSetup::MinTemperature,model::SimulationSetup::MaxTemperature));
+    colorScale->setDataRange(QCPRange(model::SimulationSetup::MinTemperature,
+                                      model::SimulationSetup::MaxTemperature));
     colorScale->axis()->setAutoTicks(false);
     colorScale->axis()->setAutoTickLabels(false);
     colorScale->axis()->setTickVector(ticksColorBar);
     colorScale->axis()->setTickVectorLabels(tickLabelsColorBar);
-    colorScale->axis()->setRange(QCPRange(model::SimulationSetup::MinTemperature,model::SimulationSetup::MaxTemperature));
+    colorScale->axis()->setRange(QCPRange(model::SimulationSetup::MinTemperature,
+                                          model::SimulationSetup::MaxTemperature));
 
     // Color Map
     colorMap = new QCPColorMap(plate->yAxis,plate->xAxis);
@@ -135,7 +137,7 @@ void presentation::VisualizationWidget::update()
 {
     if (model->getSimulated())
     {
-        if(model->getSimulating())
+        if(model->isWorking())
         {
             slider->setEnabled(false);
             playButton->setEnabled(false);

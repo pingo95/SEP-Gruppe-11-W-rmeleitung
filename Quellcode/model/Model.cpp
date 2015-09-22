@@ -1,15 +1,21 @@
 #include "Model.h"
 #include "../presentation/Ui.h"
 
-model::Model::Model() : QWidget(NULL), blocking(false), simSetup(new SimulationSetup()), simulated(false),
-    simulating(false),  simWorker(new SimulationWorker()), ui(NULL), workerThread(this)
+model::Model::Model() : QWidget(NULL), blocking(false), dataRead(false), optimized(false),
+    simSetup(new SimulationSetup()), simulated(false), working(false),
+    simWorker(new SimulationWorker()), ui(NULL), workerThread(this)
 {
     simWorker->moveToThread(&workerThread);
     simWorker->initializeMaps();
+
     connect(&workerThread, &QThread::finished, simWorker, &QObject::deleteLater);
+    connect(this,SIGNAL(startReadingData(QString,long)),simWorker,SLOT(startReadingData(QString,long)));
     connect(this,SIGNAL(startSimulation(SimulationSetup*)),simWorker,SLOT(startSimulationSlot(SimulationSetup*)));
-    connect(simWorker,SIGNAL(startedSimulation()),this,SLOT(simulationStartedSlot()));
-    connect(simWorker,SIGNAL(finishedSimulation()),this,SLOT(simulationFinishedSlot()));
+    connect(simWorker,SIGNAL(startedWork()),this,SLOT(startedWorkSlot()));
+    connect(simWorker,SIGNAL(finishedOptimization()),this,SLOT(finishedOptimizationSlot()));
+    connect(simWorker,SIGNAL(finishedReadingData()),this,SLOT(finishedReadingDataSlot()));
+    connect(simWorker,SIGNAL(finishedSimulation()),this,SLOT(finishedSimulationSlot()));
+
     workerThread.start();
 }
 
@@ -47,24 +53,51 @@ void model::Model::deleteArea(const int pos, SimulationSetup::AreaType type)
     ui->updateNotification();
 }
 
+bool model::Model::getDataRead() const
+{
+    return dataRead;
+}
+
+double** const & model::Model::getObservations() const
+{
+    if(!working && dataRead)
+        return simWorker->getObservations();
+    return NULL;
+}
+
+int model::Model::getObservationsDim() const
+{
+   if(!working && dataRead)
+       return simWorker->getObservationsDim();
+   return 1;
+}
+
 double*** const & model::Model::getResult() const
 {
-    return simWorker->getResult();
+    if(!working && simulated)
+        return simWorker->getResult();
+    return NULL;
 }
 
 long model::Model::getResultM() const
 {
-    return simWorker->getM();
+    if(!working && simulated)
+        return simWorker->getM();
+    return 1;
 }
 
 long model::Model::getResultN() const
 {
-    return simWorker->getN();
+    if(!working && simulated)
+        return simWorker->getN();
+    return 3;
 }
 
 double model::Model::getResultT() const
 {
-    return simWorker->getT();
+    if(!working && simulated)
+        return simWorker->getT();
+    return 60.0;
 }
 
 QList<QString> const model::Model::getIntMethodsNames() const
@@ -82,14 +115,22 @@ bool model::Model::getSimulated() const
     return simulated;
 }
 
-bool model::Model::getSimulating() const
+bool model::Model::isWorking() const
 {
-    return simulating;
+    return working;
 }
 
 model::SimulationSetup * const & model::Model::getSimulationSetup() const
 {
     return simSetup;
+}
+
+void model::Model::readObservations(QString const filename, long const obsCount)
+{
+    blocking = true;
+    emit startReadingData(filename,obsCount);
+    working = true;
+    ui->updateNotification();
 }
 
 model::Area * model::Model::removeLastArea(SimulationSetup::AreaType type)
@@ -177,8 +218,8 @@ void model::Model::setUI(presentation::UI *ui)
 {
     this->ui = ui;
 
-    connect(simWorker,SIGNAL(beginningSimulationStage(QString,int)),ui,SLOT(nextSimulationStageSlot(QString,int)));
-    connect(simWorker,SIGNAL(finishedStep(int)),ui,SLOT(updateSimulationProgressSlot(int)));
+    connect(simWorker,SIGNAL(beginningStage(QString,int,bool)),ui,SLOT(nextStageSlot(QString,int,bool)));
+    connect(simWorker,SIGNAL(finishedStep(int,bool)),ui,SLOT(updateProgressSlot(int,bool)));
     connect(simWorker,SIGNAL(simulationLogUpdate(QString)),ui,SLOT(appendToSimulationLogSlot(QString)));
 }
 
@@ -187,7 +228,7 @@ void model::Model::simulate()
 {
     blocking = true;
     emit startSimulation(simSetup);
-    simulating = true;
+    working = true;
     ui->updateNotification();
 }
 
@@ -199,14 +240,29 @@ void model::Model::updateAreaValue(int const pos, double const value,
     ui->updateNotification();
 }
 
-void model::Model::simulationStartedSlot()
+void model::Model::startedWorkSlot()
 {
     blocking = false;
+    working = true;
 }
 
-void model::Model::simulationFinishedSlot()
+void model::Model::finishedOptimizationSlot()
+{
+    optimized = true;
+    working = false;
+    ui->updateNotification();
+}
+
+void model::Model::finishedReadingDataSlot()
+{
+    dataRead = true;
+    working = false;
+    ui->updateNotification();
+}
+
+void model::Model::finishedSimulationSlot()
 {
     simulated = true;
-    simulating = false;
+    working = false;
     ui->updateNotification();
 }

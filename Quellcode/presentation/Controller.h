@@ -32,6 +32,7 @@ namespace presentation {
         void clearAreasSlot(model::SimulationSetup::AreaType type);
         void deleteAreaSlot(int pos, model::SimulationSetup::AreaType type);
         void discardAreaSlot(model::SimulationSetup::AreaType type);
+        void loadObservationsSlot();
         void newIBVValueSlot(double newValue, model::SimulationSetup::IBV ibv);
         void newMSlot(int newM);
         void newMaxErrorSlot(double newMaxErrorSlot);

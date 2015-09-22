@@ -9,7 +9,7 @@ double const model::SimulationSetup::MinTemperature = 0;
 model::SimulationSetup::SimulationSetup() : heatSourcesBackgroundValue(0),
     heatSourcesCount(0), m(1), n(3),
     selectedIntMethod("Impliziter Euler"),  selectedSolver("Jacobi"),
-    solverMaxError(1e-10),solverMaxIt(1000), T(1.0),
+    solverMaxError(1e-10),solverMaxIt(1000), T(60.0),
     thermalDiffusivitiesBackgroundValue(1e-4), thermalDiffusivitiesCount(0)
 {
     iBVs[SimulationSetup::InitialValue] = 300;
@@ -86,12 +86,12 @@ void model::SimulationSetup::deleteArea(const int pos, SimulationSetup::AreaType
 {
     if(type == SimulationSetup::AreaHeatSource)
     {
-        heatSources.removeAt(pos);
+        delete heatSources.takeAt(pos);
         --heatSourcesCount;
     }
     else
     {
-        thermalDiffusivities.removeAt(pos);
+        delete thermalDiffusivities.takeAt(pos);
         --thermalDiffusivitiesCount;
     }
 }

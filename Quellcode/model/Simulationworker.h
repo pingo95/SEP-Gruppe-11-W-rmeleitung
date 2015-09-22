@@ -20,20 +20,25 @@ namespace model {
 
         QList<QString> const getIntMethodNames() const;
         QList<QString> const getSolverNames() const;
-        double*** const & getResult() const;
         long getM() const;
         long getN() const;
+        double ** const &getObservations() const;
+        int getObservationsDim() const;
+        double*** const & getResult() const;
         double getT() const;
         void initializeMaps();
 
     signals:
-        void beginningSimulationStage(QString stage, int stepCount);
+        void beginningStage(QString stage, int stepCount, bool simulation = true);
+        void finishedOptimization();
+        void finishedReadingData();
         void finishedSimulation();
-        void finishedStep(int step);
-        void startedSimulation();
+        void finishedStep(int step, bool simulation = true);
+        void startedWork();
         void simulationLogUpdate(QString message);
 
     public slots:
+        void startReadingData(QString const filename, long const obsCount);
         void startSimulationSlot(SimulationSetup * simSetupTemplate);
 
 //    private:
@@ -41,15 +46,20 @@ namespace model {
     // Attribute:
     private:
         bool busy;
-        double * consecutiveTempArray;
+        double * consecutiveArrayObservations;
+        double * consecutiveArraySimulation;
+        bool dataRead;
         QMap<QString,algorithms::IntMethod*> intMethods;
-        QMap<QString,algorithms::Solver*> solvers;
         long m;
         bool mapsInitialized;
         long n;
+        long obsDim;
+        double ** observations;
         double *** result;
         bool simulated;
+        QMap<QString,algorithms::Solver*> solvers;
         double T;
+
     };
 
 }

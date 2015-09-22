@@ -25,6 +25,9 @@ namespace model {
         void addNewArea(Area * area, SimulationSetup::AreaType type);
         void deleteArea(int const pos, SimulationSetup::AreaType type);
 
+        bool getDataRead() const;
+        double** const & getObservations() const;
+        int getObservationsDim() const;
         double*** const & getResult() const;
         long getResultM() const;
         long getResultN() const;
@@ -34,9 +37,11 @@ namespace model {
         QList<QString> const getSolverNames() const;
 
         bool getSimulated() const;
-        bool getSimulating() const;
+        bool isWorking() const;
 
         SimulationSetup * const & getSimulationSetup() const;
+
+        void readObservations(QString const filename, long const obsCount);
 
         Area * removeLastArea(SimulationSetup::AreaType type);
         void reorderArea(int const pos, int const dir,
@@ -58,18 +63,23 @@ namespace model {
         void updateAreaValue(int const pos, double const value, SimulationSetup::AreaType type);
 
     signals:
+        void startReadingData(QString const filename, long const obsCount);
         void startSimulation(SimulationSetup * simSetup);
 
     private slots:
-        void simulationStartedSlot();
-        void simulationFinishedSlot();
+        void startedWorkSlot();
+        void finishedOptimizationSlot();
+        void finishedReadingDataSlot();
+        void finishedSimulationSlot();
 
     //Attribute:
     private:
         bool blocking;
+        bool dataRead;
+        bool optimized;
         SimulationSetup * const simSetup;
         bool simulated;
-        bool simulating;
+        bool working;
         SimulationWorker * simWorker;
         presentation::UI * ui;
         QThread workerThread;

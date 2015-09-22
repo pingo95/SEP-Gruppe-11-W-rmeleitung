@@ -21,7 +21,7 @@ model::Area::Area(const Area & rhs) : id(++idCounters[rhs.type]), type(rhs.type)
 }
 
 model::Area::~Area(){
-    --idCounters[type];
+//    --idCounters[type];
 }
 
 // Testet, ob die Punkte in den Vektoren ein gültiges Gebiet ergeben würden

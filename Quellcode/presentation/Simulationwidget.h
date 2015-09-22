@@ -33,8 +33,8 @@ class Controller;
 
         // Slots in spe
         void appendToSimulationLog(QString text);
-        void nextSimulationStage(QString stage, int maximum);
-        void updateSimulationProgress(int step);
+        void nextStage(QString stage, int maximum);
+        void updateProgress(int step);
 
     public slots:
 

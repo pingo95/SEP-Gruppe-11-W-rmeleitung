@@ -1,6 +1,9 @@
 #ifndef OPTIMIZATIONWIDGET_H
 #define OPTIMIZATIONWIDGET_H
+
 #include <QTabWidget>
+
+#include "../model/Model.h"
 
 #include <QCheckBox>
 #include "Qcustomplot.h"
@@ -13,88 +16,105 @@
 #include <QSpinBox>
 #include <QTableWidget>
 #include <QVBoxLayout>
+#include <QLineEdit>
 
 
 namespace presentation {
+class Controller;
 
     class OptimizationWidget : public QTabWidget
     {
         Q_OBJECT
+
+    //Funktionen:
     public:
         explicit OptimizationWidget(QWidget *parent = 0);
+//        ~OptimizationWidget();
 
-        double const MaxTemperature;
+        void setController(Controller * controller);
+        void setModel(model::Model * model);
+
+        void update();
+
+        // Slots in spe
+        void nextStage(QString stage, int maximum);
+        void updateProgress(int step);
 
     signals:
+        void subTabChange(int targetTab);
 
     public slots:
 
+    private slots:
+       void transformTabIDSlot(int targetTab);
+
     private:
         explicit OptimizationWidget();
-        //~OptimizationWidget();
 
     //Attribute
     private:
-        //Widgets
-        QWidget * widgetSolution;
-        QWidget * widgetConfiguration;
+        enum SubTab{
+            TabConfiguration = 0,
+            TabSolution = 1
+        };
 
-        //Layouts
-        QVBoxLayout * layoutSolutionTab;
-        QGridLayout * layoutConfigurationTab;
-        QGridLayout * gridBoxUserSettings;
-        QGridLayout * gridBoxSettings;
+        int activeSubTab;
+        Controller * controller;
+        model::Model * model;
 
-        //Group Boxen
-        QGroupBox * groupBoxUserSettings;
-        QGroupBox * groupBoxSettings;
+        // Config Tab
+        QWidget * configurationTab;
 
-        //Buttons
-        QPushButton * buttonLoad;
-        QPushButton * buttonOptimization;
+        QGridLayout * configurationTabLayout;
 
-        //Labels
-        QLabel * labelData;
-        QLabel * labelSolution;
-        QLabel * labelConfiguration;
-        QLabel * labelSpinBoxN;
+        QLabel * topLabelConfiguration;
+
+        QPushButton * loadDataButton;
+        QPushButton * startOptimizationButton;
+
+        QGroupBox * boxOverride;
+        QGridLayout * boxOverrideLayout;
+        QCheckBox * overrideN;
+        QLabel * labelN;
+        QSpinBox * inputN;
+        QCheckBox * overrideHeatSources;
+        QCheckBox * overrideThermalDiffusivities;
         QLabel * labelInitialValue;
+        QDoubleSpinBox * inputInitialValue;
+
+        QGroupBox * boxSettings;
+        QGridLayout * boxSettingsLayout;
         QLabel * labelSettings;
+        QLabel * labelIntMethod;
+        QLineEdit * displayIntMethod;
         QLabel * labelM;
+        QSpinBox * displayM;
         QLabel * labelT;
-        QLabel * labelEpsilon;
+        QDoubleSpinBox * displayT;
+        QLabel * labelSolver;
+        QLineEdit * displaySolver;
+        QLabel * labelMaxError;
+        QDoubleSpinBox * displayMaxError;
         QLabel * labelMaxIt;
-        QLabel * labelProgressBar;
+        QSpinBox * displayMaxIt;
 
-        //Table
-        QTableWidget * tableWidgetData;
-        QTableWidget * tableWidgetSolution;
-
-        //CheckBox
-        QCheckBox * checkBoxN;
-        QCheckBox * checkBoxHeatSources;
-        QCheckBox * checkBoxThermalDiffusivities;
-
-        //SpinBoxes
-        QSpinBox * spinBoxN;
-        QSpinBox * spinBoxM;
-        QSpinBox * spinBoxMaxIt;
-
-        //doubleSpinBoxes
-        QDoubleSpinBox * doubleSpinBoxInitialValue;
-        QDoubleSpinBox * doubleSpinBoxEpsilon;
-        QDoubleSpinBox * doubleSpinBoxT;
-
-        //Platte
-        QCustomPlot * plateOptimization;
+        QCustomPlot * plate;
         QCPColorMap * colorMap;
         QCPColorScale * colorScale;
 
-        //Progressbar
+        QLabel * labelData;
+        QTableWidget * dataTable;
+
+        QLabel * labelProgressBar;
         QProgressBar * progressBar;
 
-        //SpacerItem
         QSpacerItem * spacerItem;
+
+        // Solution Tab
+        QWidget * solutionTab;
+        QVBoxLayout * solutionTabLayout;
+        QLabel * topLabelSolution;
+        QTableWidget * solutionTable;
     };
 
 }

@@ -60,8 +60,8 @@ class Controller;
     public slots:
         // Weiterleitungen
         void appendToSimulationLogSlot(QString text);
-        void nextSimulationStageSlot(QString stage, int maximum);
-        void updateSimulationProgressSlot(int step);
+        void nextStageSlot(QString stage, int maximum, bool simulation);
+        void updateProgressSlot(int step, bool simulation);
 
     private slots:
         void transformTabIDSlot(int targetTab);

@@ -4,50 +4,16 @@
 #include "../algorithms/Jacobi.h"
 #include "../algorithms/Gaussseidel.h"
 #include "../algorithms/LU.h"
+#include <QFile>
+#include <QTextStream>
 #include <QTime>
 
 model::SimulationWorker::SimulationWorker(QObject * parent): QObject(parent),
-    busy(false), consecutiveTempArray(NULL), m(1), mapsInitialized(false), n(3),
-    result(NULL), simulated(false), T(1.)
+    busy(false), consecutiveArrayObservations(NULL),
+    consecutiveArraySimulation(NULL), dataRead(false), m(1),
+    mapsInitialized(false), n(3), obsDim(0), result(NULL), simulated(false), T(1.)
 {
 
-}
-
-QList<QString> const model::SimulationWorker::getIntMethodNames() const
-{
-    assert(mapsInitialized);
-    return intMethods.keys();
-}
-
-QList<QString> const model::SimulationWorker::getSolverNames() const
-{
-    assert(mapsInitialized);
-    return solvers.keys();
-}
-
-
-double *** const & model::SimulationWorker::getResult() const
-{
-    if(!busy && simulated) return result;
-    return NULL;
-}
-
-long model::SimulationWorker::getM() const
-{
-    if(!busy && simulated) return m;
-    return 0;
-}
-
-long model::SimulationWorker::getN() const
-{
-    if(!busy && simulated) return n;
-    return 0;
-}
-
-double model::SimulationWorker::getT() const
-{
-    if(!busy && simulated) return T;
-    return 0.;
 }
 
 model::SimulationWorker::~SimulationWorker()
@@ -62,11 +28,64 @@ model::SimulationWorker::~SimulationWorker()
         delete (*it3);
     if(simulated)
     {
-        delete consecutiveTempArray;
+        delete consecutiveArraySimulation;
         for(long i = 0; i < m+1; ++i)
             delete result[i];
         delete result;
     }
+    if(dataRead)
+    {
+        delete consecutiveArrayObservations;
+        delete observations;
+    }
+}
+
+QList<QString> const model::SimulationWorker::getIntMethodNames() const
+{
+    assert(mapsInitialized);
+    return intMethods.keys();
+}
+
+QList<QString> const model::SimulationWorker::getSolverNames() const
+{
+    assert(mapsInitialized);
+    return solvers.keys();
+}
+
+long model::SimulationWorker::getM() const
+{
+    assert(!busy && simulated);
+    return m;
+}
+
+long model::SimulationWorker::getN() const
+{
+    assert(!busy && simulated);
+    return n;
+}
+
+double** const & model::SimulationWorker::getObservations() const
+{
+    assert(!busy && dataRead) ;
+    return observations;
+}
+
+int model::SimulationWorker::getObservationsDim() const
+{
+    assert(!busy && dataRead);
+    return obsDim;
+}
+
+double *** const & model::SimulationWorker::getResult() const
+{
+    assert(!busy && simulated);
+    return result;
+}
+
+double model::SimulationWorker::getT() const
+{
+    assert(!busy && simulated);
+    return T;
 }
 
 void model::SimulationWorker::initializeMaps()
@@ -83,6 +102,56 @@ void model::SimulationWorker::initializeMaps()
     mapsInitialized = true;
 }
 
+void model::SimulationWorker::startReadingData(QString const filename, long const obsCount)
+{
+    if(busy) return;
+    busy = true;
+
+    emit startedWork();
+    emit beginningStage("Messungen einlesen:",obsCount,false);
+    QFile file(filename);
+    if (file.open(QFile::ReadOnly | QFile::Truncate)) {
+        QTextStream in(&file);
+        obsDim = sqrt(obsCount);
+        if(obsDim*obsDim != obsCount)
+            obsDim += 1;
+        long count = 0;
+
+        //alte Werte löschen:
+        if(dataRead)
+        {
+            delete consecutiveArrayObservations;
+            delete observations;
+        }
+        consecutiveArrayObservations = new double[obsDim*obsDim];
+        observations = new double*[obsDim];
+        for(long i = 0; i < obsDim; ++i)
+        {
+            observations[i] = &(consecutiveArrayObservations[i*obsDim]);
+            for(long j= 0; j < obsDim; ++j)
+                observations[i][j] = 0.0;
+        }
+        for(long i = 0; i < obsDim; ++i)
+        {
+            for(long j = 0; j < obsDim; ++j)
+            {
+                if(count == obsCount)
+                    break;
+                in >> observations[i][j];
+                ++count;
+                emit finishedStep(i*obsDim+j+1,false);
+            }
+            if(count == obsCount)
+                break;
+        }
+    }
+
+    dataRead = true;
+    busy = false;
+    emit finishedReadingData();
+}
+
+
 void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemplate)
 {
     if(!mapsInitialized || busy) return;
@@ -91,12 +160,12 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
     timer.start();
     SimulationSetup  simSetup(*simSetupTemplate);
 
-    emit startedSimulation();
+    emit startedWork();
 
     //altes ergebniss löschen
     if(simulated)
     {
-        delete consecutiveTempArray;
+        delete consecutiveArraySimulation;
         for(long i = 0; i < m+1; ++i)
             delete result[i];
         delete result;
@@ -117,7 +186,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
     emit simulationLogUpdate(message);
 
     // konsekutives Anlegen
-    consecutiveTempArray = new double [(m+1)*n*n];
+    consecutiveArraySimulation = new double [(m+1)*n*n];
     // umwandeln in die Ergebnismatrix
     result = new double**[m+1];
     for(long i = 0; i < m+1; ++i)
@@ -125,13 +194,13 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
         result[i] = new double *[n];
 
         // Erste Zeilen mit unterem Randwert
-        result[i][0] = &(consecutiveTempArray[i*n*n]);
+        result[i][0] = &(consecutiveArraySimulation[i*n*n]);
         for(long k = 0; k < n; ++k)
             result[i][0][k] = simSetup.getIBV(SimulationSetup::BottomBoundary);
 
         for(long j = 1; j < n-1; ++j)
         {
-            result[i][j] = &(consecutiveTempArray[i*n*n + j*n]);
+            result[i][j] = &(consecutiveArraySimulation[i*n*n + j*n]);
 
             // Erste und letzter Punkt mit linkem bzw rechtem Randwert
             result[i][j][0] = simSetup.getIBV(SimulationSetup::LeftBoundary);
@@ -142,7 +211,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
         }
 
         // Letzte Zeilen mit oberem Randwert
-        result[i][n-1] = &(consecutiveTempArray[i*n*n + (n-1)*n]);
+        result[i][n-1] = &(consecutiveArraySimulation[i*n*n + (n-1)*n]);
         for(long k = 0; k < n; ++k)
             result[i][n-1][k] = simSetup.getIBV(SimulationSetup::TopBoundary);
     }
@@ -155,7 +224,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
 
     // Berechnen welche Punkte von welchem Wärmeleitkoeffizienten-Gebiet
     // abgedeckt werden, dabei überschreiben neure Gebiete ältere
-    emit beginningSimulationStage("Wärmeleitkoeffizienten:",simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity));
+    emit beginningStage("Wärmeleitkoeffizienten:",simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity));
     if(simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity) > 0)
     {
         QList<Area*>::const_iterator it = simSetup.getAreas(SimulationSetup::AreaThermalDiffusivity).begin();
@@ -197,7 +266,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
 
     // Berechnen welche Punkte von welcher Wärmequelle abgedeckt werden,
     // zwischenspeichern als Indizes
-    emit beginningSimulationStage("Wärmequellen", simSetup.getAreaCount(SimulationSetup::AreaHeatSource));
+    emit beginningStage("Wärmequellen", simSetup.getAreaCount(SimulationSetup::AreaHeatSource));
     QList<QList<double> *> heatSourceIndices;
     if(simSetup.getAreaCount(SimulationSetup::AreaHeatSource) > 0)
     {
@@ -250,7 +319,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
     message = "Wärmequellen abgeschlossen\n\n Initialisieren der Integrationsmethode und des Lösers\n\n";
     emit simulationLogUpdate(message);
 
-    emit beginningSimulationStage("Zeitschritte berechnen:",m);
+    emit beginningStage("Zeitschritte berechnen:",m);
     // Intialisieren der Int-Methode
     selectedIntMethod->setUp(n,m,T,thermalDiffusivitiesGrid);
 
@@ -347,6 +416,6 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
     simulated = true;
 
     busy = false;
-    emit beginningSimulationStage("Simulation beendet",0);
+//    emit beginningStage("Simulation beendet",0);
     emit finishedSimulation();
 }

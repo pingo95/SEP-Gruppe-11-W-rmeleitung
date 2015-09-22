@@ -101,7 +101,7 @@ void presentation::UI::setController(Controller *controller)
     iBVsTab->setController(controller);
     simulationTab->setController(controller);
     visualizationTab->setController(controller);
-//    optimizationTab->setController(controller);
+    optimizationTab->setController(controller);
 }
 
 void presentation::UI::setModel(model::Model *model)
@@ -113,7 +113,7 @@ void presentation::UI::setModel(model::Model *model)
     iBVsTab->setModel(model);
     simulationTab->setModel(model);
     visualizationTab->setModel(model);
-//    optimizationTab->setModel(model);
+    optimizationTab->setModel(model);
 
     // Initialen Tab laden/updaten
     updateNotification();
@@ -130,7 +130,7 @@ void presentation::UI::updateNotification()
         iBVsTab->update();
         break;
     case TabParameterFitting:
-//        optimizationTab->update();
+        optimizationTab->update();
         break;
     case TabSimulating:
         simulationTab->update();
@@ -156,14 +156,20 @@ void presentation::UI::appendToSimulationLogSlot(QString text)
     simulationTab->appendToSimulationLog(text);
 }
 
-void presentation::UI::nextSimulationStageSlot(QString stage, int maximum)
+void presentation::UI::nextStageSlot(QString stage, int maximum, bool simulation)
 {
-    simulationTab->nextSimulationStage(stage,maximum);
+    if(simulation)
+        simulationTab->nextStage(stage,maximum);
+    else
+        optimizationTab->nextStage(stage,maximum);
 }
 
-void presentation::UI::updateSimulationProgressSlot(int step)
+void presentation::UI::updateProgressSlot(int step, bool simulation)
 {
-    simulationTab->updateSimulationProgress(step);
+    if(simulation)
+        simulationTab->updateProgress(step);
+    else
+        optimizationTab->updateProgress(step);
 }
 
 void presentation::UI::transformTabIDSlot(int targetTab)

@@ -1,226 +1,418 @@
 #include "Optimizationwidget.h"
 
+#include "Controller.h"
+
 
 presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
-    : QTabWidget(parent) , MaxTemperature(1000)
+    : QTabWidget(parent), activeSubTab(OptimizationWidget::TabConfiguration),
+      controller(NULL), model(NULL)
 {
-    widgetConfiguration = new QWidget(this);
-    widgetSolution = new QWidget(this);
+        //Tab Konfig
+    configurationTab = new QWidget(this);
+    this->addTab(configurationTab,"Konfiguration");
 
-    layoutConfigurationTab = new QGridLayout(widgetConfiguration);
-    layoutSolutionTab = new QVBoxLayout(widgetSolution);
+    topLabelConfiguration = new QLabel("Dies ist der Tab zur Optimierung der "
+                                       "Temperaturleitkoeffizienten.\nFür weitere "
+                                       "Informationen wechseln Sie bitte in den Hi"
+                                       "lfe-Tab.",configurationTab);
+    topLabelConfiguration->setWordWrap(true);
 
-    this->addTab(widgetConfiguration,"Konfiguration");
-    this->addTab(widgetSolution,"Ergebnis");
+    loadDataButton = new QPushButton("Laden",configurationTab);
+    startOptimizationButton = new QPushButton("Optimieren starten",configurationTab);
 
-    //Tab Konfig
-        //Labels
-    labelConfiguration = new QLabel("Information",widgetConfiguration);
-    labelSpinBoxN = new QLabel("neues N eingeben",widgetConfiguration);
-    labelSpinBoxN->setAlignment(Qt::AlignRight);
-    labelSpinBoxN->setEnabled(false);
-    labelInitialValue = new QLabel("Manueller Anfangswert",widgetConfiguration);
+        //Override-Box
+    overrideN = new QCheckBox("Überschreibe Anzahl Messwerte",configurationTab);
+
+    labelN = new QLabel("neues N eingeben",configurationTab);
+    labelN->setAlignment(Qt::AlignRight);
+    labelN->setEnabled(false);
+    inputN = new QSpinBox(configurationTab);
+    inputN->setMaximum(0);
+    inputN->setMaximum(800);
+    inputN->setEnabled(false);
+
+    overrideHeatSources = new QCheckBox("Nutze bereits vorhandene Wärmequellen "
+                                        "zur Simulation",configurationTab);
+
+    overrideThermalDiffusivities = new QCheckBox("Überschreibe bereits vorhandene "
+                                                 "Wärmeleitkoeffizienten zur Simu"
+                                                 "lation",configurationTab);
+    overrideThermalDiffusivities->setChecked(true);
+
+    labelInitialValue = new QLabel("Manueller Anfangswert",configurationTab);
     labelInitialValue->setAlignment(Qt::AlignRight);
-    labelInitialValue->setEnabled(false);
-    labelSettings = new QLabel("Simulationseinstellungen (Änderbar im Tab \"Simulation\")",widgetConfiguration);
-    labelM = new QLabel("M: ",widgetConfiguration);
-    labelT = new QLabel("T: ",widgetConfiguration);
-    labelEpsilon = new QLabel("Epsilon: ",widgetConfiguration);
-    labelMaxIt = new QLabel("Maximale Iterationsanzahl: ",widgetConfiguration);
-    labelData = new QLabel("Temperaturverteilung:",widgetConfiguration);
-    labelProgressBar = new QLabel("Fortschrittsbalken:",widgetConfiguration);
+//    labelInitialValue->setEnabled(false);
+    inputInitialValue = new QDoubleSpinBox(configurationTab);
+    inputInitialValue->setMinimum(model::SimulationSetup::AreaMinValue[
+                                  model::SimulationSetup::AreaThermalDiffusivity]*1e6);
+    inputInitialValue->setMaximum(model::SimulationSetup::AreaMaxValue[
+                                  model::SimulationSetup::AreaThermalDiffusivity]*1e6);
+    inputInitialValue->setDecimals(0);
+    inputInitialValue->setSuffix(" [1e-6 m²/s]");
+//    inputInitialValue->setEnabled(false);
 
-        //Buttons
-    buttonLoad = new QPushButton("Laden",widgetConfiguration);
-    buttonOptimization = new QPushButton("Optimieren starten",widgetConfiguration);
+    boxOverride = new QGroupBox(configurationTab);
+    boxOverrideLayout = new QGridLayout();
+    boxOverrideLayout->addWidget(overrideN,0,0,1,2);
+    boxOverrideLayout->addWidget(labelN,1,0);
+    boxOverrideLayout->addWidget(inputN,1,1);
+    boxOverrideLayout->addWidget(overrideHeatSources,2,0,1,2);
+    boxOverrideLayout->addWidget(overrideThermalDiffusivities,3,0,1,2);
+    boxOverrideLayout->addWidget(labelInitialValue,4,0);
+    boxOverrideLayout->addWidget(inputInitialValue,4,1);
+    boxOverride->setLayout(boxOverrideLayout);
 
-        //CheckBoxes
-    checkBoxN = new QCheckBox("Überschreibe Anzahl Messwerte",widgetConfiguration);
-    checkBoxHeatSources = new QCheckBox("Nutze bereits vorhandene Wärmequellen zur Simulation",widgetConfiguration);
-    checkBoxThermalDiffusivities = new QCheckBox("Überschreibe bereits vorhandene Wärmeleitkoeffizienten zur Simulation",widgetConfiguration);
+        //Settings-Box
+    labelSettings = new QLabel("Simulationseinstellungen (Änderbar im "
+                               "Tab \"Simulation\")",configurationTab);
 
-        //spinBoxes
-    spinBoxN = new QSpinBox(widgetConfiguration);
-    spinBoxN->setMaximum(0);
-    spinBoxN->setMaximum(800);
-    spinBoxN->setEnabled(false);
+    labelIntMethod = new QLabel("Integrationsmethode:",configurationTab);
+    displayIntMethod = new QLineEdit(configurationTab);
+    displayIntMethod->setReadOnly(true);
 
-    spinBoxM = new QSpinBox(widgetConfiguration);
-    spinBoxM->setMinimum(0);
-    spinBoxM->setMaximum(800);
-    spinBoxM->setReadOnly(true);
-    spinBoxM->setButtonSymbols(QAbstractSpinBox::NoButtons);
+    labelM = new QLabel("M:",configurationTab);
+    displayM = new QSpinBox(configurationTab);
+    displayM->setMinimum(0);
+    displayM->setMaximum(800);
+    displayM->setReadOnly(true);
+    displayM->setButtonSymbols(QAbstractSpinBox::NoButtons);
 
-    spinBoxMaxIt = new QSpinBox(widgetConfiguration);
-    spinBoxMaxIt->setMinimum(0);
-    spinBoxMaxIt->setMaximum(1000);
-    spinBoxMaxIt->setReadOnly(true);
-    spinBoxMaxIt->setButtonSymbols(QAbstractSpinBox::NoButtons);
+    labelT = new QLabel("T:",configurationTab);
+    displayT = new QDoubleSpinBox(configurationTab);
+    displayT->setDecimals(3);
+    displayT->setMinimum(0);
+    displayT->setMaximum(3600);
+    displayT->setSuffix("s");
+    displayT->setReadOnly(true);
+    displayT->setButtonSymbols(QAbstractSpinBox::NoButtons);
 
-    doubleSpinBoxInitialValue = new QDoubleSpinBox(widgetConfiguration);
-    doubleSpinBoxInitialValue->setMinimum(0);
-    doubleSpinBoxInitialValue->setMaximum(430);
-    doubleSpinBoxInitialValue->setEnabled(false);
+    labelSolver = new QLabel("Löser:",configurationTab);
+    displaySolver = new QLineEdit(configurationTab);
+    displaySolver->setReadOnly(true);
 
-    doubleSpinBoxEpsilon = new QDoubleSpinBox(widgetConfiguration);
-    doubleSpinBoxEpsilon->setDecimals(10);
-    doubleSpinBoxEpsilon->setMinimum(1e-10);
-    doubleSpinBoxEpsilon->setMaximum(1e-5);
-    doubleSpinBoxEpsilon->setReadOnly(true);
-    doubleSpinBoxEpsilon->setButtonSymbols(QAbstractSpinBox::NoButtons);
+    labelMaxError = new QLabel("Epsilon:",configurationTab);
+    displayMaxError = new QDoubleSpinBox(configurationTab);
+    displayMaxError->setDecimals(10);
+    displayMaxError->setMinimum(1e-10);
+    displayMaxError->setMaximum(1e-5);
+    displayMaxError->setReadOnly(true);
+    displayMaxError->setButtonSymbols(QAbstractSpinBox::NoButtons);
 
-    doubleSpinBoxT = new QDoubleSpinBox(widgetConfiguration);
-    doubleSpinBoxT->setDecimals(3);
-    doubleSpinBoxT->setMinimum(0);
-    doubleSpinBoxT->setMaximum(1000);
-    doubleSpinBoxT->setSuffix("s");
-    doubleSpinBoxT->setReadOnly(true);
-    doubleSpinBoxT->setButtonSymbols(QAbstractSpinBox::NoButtons);
+    labelMaxIt = new QLabel("Maximale Iterationsanzahl:",configurationTab);
+    displayMaxIt = new QSpinBox(configurationTab);
+    displayMaxIt->setMinimum(0);
+    displayMaxIt->setMaximum(1000);
+    displayMaxIt->setReadOnly(true);
+    displayMaxIt->setButtonSymbols(QAbstractSpinBox::NoButtons);
 
-        //Gruppen
-    gridBoxUserSettings = new QGridLayout();
-    gridBoxUserSettings->addWidget(checkBoxN,0,0,1,2);
-    gridBoxUserSettings->addWidget(labelSpinBoxN,1,0);
-    gridBoxUserSettings->addWidget(spinBoxN,1,1);
-    gridBoxUserSettings->addWidget(checkBoxHeatSources,2,0,1,2);
-    gridBoxUserSettings->addWidget(checkBoxThermalDiffusivities,3,0,1,2);
-    gridBoxUserSettings->addWidget(labelInitialValue,4,0);
-    gridBoxUserSettings->addWidget(doubleSpinBoxInitialValue,4,1);
-    groupBoxUserSettings = new QGroupBox(widgetConfiguration);
-    groupBoxUserSettings->setLayout(gridBoxUserSettings);
+    boxSettings = new QGroupBox(configurationTab);
+    boxSettingsLayout = new QGridLayout();
+    boxSettingsLayout->addWidget(labelSettings,0,0);
+    boxSettingsLayout->addWidget(labelIntMethod,1,0);
+    boxSettingsLayout->addWidget(displayIntMethod,1,1);
+    boxSettingsLayout->addWidget(labelM,2,0);
+    boxSettingsLayout->addWidget(displayM,2,1);
+    boxSettingsLayout->addWidget(labelT,3,0);
+    boxSettingsLayout->addWidget(displayT,3,1);
+    boxSettingsLayout->addWidget(labelSolver,4,0);
+    boxSettingsLayout->addWidget(displaySolver,4,1);
+    boxSettingsLayout->addWidget(labelMaxError,5,0);
+    boxSettingsLayout->addWidget(displayMaxError,5,1);
+    boxSettingsLayout->addWidget(labelMaxIt,6,0);
+    boxSettingsLayout->addWidget(displayMaxIt,6,1);
+    boxSettings->setLayout(boxSettingsLayout);
 
-    gridBoxSettings = new QGridLayout();
-    gridBoxSettings->addWidget(labelSettings,0,0);
-    gridBoxSettings->addWidget(labelM,1,0);
-    gridBoxSettings->addWidget(spinBoxM,1,1);
-    gridBoxSettings->addWidget(labelT,2,0);
-    gridBoxSettings->addWidget(doubleSpinBoxT,2,1);
-    gridBoxSettings->addWidget(labelEpsilon,3,0);
-    gridBoxSettings->addWidget(doubleSpinBoxEpsilon,3,1);
-    gridBoxSettings->addWidget(labelMaxIt,4,0);
-    gridBoxSettings->addWidget(spinBoxMaxIt,4,1);
-    groupBoxSettings = new QGroupBox(widgetConfiguration);
-    groupBoxSettings->setLayout(gridBoxSettings);
-
+        //Für Platte
     QVector<double> ticks,ticksColorBar;
-    QVector<QString> labels,labelsColorBar;
-    ticks << 0 << 0.1 << 0.2 << 0.3 << 0.4 << 0.5
-          << 0.6 << 0.7 << 0.8 << 0.9 << 1 ;
-    labels << QString::number(0)   << QString::number(0.1)
-           << QString::number(0.2) << QString::number(0.3)
-           << QString::number(0.4) << QString::number(0.5)
-           << QString::number(0.6) << QString::number(0.7)
-           << QString::number(0.8) << QString::number(0.9)
-           << QString::number(1);
-    ticksColorBar << 0 << MaxTemperature * 0.1 << MaxTemperature * 0.2
-                  << MaxTemperature * 0.3 << MaxTemperature * 0.4
-                  << MaxTemperature * 0.5 << MaxTemperature * 0.6
-                  << MaxTemperature * 0.7 << MaxTemperature * 0.8
-                  << MaxTemperature * 0.9 << MaxTemperature;
-    labelsColorBar << QString::number(0) << QString::number(MaxTemperature * 0.1)
-                   << QString::number(MaxTemperature * 0.2) << QString::number(MaxTemperature * 0.3)
-                   << QString::number(MaxTemperature * 0.4) << QString::number(MaxTemperature * 0.5)
-                   << QString::number(MaxTemperature * 0.6) << QString::number(MaxTemperature * 0.7)
-                   << QString::number(MaxTemperature * 0.8) << QString::number(MaxTemperature * 0.9)
-                   << QString::number(MaxTemperature);
+    QVector<QString> tickLabels,tickLabelsColorBar;
+    double valueSpan = model::SimulationSetup::AreaMaxValue[
+            model::SimulationSetup::AreaThermalDiffusivity] -
+            model::SimulationSetup::AreaMinValue[
+            model::SimulationSetup::AreaThermalDiffusivity];
+    for(int i = 0; i < 11; ++i)
+    {
+        ticks << (double) i / 10;
+        tickLabels << QString::number(ticks[i]);
+
+        ticksColorBar << round((valueSpan * ticks[i] +
+                                model::SimulationSetup::AreaMinValue[
+                                model::SimulationSetup::AreaThermalDiffusivity])*1e6);
+        tickLabelsColorBar << QString::number(ticksColorBar[i]);
+    }
 
         //Platte
-    plateOptimization = new QCustomPlot(widgetConfiguration,false);
+    plate = new QCustomPlot(configurationTab,false);
+    plate->setMinimumWidth(300);
+    plate->setMinimumHeight(300);
             //Platte xAchse unten
-    plateOptimization->xAxis->setAutoTicks(false);
-    plateOptimization->xAxis->setAutoTickLabels(false);
-    plateOptimization->xAxis->setTickVector(ticks);
-    plateOptimization->xAxis->setTickVectorLabels(labels);
-    plateOptimization->xAxis->setRange(0,1);
-    plateOptimization->xAxis->grid()->setSubGridVisible(true);
+    plate->xAxis->setAutoTicks(false);
+    plate->xAxis->setAutoTickLabels(false);
+    plate->xAxis->setTickVector(ticks);
+    plate->xAxis->setTickVectorLabels(tickLabels);
+    plate->xAxis->setRange(0,1);
+    plate->xAxis->grid()->setSubGridVisible(true);
             //Platte yAchse links
-    plateOptimization->yAxis->setAutoTicks(false);
-    plateOptimization->yAxis->setAutoTickLabels(false);
-    plateOptimization->yAxis->setTickVector(ticks);
-    plateOptimization->yAxis->setTickVectorLabels(labels);
-    plateOptimization->yAxis->setRange(0,1);
-    plateOptimization->yAxis->grid()->setSubGridVisible(true);
+    plate->yAxis->setAutoTicks(false);
+    plate->yAxis->setAutoTickLabels(false);
+    plate->yAxis->setTickVector(ticks);
+    plate->yAxis->setTickVectorLabels(tickLabels);
+    plate->yAxis->setRange(0,1);
+    plate->yAxis->grid()->setSubGridVisible(true);
             //Platte xAchse oben
-    plateOptimization->xAxis2->setVisible(true);
-    plateOptimization->xAxis2->setAutoTicks(false);
-    plateOptimization->xAxis2->setAutoTickLabels(false);
-    plateOptimization->xAxis2->setTickVector(ticks);
-    plateOptimization->xAxis2->setTickVectorLabels(labels);
-    plateOptimization->xAxis2->setRange(0,1);
-    plateOptimization->xAxis2->grid()->setSubGridVisible(true);
+    plate->xAxis2->setVisible(true);
+    plate->xAxis2->setAutoTicks(false);
+    plate->xAxis2->setAutoTickLabels(false);
+    plate->xAxis2->setTickVector(ticks);
+    plate->xAxis2->setTickVectorLabels(tickLabels);
+    plate->xAxis2->setRange(0,1);
+    plate->xAxis2->grid()->setSubGridVisible(true);
             //Platte yAchse rechts
-    plateOptimization->yAxis2->setVisible(true);
-    plateOptimization->yAxis2->setAutoTicks(false);
-    plateOptimization->yAxis2->setAutoTickLabels(false);
-    plateOptimization->yAxis2->setTickVector(ticks);
-    plateOptimization->yAxis2->setTickVectorLabels(labels);
-    plateOptimization->yAxis2->setRange(0,1);
-    plateOptimization->yAxis2->grid()->setSubGridVisible(true);
+    plate->yAxis2->setVisible(true);
+    plate->yAxis2->setAutoTicks(false);
+    plate->yAxis2->setAutoTickLabels(false);
+    plate->yAxis2->setTickVector(ticks);
+    plate->yAxis2->setTickVectorLabels(tickLabels);
+    plate->yAxis2->setRange(0,1);
+    plate->yAxis2->grid()->setSubGridVisible(true);
 
             //ColorScale
-    colorScale = new QCPColorScale(plateOptimization);
-    plateOptimization->plotLayout()->addElement(0,1,colorScale);
-    colorScale->setLabel("Christian stinkt");
+    colorScale = new QCPColorScale(plate);
+    plate->plotLayout()->addElement(0,1,colorScale);
+    colorScale->setLabel("Temperaturleitkoeffizienten\n[1e-6 m²/s]");
 
-    QCPMarginGroup * group = new QCPMarginGroup(plateOptimization);
-    plateOptimization->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, group);
+    QCPMarginGroup * group = new QCPMarginGroup(plate);
+    plate->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, group);
     colorScale->setMarginGroup(QCP::msBottom | QCP::msTop, group);
     colorScale->setGradient(QCPColorGradient::gpThermal);
-    colorScale->setDataRange(QCPRange(0,MaxTemperature));
+    QCPRange range(model::SimulationSetup::AreaMinValue[
+                        model::SimulationSetup::AreaThermalDiffusivity]*1e6,
+                   model::SimulationSetup::AreaMaxValue[
+                        model::SimulationSetup::AreaThermalDiffusivity]*1e6);
+    colorScale->setDataRange(range);
     colorScale->axis()->setAutoTicks(false);
     colorScale->axis()->setAutoTickLabels(false);
     colorScale->axis()->setTickVector(ticksColorBar);
-    colorScale->axis()->setTickVectorLabels(labelsColorBar);
-    colorScale->axis()->setRange(QCPRange(0,MaxTemperature));
+    colorScale->axis()->setTickVectorLabels(tickLabelsColorBar);
+    colorScale->axis()->setRange(range);
 
-    colorMap = new QCPColorMap(plateOptimization->yAxis,plateOptimization->xAxis);
+    colorMap = new QCPColorMap(plate->yAxis,plate->xAxis);
     colorMap->data()->setRange(QCPRange(0,1),QCPRange(0,1));
     colorMap->setColorScale(colorScale);
+    plate->addPlottable(colorMap);
 
-    plateOptimization->addPlottable(colorMap);
-    plateOptimization->setMinimumWidth(300);
-    plateOptimization->setMinimumHeight(300);
+        //Daten-Tabelle
+    labelData = new QLabel("Temperaturverteilung (in Kelvin):",configurationTab);
+    dataTable = new QTableWidget(configurationTab);
 
-        //ProgressBar
-    progressBar = new QProgressBar(widgetConfiguration);
+        //Fortschritts-Balken
+    labelProgressBar = new QLabel("Fortschrittsbalken:",configurationTab);
+    progressBar = new QProgressBar(configurationTab);
 
-        //Tabelle
-    tableWidgetData = new QTableWidget(widgetConfiguration);
+        //Platzhalter
     spacerItem = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
 
-        //Layout anwenden
-    layoutConfigurationTab->addWidget(labelConfiguration,0,0);
-    layoutConfigurationTab->addWidget(buttonLoad,1,0);
-    layoutConfigurationTab->addWidget(buttonOptimization,1,1);
-    layoutConfigurationTab->addWidget(labelData,1,2);
-    layoutConfigurationTab->addWidget(groupBoxUserSettings,2,0,1,2);
-    layoutConfigurationTab->addWidget(tableWidgetData,2,2,3,2);
-    layoutConfigurationTab->addWidget(groupBoxSettings,3,0,1,2);
-    layoutConfigurationTab->addWidget(plateOptimization,4,0,2,2);
-    layoutConfigurationTab->addWidget(labelProgressBar,5,2);
-    layoutConfigurationTab->addWidget(progressBar,5,3);
-    layoutConfigurationTab->addItem(spacerItem,6,0);
+        //Layout
+    configurationTabLayout = new QGridLayout(configurationTab);
 
-    layoutConfigurationTab->setColumnStretch(0,0);
-    layoutConfigurationTab->setColumnStretch(1,0);
-    layoutConfigurationTab->setColumnStretch(2,0);
-    layoutConfigurationTab->setColumnStretch(3,1);
+    configurationTabLayout->addWidget(topLabelConfiguration,0,0,1,4);
+    configurationTabLayout->addWidget(loadDataButton,1,0);
+    configurationTabLayout->addWidget(startOptimizationButton,1,1);
+    configurationTabLayout->addWidget(labelData,1,2);
+    configurationTabLayout->addWidget(boxOverride,2,0,1,2);
+    configurationTabLayout->addWidget(dataTable,2,2,3,2);
+    configurationTabLayout->addWidget(boxSettings,3,0,1,2);
+    configurationTabLayout->addWidget(plate,4,0,2,2);
+    configurationTabLayout->addWidget(labelProgressBar,5,2);
+    configurationTabLayout->addWidget(progressBar,5,3);
+    configurationTabLayout->addItem(spacerItem,6,0);
 
-    layoutConfigurationTab->setRowStretch(0,0);
-    layoutConfigurationTab->setRowStretch(1,0);
-    layoutConfigurationTab->setRowStretch(2,0);
-    layoutConfigurationTab->setRowStretch(3,0);
-    layoutConfigurationTab->setRowStretch(4,0);
-    layoutConfigurationTab->setRowStretch(5,0);
-    layoutConfigurationTab->setRowStretch(6,1);
-//    layoutConfigurationTab->setRowMinimumHeight(4,300);
+    configurationTabLayout->setColumnStretch(0,0);
+    configurationTabLayout->setColumnStretch(1,0);
+    configurationTabLayout->setColumnStretch(2,0);
+    configurationTabLayout->setColumnStretch(3,1);
+
+    configurationTabLayout->setRowStretch(0,0);
+    configurationTabLayout->setRowStretch(1,0);
+    configurationTabLayout->setRowStretch(2,0);
+    configurationTabLayout->setRowStretch(3,0);
+    configurationTabLayout->setRowStretch(4,0);
+    configurationTabLayout->setRowStretch(5,0);
+    configurationTabLayout->setRowStretch(6,1);
+
+//    configurationTabLayout->setColumnMinimumWidth(0,200);
+//    configurationTabLayout->setColumnMinimumWidth(1,200);
 
     //Tab Ergebnis
-        //Label
-    labelSolution = new QLabel("Gefittete Wärmeleitkoeffizienten",widgetSolution);
-        //Table
-    tableWidgetSolution = new QTableWidget(widgetSolution);
-        //Layout anwenden
-    layoutSolutionTab->addWidget(labelSolution,0);
-    layoutSolutionTab->addWidget(tableWidgetSolution,1);
+    solutionTab = new QWidget(this);
+    this->addTab(solutionTab,"Ergebnis");
+
+    topLabelSolution = new QLabel("Es kann erst ein Ergebnis angezeigt werden, "
+                                  "nachdem eine Optimierung durchgeführt wurde.",solutionTab);
+
+    solutionTable = new QTableWidget(solutionTab);
+
+    solutionTabLayout = new QVBoxLayout(solutionTab);
+
+    solutionTabLayout->addWidget(topLabelSolution,0);
+    solutionTabLayout->addWidget(solutionTable,1);
+
+    // interne Signal & Slots verbinden
+    connect(this,SIGNAL(currentChanged(int)),this,SLOT(transformTabIDSlot(int)));
+}
+
+void presentation::OptimizationWidget::setController(Controller *controller)
+{
+    this->controller = controller;
+
+    connect(this,SIGNAL(subTabChange(int)),controller,SLOT(tabChangedSlot(int)));
+
+    connect(loadDataButton,SIGNAL(clicked(bool)),controller,SLOT(loadObservationsSlot()));
+}
+
+void presentation::OptimizationWidget::setModel(model::Model *model)
+{
+    this->model = model;
+}
+
+void presentation::OptimizationWidget::update()
+{
+    if(activeSubTab == OptimizationWidget::TabConfiguration)
+    {
+        //Config Tab updaten
+        //überprüfen ob gerade optimiert wird: i.e. model->getOptimizing()
+        if(model->isWorking())
+        {
+            //label ändern:
+            topLabelConfiguration->setText("Es wird gerade eine Simulation oder Optimierung durchgeführt.");
+
+            // Knöpfe deaktivieren:
+            loadDataButton->setEnabled(false);
+            startOptimizationButton->setEnabled(false);
+
+            overrideN->setEnabled(false);
+            labelInitialValue->setEnabled(false);
+            inputInitialValue->setEnabled(false);
+            //untere wirklich blockieren?
+            overrideHeatSources->setEnabled(false);
+            overrideThermalDiffusivities->setEnabled(false);
+            labelInitialValue->setEnabled(false);
+            inputInitialValue->setEnabled(false);
+        }
+        else
+        {
+            //label ändern:
+            topLabelConfiguration->setText("Dies ist der Tab zur Optimierung der "
+                                           "Temperaturleitkoeffizienten.\nFür weitere "
+                                           "Informationen wechseln Sie bitte in den Hi"
+                                           "lfe-Tab.");
+
+            // Knöpfe aktivieren:
+            loadDataButton->setEnabled(true);
+            startOptimizationButton->setEnabled(true);
+
+            overrideN->setEnabled(true);
+            labelInitialValue->setEnabled(true);
+            inputInitialValue->setEnabled(true);
+            //untere wirklich blockieren?
+            overrideHeatSources->setEnabled(true);
+            overrideThermalDiffusivities->setEnabled(true);
+            labelInitialValue->setEnabled(true);
+            inputInitialValue->setEnabled(true);
+        }
+
+        //TODO: Override inputs werte aktualisieren temporär:
+        inputN->setValue(model->getObservationsDim());
+        inputInitialValue->setValue(model->getSimulationSetup()->getAreaBackgroundValue(
+                                        model::SimulationSetup::AreaThermalDiffusivity)*1e6);
+
+        //Übernommene Werte aktualisieren
+        displayIntMethod->setText(model->getSimulationSetup()->getSelectedIntMethod());
+        displayM->setValue(model->getSimulationSetup()->getM());
+        displayT->setValue(model->getSimulationSetup()->getT());
+        displaySolver->setText(model->getSimulationSetup()->getSelectedSolver());
+        displayMaxError->setValue(model->getSimulationSetup()->getSolverMaxError());
+        displayMaxIt->setValue(model->getSimulationSetup()->getSolverMaxIt());
+
+        //TODO: Endergebnis oder Anfangswert auf platte darstellen valueShift!!!
+        colorMap->data()->setSize(1,1);
+        colorMap->data()->setCell(0,0,model->getSimulationSetup()->getAreaBackgroundValue(
+                                      model::SimulationSetup::AreaThermalDiffusivity)*1e6);
+        colorScale->setLabel("(Initiale) Temperaturleitkoeffizienten\n[1e-6 m²/s]");
+        plate->replot();
+
+        //TODO: Falls geladen, Messungen in Tabelle darstellen
+        if(model->getDataRead())
+        {
+            int count = model->getObservationsDim();
+            double ** observations = model->getObservations();
+
+            dataTable->clear();
+            dataTable->setColumnCount(count);
+            dataTable->setRowCount(count);
+            QStringList header;
+            for(int i = 0; i < count; ++i)
+            {
+                header << QString::number((double) i * 1./(double)(count-1));
+                for(int j = 0; j < count; ++ j)
+                {
+                    QTableWidgetItem * tmpItemPtr = new QTableWidgetItem(QString::number(observations[i][j]));
+                    tmpItemPtr->setFlags(Qt::ItemIsEnabled);
+                    tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+                    dataTable->setItem(i,j,tmpItemPtr);
+                }
+            }
+            dataTable->setHorizontalHeaderLabels(header);
+            dataTable->horizontalHeader()->setSectionsClickable(false);
+            dataTable->setVerticalHeaderLabels(header);
+            dataTable->verticalHeader()->setSectionsClickable(false);
+        }
+
+
+    }
+    else
+    {
+        // Ergebnis Tab updaten
+        // 1.Schritt Test ob schon optimiert wurde, i.e. if(model->getOptimized())
+        // 2.Schritt Ergegnis n holen, i.e. int n = model->getOptimizationN();
+        // 3.Schritt Ergebnis Referenz holen, i.e. double ** & result = model->getOptimizationResult();
+        // 4.Schritt Ergebnis in Tabelle einfügen:
+//        solutionTable->clear();
+//        solutionTable->setRowCount(n);
+//        solutionTable->setColumnCount(n);
+//        QStringList header;
+//        for(int i = 0; i < n; ++i)
+//        {
+//            header << QString::number((double) i * 1./(double)(n-1));
+//            for(int j = 0; j < n; ++ j)
+//            {
+//                QTableWidgetItem * tmpItemPtr = new QTableWidgetItem(QString::number(result[i][j]*1e6));
+//                tmpItemPtr->setFlags(Qt::ItemIsEnabled);
+//                tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+//                solutionTable->setItem(i,j,tmpItemPtr);
+//            }
+//        }
+//        solutionTable->setHorizontalHeaderLabels(header);
+//        solutionTable->horizontalHeader()->setSectionsClickable(false);
+//        solutionTable->setVerticalHeaderLabels(header);
+//        solutionTable->verticalHeader()->setSectionsClickable(false);
+    }
+}
+
+void presentation::OptimizationWidget::nextStage(QString stage, int maximum)
+{
+    progressBar->setMaximum(maximum);
+    progressBar->setMinimum(0);
+    progressBar->setValue(0);
+    labelProgressBar->setText(stage);
+}
+
+void presentation::OptimizationWidget::updateProgress(int step)
+{
+    progressBar->setValue(step);
+}
+
+void presentation::OptimizationWidget::transformTabIDSlot(int targetTab)
+{
+    activeSubTab = targetTab;
+    emit subTabChange(UI::TabParameterFitting);
 }
