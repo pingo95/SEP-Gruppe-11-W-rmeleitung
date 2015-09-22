@@ -185,21 +185,6 @@ double model::SimulationSetup::getT() const
     return T;
 }
 
-
-model::Area * model::SimulationSetup::removeLastArea(SimulationSetup::AreaType type)
-{
-    if(type == SimulationSetup::AreaHeatSource)
-    {
-        --heatSourcesCount;
-        return heatSources.takeLast();
-    }
-    else
-    {
-        --thermalDiffusivitiesCount;
-        return thermalDiffusivities.takeLast();
-    }
-}
-
 void model::SimulationSetup::reorderArea(int const pos, int const dir,
                                          SimulationSetup::AreaType type)
 {
@@ -272,6 +257,20 @@ void model::SimulationSetup::setSolverMaxIt(double const maxIt)
 void model::SimulationSetup::setT(double const newT)
 {
     T = newT;
+}
+
+model::Area * model::SimulationSetup::takeLastArea(SimulationSetup::AreaType type)
+{
+    if(type == SimulationSetup::AreaHeatSource)
+    {
+        --heatSourcesCount;
+        return heatSources.takeLast();
+    }
+    else
+    {
+        --thermalDiffusivitiesCount;
+        return thermalDiffusivities.takeLast();
+    }
 }
 
 void model::SimulationSetup::updateAreaValue(const int pos, const double value, SimulationSetup::AreaType type)

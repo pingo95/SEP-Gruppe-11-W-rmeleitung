@@ -38,7 +38,10 @@ namespace presentation {
         void newMaxErrorSlot(double newMaxErrorSlot);
         void newMaxItSlot(int newMaxItSlot);
         void newNSlot(int newN);
+        void newOverrideValue(double newValue);
         void newTSlot(double newT);
+        void optimizationSlot();
+        void overrideThermalDiffusivities(bool override);
         void playVideoSlot();
         void redoAreaSlot(model::SimulationSetup::AreaType type);
         void reorderAreaSlot(int pos, int dir, model::SimulationSetup::AreaType type);
@@ -47,6 +50,7 @@ namespace presentation {
         void simulateSlot();
         void tabChangedSlot(int newTab);
         void undoAreaSlot(model::SimulationSetup::AreaType type);
+        void useHeatSourcesSlot(bool use);
         void visualizeStateSlot(int frame);
 
     private:

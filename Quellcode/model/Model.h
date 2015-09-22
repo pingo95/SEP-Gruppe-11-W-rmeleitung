@@ -26,24 +26,29 @@ namespace model {
         void deleteArea(int const pos, SimulationSetup::AreaType type);
 
         bool getDataRead() const;
+        QList<QString> const getIntMethodsNames() const;
         double** const & getObservations() const;
         int getObservationsDim() const;
+        bool getOverrideThermalDiffusivities() const;
+        double getOverrideValue() const;
         double*** const & getResult() const;
         long getResultM() const;
         long getResultN() const;
         double getResultT() const;
 
-        QList<QString> const getIntMethodsNames() const;
+        bool getSimulated() const;
+        SimulationSetup * const & getSimulationSetup() const;
+
         QList<QString> const getSolverNames() const;
 
-        bool getSimulated() const;
+        bool getUseHeatSources() const;
+
         bool isWorking() const;
 
-        SimulationSetup * const & getSimulationSetup() const;
+        void optimize();
 
         void readObservations(QString const filename, long const obsCount);
 
-        Area * removeLastArea(SimulationSetup::AreaType type);
         void reorderArea(int const pos, int const dir,
                          model::SimulationSetup::AreaType type);
 
@@ -53,16 +58,23 @@ namespace model {
         void setIBV(double const newValue, SimulationSetup::IBV ibv);
         void setM(int const newM);
         void setN(int const newN);
+        void setOverrideThermalDiffusivities(bool const override);
+        void setOverrideValue(double const value);
         void setSolverMaxError(double const maxError);
         void setSolverMaxIt(double const maxIt);
         void setT(double const T);
         void setUI(presentation::UI * ui);
+        void setUseHeatSources(bool const useHeatSources);
 
         void simulate();
+
+        Area * takeLastArea(SimulationSetup::AreaType type);
 
         void updateAreaValue(int const pos, double const value, SimulationSetup::AreaType type);
 
     signals:
+        void startOptimization(SimulationSetup * simSetup, bool overrideTD,
+                               double overrideValue, bool useHeatSources);
         void startReadingData(QString const filename, long const obsCount);
         void startSimulation(SimulationSetup * simSetup);
 
@@ -77,12 +89,15 @@ namespace model {
         bool blocking;
         bool dataRead;
         bool optimized;
+        bool overrideDiffusivities;
+        double overrideInitialTDvalue;
         SimulationSetup * const simSetup;
         bool simulated;
-        bool working;
         SimulationWorker * simWorker;
         presentation::UI * ui;
+        bool useHeatSources;
         QThread workerThread;
+        bool working;
     };
 
 }

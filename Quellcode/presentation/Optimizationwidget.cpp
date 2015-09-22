@@ -5,7 +5,7 @@
 
 presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     : QTabWidget(parent), activeSubTab(OptimizationWidget::TabConfiguration),
-      controller(NULL), model(NULL)
+      controller(NULL), model(NULL), valueShift(1e-6)
 {
         //Tab Konfig
     configurationTab = new QWidget(this);
@@ -19,6 +19,7 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
 
     loadDataButton = new QPushButton("Laden",configurationTab);
     startOptimizationButton = new QPushButton("Optimieren starten",configurationTab);
+    startOptimizationButton->setEnabled(false);
 
         //Override-Box
     overrideHeatSources = new QCheckBox("Nutze bereits vorhandene Wärmequellen "
@@ -27,19 +28,22 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     overrideThermalDiffusivities = new QCheckBox("Überschreibe bereits vorhandene "
                                                  "Wärmeleitkoeffizienten zur Simu"
                                                  "lation",configurationTab);
-    overrideThermalDiffusivities->setChecked(true);
 
     labelInitialValue = new QLabel("Manueller Anfangswert",configurationTab);
     labelInitialValue->setAlignment(Qt::AlignRight);
-//    labelInitialValue->setEnabled(false);
+    labelInitialValue->setEnabled(false);
     inputInitialValue = new QDoubleSpinBox(configurationTab);
     inputInitialValue->setMinimum(model::SimulationSetup::AreaMinValue[
-                                  model::SimulationSetup::AreaThermalDiffusivity]*1e6);
+                                  model::SimulationSetup::AreaThermalDiffusivity]/valueShift);
     inputInitialValue->setMaximum(model::SimulationSetup::AreaMaxValue[
-                                  model::SimulationSetup::AreaThermalDiffusivity]*1e6);
+                                  model::SimulationSetup::AreaThermalDiffusivity]/valueShift);
     inputInitialValue->setDecimals(0);
     inputInitialValue->setSuffix(" [1e-6 m²/s]");
-//    inputInitialValue->setEnabled(false);
+    inputInitialValue->setEnabled(false);
+    inputInitialValue->setKeyboardTracking(false);
+    inputInitialValue->setSingleStep(1);
+    inputInitialValue->setValue(model::SimulationSetup::AreaMinValue[
+                                model::SimulationSetup::AreaThermalDiffusivity]/valueShift);
 
     boxOverride = new QGroupBox(configurationTab);
     boxOverrideLayout = new QGridLayout();
@@ -123,7 +127,7 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
 
         ticksColorBar << round((valueSpan * ticks[i] +
                                 model::SimulationSetup::AreaMinValue[
-                                model::SimulationSetup::AreaThermalDiffusivity])*1e6);
+                                model::SimulationSetup::AreaThermalDiffusivity])/valueShift);
         tickLabelsColorBar << QString::number(ticksColorBar[i]);
     }
 
@@ -172,9 +176,9 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     colorScale->setMarginGroup(QCP::msBottom | QCP::msTop, group);
     colorScale->setGradient(QCPColorGradient::gpThermal);
     QCPRange range(model::SimulationSetup::AreaMinValue[
-                        model::SimulationSetup::AreaThermalDiffusivity]*1e6,
+                        model::SimulationSetup::AreaThermalDiffusivity]/valueShift,
                    model::SimulationSetup::AreaMaxValue[
-                        model::SimulationSetup::AreaThermalDiffusivity]*1e6);
+                        model::SimulationSetup::AreaThermalDiffusivity]/valueShift);
     colorScale->setDataRange(range);
     colorScale->axis()->setAutoTicks(false);
     colorScale->axis()->setAutoTickLabels(false);
@@ -245,6 +249,8 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
 
     // interne Signal & Slots verbinden
     connect(this,SIGNAL(currentChanged(int)),this,SLOT(transformTabIDSlot(int)));
+
+    connect(inputInitialValue,SIGNAL(valueChanged(double)),this,SLOT(shiftInitialValue(double)));
 }
 
 void presentation::OptimizationWidget::setController(Controller *controller)
@@ -254,6 +260,11 @@ void presentation::OptimizationWidget::setController(Controller *controller)
     connect(this,SIGNAL(subTabChange(int)),controller,SLOT(tabChangedSlot(int)));
 
     connect(loadDataButton,SIGNAL(clicked(bool)),controller,SLOT(loadObservationsSlot()));
+    connect(startOptimizationButton,SIGNAL(clicked(bool)),controller,SLOT(optimizationSlot()));
+
+    connect(overrideHeatSources,SIGNAL(clicked(bool)),controller,SLOT(useHeatSourcesSlot(bool)));
+    connect(overrideThermalDiffusivities,SIGNAL(clicked(bool)),controller,SLOT(overrideThermalDiffusivities(bool)));
+    connect(this,SIGNAL(newInitialValue(double)),controller,SLOT(newOverrideValue(double)));
 }
 
 void presentation::OptimizationWidget::setModel(model::Model *model)
@@ -275,12 +286,6 @@ void presentation::OptimizationWidget::update()
             // Knöpfe deaktivieren:
             loadDataButton->setEnabled(false);
             startOptimizationButton->setEnabled(false);
-
-            //untere wirklich blockieren?
-            overrideHeatSources->setEnabled(false);
-            overrideThermalDiffusivities->setEnabled(false);
-            labelInitialValue->setEnabled(false);
-            inputInitialValue->setEnabled(false);
         }
         else
         {
@@ -292,18 +297,22 @@ void presentation::OptimizationWidget::update()
 
             // Knöpfe aktivieren:
             loadDataButton->setEnabled(true);
-            startOptimizationButton->setEnabled(true);
-
-            //untere wirklich blockieren?
-            overrideHeatSources->setEnabled(true);
-            overrideThermalDiffusivities->setEnabled(true);
-            labelInitialValue->setEnabled(true);
-            inputInitialValue->setEnabled(true);
+            if(model->getDataRead())
+                startOptimizationButton->setEnabled(true);
         }
 
         //TODO: Override inputs werte aktualisieren temporär:
-        inputInitialValue->setValue(model->getSimulationSetup()->getAreaBackgroundValue(
-                                        model::SimulationSetup::AreaThermalDiffusivity)*1e6);
+        inputInitialValue->setValue(model->getOverrideValue()/valueShift);
+        if(model->getOverrideThermalDiffusivities())
+        {
+            labelInitialValue->setEnabled(true);
+            inputInitialValue->setEnabled(true);
+        }
+        else
+        {
+            labelInitialValue->setEnabled(false);
+            inputInitialValue->setEnabled(false);
+        }
 
         //Übernommene Werte aktualisieren
         displayIntMethod->setText(model->getSimulationSetup()->getSelectedIntMethod());
@@ -315,8 +324,7 @@ void presentation::OptimizationWidget::update()
 
         //TODO: Endergebnis oder Anfangswert auf platte darstellen valueShift!!!
         colorMap->data()->setSize(1,1);
-        colorMap->data()->setCell(0,0,model->getSimulationSetup()->getAreaBackgroundValue(
-                                      model::SimulationSetup::AreaThermalDiffusivity)*1e6);
+        colorMap->data()->setCell(0,0,model->getOverrideValue()/valueShift);
         colorScale->setLabel("(Initiale) Temperaturleitkoeffizienten\n[1e-6 m²/s]");
         plate->replot();
 
@@ -365,7 +373,7 @@ void presentation::OptimizationWidget::update()
 //            header << QString::number((double) i * 1./(double)(n-1));
 //            for(int j = 0; j < n; ++ j)
 //            {
-//                QTableWidgetItem * tmpItemPtr = new QTableWidgetItem(QString::number(result[i][j]*1e6));
+//                QTableWidgetItem * tmpItemPtr = new QTableWidgetItem(QString::number(result[i][j]/valueShift));
 //                tmpItemPtr->setFlags(Qt::ItemIsEnabled);
 //                tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 //                solutionTable->setItem(i,j,tmpItemPtr);
@@ -395,4 +403,9 @@ void presentation::OptimizationWidget::transformTabIDSlot(int targetTab)
 {
     activeSubTab = targetTab;
     emit subTabChange(UI::TabParameterFitting);
+}
+
+void presentation::OptimizationWidget::shiftInitialValue(double newValue)
+{
+    emit newInitialValue(newValue*1e-6);
 }

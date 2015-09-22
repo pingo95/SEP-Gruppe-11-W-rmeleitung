@@ -59,7 +59,6 @@ namespace model {
         int getSolverMaxIt() const;
         double getT() const;
 
-        Area * removeLastArea(SimulationSetup::AreaType type);
         void reorderArea(int const pos, int const dir, SimulationSetup::AreaType type);
 
         void selectIntMethod(QString const intMethod);
@@ -72,6 +71,8 @@ namespace model {
         void setSolverMaxError(double const maxError);
         void setSolverMaxIt(double const maxIt);
         void setT(double const T);
+
+        Area * takeLastArea(SimulationSetup::AreaType type);
 
         void updateAreaValue(int const pos, double const value, SimulationSetup::AreaType type);
 

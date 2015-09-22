@@ -174,7 +174,7 @@ void presentation::Controller::clearAreasSlot(model::SimulationSetup::AreaType t
     if(!started[type])
     {
         while(model->getSimulationSetup()->getAreaCount(type))
-            delete model->removeLastArea(type);
+            delete model->takeLastArea(type);
         clearRedo();
     }
 }
@@ -331,6 +331,23 @@ void presentation::Controller::newNSlot(int newN)
     }
 }
 
+void presentation::Controller::newOverrideValue(double newValue)
+{
+    if(model->getOverrideThermalDiffusivities())
+    {
+        model->setOverrideValue(newValue);
+    }
+    else
+    {
+        ui->updateNotification();
+        // Fehlermeldung ausgeben:
+        errorMessages->setText("Es muss zunächst das Überschreiben der Wärmeleit"
+                               "koeffizienten aktiviert werden.");
+        errorMessages->setDetailedText("");
+        errorMessages->exec();
+    }
+}
+
 // Dieser Slot updatet den Wert für den Endzeitpunkt, falls der neue
 // gültig ist
 void presentation::Controller::newTSlot(double newT)
@@ -348,6 +365,38 @@ void presentation::Controller::newTSlot(double newT)
                                        " größer Null gewählt werden, die E"
                                        "inheit ist Sekunden.");
         errorMessages->exec();
+    }
+}
+
+void presentation::Controller::optimizationSlot()
+{
+    if(model->getDataRead())
+    {
+        model->optimize();
+    }
+    else
+    {
+        // Fehlermeldung ausgeben:
+        errorMessages->setText("Es müssen erst Messwerte eingelesen werden.");
+        errorMessages->setDetailedText("");
+        errorMessages->exec();
+    }
+}
+
+void presentation::Controller::overrideThermalDiffusivities(bool override)
+{
+    model->setOverrideThermalDiffusivities(override);
+
+    if(override && model->getSimulationSetup()->getAreaCount(
+                    model::SimulationSetup::AreaThermalDiffusivity) == 0)
+    {
+        // Warnunge ausgeben:
+        errorMessages->setIcon(QMessageBox::Warning);
+        errorMessages->setText("Es wurde noch keine Wärmeleitkoeffizienten hinzugefügt, "
+                               "Überschreiben hat keinen Effekt.");
+        errorMessages->setDetailedText("");
+        errorMessages->exec();
+        errorMessages->setIcon(QMessageBox::Critical);
     }
 }
 
@@ -559,7 +608,7 @@ void presentation::Controller::undoAreaSlot(model::SimulationSetup::AreaType typ
         if(model->getSimulationSetup()->getAreaCount(type) > 0)
         {
             redoPossible[type] = true;
-            redoAreaStack.append(model->removeLastArea(type));
+            redoAreaStack.append(model->takeLastArea(type));
         }
         else
         {
@@ -569,6 +618,24 @@ void presentation::Controller::undoAreaSlot(model::SimulationSetup::AreaType typ
             errorMessages->exec();
         }
 }
+
+void presentation::Controller::useHeatSourcesSlot(bool use)
+{
+    model->setUseHeatSources(use);
+
+    if(use && model->getSimulationSetup()->getAreaCount(
+                    model::SimulationSetup::AreaHeatSource) == 0)
+    {
+        // Warnunge ausgeben:
+        errorMessages->setIcon(QMessageBox::Warning);
+        errorMessages->setText("Es wurde noch keine Wärmequellen hinzugefügt, "
+                               "Überschreiben hat keinen Effekt.");
+        errorMessages->setDetailedText("");
+        errorMessages->exec();
+        errorMessages->setIcon(QMessageBox::Critical);
+    }
+}
+
 
 // Dieser Slot visualiziert einen einzelnen Zeitpunkt der letzen Simulation,
 // vorrausgesetzt es wurde bereits eine durchgeführt

@@ -41,12 +41,14 @@ class Controller;
         void updateProgress(int step);
 
     signals:
+        void newInitialValue(double shiftedValue);
         void subTabChange(int targetTab);
 
     public slots:
 
     private slots:
        void transformTabIDSlot(int targetTab);
+       void shiftInitialValue(double newValue);
 
     private:
         explicit OptimizationWidget();
@@ -61,6 +63,7 @@ class Controller;
         int activeSubTab;
         Controller * controller;
         model::Model * model;
+        double const valueShift;
 
         // Config Tab
         QWidget * configurationTab;

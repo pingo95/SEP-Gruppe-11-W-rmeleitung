@@ -2,15 +2,22 @@
 #include "../presentation/Ui.h"
 
 model::Model::Model() : QWidget(NULL), blocking(false), dataRead(false), optimized(false),
-    simSetup(new SimulationSetup()), simulated(false), working(false),
-    simWorker(new SimulationWorker()), ui(NULL), workerThread(this)
+    overrideDiffusivities(false), overrideInitialTDvalue(model::SimulationSetup::AreaMinValue[
+                                                         model::SimulationSetup::AreaThermalDiffusivity]),
+    simSetup(new SimulationSetup()),
+    simulated(false), simWorker(new SimulationWorker()), ui(NULL), useHeatSources(false),
+    workerThread(this), working(false)
 {
     simWorker->moveToThread(&workerThread);
     simWorker->initializeMaps();
 
     connect(&workerThread, &QThread::finished, simWorker, &QObject::deleteLater);
-    connect(this,SIGNAL(startReadingData(QString,long)),simWorker,SLOT(startReadingData(QString,long)));
-    connect(this,SIGNAL(startSimulation(SimulationSetup*)),simWorker,SLOT(startSimulationSlot(SimulationSetup*)));
+    connect(this,SIGNAL(startOptimization(SimulationSetup*,bool,double,bool)),
+            simWorker,SLOT(startOptimization(SimulationSetup*,bool,double,bool)));
+    connect(this,SIGNAL(startReadingData(QString,long)),
+            simWorker,SLOT(startReadingData(QString,long)));
+    connect(this,SIGNAL(startSimulation(SimulationSetup*)),
+            simWorker,SLOT(startSimulationSlot(SimulationSetup*)));
     connect(simWorker,SIGNAL(startedWork()),this,SLOT(startedWorkSlot()));
     connect(simWorker,SIGNAL(finishedOptimization()),this,SLOT(finishedOptimizationSlot()));
     connect(simWorker,SIGNAL(finishedReadingData()),this,SLOT(finishedReadingDataSlot()));
@@ -58,6 +65,11 @@ bool model::Model::getDataRead() const
     return dataRead;
 }
 
+QList<QString> const model::Model::getIntMethodsNames() const
+{
+    return simWorker->getIntMethodNames();
+}
+
 double** const & model::Model::getObservations() const
 {
     if(!working && dataRead)
@@ -70,6 +82,16 @@ int model::Model::getObservationsDim() const
    if(!working && dataRead)
        return simWorker->getObservationsDim();
    return 1;
+}
+
+bool model::Model::getOverrideThermalDiffusivities() const
+{
+    return overrideDiffusivities;
+}
+
+double model::Model::getOverrideValue() const
+{
+    return overrideInitialTDvalue;
 }
 
 double*** const & model::Model::getResult() const
@@ -100,9 +122,14 @@ double model::Model::getResultT() const
     return 60.0;
 }
 
-QList<QString> const model::Model::getIntMethodsNames() const
+bool model::Model::getSimulated() const
 {
-    return simWorker->getIntMethodNames();
+    return simulated;
+}
+
+model::SimulationSetup * const & model::Model::getSimulationSetup() const
+{
+    return simSetup;
 }
 
 QList<QString> const model::Model::getSolverNames() const
@@ -110,9 +137,9 @@ QList<QString> const model::Model::getSolverNames() const
     return simWorker->getSolverNames();
 }
 
-bool model::Model::getSimulated() const
+bool model::Model::getUseHeatSources() const
 {
-    return simulated;
+    return useHeatSources;
 }
 
 bool model::Model::isWorking() const
@@ -120,9 +147,12 @@ bool model::Model::isWorking() const
     return working;
 }
 
-model::SimulationSetup * const & model::Model::getSimulationSetup() const
+void model::Model::optimize()
 {
-    return simSetup;
+    blocking = true;
+    emit startOptimization(simSetup,overrideDiffusivities,overrideInitialTDvalue,useHeatSources);
+    working = true;
+    ui->updateNotification();
 }
 
 void model::Model::readObservations(QString const filename, long const obsCount)
@@ -131,14 +161,6 @@ void model::Model::readObservations(QString const filename, long const obsCount)
     emit startReadingData(filename,obsCount);
     working = true;
     ui->updateNotification();
-}
-
-model::Area * model::Model::removeLastArea(SimulationSetup::AreaType type)
-{
-    assert(!blocking);
-    Area * ptr = simSetup->removeLastArea(type);
-    ui->updateNotification();
-    return ptr;
 }
 
 void model::Model::reorderArea(int const pos, int const dir,
@@ -193,6 +215,20 @@ void model::Model::setN(int const newN)
     ui->updateNotification();
 }
 
+void model::Model::setOverrideThermalDiffusivities(bool const override)
+{
+    assert(!blocking);
+    overrideDiffusivities = override;
+    ui->updateNotification();
+}
+
+void model::Model::setOverrideValue(double const value)
+{
+    assert(!blocking);
+    overrideInitialTDvalue = value;
+    ui->updateNotification();
+}
+
 void model::Model::setSolverMaxError(double const maxError)
 {
     assert(!blocking);
@@ -223,6 +259,12 @@ void model::Model::setUI(presentation::UI *ui)
     connect(simWorker,SIGNAL(simulationLogUpdate(QString)),ui,SLOT(appendToSimulationLogSlot(QString)));
 }
 
+void model::Model::setUseHeatSources(bool const useHeatSources)
+{
+    assert(!blocking);
+    this->useHeatSources = useHeatSources;
+    ui->updateNotification();
+}
 
 void model::Model::simulate()
 {
@@ -230,6 +272,14 @@ void model::Model::simulate()
     emit startSimulation(simSetup);
     working = true;
     ui->updateNotification();
+}
+
+model::Area * model::Model::takeLastArea(SimulationSetup::AreaType type)
+{
+    assert(!blocking);
+    Area * ptr = simSetup->takeLastArea(type);
+    ui->updateNotification();
+    return ptr;
 }
 
 void model::Model::updateAreaValue(int const pos, double const value,
