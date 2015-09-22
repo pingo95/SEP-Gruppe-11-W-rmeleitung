@@ -74,9 +74,6 @@ class Controller;
 
         QGroupBox * boxOverride;
         QGridLayout * boxOverrideLayout;
-        QCheckBox * overrideN;
-        QLabel * labelN;
-        QSpinBox * inputN;
         QCheckBox * overrideHeatSources;
         QCheckBox * overrideThermalDiffusivities;
         QLabel * labelInitialValue;

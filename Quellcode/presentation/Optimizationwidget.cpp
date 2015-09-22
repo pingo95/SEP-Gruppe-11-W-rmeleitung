@@ -21,16 +21,6 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     startOptimizationButton = new QPushButton("Optimieren starten",configurationTab);
 
         //Override-Box
-    overrideN = new QCheckBox("Überschreibe Anzahl Messwerte",configurationTab);
-
-    labelN = new QLabel("neues N eingeben",configurationTab);
-    labelN->setAlignment(Qt::AlignRight);
-    labelN->setEnabled(false);
-    inputN = new QSpinBox(configurationTab);
-    inputN->setMaximum(0);
-    inputN->setMaximum(800);
-    inputN->setEnabled(false);
-
     overrideHeatSources = new QCheckBox("Nutze bereits vorhandene Wärmequellen "
                                         "zur Simulation",configurationTab);
 
@@ -53,13 +43,10 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
 
     boxOverride = new QGroupBox(configurationTab);
     boxOverrideLayout = new QGridLayout();
-    boxOverrideLayout->addWidget(overrideN,0,0,1,2);
-    boxOverrideLayout->addWidget(labelN,1,0);
-    boxOverrideLayout->addWidget(inputN,1,1);
-    boxOverrideLayout->addWidget(overrideHeatSources,2,0,1,2);
-    boxOverrideLayout->addWidget(overrideThermalDiffusivities,3,0,1,2);
-    boxOverrideLayout->addWidget(labelInitialValue,4,0);
-    boxOverrideLayout->addWidget(inputInitialValue,4,1);
+    boxOverrideLayout->addWidget(overrideHeatSources,0,0,1,2);
+    boxOverrideLayout->addWidget(overrideThermalDiffusivities,1,0,1,2);
+    boxOverrideLayout->addWidget(labelInitialValue,2,0);
+    boxOverrideLayout->addWidget(inputInitialValue,2,1);
     boxOverride->setLayout(boxOverrideLayout);
 
         //Settings-Box
@@ -289,9 +276,6 @@ void presentation::OptimizationWidget::update()
             loadDataButton->setEnabled(false);
             startOptimizationButton->setEnabled(false);
 
-            overrideN->setEnabled(false);
-            labelInitialValue->setEnabled(false);
-            inputInitialValue->setEnabled(false);
             //untere wirklich blockieren?
             overrideHeatSources->setEnabled(false);
             overrideThermalDiffusivities->setEnabled(false);
@@ -310,9 +294,6 @@ void presentation::OptimizationWidget::update()
             loadDataButton->setEnabled(true);
             startOptimizationButton->setEnabled(true);
 
-            overrideN->setEnabled(true);
-            labelInitialValue->setEnabled(true);
-            inputInitialValue->setEnabled(true);
             //untere wirklich blockieren?
             overrideHeatSources->setEnabled(true);
             overrideThermalDiffusivities->setEnabled(true);
@@ -321,7 +302,6 @@ void presentation::OptimizationWidget::update()
         }
 
         //TODO: Override inputs werte aktualisieren temporär:
-        inputN->setValue(model->getObservationsDim());
         inputInitialValue->setValue(model->getSimulationSetup()->getAreaBackgroundValue(
                                         model::SimulationSetup::AreaThermalDiffusivity)*1e6);
 
