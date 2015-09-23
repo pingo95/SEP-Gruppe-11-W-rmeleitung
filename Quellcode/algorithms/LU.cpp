@@ -1,17 +1,19 @@
 #include "LU.h"
 
-algorithms::LU::LU() {
+template <class T>
+algorithms::LU<T>::LU() {
 
 }
 
-void algorithms::LU::decompose(CRS const & matrix) {
+template <class T>
+void algorithms::LU<T>::decompose(CRS<T> const & matrix) {
     L.resize(matrix.getSize());
     for(int i=0; i<L.size(); ++i) {
         L[i].resize(L.size());
         L[i][i] = 1;
     }
 
-    QVector<QVector<double> > full;
+    QVector<QVector<T> > full;
     matrix.full(full);
     U = full;
 
@@ -26,17 +28,17 @@ void algorithms::LU::decompose(CRS const & matrix) {
 
 }
 
-void algorithms::LU::solve(QVector<double> & result, CRS const & matrix, QVector<double> const & rhs) {
-    QVector<double> y;
+template <class T>
+void algorithms::LU<T>::solve(QVector<T> & result, CRS<T> const & matrix, QVector<T> const & rhs) {
+    QVector<T> y;
     y.resize(result.size());
-    double sum;
+    T sum;
     for(int i=0; i<y.size(); ++i) {
         sum=0;
         for(int j=0; j<i; ++j) {
             sum += L[i][j]*y[j];
         }
-        double tmp = rhs[i]-sum;
-        y[i] = 1/L[i][i]*(tmp);
+        y[i] = 1/L[i][i]*(rhs[i]-sum);
     }
     for(int i=y.size()-1; i>=0; --i) {
         sum=0;

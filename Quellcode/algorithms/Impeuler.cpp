@@ -1,26 +1,30 @@
 #include "Impeuler.h"
 
-algorithms::ImpEuler::ImpEuler() {
+template <class T>
+algorithms::ImpEuler<T>::ImpEuler() {
 
 }
 
-void algorithms::ImpEuler::calcNextStep(QVector<double> const & last, QVector<double> & next, QVector< QVector<double>* > const & heatSources) const {
-    QVector<double> rhs = addQVectors(last,deltaT*(*(heatSources[0])));
-    activeSolver->solve(next,itMatrix,rhs);
+template <class T>
+void algorithms::ImpEuler<T>::calcNextStep(QVector<T> const & last, QVector<T> & next, QVector< QVector<T>* > const & heatSources) const {
+    QVector<T> rhs = addQVectors(last,this->deltaT*(*(heatSources[0])));
+    this->activeSolver->solve(next,this->itMatrix,rhs);
 }
 
-void algorithms::ImpEuler::getNeedetHeatSources(QVector<double> & neededTimeSteps, bool & reusable) const {
+template <class T>
+void algorithms::ImpEuler<T>::getNeedetHeatSources(QVector<T> & neededTimeSteps, bool & reusable) const {
     reusable = true;
     neededTimeSteps.resize(1);
     neededTimeSteps[0]=1;
 }
 
-void algorithms::ImpEuler::setUpSpecific(QVector<double> const & thermalDiffusivities) {
-    CRS A1, diag;
-    A1.A1(n);
+template <class T>
+void algorithms::ImpEuler<T>::setUpSpecific(QVector<T> const & thermalDiffusivities) {
+    CRS<T> A1, diag;
+    A1.A1(this->n);
     diag.diag(thermalDiffusivities);
     diag = diag.multCRSCRS(A1);
-    A1.eye(n);
-    itMatrix = deltaT/(deltaX*deltaX) * diag;
-    itMatrix = A1 - itMatrix;
+    A1.eye(this->n);
+    this->itMatrix = this->deltaT/(this->deltaX*this->deltaX) * diag;
+    this->itMatrix = A1 - this->itMatrix;
 }

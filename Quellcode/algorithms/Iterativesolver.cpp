@@ -1,29 +1,36 @@
 #include "Iterativesolver.h"
 
-algorithms::IterativeSolver::IterativeSolver() {
+template <class T>
+algorithms::IterativeSolver<T>::IterativeSolver() {
 
 }
 
-algorithms::IterativeSolver::~IterativeSolver(){
+template <class T>
+algorithms::IterativeSolver<T>::~IterativeSolver(){
 
 }
 
-double algorithms::IterativeSolver::getEps() const {
-    return eps;
+template <class T>
+double algorithms::IterativeSolver<T>::getEps() const {
+    return this->eps;
 }
 
-int algorithms::IterativeSolver::getItCount() const {
-    return itCount;
+template <class T>
+int algorithms::IterativeSolver<T>::getItCount() const {
+    return this->itCount;
 }
 
-int algorithms::IterativeSolver::getMaxIt() const {
-    return maxIt;
+template <class T>
+int algorithms::IterativeSolver<T>::getMaxIt() const {
+    return this->maxIt;
 }
 
-void algorithms::IterativeSolver::setEps(double const eps) {
+template <class T>
+void algorithms::IterativeSolver<T>::setEps(double const eps) {
     this->eps = eps;
 }
 
-void algorithms::IterativeSolver::setMaxIt(const int maxIt) {
+template <class T>
+void algorithms::IterativeSolver<T>::setMaxIt(const int maxIt) {
     this->maxIt = maxIt;
 }

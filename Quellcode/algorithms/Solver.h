@@ -9,19 +9,20 @@
 
 namespace algorithms {
 
+    template <class T>
     class Solver {
     //Funktionen:
     public:
         Solver();
         virtual ~Solver();
 
-        virtual void decompose(CRS const & matrix);
+        virtual void decompose(CRS<T> const & matrix);
         virtual double getEps() const;
         virtual int getItCount() const;
         virtual int getMaxIt() const;
         virtual void setEps(double const eps);
         virtual void setMaxIt(int const maxIt);
-        virtual void solve(QVector<double> & result, CRS const & matrix, QVector<double> const & rhs)=0;
+        virtual void solve(QVector<T> & result, CRS<T> const & matrix, QVector<T> const & rhs)=0;
 
     //Attribute:
     protected:
@@ -30,8 +31,11 @@ namespace algorithms {
         int maxIt;
     };
 
-    double norm2(QVector<double> const & vec);
-    double normInf(QVector<double> const & vec);
+    template <class T>
+    double norm2(QVector<T> const & vec);
+
+    template <class T>
+    double normInf(QVector<T> const & vec);
 
 }
 

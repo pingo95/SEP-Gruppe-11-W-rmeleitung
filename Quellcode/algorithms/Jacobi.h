@@ -5,12 +5,12 @@
 
 namespace algorithms {
 
-    class Jacobi : public IterativeSolver
-    {
+    template <class T>
+    class Jacobi : public IterativeSolver<T> {
     public:
         Jacobi();
 
-        void solve(QVector<double> & result, CRS const & matrix, QVector<double> const & rhs);
+        void solve(QVector<T> & result, CRS<T> const & matrix, QVector<T> const & rhs);
     };
 
 }

@@ -1,39 +1,48 @@
 #include "Solver.h"
 
-algorithms::Solver::Solver() : eps(1e-10), itCount(0), maxIt(1000) {
+template <class T>
+algorithms::Solver<T>::Solver() : eps(1e-10), itCount(0), maxIt(1000) {
 
 }
 
-algorithms::Solver::~Solver() {
+template <class T>
+algorithms::Solver<T>::~Solver() {
 
 }
 
-void algorithms::Solver::decompose(CRS const & matrix) {
+template <class T>
+void algorithms::Solver<T>::decompose(CRS<T> const & matrix) {
 
 }
 
-double algorithms::Solver::getEps() const {
+template <class T>
+double algorithms::Solver<T>::getEps() const {
     return 0;
 }
 
-int algorithms::Solver::getItCount() const {
+template <class T>
+int algorithms::Solver<T>::getItCount() const {
     return 1;
 }
 
-int algorithms::Solver::getMaxIt() const {
+template <class T>
+int algorithms::Solver<T>::getMaxIt() const {
     return 1;
 }
 
-void algorithms::Solver::setEps(double const eps) {
+template <class T>
+void algorithms::Solver<T>::setEps(double const eps) {
 
 }
 
-void algorithms::Solver::setMaxIt(int const maxIt) {
+template <class T>
+void algorithms::Solver<T>::setMaxIt(int const maxIt) {
 
 }
 
-double algorithms::norm2(QVector<double> const & vec) {
-    double sum=0;
+template <class T>
+double algorithms::norm2(QVector<T> const & vec) {
+    T sum=0;
     for(int i=0; i<vec.size(); ++i) {
         sum += vec[i]*vec[i];
     }
@@ -41,8 +50,9 @@ double algorithms::norm2(QVector<double> const & vec) {
     return sum;
 }
 
-double algorithms::normInf(QVector<double> const & vec) {
-    double max=0;
+template <class T>
+double algorithms::normInf(QVector<T> const & vec) {
+    T max=0;
     for(int i=0; i<vec.size(); ++i) {
         if(max<fabs(vec[i]))
             max = fabs(vec[i]);

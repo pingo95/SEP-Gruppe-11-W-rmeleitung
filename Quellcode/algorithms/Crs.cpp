@@ -1,17 +1,20 @@
 #include "Crs.h"
 
-algorithms::CRS::CRS() {
+template <class T>
+algorithms::CRS<T>::CRS() {
 
 }
 
-algorithms::CRS::CRS(const algorithms::CRS & rhs) {
+template <class T>
+algorithms::CRS<T>::CRS(const CRS<T> & rhs) {
     size = rhs.size;
     index = rhs.index;
     ptr = rhs.ptr;
     value = rhs.value;
 }
 
-algorithms::CRS& algorithms::CRS::operator=(algorithms::CRS const & rhs) {
+template <class T>
+algorithms::CRS<T>& algorithms::CRS<T>::operator=(CRS<T> const & rhs) {
     size = rhs.size;
     ptr = rhs.ptr;
     index = rhs.index;
@@ -19,17 +22,19 @@ algorithms::CRS& algorithms::CRS::operator=(algorithms::CRS const & rhs) {
     return *this;
 }
 
-QVector<double> algorithms::CRS::operator*(QVector<double> const & vec) const {
-    QVector<double> res(size);
+template <class T>
+QVector<T> algorithms::CRS<T>::operator*(QVector<T> const & vec) const {
+    QVector<T> res(size);
     for(int i=0; i<size; ++i)
         for(int j=ptr[i]; j<ptr[i+1]; ++j)
             res[i] += value[j] * vec[index[j]];
     return res;
 }
 
-algorithms::CRS algorithms::CRS::operator+(algorithms::CRS const & rMat) const {
+template <class T>
+algorithms::CRS<T> algorithms::CRS<T>::operator+(algorithms::CRS<T> const & rMat) const {
     assert(size==rMat.size);
-    algorithms::CRS diff;
+    algorithms::CRS<T> diff;
     diff.size=size;
     diff.ptr.resize(size+1);
     int jl, jr;
@@ -78,11 +83,13 @@ algorithms::CRS algorithms::CRS::operator+(algorithms::CRS const & rMat) const {
     return diff;
 }
 
-algorithms::CRS algorithms::CRS::operator-(algorithms::CRS const & rMat) const {
+template <class T>
+algorithms::CRS<T> algorithms::CRS<T>::operator-(algorithms::CRS<T> const & rMat) const {
     return (*this+(-1*rMat));
 }
 
-void algorithms::CRS::A1(int const n) {
+template <class T>
+void algorithms::CRS<T>::A1(int const n) {
     int nnz = 5 * (n-2) * (n-2); // non-zero elements
     ptr.resize(n*n+1);
     size = n*n;
@@ -116,7 +123,8 @@ void algorithms::CRS::A1(int const n) {
 }
 
 
-void algorithms::CRS::diag(QVector<double> const & diag) {
+template <class T>
+void algorithms::CRS<T>::diag(QVector<T> const & diag) {
     int n = diag.size();
     int nnz = n; // non-zero elements
     ptr.resize(n+1);
@@ -131,7 +139,8 @@ void algorithms::CRS::diag(QVector<double> const & diag) {
     ptr[n] = nnz;
 }
 
-void algorithms::CRS::eye(int const n)
+template <class T>
+void algorithms::CRS<T>::eye(int const n)
 {
     int nnz = n*n; // non-zero elements
     ptr.resize(n*n+1);
@@ -147,7 +156,8 @@ void algorithms::CRS::eye(int const n)
     ptr[n*n] = nnz;
 }
 
-void algorithms::CRS::full(QVector<QVector<double> > & full) const {
+template <class T>
+void algorithms::CRS<T>::full(QVector<QVector<T> > & full) const {
     full.resize(size);
     for(int i=0; i<size; ++i) {
         full[i].resize(size);
@@ -159,19 +169,18 @@ void algorithms::CRS::full(QVector<QVector<double> > & full) const {
     }
 }
 
-int algorithms::CRS::getIndex(int const i) const {
+template <class T>
+int algorithms::CRS<T>::getIndex(int const i) const {
     return index[i];
 }
 
-//int algorithms::CRS::getRowsNumElem(int const i) const {
-//    return ptr[i];
-//}
-
-int algorithms::CRS::getSize() const {
+template <class T>
+int algorithms::CRS<T>::getSize() const {
     return size;
 }
 
-double algorithms::CRS::getValue(int const i, int const j) const {
+template <class T>
+T algorithms::CRS<T>::getValue(int const i, int const j) const {
     for(int k=ptr[i]; k<ptr[i+1]; ++k) {
         if(index[k]==j)
             return value[k];
@@ -179,8 +188,9 @@ double algorithms::CRS::getValue(int const i, int const j) const {
     return 0;
 }
 
-algorithms::CRS algorithms::CRS::multCRSCRS(CRS const & rMat) const {
-    algorithms::CRS mult;
+template <class T>
+algorithms::CRS<T> algorithms::CRS<T>::multCRSCRS(CRS<T> const & rMat) const {
+    algorithms::CRS<T> mult;
     mult.size=size;
     mult.ptr.resize(size+1);
     int j;
@@ -196,24 +206,27 @@ algorithms::CRS algorithms::CRS::multCRSCRS(CRS const & rMat) const {
     return mult;
 }
 
-double algorithms::CRS::multRowQVector(int const i, QVector<double> const & vec) const {
-    double res=0;
+template <class T>
+T algorithms::CRS<T>::multRowQVector(int const i, QVector<T> const & vec) const {
+    T res=0;
     for(int j=ptr[i]; j<ptr[i+1]; ++j) {
         res += value[j] * vec[index[j]];
     }
     return res;
 }
 
-double algorithms::CRS::multRowQVectorAbs(int const i, QVector<double> const & vec) const {
-    double res=0;
+template <class T>
+T algorithms::CRS<T>::multRowQVectorAbs(int const i, QVector<T> const & vec) const {
+    T res=0;
     for(int j=ptr[i]; j<ptr[i+1]; ++j) {
         res += fabs(value[j] * vec[index[j]]);
     }
     return res;
 }
 
-algorithms::CRS algorithms::operator *(double const & scalar, algorithms::CRS const & mat) {
-    CRS mult;
+template <class T>
+algorithms::CRS<T> algorithms::operator *(T const & scalar, algorithms::CRS<T> const & mat) {
+    CRS<T> mult;
     mult = mat;
     for(int i=0; i<mat.value.size(); ++i) {
         mult.value[i] *= scalar;
@@ -221,14 +234,16 @@ algorithms::CRS algorithms::operator *(double const & scalar, algorithms::CRS co
     return mult;
 }
 
-QVector<double> algorithms::operator *(double const & scalar, QVector<double> const & rhs) {
-    QVector<double> mult = rhs;
+template <class T>
+QVector<T> algorithms::operator *(T const & scalar, QVector<T> const & rhs) {
+    QVector<T> mult = rhs;
     for(int i=0; i<rhs.size(); ++i) mult[i] *= scalar;
     return mult;
 }
 
-QVector<double> algorithms::addQVectors(QVector<double> const & lhs, QVector<double> const & rhs) {
-    QVector<double> sum = lhs;
+template <class T>
+QVector<T> algorithms::addQVectors(const QVector<T> & lhs, const QVector<T> & rhs) {
+    QVector<T> sum = lhs;
     for(int i=0; i<sum.size(); ++i) sum[i] += rhs[i];
     return sum;
 }

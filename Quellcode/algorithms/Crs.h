@@ -8,28 +8,28 @@
 
 namespace algorithms {
 
+    template <class T>
     class CRS
     {
     //Funktionen:
     public:
         CRS();
-        CRS(CRS const &rhs);
-        CRS& operator=(CRS const & rhs);
-        QVector<double> operator*(QVector<double> const & vec) const;
+        CRS(const CRS<T> & rhs);
+        CRS & operator=(CRS const & rhs);
+        QVector<T> operator*(QVector<T> const & vec) const;
         CRS operator+(CRS const & rMat) const;
         CRS operator-(CRS const & rMat) const;
 
         void A1(int const n); // 2D-Diskretisierungsmatrix Laplace-Operator
-        void diag(QVector<double> const & diag); // Diagonalmatrix mit Vektoreinträgen auf der Diagonalen
+        void diag(QVector<T> const & diag); // Diagonalmatrix mit Vektoreinträgen auf der Diagonalen
         void eye(int const n); // Einheitsmatrix der Größe n*n
-        void full(QVector<QVector<double> > & full) const;
+        void full(QVector<QVector<T> > & full) const;
         int getIndex(int const i) const;
-        //int getRowsNumElem(int const i) const;
         int getSize() const;
-        double getValue(int const i, int const j) const; // Liefert Eintrag a_ij
+        T getValue(int const i, int const j) const; // Liefert Eintrag a_ij
         CRS multCRSCRS(CRS const & rMat) const; // Implementiert lediglich Diagonalmatrix * bel. Matrix
-        double multRowQVector(int const i, QVector<double> const & vec) const;
-        double multRowQVectorAbs(int const i, QVector<double> const & vec) const;
+        T multRowQVector(int const i, QVector<T> const & vec) const;
+        T multRowQVectorAbs(int const i, QVector<T> const & vec) const;
 
     //Attribute:
     private:
@@ -38,17 +38,21 @@ namespace algorithms {
         int size;
         QVector<double> value;
 
-    friend CRS operator*(double const & scalar, CRS const & mat);
+    friend CRS<T> operator*(T const & scalar, CRS<T> const & mat);
 
-    friend QString printCRS(algorithms::CRS const & matrix);
+    friend QString printCRS(algorithms::CRS<T> const & matrix);
     friend class TesterIterativeSolver;
 
     };
 
-    CRS operator *(double const & scalar, CRS const & mat);
+    template <class T>
+    CRS<T> operator *(T const & scalar, CRS<T> const & mat);
 
-    QVector<double> operator *(double const & scalar, QVector<double> const & rhs);
-    QVector<double> addQVectors(QVector<double> const & lhs, QVector<double> const & rhs);
+    template <class T>
+    QVector<T> operator *(T const & scalar, QVector<T> const & rhs);
+
+    template <class T>
+    QVector<T> addQVectors(QVector<T> const & lhs, QVector<T> const & rhs);
 
 
 }

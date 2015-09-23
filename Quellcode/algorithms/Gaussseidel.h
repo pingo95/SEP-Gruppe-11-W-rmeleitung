@@ -5,12 +5,12 @@
 
 namespace algorithms {
 
-    class GaussSeidel : public IterativeSolver
-    {
+    template <class T>
+    class GaussSeidel : public IterativeSolver<T> {
     public:
         GaussSeidel();
 
-        void solve(QVector<double> & result, CRS const & matrix, QVector<double> const & rhs);
+        void solve(QVector<T> & result, CRS<T> const & matrix, QVector<T> const & rhs);
     };
 
 }

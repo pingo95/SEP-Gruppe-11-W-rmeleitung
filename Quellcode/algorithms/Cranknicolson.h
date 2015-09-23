@@ -5,16 +5,17 @@
 
 namespace algorithms {
 
-    class CrankNicolson : public IntMethod {
+    template <class T>
+    class CrankNicolson : public IntMethod<T> {
     public:
         CrankNicolson();
 
-        void calcNextStep(QVector<double> const & last, QVector<double> & next, QVector<QVector<double>* > const & heatSources) const;
-        void getNeedetHeatSources(QVector<double> & neededTimeSteps, bool & reusable) const;
-        void setUpSpecific(QVector<double> const & thermalDiffusivities);
+        void calcNextStep(QVector<T> const & last, QVector<T> & next, QVector<QVector<T>* > const & heatSources) const;
+        void getNeedetHeatSources(QVector<T> & neededTimeSteps, bool & reusable) const;
+        void setUpSpecific(QVector<T> const & thermalDiffusivities);
 
     private:
-        CRS rhsMatrix;
+        CRS<T> rhsMatrix;
     };
 
 }

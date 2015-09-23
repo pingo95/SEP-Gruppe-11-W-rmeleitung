@@ -7,27 +7,26 @@
 
 namespace algorithms {
 
-    class Solver;
-
+    template <class T>
     class IntMethod {
     //Funktionen:
     public:
         IntMethod();
         virtual ~IntMethod();
 
-        virtual void calcNextStep(QVector<double> const & last, QVector<double> & next, QVector< QVector<double>* > const & heatSources) const=0;
-        virtual void getNeedetHeatSources(QVector<double> & neededTimeSteps, bool &reusable) const=0;
-        Solver* const & getSolver() const;
-        void selectSolver(Solver* solver);
-        void setUp(int const n, int const m, double const T, QVector<double> const & thermalDiffusivities);
-        virtual void setUpSpecific(QVector<double> const & thermalDiffusivities)=0;
+        virtual void calcNextStep(QVector<T> const & last, QVector<T> & next, QVector< QVector<T>* > const & heatSources) const=0;
+        virtual void getNeedetHeatSources(QVector<T> & neededTimeSteps, bool &reusable) const=0;
+        Solver<T>* const & getSolver() const;
+        void selectSolver(Solver<T>* solver);
+        void setUp(int const n, int const m, T const Time, QVector<T> const & thermalDiffusivities);
+        virtual void setUpSpecific(QVector<T> const & thermalDiffusivities)=0;
 
     //Attribute:
     protected:
-        Solver* activeSolver;
-        double deltaT;
-        double deltaX;
-        CRS itMatrix;
+        Solver<T>* activeSolver;
+        T deltaT;
+        T deltaX;
+        CRS<T> itMatrix;
         int n;
     };
 

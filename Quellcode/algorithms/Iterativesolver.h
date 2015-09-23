@@ -5,7 +5,8 @@
 
 namespace algorithms {
 
-    class IterativeSolver : public Solver {
+    template <class T>
+    class IterativeSolver : public Solver<T> {
     public:
         IterativeSolver();
         virtual ~IterativeSolver();
@@ -15,7 +16,7 @@ namespace algorithms {
         int getMaxIt() const;
         void setEps(double const eps);
         void setMaxIt(int const maxIt);
-        virtual void solve(QVector<double> & result, CRS const & matrix, QVector<double> const & rhs)=0;
+        virtual void solve(QVector<T> & result, CRS<T> const & matrix, QVector<T> const & rhs)=0;
     };
 }
 

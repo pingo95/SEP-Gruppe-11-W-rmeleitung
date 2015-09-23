@@ -6,18 +6,19 @@
 
 namespace algorithms {
 
-    class LU : public Solver {
+    template <class T>
+    class LU : public Solver<T> {
     //Funktionen:
     public:
         LU();
 
-        void decompose(CRS const & matrix);
-        void solve(QVector<double> & result, CRS const & matrix, QVector<double> const & rhs);
+        void decompose(CRS<T> const & matrix);
+        void solve(QVector<T> & result, CRS<T> const & matrix, QVector<T> const & rhs);
 
     //Attribute:
     private:
-        QVector<QVector<double> > L;
-        QVector<QVector<double> > U;
+        QVector<QVector<T> > L;
+        QVector<QVector<T> > U;
 
     };
 }

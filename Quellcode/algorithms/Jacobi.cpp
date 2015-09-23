@@ -1,15 +1,17 @@
 #include "Jacobi.h"
 
-algorithms::Jacobi::Jacobi() {
+template <class T>
+algorithms::Jacobi<T>::Jacobi() {
 
 }
 
-void algorithms::Jacobi::solve(QVector<double> & result, CRS const & matrix, QVector<double> const & rhs) {
-    double rel=1, sum;
-    itCount = 0;
+template <class T>
+void algorithms::Jacobi<T>::solve(QVector<T> & result, CRS<T> const & matrix, QVector<T> const & rhs) {
+    T rel=1, sum;
+    this->itCount = 0;
 
-    QVector<double> old = result;
-    while(rel-eps>0 && itCount < maxIt) {
+    QVector<T> old = result;
+    while(rel-this->eps>0 && this->itCount < this->maxIt) {
         for(int i=0; i<result.size(); ++i) {
             assert(matrix.getValue(i,i)!=0);
             sum=matrix.multRowQVector(i,old);
@@ -18,6 +20,6 @@ void algorithms::Jacobi::solve(QVector<double> & result, CRS const & matrix, QVe
         old = result;
 //        rel = norm2(addQVectors(matrix*result,(-1.) * rhs))/norm2(rhs);
         rel = normInf(addQVectors(matrix*result,(-1.) * rhs))/normInf(rhs);
-        ++itCount;
+        ++(this->itCount);
     }
 }

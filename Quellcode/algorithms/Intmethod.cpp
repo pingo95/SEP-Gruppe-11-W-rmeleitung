@@ -1,25 +1,30 @@
 #include "Intmethod.h"
 
-algorithms::IntMethod::IntMethod() {
+template <class T>
+algorithms::IntMethod<T>::IntMethod() {
 
 }
 
-algorithms::IntMethod::~IntMethod() {
+template <class T>
+algorithms::IntMethod<T>::~IntMethod() {
 
 }
 
-algorithms::Solver* const & algorithms::IntMethod::getSolver() const {
-    return activeSolver;
+template <class T>
+algorithms::Solver<T>* const & algorithms::IntMethod<T>::getSolver() const {
+    return this->activeSolver;
 }
 
-void algorithms::IntMethod::selectSolver(Solver* solver) {
-    activeSolver = solver;
+template <class T>
+void algorithms::IntMethod<T>::selectSolver(Solver<T>* solver) {
+    this->activeSolver = solver;
 }
 
-void algorithms::IntMethod::setUp(int const n, int const m, double const T, QVector<double> const & thermalDiffusivities) {
+template <class T>
+void algorithms::IntMethod<T>::setUp(int const n, int const m, T const Time, QVector<T> const & thermalDiffusivities) {
     this->n = n;
-    deltaX = (1./(double)(n-1));
-    deltaT = (T/(double)m);
+    this->deltaX = (1./(T)(n-1));
+    this->deltaT = (Time/(T)m);
     setUpSpecific(thermalDiffusivities);
-    activeSolver->decompose(itMatrix);
+    this->activeSolver->decompose(this->itMatrix);
 }

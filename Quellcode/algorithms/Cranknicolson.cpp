@@ -1,28 +1,32 @@
 #include "Cranknicolson.h"
 
-algorithms::CrankNicolson::CrankNicolson() {
+template <class T>
+algorithms::CrankNicolson<T>::CrankNicolson() {
 
 }
 
-void algorithms::CrankNicolson::calcNextStep(QVector<double> const & last, QVector<double> & next, QVector< QVector<double>* > const & heatSources) const {
-    QVector<double> rhs = algorithms::addQVectors(rhsMatrix*last,deltaT/2*(algorithms::addQVectors(*(heatSources[1]),*(heatSources[0]))));
-    activeSolver->solve(next,itMatrix,rhs);
+template <class T>
+void algorithms::CrankNicolson<T>::calcNextStep(QVector<T> const & last, QVector<T> & next, QVector< QVector<T>* > const & heatSources) const {
+    QVector<T> rhs = algorithms::addQVectors(this->rhsMatrix*last,this->deltaT/2*(algorithms::addQVectors(*(heatSources[1]),*(heatSources[0]))));
+    this->activeSolver->solve(next,this->itMatrix,rhs);
 }
 
-void algorithms::CrankNicolson::getNeedetHeatSources(QVector<double> & neededTimeSteps, bool & reusable) const {
+template <class T>
+void algorithms::CrankNicolson<T>::getNeedetHeatSources(QVector<T> & neededTimeSteps, bool & reusable) const {
     reusable = true;
     neededTimeSteps.resize(2);
     neededTimeSteps[0]=1;
     neededTimeSteps[1]=0;
 }
 
-void algorithms::CrankNicolson::setUpSpecific(QVector<double> const & thermalDiffusivities) {
-    algorithms::CRS A1, diag;
-    A1.A1(n);
+template <class T>
+void algorithms::CrankNicolson<T>::setUpSpecific(QVector<T> const & thermalDiffusivities) {
+    algorithms::CRS<T> A1, diag;
+    A1.A1(this->n);
     diag.diag(thermalDiffusivities);
     diag = diag.multCRSCRS(A1);
-    A1.eye(n);
-    diag = deltaT/(2*deltaX*deltaX) * diag;
-    itMatrix = A1 - diag;
-    rhsMatrix = A1 + diag;
+    A1.eye(this->n);
+    diag = this->deltaT/(2*this->deltaX*this->deltaX) * diag;
+    this->itMatrix = A1 - diag;
+    this->rhsMatrix = A1 + diag;
 }
