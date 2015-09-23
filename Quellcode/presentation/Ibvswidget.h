@@ -52,11 +52,11 @@ class Controller;
         QLabel * labelLeftBoundary;
         QDoubleSpinBox * input3LeftBoundary;
 
-        QLabel * labelRightBoundary;
-        QDoubleSpinBox * input4RightBoundary;
-
         QLabel * labelTopBoundary;
-        QDoubleSpinBox * input5TopBoundary;
+        QDoubleSpinBox * input4TopBoundary;
+
+        QLabel * labelRightBoundary;
+        QDoubleSpinBox * input5RightBoundary;
 
         QSpacerItem * spacerHorizontal;
         QSpacerItem * spacerVertical;

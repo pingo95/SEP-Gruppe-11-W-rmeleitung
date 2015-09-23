@@ -42,12 +42,10 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     inputSolver = new QComboBox(this);
 
     labelMaxError = new QLabel("Epsilon eingeben",this);
-    inputMaxError = new QDoubleSpinBox(this);
-    inputMaxError->setDecimals(10);
-    inputMaxError->setMinimum(1e-10);
-    inputMaxError->setMaximum(1e-5);
+    inputMaxError = new QSpinBox(this);
+    inputMaxError->setMinimum(2);
+    inputMaxError->setMaximum(10);
     inputMaxError->setKeyboardTracking(false);
-    inputMaxError->setSingleStep(1e-10);
 
     labelMaxIt = new QLabel("Maximale Iterationszahl eingeben",this);
     inputMaxIt = new QSpinBox(this);
@@ -118,7 +116,7 @@ void presentation::SimulationWidget::setController(Controller *controller)
     connect(inputT,SIGNAL(valueChanged(double)),controller,SLOT(newTSlot(double)));
 
     connect(inputSolver,SIGNAL(activated(QString)),controller,SLOT(selectSolverSlot(QString)));
-    connect(inputMaxError,SIGNAL(valueChanged(double)),controller,SLOT(newMaxErrorSlot(double)));
+    connect(this,SIGNAL(newMaxErrorValue(double)),controller,SLOT(newMaxErrorSlot(double)));
     connect(inputMaxIt,SIGNAL(valueChanged(int)),controller,SLOT(newMaxItSlot(int)));
 
     connect(inputN,SIGNAL(valueChanged(int)),controller,SLOT(newNSlot(int)));
@@ -145,7 +143,7 @@ void presentation::SimulationWidget::update()
     inputT->setValue(model->getSimulationSetup()->getT());
 
     inputSolver->setCurrentText(model->getSimulationSetup()->getSelectedSolver());
-    inputMaxError->setValue(model->getSimulationSetup()->getSolverMaxError());
+    inputMaxError->setValue(-1*log(model->getSimulationSetup()->getSolverMaxError()));
     inputMaxIt->setValue(model->getSimulationSetup()->getSolverMaxIt());
 
     inputN->setValue(model->getSimulationSetup()->getN());
@@ -182,4 +180,9 @@ void presentation::SimulationWidget::nextStage(QString stage, int maximum)
 void presentation::SimulationWidget::updateProgress(int step)
 {
     progressBar->setValue(step);
+}
+
+void presentation::SimulationWidget::transformMaxError(int value)
+{
+    emit newMaxErrorValue(pow(10,-1*value));
 }

@@ -49,7 +49,8 @@ class Controller;
 
     signals:
         void areaClicked(double xKoord, double yKoord, QSize plateSize,
-                         double valueShift, model::SimulationSetup::AreaType type);
+                         double valueShift, bool mouseClick,
+                         model::SimulationSetup::AreaType type);
         void areaValueChanged(int pos, double newValue, bool ok,
                               model::SimulationSetup::AreaType type);
         void deleteArea(int pos, model::SimulationSetup::AreaType type);

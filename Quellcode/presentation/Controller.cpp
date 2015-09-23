@@ -59,7 +59,8 @@ void presentation::Controller::testPartialArea(model::SimulationSetup::AreaType 
 // Dieser Slot verwaltet Mausklicks auf die Fläche zum Erstellen neuer
 // Gebiete für Wärmequellen
 void presentation::Controller::areaClickSlot(double xKoord, double yKoord, QSize plateSize,
-                                             double valueShift, model::SimulationSetup::AreaType type)
+                                             double valueShift, bool mouseClick,
+                                             model::SimulationSetup::AreaType type)
 {
     clearRedo();
 
@@ -71,8 +72,8 @@ void presentation::Controller::areaClickSlot(double xKoord, double yKoord, QSize
         double diffX = fabs(xKoord - partialAreaX.first());
         double diffY = fabs(yKoord - partialAreaY.first());
         // (x,y) € [0,1] x [0,1], Radius von 10 Pixeln:
-        double epsilonX = 10./plateSize.width();
-        double epsilonY = 10./plateSize.height();
+        double epsilonX = mouseClick ? 10./plateSize.width() : 0;
+        double epsilonY = mouseClick ? 10./plateSize.height() : 0;
         if((diffX <= epsilonX) && (diffY <= epsilonY))
         {
             // Den ersten Punkt als neuen (letzten) Punkt hinzufügen
@@ -639,10 +640,10 @@ void presentation::Controller::useHeatSourcesSlot(bool use)
 
 // Dieser Slot visualiziert einen einzelnen Zeitpunkt der letzen Simulation,
 // vorrausgesetzt es wurde bereits eine durchgeführt
-void presentation::Controller::visualizeStateSlot(int frame)
+void presentation::Controller::visualizeStateSlot()
 {
     if(model->getSimulated())
-        ui->visualizeState(frame);
+        ui->visualizeState(ui->getInitialFrame());
     else
     {
         // Fehlermeldung ausgeben:

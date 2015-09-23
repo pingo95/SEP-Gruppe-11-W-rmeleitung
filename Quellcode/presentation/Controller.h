@@ -26,7 +26,8 @@ namespace presentation {
 
     public slots:
         void areaClickSlot(double xKoord, double yKoord, QSize plateSize,
-                           double valueShift, model::SimulationSetup::AreaType type);
+                           double valueShift, bool mouseClick,
+                           model::SimulationSetup::AreaType type);
         void areaValueChangedSlot(int pos, double newValue, bool ok,
                                   model::SimulationSetup::AreaType type);
         void clearAreasSlot(model::SimulationSetup::AreaType type);
@@ -51,7 +52,7 @@ namespace presentation {
         void tabChangedSlot(int newTab);
         void undoAreaSlot(model::SimulationSetup::AreaType type);
         void useHeatSourcesSlot(bool use);
-        void visualizeStateSlot(int frame);
+        void visualizeStateSlot();
 
     private:
         void clearRedo();

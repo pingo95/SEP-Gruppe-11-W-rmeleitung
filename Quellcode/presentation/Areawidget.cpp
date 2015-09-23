@@ -321,8 +321,8 @@ void presentation::AreaWidget::setController(Controller *controller)
 {
     this->controller = controller;
 
-    connect(this,SIGNAL(areaClicked(double,double,QSize,double,model::SimulationSetup::AreaType)),
-            controller,SLOT(areaClickSlot(double,double,QSize,double,model::SimulationSetup::AreaType)));
+    connect(this,SIGNAL(areaClicked(double,double,QSize,double,bool,model::SimulationSetup::AreaType)),
+            controller,SLOT(areaClickSlot(double,double,QSize,double,bool,model::SimulationSetup::AreaType)));
     connect(this,SIGNAL(areaValueChanged(int,double,bool,model::SimulationSetup::AreaType)),
             controller,SLOT(areaValueChangedSlot(int,double,bool,model::SimulationSetup::AreaType)));
     connect(this,SIGNAL(clearAreas(model::SimulationSetup::AreaType)),
@@ -488,7 +488,7 @@ void presentation::AreaWidget::buttonMapperSlot()
     if(_sender == confirmButton)
     {
         emit areaClicked(inputXValue->value(), inputYValue->value(),
-                         plate->size(),valueShift,type);
+                         plate->size(),valueShift,false,type);
         return;
     }
     if(_sender == deleteAreaButton)
@@ -522,7 +522,7 @@ void presentation::AreaWidget::clickModeChangeSlot()
     {
         tableSelectionChangeSlot();
 
-        clearAreasButton->setEnabled(false);
+//        clearAreasButton->setEnabled(false);
         redoButton->setEnabled(false);
         undoButton->setEnabled(false);
 
@@ -543,12 +543,12 @@ void presentation::AreaWidget::clickModeChangeSlot()
 
         if(model->getSimulationSetup()->getAreaCount(type) == 0)
         {
-            clearAreasButton->setEnabled(false);
+//            clearAreasButton->setEnabled(false);
             undoButton->setEnabled(false);
         }
         else
         {
-            clearAreasButton->setEnabled(true);
+//            clearAreasButton->setEnabled(true);
             undoButton->setEnabled(true);
         }
         redoButton->setEnabled(controller->getRedoPossible(type));
@@ -575,7 +575,7 @@ void presentation::AreaWidget::mouseClickOnPlateSlot(QMouseEvent *event)
         if(y > 1)
             y = 1;
     if(newAreaModeButton->isChecked())
-        emit areaClicked(x,y,plate->size(),valueShift,type);
+        emit areaClicked(x,y,plate->size(),valueShift,true,type);
     else
     {
         table->selectRow(findRow(model->getSimulationSetup()->getContainingAreaID(x,y,type)));

@@ -125,7 +125,7 @@ void presentation::VisualizationWidget::setController(Controller *controller)
     this->controller = controller;
 
     connect(playButton,SIGNAL(pressed()),controller,SLOT(playVideoSlot()));
-    connect(slider,SIGNAL(valueChanged(int)),controller,SLOT(visualizeStateSlot(int)));
+    connect(slider,SIGNAL(sliderReleased()),controller,SLOT(visualizeStateSlot()));
 }
 
 void presentation::VisualizationWidget::setModel(model::Model *model)

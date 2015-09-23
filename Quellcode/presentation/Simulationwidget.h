@@ -36,7 +36,11 @@ class Controller;
         void nextStage(QString stage, int maximum);
         void updateProgress(int step);
 
-    public slots:
+    signals:
+        void newMaxErrorValue(double newValue);
+
+    private slots:
+        void transformMaxError(int value);
 
     private:
         explicit SimulationWidget();
@@ -64,7 +68,7 @@ class Controller;
         QLabel * labelSolver;
         QComboBox * inputSolver;
         QLabel * labelMaxError;
-        QDoubleSpinBox * inputMaxError;
+        QSpinBox * inputMaxError;
         QLabel * labelMaxIt;
         QSpinBox * inputMaxIt;
 
