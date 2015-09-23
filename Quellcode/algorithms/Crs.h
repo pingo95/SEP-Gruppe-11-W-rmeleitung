@@ -38,9 +38,11 @@ namespace algorithms {
         int size;
         QVector<double> value;
 
-    friend CRS<T> operator*(T const & scalar, CRS<T> const & mat);
+    template <class U>
+    friend CRS<U> operator*(U const & scalar, CRS<U> const & mat);
 
-    friend QString printCRS(algorithms::CRS<T> const & matrix);
+    template <class U>
+    friend QString printCRS(algorithms::CRS<U> const & matrix);
     friend class TesterIterativeSolver;
 
     };
