@@ -9,11 +9,24 @@
 
 namespace algorithms {
 
+    /*!
+     * \brief Die abstrakte Basisklasse Solver stellt den Rumpf für Löser linearer Gleichungssysteme bereit
+     *
+     * lediglich die solve-Methode ist zu implementieren, diese soll die Lösung des LGS Ax=b berechnen/approximieren
+     */
     template <class T>
     class Solver {
     //Funktionen:
     public:
+
+        /*!
+         * \brief Standardkonstruktor
+         */
         Solver();
+
+        /*!
+         * \brief virtueller Destruktor
+         */
         virtual ~Solver();
 
         virtual void decompose(CRS<T> const & matrix);
@@ -31,9 +44,17 @@ namespace algorithms {
         int maxIt;
     };
 
+    /*!
+     *  \brief norm2 berechnet die 2Norm des übergebenen Vektors
+     *  \param vec
+     */
     template <class T>
     double norm2(QVector<T> const & vec);
 
+    /*!
+     *  \brief normInf berechnet die Maximumsnorm des übergebenen Vektors
+     *  \param vec
+     */
     template <class T>
     double normInf(QVector<T> const & vec);
 

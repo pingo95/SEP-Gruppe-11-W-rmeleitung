@@ -6,7 +6,7 @@
 namespace algorithms {
 
     /*!
-     *    \brief Die Klasse CrankNicolson implementiert die gleichnamige Integrationsmethode zur Approximation der Lösung einer DGL in der Zeit
+     *    \brief Die Klasse CrankNicolson implementiert die gleichnamige Integrationsmethode zur Approximation der Lösung der ortsdiskretisierten Wärmeleitungsgleichung
      *
      *    Sie implementiert:
      *        - eine Funtkion, die der Berechnung des Zustandes zum nächsten Zeitpunkt dient
@@ -39,7 +39,7 @@ namespace algorithms {
 
         /*!
          * \brief setUpSpecific stellt die für das Crank-Nicolson-Verfahren benötigten Matrizen auf
-         * \param thermalDiffusivities beinhaltet die Temperaturleitkoeffizienten eines jeden Gitterpunktes
+         * \param thermalDiffusivities beinhaltet die Temperaturleitkoeffizienten eines jeden Gitterpunktes (Standard-Nummerierung)
          */
         void setUpSpecific(QVector<T> const & thermalDiffusivities);
 

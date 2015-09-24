@@ -1,0 +1,39 @@
+\chapter{Entwicklerdokumentation}
+\section{Codestruktur}
+
+\section{Detaillierte Dokumentation des Codes}
+
+\section{Software Tests}
+
+Zur Verifikation der Software haben wir verschiedene Testmethoden verwendet. Im Folgenden werden diese Tests nach Code-Zugehörigkeit sortiert aufgelistet:
+
+Die Simulationsergebnisse der Software wurden unter Auswahl der Kombination "Impliziter Euler - Jacobi" gegen einen im Zuge der Veranstaltung "Mathematische Grundlagen IV" verifizierten Matlab-Simulationscode getestet, der zugehörige Code wird im Anhang präsentiert. Die weiteren numerischen Methoden wurden anschließend gegen dieses Referenzergebnis getestet.
+
+\subsection{algorithms}
+\subsubsection{CRS}
+
+Die folgenden Funktionalitäten wurden vom Programmierer per Ausgabe (Vergleich Zahlenwerte) verifiziert:
+\begin{enumerate}
+	\item A1
+	\item diag
+	\item diffCRS
+	\item full
+	\item eye
+	\item multCRSCRS
+	\item multCRSQVector
+	\item multRowQVector
+	\item multRowQVectorAbs
+	\item scalarCRS
+	\item scalarQVector
+	\item sumCRS
+	\item sumQVector
+\end{enumerate}
+
+\subsection{Solver}
+
+Die folgenden Löser per Ausgabe (Vergleich Zahlenwerte) anhand von Beispielsystemen verifiziert:
+\begin{enumerate}
+	\item Jacobi
+	\item Gauss-Seidel
+	\item LU (direkter Löser)
+\end{enumerate}

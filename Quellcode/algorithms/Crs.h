@@ -9,7 +9,7 @@
 namespace algorithms {
 
     /*!
-     *  \brief CRS implementiert eine Variante des CRS-Formats, die nur die für diese Anwendung benötigten Funktionalitäten enthält
+     *  \brief Die Klasse CRS implementiert eine Variante des CRS-Formats, die nur die für diese Anwendung benötigten Funktionalitäten enthält
      *
      *  Diese sind:
      *      - Konstruktor, Copy-Konstruktor und Zuweisungsoperator
