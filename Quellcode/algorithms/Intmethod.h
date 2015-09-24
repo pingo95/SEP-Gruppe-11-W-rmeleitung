@@ -5,6 +5,10 @@
 
 #include "Solver.h"
 
+
+/*!
+ *    \brief algorithms enthält alle verwendeten mathematischen Verfahren/grundlegende Datenstrukturen
+ */
 namespace algorithms {
 
     template <class T>
