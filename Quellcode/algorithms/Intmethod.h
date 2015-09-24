@@ -4,6 +4,7 @@
 #include <QVector>
 
 #include "Solver.h"
+#include "Crs.hpp"
 
 
 /*!

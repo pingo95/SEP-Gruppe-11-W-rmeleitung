@@ -13,17 +13,8 @@ TEMPLATE = app
 
 
 SOURCES += \
-    algorithms/Crs.cpp \
     model/Area.cpp \
     presentation/Qcustomplot.cpp \
-    algorithms/Solver.cpp \
-    algorithms/Iterativesolver.cpp \
-    algorithms/Jacobi.cpp \
-    algorithms/Gaussseidel.cpp \
-    algorithms/LU.cpp \
-    algorithms/Intmethod.cpp \
-    algorithms/Impeuler.cpp \
-    algorithms/Cranknicolson.cpp \
     model/Simulationsetup.cpp \
     model/Simulationworker.cpp \
     model/Model.cpp \
@@ -41,14 +32,23 @@ SOURCES += \
 
 HEADERS  += \
     algorithms/Crs.h \
+    algorithms/Crs.hpp \
     algorithms/Solver.h \
+    algorithms/Solver.hpp \
     algorithms/Iterativesolver.h \
+    algorithms/Iterativesolver.hpp \
     algorithms/Jacobi.h \
+    algorithms/Jacobi.hpp \
     algorithms/Gaussseidel.h \
+    algorithms/Gaussseidel.hpp \
     algorithms/LU.h \
+    algorithms/LU.hpp \
     algorithms/Intmethod.h \
+    algorithms/Intmethod.hpp \
     algorithms/Impeuler.h \
+    algorithms/Impeuler.hpp \
     algorithms/Cranknicolson.h \
+    algorithms/Cranknicolson.hpp \
     presentation/Qcustomplot.h \
 #    algorithms/dco.hpp \
     model/Area.h \

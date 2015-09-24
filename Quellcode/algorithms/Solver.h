@@ -5,7 +5,7 @@
 
 #include <math.h>
 #include <cassert>
-#include "Crs.h"
+#include "Crs.hpp"
 
 namespace algorithms {
 
