@@ -18,7 +18,7 @@ namespace algorithms {
     public:
 
         /*!
-         *    \brief Standardkonstruktor für CrankNicolson
+         *    \brief Standardkonstruktor
          */
         CrankNicolson();
 

@@ -170,11 +170,6 @@ void algorithms::CRS<T>::full(QVector<QVector<T> > & full) const {
 }
 
 template <class T>
-int algorithms::CRS<T>::getIndex(int const i) const {
-    return index[i];
-}
-
-template <class T>
 int algorithms::CRS<T>::getSize() const {
     return size;
 }
@@ -235,9 +230,9 @@ algorithms::CRS<T> algorithms::operator *(T const & scalar, algorithms::CRS<T> c
 }
 
 template <class T>
-QVector<T> algorithms::operator *(T const & scalar, QVector<T> const & rhs) {
-    QVector<T> mult = rhs;
-    for(int i=0; i<rhs.size(); ++i) mult[i] *= scalar;
+QVector<T> algorithms::operator *(T const & scalar, QVector<T> const & vec) {
+    QVector<T> mult = vec;
+    for(int i=0; i<vec.size(); ++i) mult[i] *= scalar;
     return mult;
 }
 
