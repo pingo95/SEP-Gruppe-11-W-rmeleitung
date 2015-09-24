@@ -17,27 +17,27 @@ presentation::AreaWidget::AreaWidget(QWidget *parent, model::SimulationSetup::Ar
     table = new QTableWidget(this);
     table->setShowGrid(true);
     table->setRowCount(1);
-    table->setColumnCount(3);
+    table->setColumnCount(2);
+    table->setFixedWidth(117);
+//    table->horizontalScrollBar()->setVisible(false);
 
-    table->setMinimumWidth(152);
-    table->setMaximumWidth(152);
 
     QString combinedUnit = "\n[";
     if(valueShift != 1)
         combinedUnit += QString::number(valueShift,'e',0);
     combinedUnit += " " + unit + "]";
 
-    tableHeader <<"ID"<<"Wert"+combinedUnit<<"Sichtbar";
+    tableHeader <<"ID"<<"Wert"+combinedUnit;
     table->setHorizontalHeaderLabels(tableHeader);
     table->horizontalHeader()->setSectionsClickable(false);
     table->verticalHeader()->setVisible(false);
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
     table->setSelectionMode(QAbstractItemView::SingleSelection);
     table->horizontalHeader()->setMinimumHeight(45);
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
-    table->setColumnWidth(0,20);
-    table->setColumnWidth(1,72);
-    table->setColumnWidth(2,60);
+    table->setColumnWidth(0,30);
+    table->setColumnWidth(1,85);
 
     QTableWidgetItem * tmpItemPtr = new QTableWidgetItem("0");
     tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
@@ -47,10 +47,6 @@ presentation::AreaWidget::AreaWidget(QWidget *parent, model::SimulationSetup::Ar
     tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
     tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     table->setItem(0,AreaWidget::ColumnValue,tmpItemPtr);
-    tmpItemPtr = new QTableWidgetItem("-");
-    tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    table->setItem(0,AreaWidget::ColumnVisibility,tmpItemPtr);
 
         //Reorder-Box
     allUpButton = new QPushButton(this);
@@ -159,7 +155,6 @@ presentation::AreaWidget::AreaWidget(QWidget *parent, model::SimulationSetup::Ar
     boxClickModeLayout = new QVBoxLayout;
     boxClickModeLayout->addWidget(selectionModeButton);
     boxClickModeLayout->addWidget(newAreaModeButton);
-//    boxClickModeLayout->addStretch(1);
     boxClickMode->setLayout(boxClickModeLayout);
 
         //Point-per-keyboard
@@ -205,7 +200,6 @@ presentation::AreaWidget::AreaWidget(QWidget *parent, model::SimulationSetup::Ar
     boxUndoRedoLayout->addWidget(pointModeButton);
     boxUndoRedoLayout->addWidget(undoButton);
     boxUndoRedoLayout->addWidget(redoButton);
-//    boxUndoRedoLayout->addStretch(1);
     boxUndoRedo->setLayout(boxUndoRedoLayout);
 
         //Abbruch Knöpfe
@@ -257,7 +251,6 @@ presentation::AreaWidget::AreaWidget(QWidget *parent, model::SimulationSetup::Ar
     connect(plate,SIGNAL(mousePress(QMouseEvent*)),this,SLOT(mouseClickOnPlateSlot(QMouseEvent*)));
 
     connect(table,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(tableItemChangeSlot(QTableWidgetItem*)));
-    connect(table,SIGNAL(itemClicked(QTableWidgetItem*)),this,SLOT(tableItemClickSlot(QTableWidgetItem*)));
     connect(table,SIGNAL(itemSelectionChanged()),this,SLOT(tableSelectionChangeSlot()));
 
     connect(clearAreasButton,SIGNAL(clicked(bool)),this,SLOT(buttonMapperSlot()));
@@ -354,7 +347,6 @@ void presentation::AreaWidget::setModel(model::Model *model)
 
 void presentation::AreaWidget::update()
 {
-//    unhighlightGraph();
     // colorScale Range
     QCPRange range(model::SimulationSetup::AreaMinValue[type]/valueShift,
                     model::SimulationSetup::AreaMaxValue[type]/valueShift);
@@ -382,9 +374,6 @@ void presentation::AreaWidget::update()
         table->item(i,AreaWidget::ColumnID)->setText(QString::number((*it)->getID()));
 
         table->item(i,AreaWidget::ColumnValue)->setText(QString::number(value));
-
-        table->item(i,AreaWidget::ColumnVisibility)->setCheckState(
-                    visibilities.value((*it)->getID(),true) ? Qt::Checked : Qt::Unchecked);
     }
     if(areaCount+1 >= rowCount)
     {
@@ -400,11 +389,6 @@ void presentation::AreaWidget::update()
             tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             table->setItem(i,AreaWidget::ColumnValue,tmpItemPtr);
-
-            tmpItemPtr = new QTableWidgetItem();
-            tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
-            tmpItemPtr->setCheckState(visibilities.value((*it)->getID(),true) ? Qt::Checked : Qt::Unchecked);
-            table->setItem(i,AreaWidget::ColumnVisibility,tmpItemPtr);
         }
     }
     else
@@ -413,7 +397,6 @@ void presentation::AreaWidget::update()
         {
             delete table->takeItem(j,AreaWidget::ColumnID);
             delete table->takeItem(j,AreaWidget::ColumnValue);
-            delete table->takeItem(j,AreaWidget::ColumnVisibility);
         }
     }
 
@@ -434,13 +417,12 @@ void presentation::AreaWidget::update()
         plate->graph(j)->setPen(QPen(Qt::black));
         plate->graph(j)->setBrush(QBrush(color,Qt::SolidPattern));
         plate->graph(j)->setScatterStyle(QCPScatterStyle::ssNone);
-        plate->graph(j)->setVisible(visibilities.value((*it)->getID(),true));
+        plate->graph(j)->setVisible(true);
     }
     plate->replot();
     controller->testPartialArea(type);
     if(selectionModeButton->isChecked())
         table->selectRow(findRow(selectedAreaID));
-
     else
     {
         if(areaCount == 0)
@@ -455,6 +437,10 @@ void presentation::AreaWidget::update()
         }
         redoButton->setEnabled(controller->getRedoPossible(type));
     }
+    if(areaCount == 0)
+        clearAreasButton->setEnabled(false);
+    else
+        clearAreasButton->setEnabled(true);
 }
 
 void presentation::AreaWidget::buttonMapperSlot()
@@ -522,7 +508,6 @@ void presentation::AreaWidget::clickModeChangeSlot()
     {
         tableSelectionChangeSlot();
 
-//        clearAreasButton->setEnabled(false);
         redoButton->setEnabled(false);
         undoButton->setEnabled(false);
 
@@ -543,12 +528,10 @@ void presentation::AreaWidget::clickModeChangeSlot()
 
         if(model->getSimulationSetup()->getAreaCount(type) == 0)
         {
-//            clearAreasButton->setEnabled(false);
             undoButton->setEnabled(false);
         }
         else
         {
-//            clearAreasButton->setEnabled(true);
             undoButton->setEnabled(true);
         }
         redoButton->setEnabled(controller->getRedoPossible(type));
@@ -593,26 +576,6 @@ void presentation::AreaWidget::tableItemChangeSlot(QTableWidgetItem *item)
     double newValue = table->item(row,AreaWidget::ColumnValue)->text().toDouble(&ok)*valueShift;
     emit areaValueChanged(row,newValue,ok,type);
 
-}
-
-void presentation::AreaWidget::tableItemClickSlot(QTableWidgetItem *item)
-{
-    int column = table->column(item);
-    if(column != AreaWidget::ColumnVisibility)
-        return;
-    int row = table->row(item);
-
-    if(row == 0)
-        return;
-
-    bool visible = table->item(row,AreaWidget::ColumnVisibility)->
-            checkState() == Qt::Checked ? true : false;
-    bool ok;
-    int id = table->item(row,AreaWidget::ColumnID)->text().toInt(&ok);
-    assert(ok);
-    visibilities[id] = visible;
-    plate->graph(row-1)->setVisible(visible);
-    plate->replot();
 }
 
 void presentation::AreaWidget::tableSelectionChangeSlot()

@@ -217,12 +217,12 @@ void presentation::Controller::loadObservationsSlot()
                 ++obsCount;
             }
             long n = sqrt(obsCount);
-            if(n*n == obsCount)
+//            if(n*n == obsCount)
             {
                 model->readObservations(filename,obsCount);
                 return;
             }
-            else
+//            else
             {
                 //TODO: anfrage an user ob ignorieren oder nicht
             }
@@ -492,6 +492,11 @@ void presentation::Controller::reorderAreaSlot(int pos, int dir,
         errorMessages->setDetailedText("");
         errorMessages->exec();
     }
+}
+
+void presentation::Controller::resetSetupSlot()
+{
+    model->resetSetup();
 }
 
 // Dieser Slot updatet die gewählte Integrationsmethode, dies ist aber nur

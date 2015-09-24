@@ -171,6 +171,18 @@ void model::Model::reorderArea(int const pos, int const dir,
     ui->updateNotification();
 }
 
+void model::Model::resetSetup()
+{
+    assert(!blocking);
+    delete simSetup;
+    simSetup = new SimulationSetup;
+    overrideDiffusivities = false;
+    overrideInitialTDvalue = SimulationSetup::AreaMinValue[
+            SimulationSetup::AreaThermalDiffusivity];
+    useHeatSources = false;
+    ui->updateNotification();
+}
+
 // Updatet die gewählte Integrationsmethode
 void model::Model::selectIntMethod(QString intMethod)
 {

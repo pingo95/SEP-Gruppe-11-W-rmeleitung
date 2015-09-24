@@ -16,3 +16,7 @@ build-*/
 *.Release
 *.exe
 *.Debug
+Quellcode/algorithms/dco.hpp
+*.a
+Quellcode/algorithms/key.txt
+Quellcode/Doxygen/html/*

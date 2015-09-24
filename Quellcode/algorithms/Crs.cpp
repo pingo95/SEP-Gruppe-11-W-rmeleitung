@@ -85,7 +85,7 @@ algorithms::CRS<T> algorithms::CRS<T>::operator+(algorithms::CRS<T> const & rMat
 
 template <class T>
 algorithms::CRS<T> algorithms::CRS<T>::operator-(algorithms::CRS<T> const & rMat) const {
-    return (*this+(-1*rMat));
+    return (*this+((T)-1*rMat));
 }
 
 template <class T>

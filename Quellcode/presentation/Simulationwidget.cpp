@@ -10,6 +10,8 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     topLabel->setWordWrap(true);
 
         //IntMethod-Box
+    labelBoxIntMethod = new QLabel("Zeitdiskretisierung",this);
+
     labelIntMethod = new QLabel("Integrationsmethode auswählen",this);
     inputIntMethod = new QComboBox(this);
 
@@ -29,19 +31,22 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
 
     boxIntMethod = new QGroupBox(this);
     boxIntMethodLayout = new QGridLayout();
-    boxIntMethodLayout->addWidget(labelIntMethod,0,0);
-    boxIntMethodLayout->addWidget(inputIntMethod,0,1);
-    boxIntMethodLayout->addWidget(labelM,1,0);
-    boxIntMethodLayout->addWidget(inputM,1,1);
-    boxIntMethodLayout->addWidget(labelT,2,0);
-    boxIntMethodLayout->addWidget(inputT,2,1);
+    boxIntMethodLayout->addWidget(labelBoxIntMethod,0,0,1,2);
+    boxIntMethodLayout->addWidget(labelIntMethod,1,0);
+    boxIntMethodLayout->addWidget(inputIntMethod,1,1);
+    boxIntMethodLayout->addWidget(labelM,2,0);
+    boxIntMethodLayout->addWidget(inputM,2,1);
+    boxIntMethodLayout->addWidget(labelT,3,0);
+    boxIntMethodLayout->addWidget(inputT,3,1);
     boxIntMethod->setLayout(boxIntMethodLayout);
 
         //Solver-Box
+    labelBoxSolver = new QLabel("LGS Löser",this);
+
     labelSolver = new QLabel("Löser auswählen",this);
     inputSolver = new QComboBox(this);
 
-    labelMaxError = new QLabel("Epsilon eingeben",this);
+    labelMaxError = new QLabel("Relative Genauigkeit:\t1e-",this);
     inputMaxError = new QSpinBox(this);
     inputMaxError->setMinimum(2);
     inputMaxError->setMaximum(10);
@@ -55,15 +60,18 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
 
     boxSolver = new QGroupBox(this);
     boxSolverLayout = new QGridLayout();
-    boxSolverLayout->addWidget(labelSolver,0,0);
-    boxSolverLayout->addWidget(inputSolver,0,1);
-    boxSolverLayout->addWidget(labelMaxError,1,0);
-    boxSolverLayout->addWidget(inputMaxError,1,1);
-    boxSolverLayout->addWidget(labelMaxIt,2,0);
-    boxSolverLayout->addWidget(inputMaxIt,2,1);
+    boxSolverLayout->addWidget(labelBoxSolver,0,0,1,2);
+    boxSolverLayout->addWidget(labelSolver,1,0);
+    boxSolverLayout->addWidget(inputSolver,1,1);
+    boxSolverLayout->addWidget(labelMaxError,2,0);
+    boxSolverLayout->addWidget(inputMaxError,2,1);
+    boxSolverLayout->addWidget(labelMaxIt,3,0);
+    boxSolverLayout->addWidget(inputMaxIt,3,1);
     boxSolver->setLayout(boxSolverLayout);
 
         //Simulate-Box
+    labelBoxSimulate = new QLabel("Ortsdiskretisierung",this);
+
     labelN = new QLabel("Stützstellen N eingeben",this);
     labelN->setMaximumWidth(175);
     inputN = new QSpinBox(this);
@@ -72,14 +80,16 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     inputN->setKeyboardTracking(false);
     inputN->setMaximumWidth(50);
     simulateButton = new QPushButton("Simulieren",this);
+    resetButton = new QPushButton("Zurücksetzen",this);
 
     boxSimulate = new QGroupBox(this);
     boxSimulateLayout = new QGridLayout();
-    boxSimulateLayout->addWidget(labelN,0,0);
-    boxSimulateLayout->addWidget(inputN,0,1);
-    boxSimulateLayout->addWidget(simulateButton,1,0,1,2);
+    boxSimulateLayout->addWidget(labelBoxSimulate,0,0,1,2);
+    boxSimulateLayout->addWidget(labelN,1,0);
+    boxSimulateLayout->addWidget(inputN,1,1);
+    boxSimulateLayout->addWidget(simulateButton,2,0,1,2);
+    boxSimulateLayout->addWidget(resetButton,3,0,1,2);
     boxSimulate->setLayout(boxSimulateLayout);
-//    boxSimulate->
 
         //SimulationLog
     simulationLog = new QTextEdit(this);
@@ -95,7 +105,7 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     layout->addWidget(topLabel,0,0,1,2);
     layout->addWidget(boxIntMethod,1,0,3,1);
     layout->addWidget(boxSolver,1,1,3,1);
-    layout->addWidget(boxSimulate,1,2,2,1);
+    layout->addWidget(boxSimulate,1,2,3,1);
     layout->addWidget(simulationLog,4,0,1,4);
     layout->addWidget(labelProgressBar,5,0);
     layout->addWidget(progressBar,5,1,1,3);
@@ -121,6 +131,7 @@ void presentation::SimulationWidget::setController(Controller *controller)
 
     connect(inputN,SIGNAL(valueChanged(int)),controller,SLOT(newNSlot(int)));
     connect(simulateButton,SIGNAL(clicked(bool)),controller,SLOT(simulateSlot()));
+    connect(resetButton,SIGNAL(clicked(bool)),controller,SLOT(resetSetupSlot()));
 }
 
 void presentation::SimulationWidget::setModel(model::Model *model)

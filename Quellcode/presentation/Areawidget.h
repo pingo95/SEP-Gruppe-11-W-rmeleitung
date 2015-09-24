@@ -30,7 +30,6 @@ class Controller;
         {
             ColumnID = 0,
             ColumnValue = 1,
-            ColumnVisibility = 2
         };
 
     //Funktionen:
@@ -67,7 +66,6 @@ class Controller;
         void clickModeChangeSlot();
         void mouseClickOnPlateSlot(QMouseEvent * event);
         void tableItemChangeSlot(QTableWidgetItem * item);
-        void tableItemClickSlot(QTableWidgetItem * item);
         void tableSelectionChangeSlot();
 
     private:
@@ -84,7 +82,6 @@ class Controller;
         model::SimulationSetup::AreaType type;
         QString const unit;
         double const valueShift;
-        QMap<int,bool> visibilities;
 
         //Qt Widgets:
         QGridLayout * layout;

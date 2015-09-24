@@ -52,6 +52,8 @@ namespace model {
         void reorderArea(int const pos, int const dir,
                          model::SimulationSetup::AreaType type);
 
+        void resetSetup();
+
         void selectIntMethod(QString const intMethod);
         void selectSolver(QString const newSolver);
         void setAreaBackground(double const newValue, SimulationSetup::AreaType type);
@@ -91,7 +93,7 @@ namespace model {
         bool optimized;
         bool overrideDiffusivities;
         double overrideInitialTDvalue;
-        SimulationSetup * const simSetup;
+        SimulationSetup * simSetup;
         bool simulated;
         SimulationWorker * simWorker;
         presentation::UI * ui;

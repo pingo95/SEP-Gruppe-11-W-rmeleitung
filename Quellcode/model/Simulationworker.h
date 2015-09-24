@@ -45,7 +45,7 @@ namespace model {
 
     private:
         QVector<double> * & simpleSimulation(SimulationSetup & simSetup, QVector<double> * & step1,
-                              QVector<double> * & step2, QVector<double> currentCs,
+                              QVector<double> * & step2, QVector<double> &currentCs,
                               QList<QList<long>*> heatSourceIndices);
 
     // Attribute:
@@ -54,20 +54,20 @@ namespace model {
         double * consecutiveArrayObservations;
         double * consecutiveArraySimulation;
         bool dataRead;
-        QMap<QString,algorithms::IntMethod*> intMethods;
+        QMap<QString,algorithms::IntMethod<double>*> intMethods;
         long m;
         bool mapsInitialized;
         long n;
-        long obsDim;
+        long obsSize;
         double ** observations;
         double *** result;
         bool simulated;
-        QMap<QString,algorithms::Solver*> solvers;
+        QMap<QString,algorithms::Solver<double>*> solvers;
         double T;
 
         bool optimized;
         long optimizationN;
-        QVector<double> * optimizedCs;
+        QVector<double> optimizedCs;
     };
 
 }

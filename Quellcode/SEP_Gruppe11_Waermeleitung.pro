@@ -28,14 +28,14 @@ SOURCES += \
     model/Simulationworker.cpp \
     model/Model.cpp \
     presentation/Areawidget.cpp \
+    presentation/Ibvswidget.cpp \
     presentation/Simulationwidget.cpp \
     presentation/Visualizationwidget.cpp \
     presentation/Optimizationwidget.cpp \
     presentation/Helpwidget.cpp \
     presentation/Ui.cpp \
     presentation/Controller.cpp \
-    Main.cpp \
-    presentation/Ibvswidget.cpp
+    Main.cpp
 
 
 
@@ -50,18 +50,19 @@ HEADERS  += \
     algorithms/Impeuler.h \
     algorithms/Cranknicolson.h \
     presentation/Qcustomplot.h \
+#    algorithms/dco.hpp \
     model/Area.h \
     model/Simulationsetup.h \
     model/Simulationworker.h \
     model/Model.h \
     presentation/Areawidget.h \
+    presentation/Ibvswidget.h \
     presentation/Simulationwidget.h \
     presentation/Visualizationwidget.h \
     presentation/Optimizationwidget.h \
     presentation/Helpwidget.h \
     presentation/Ui.h \
-    presentation/Controller.h \
-    presentation/Ibvswidget.h
+    presentation/Controller.h
 
 RESOURCES += \
     presentation/uiicons.qrc

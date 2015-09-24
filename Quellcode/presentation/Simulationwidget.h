@@ -56,6 +56,7 @@ class Controller;
 
         QGroupBox * boxIntMethod;
         QGridLayout * boxIntMethodLayout;
+        QLabel * labelBoxIntMethod;
         QLabel * labelIntMethod;
         QComboBox * inputIntMethod;
         QLabel * labelM;
@@ -65,6 +66,7 @@ class Controller;
 
         QGroupBox * boxSolver;
         QGridLayout * boxSolverLayout;
+        QLabel * labelBoxSolver;
         QLabel * labelSolver;
         QComboBox * inputSolver;
         QLabel * labelMaxError;
@@ -74,9 +76,11 @@ class Controller;
 
         QGroupBox * boxSimulate;
         QGridLayout * boxSimulateLayout;
+        QLabel * labelBoxSimulate;
         QLabel * labelN;
         QSpinBox * inputN;
         QPushButton * simulateButton;
+        QPushButton* resetButton;
 
         QTextEdit * simulationLog;
 
