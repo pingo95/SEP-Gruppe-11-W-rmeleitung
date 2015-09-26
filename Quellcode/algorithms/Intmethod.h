@@ -1,10 +1,7 @@
 #ifndef INTMETHOD_H
 #define INTMETHOD_H
 
-#include <QVector>
-
 #include "Solver.h"
-#include "Crs.hpp"
 
 
 /*!

@@ -11,17 +11,18 @@ namespace model {
     //Funktionen:
     public:
         explicit Area(QVector<double> const & xKoords,
-             QVector<double> const & yKoords, double value, int const type);
+                      QVector<double> const & yKoords,
+                      double value, int const type);
         explicit Area(Area const &rhs);
         ~Area();
         static bool validateArea(QVector<double> const & xKoords,
                                  QVector<double> const & yKoords);
 
-        void getTransitiveRectangle(double & xMin, double & xMax,
-                                double & yMin, double & yMax) const;
         int getID() const;
         void getPoints(QVector<double> & xKoords,
                        QVector<double> & yKoords) const;
+        void getTransitiveRectangle(double & xMin, double & xMax,
+                                    double & yMin, double & yMax) const;
         double getValue() const;
         bool insidePoint(double const xKoord, double const yKoord) const;
         void setValue(double const value);

@@ -80,6 +80,13 @@ class Controller;
         QLabel * labelN;
         QSpinBox * inputN;
         QPushButton * simulateButton;
+        QPushButton * abortButton;
+
+        QGroupBox * boxSaveLoad;
+        QGridLayout * boxSaveLoadLayout;
+        QLabel * labelBoxSaveLoad;
+        QPushButton * saveButton;
+        QPushButton * loadButton;
         QPushButton* resetButton;
 
         QTextEdit * simulationLog;

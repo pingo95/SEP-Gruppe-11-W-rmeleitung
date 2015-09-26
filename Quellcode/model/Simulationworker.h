@@ -38,9 +38,9 @@ namespace model {
         void simulationLogUpdate(QString message);
 
     public slots:
-        void startOptimization(SimulationSetup * simSetupTemplate, bool overrideTD,
-                               double overrideValue, bool useHeatSources);
-        void startReadingData(QString const filename, long const obsCount);
+//        void startOptimizationSlot(SimulationSetup * simSetupTemplate, bool overrideTD,
+//                               double overrideValue, bool useHeatSources);
+        void startReadingDataSlot(QString const filename, long const obsCount);
         void startSimulationSlot(SimulationSetup * simSetupTemplate);
 
     private:
@@ -60,14 +60,14 @@ namespace model {
         long n;
         long obsSize;
         double ** observations;
+        long optimizationN;
+        bool optimized;
+        QVector<double> optimizedCs;
         double *** result;
         bool simulated;
         QMap<QString,algorithms::Solver<double>*> solvers;
         double T;
 
-        bool optimized;
-        long optimizationN;
-        QVector<double> optimizedCs;
     };
 
 }

@@ -22,7 +22,6 @@ namespace model {
         void addNewArea(QVector<double> const & xKoords,
                         QVector<double> const & yKoords, double value,
                         SimulationSetup::AreaType type);
-        void addNewArea(Area * area, SimulationSetup::AreaType type);
         void deleteArea(int const pos, SimulationSetup::AreaType type);
 
         bool getDataRead() const;
@@ -49,6 +48,7 @@ namespace model {
 
         void readObservations(QString const filename, long const obsCount);
 
+        void removeLastArea(SimulationSetup::AreaType type);
         void reorderArea(int const pos, int const dir,
                          model::SimulationSetup::AreaType type);
 
@@ -70,7 +70,6 @@ namespace model {
 
         void simulate();
 
-        Area * takeLastArea(SimulationSetup::AreaType type);
 
         void updateAreaValue(int const pos, double const value, SimulationSetup::AreaType type);
 

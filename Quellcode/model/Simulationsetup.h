@@ -19,8 +19,8 @@ namespace model {
         };
         enum IBV
         {
-            InitialValue = 0,
-            BottomBoundary = 1,
+            BottomBoundary = 0,
+            InitialValue = 1,
             LeftBoundary = 2,
             RightBoundary = 3,
             TopBoundary = 4
@@ -38,11 +38,10 @@ namespace model {
         ~SimulationSetup();
 
         void addNewArea(QVector<double> const & xKoords,
-                        QVector<double> const & yKoords, double value,
+                        QVector<double> const & yKoords,
+                        double value,
                         SimulationSetup::AreaType type);
-        void addNewArea(Area * area, SimulationSetup::AreaType type);
         void deleteArea(int const pos, SimulationSetup::AreaType type);
-        Area * const & getArea(int const id, SimulationSetup::AreaType type) const;
         double getAreaBackgroundValue(SimulationSetup::AreaType type) const;
         QList<Area*> const & getAreas(SimulationSetup::AreaType type) const;
         int getAreaCount(SimulationSetup::AreaType type) const;
@@ -50,7 +49,6 @@ namespace model {
                                 SimulationSetup::AreaType type);
 
         double getIBV(SimulationSetup::IBV ibv);
-        double getInitialValue() const;
         long getM() const;
         long getN() const;
         QString getSelectedIntMethod() const;
@@ -59,22 +57,22 @@ namespace model {
         int getSolverMaxIt() const;
         double getT() const;
 
-        void reorderArea(int const pos, int const dir, SimulationSetup::AreaType type);
+        void removeLastArea(SimulationSetup::AreaType type);
+        void reorderAreas(int const pos, int const dir, SimulationSetup::AreaType type);
 
-        void selectIntMethod(QString const intMethod);
+        void selectIntMethod(QString const newIntMethod);
         void selectSolver(QString const newSolver);
         void setAreaBackground(double const newValue, SimulationSetup::AreaType type);
         void setIBV(double const newValue, SimulationSetup::IBV ibv);
-        void setInitialValue(double const newInitialValue);
         void setM(int const newM);
         void setN(int const newN);
-        void setSolverMaxError(double const maxError);
-        void setSolverMaxIt(double const maxIt);
-        void setT(double const T);
+        void setSolverMaxError(double const newMaxError);
+        void setSolverMaxIt(double const newMaxIt);
+        void setT(double const newT);
 
-        Area * takeLastArea(SimulationSetup::AreaType type);
 
-        void updateAreaValue(int const pos, double const value, SimulationSetup::AreaType type);
+        void updateAreaValue(int const pos, double const newValue,
+                             SimulationSetup::AreaType type);
 
     // Attribute:
     private:

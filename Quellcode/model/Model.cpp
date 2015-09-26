@@ -13,9 +13,9 @@ model::Model::Model() : QWidget(NULL), blocking(false), dataRead(false), optimiz
 
     connect(&workerThread, &QThread::finished, simWorker, &QObject::deleteLater);
     connect(this,SIGNAL(startOptimization(SimulationSetup*,bool,double,bool)),
-            simWorker,SLOT(startOptimization(SimulationSetup*,bool,double,bool)));
+            simWorker,SLOT(startOptimizationSlot(SimulationSetup*,bool,double,bool)));
     connect(this,SIGNAL(startReadingData(QString,long)),
-            simWorker,SLOT(startReadingData(QString,long)));
+            simWorker,SLOT(startReadingDataSlot(QString,long)));
     connect(this,SIGNAL(startSimulation(SimulationSetup*)),
             simWorker,SLOT(startSimulationSlot(SimulationSetup*)));
     connect(simWorker,SIGNAL(startedWork()),this,SLOT(startedWorkSlot()));
@@ -43,13 +43,6 @@ void model::Model::addNewArea(const QVector<double> &xKoords,
 {
     assert(!blocking);
     simSetup->addNewArea(xKoords,yKoords,value,type);
-    ui->updateNotification();
-}
-
-void model::Model::addNewArea(Area *area, SimulationSetup::AreaType type)
-{
-    assert(!blocking);
-    simSetup->addNewArea(area,type);
     ui->updateNotification();
 }
 
@@ -163,11 +156,18 @@ void model::Model::readObservations(QString const filename, long const obsCount)
     ui->updateNotification();
 }
 
+void model::Model::removeLastArea(SimulationSetup::AreaType type)
+{
+    assert(!blocking);
+    simSetup->removeLastArea(type);
+    ui->updateNotification();
+}
+
 void model::Model::reorderArea(int const pos, int const dir,
                                model::SimulationSetup::AreaType type)
 {
     assert(!blocking);
-    simSetup->reorderArea(pos,dir,type);
+    simSetup->reorderAreas(pos,dir,type);
     ui->updateNotification();
 }
 
@@ -284,14 +284,6 @@ void model::Model::simulate()
     emit startSimulation(simSetup);
     working = true;
     ui->updateNotification();
-}
-
-model::Area * model::Model::takeLastArea(SimulationSetup::AreaType type)
-{
-    assert(!blocking);
-    Area * ptr = simSetup->takeLastArea(type);
-    ui->updateNotification();
-    return ptr;
 }
 
 void model::Model::updateAreaValue(int const pos, double const value,

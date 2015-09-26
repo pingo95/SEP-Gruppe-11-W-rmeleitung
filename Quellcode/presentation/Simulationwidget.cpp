@@ -80,7 +80,8 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     inputN->setKeyboardTracking(false);
     inputN->setMaximumWidth(50);
     simulateButton = new QPushButton("Simulieren",this);
-    resetButton = new QPushButton("Zurücksetzen",this);
+    abortButton = new QPushButton("Simulation abbrechen",this);
+    abortButton->setEnabled(false);
 
     boxSimulate = new QGroupBox(this);
     boxSimulateLayout = new QGridLayout();
@@ -88,8 +89,25 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     boxSimulateLayout->addWidget(labelN,1,0);
     boxSimulateLayout->addWidget(inputN,1,1);
     boxSimulateLayout->addWidget(simulateButton,2,0,1,2);
-    boxSimulateLayout->addWidget(resetButton,3,0,1,2);
+    boxSimulateLayout->addWidget(abortButton,3,0,1,2);
     boxSimulate->setLayout(boxSimulateLayout);
+
+        //Save-Load-Box
+    labelBoxSaveLoad = new QLabel("Simulationseinstellungen", this);
+
+    saveButton = new QPushButton("Speichern",this);
+    saveButton->setEnabled(false);
+    loadButton = new QPushButton("Laden",this);
+    loadButton->setEnabled(false);
+    resetButton = new QPushButton("Zurücksetzen",this);
+
+    boxSaveLoad = new QGroupBox(this);
+    boxSaveLoadLayout = new QGridLayout();
+    boxSaveLoadLayout->addWidget(labelBoxSaveLoad,0,0);
+    boxSaveLoadLayout->addWidget(saveButton,1,0);
+    boxSaveLoadLayout->addWidget(loadButton,2,0);
+    boxSaveLoadLayout->addWidget(resetButton,3,0);
+    boxSaveLoad->setLayout(boxSaveLoadLayout);
 
         //SimulationLog
     simulationLog = new QTextEdit(this);
@@ -103,17 +121,19 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     layout = new QGridLayout(this);
 
     layout->addWidget(topLabel,0,0,1,2);
-    layout->addWidget(boxIntMethod,1,0,3,1);
-    layout->addWidget(boxSolver,1,1,3,1);
-    layout->addWidget(boxSimulate,1,2,3,1);
-    layout->addWidget(simulationLog,4,0,1,4);
-    layout->addWidget(labelProgressBar,5,0);
-    layout->addWidget(progressBar,5,1,1,3);
+    layout->addWidget(boxIntMethod,1,0,4,1);
+    layout->addWidget(boxSolver,1,1,4,1);
+    layout->addWidget(boxSimulate,1,2,4,1);
+    layout->addWidget(boxSaveLoad,1,3,4,1);
+    layout->addWidget(simulationLog,5,0,1,5);
+    layout->addWidget(labelProgressBar,6,0);
+    layout->addWidget(progressBar,6,1,1,4);
 
     layout->setColumnStretch(0,0);
     layout->setColumnStretch(1,0);
     layout->setColumnStretch(2,0);
-    layout->setColumnStretch(3,1);
+    layout->setColumnStretch(3,0);
+    layout->setColumnStretch(4,1);
 }
 
 void presentation::SimulationWidget::setController(Controller *controller)
@@ -163,12 +183,14 @@ void presentation::SimulationWidget::update()
     {
         topLabel->setText("Es wird zur Zeit simuliert.");
         simulateButton->setEnabled(false);
+        abortButton->setEnabled(true);
     }
     else
     {
        topLabel->setText("Dies ist der Tab zur Einstellung der Simulation.\n"
                          "Für weitere Informationen wechseln Sie in den Hilfe-Tab.");
        simulateButton->setEnabled(true);
+       abortButton->setEnabled(false);
        if(model->getSimulated())
            labelProgressBar->setText("Simulation beendet");
 

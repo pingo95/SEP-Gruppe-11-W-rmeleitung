@@ -1,7 +1,6 @@
 #ifndef GAUSS_H
 #define GAUSS_H
 
-#include <cassert>
 #include "Solver.h"
 
 namespace algorithms {

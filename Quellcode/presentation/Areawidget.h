@@ -55,15 +55,14 @@ class Controller;
         void deleteArea(int pos, model::SimulationSetup::AreaType type);
         void clearAreas(model::SimulationSetup::AreaType type);
         void discardNewArea(model::SimulationSetup::AreaType type);
-        void redoArea(model::SimulationSetup::AreaType type);
+        void redo(model::SimulationSetup::AreaType type);
         void reorderArea(int pos, int dir, model::SimulationSetup::AreaType type);
-        void undoArea(model::SimulationSetup::AreaType type);
+        void undo(model::SimulationSetup::AreaType type);
 
     public slots:
 
     private slots:
         void buttonMapperSlot();
-        void clickModeChangeSlot();
         void mouseClickOnPlateSlot(QMouseEvent * event);
         void tableItemChangeSlot(QTableWidgetItem * item);
         void tableSelectionChangeSlot();
@@ -78,6 +77,7 @@ class Controller;
         Controller * controller;
         model::Model * model;
         QString const name;
+        bool partialArea;
         int selectedAreaID;
         model::SimulationSetup::AreaType type;
         QString const unit;
@@ -102,11 +102,6 @@ class Controller;
         QCustomPlot * plate;
         QCPColorScale * colorScale;
 
-        QGroupBox * boxClickMode;
-        QVBoxLayout * boxClickModeLayout;
-        QRadioButton * selectionModeButton;
-        QRadioButton * newAreaModeButton;
-
         QLabel * labelKeyboardInput;
         QLabel * labelXValue;
         QDoubleSpinBox * inputXValue;
@@ -116,8 +111,6 @@ class Controller;
 
         QGroupBox * boxUndoRedo;
         QVBoxLayout * boxUndoRedoLayout;
-        QRadioButton * areaModeButton;
-        QRadioButton * pointModeButton;
         QPushButton * undoButton;
         QPushButton * redoButton;
 

@@ -22,7 +22,8 @@ namespace presentation {
         void setModel(model::Model * model);
         void setUI(UI * ui);
 
-        void testPartialArea(model::SimulationSetup::AreaType type) const; //<--Wann wirklich?
+        void getPartialArea(QVector<double> & xKoords,
+                            QVector<double> & yKoords) const;
 
     public slots:
         void areaClickSlot(double xKoord, double yKoord, QSize plateSize,
@@ -44,14 +45,14 @@ namespace presentation {
         void optimizationSlot();
         void overrideThermalDiffusivities(bool override);
         void playVideoSlot();
-        void redoAreaSlot(model::SimulationSetup::AreaType type);
+        void redoSlot(model::SimulationSetup::AreaType type);
         void reorderAreaSlot(int pos, int dir, model::SimulationSetup::AreaType type);
         void resetSetupSlot();
         void selectIntMethodSlot(QString newIntMethod);
         void selectSolverSlot(QString newIterativeSolver);
         void simulateSlot();
         void tabChangedSlot(int newTab);
-        void undoAreaSlot(model::SimulationSetup::AreaType type);
+        void undoSlot(model::SimulationSetup::AreaType type);
         void useHeatSourcesSlot(bool use);
         void visualizeStateSlot();
 
@@ -64,7 +65,6 @@ namespace presentation {
         model::Model * model;
         QVector<double> partialAreaX;
         QVector<double> partialAreaY;
-        QList<model::Area *> redoAreaStack;
         QList<double> redoPointXStack;
         QList<double> redoPointYStack;
         bool redoPossible[2];

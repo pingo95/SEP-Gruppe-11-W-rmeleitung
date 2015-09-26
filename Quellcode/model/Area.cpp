@@ -70,6 +70,19 @@ bool model::Area::validateArea(QVector<double> const & xKoords,
     return true;
 }
 
+
+int model::Area::getID() const
+{
+    return id;
+}
+
+void model::Area::getPoints(QVector<double> & xKoords,
+                            QVector<double> & yKoords) const
+{
+    xKoords = this->xKoords;
+    yKoords = this->yKoords;
+}
+
 // Returned Rechteck, das parallel zur x und y Achse das Gebiet einschließt
 void model::Area::getTransitiveRectangle(double &xMin, double &xMax,
                                      double &yMin, double &yMax) const
@@ -87,18 +100,6 @@ void model::Area::getTransitiveRectangle(double &xMin, double &xMax,
         if(yKoords[i] < yMin) yMin = yKoords[i];
         else if(yKoords[i] > yMax) yMax = yKoords[i];
     }
-}
-
-void model::Area::getPoints(QVector<double> & xKoords,
-                            QVector<double> & yKoords) const
-{
-    xKoords = this->xKoords;
-    yKoords = this->yKoords;
-}
-
-int model::Area::getID() const
-{
-    return id;
 }
 
 double model::Area::getValue() const

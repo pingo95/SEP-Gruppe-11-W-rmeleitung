@@ -1,11 +1,7 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
-#include <QVector>
-
-#include <math.h>
-#include <cassert>
-#include "Crs.hpp"
+#include "Crs.h"
 
 namespace algorithms {
 
