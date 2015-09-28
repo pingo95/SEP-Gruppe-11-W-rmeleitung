@@ -25,14 +25,14 @@ namespace presentation {
 
         QLabel * configurationHelp;
         QLabel * thermalDiffusivitiesHelp;
-        QLabel * heatSourcesHelp;
         QLabel * iBVsHelp;
 
         QLabel * simulationHelp;
 
         QLabel * visualizationHelp;
 
-        QLabel * optimizationHelp;
+        QLabel * optimizationKonfigurationHelp;
+        QLabel * optimizationResultsHelp;
 
         QSpacerItem * spacerItem;
     };
