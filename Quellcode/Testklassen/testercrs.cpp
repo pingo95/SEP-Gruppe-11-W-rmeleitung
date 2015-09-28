@@ -1,4 +1,5 @@
 #include "Testercrs.h"
+#include "Testwindow.cpp"
 
 algorithms::TesterCRS::TesterCRS() {
 
@@ -40,7 +41,7 @@ QLabel* algorithms::TesterCRS::testDiffCRS() {
     QString testString;
     int testSize=3;
 
-    algorithms::CRS mat1, mat2;
+    algorithms::CRS<double> mat1, mat2;
     mat1.A1(testSize); mat2.eye(testSize);
 
     testMatrix = mat1 - mat2;
@@ -84,7 +85,7 @@ QLabel* algorithms::TesterCRS::testMultCRSCRS() {
 
     QVector<double> testVec(testSize*testSize);
     for(int i=0;i<testSize*testSize;++i) testVec[i]=(i+1)*(i+1);
-    algorithms::CRS mat1, mat2;
+    algorithms::CRS<double> mat1, mat2;
     mat1.diag(testVec); mat2.A1(testSize);
 
     testMatrix = mat1.multCRSCRS(mat2);
@@ -142,7 +143,7 @@ QLabel* algorithms::TesterCRS::testScalarCRS() {
     int testSize=3;
 
     testMatrix.eye(testSize);
-    testMatrix = 3 * testMatrix;
+    testMatrix = 3. * testMatrix;
     testString = printCRS(testMatrix);
     text->setText(testString);
     return text;
@@ -156,7 +157,7 @@ QLabel* algorithms::TesterCRS::testScalarQVector() {
     QVector<double> testVec(testSize*testSize);
     for(int i=0;i<testSize*testSize;++i) testVec[i]=(i+1)*(i+1);
 
-    testVec = 3 * testVec;
+    testVec = 3. * testVec;
 
     testString = printQVector(testVec);
     text->setText(testString);
@@ -168,7 +169,7 @@ QLabel* algorithms::TesterCRS::testSumCRS() {
     QString testString;
     int testSize=3;
 
-    algorithms::CRS mat1, mat2;
+    algorithms::CRS<double> mat1, mat2;
     mat1.A1(testSize); mat2.eye(testSize);
 
     testMatrix = mat1 + mat2;

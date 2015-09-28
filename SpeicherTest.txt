@@ -1,0 +1,104 @@
+TODO: Grosse tolle Ueberschrift
+Simulation:
+
+Einstellung fuer die Zeitdiskretisierung:
+Ausgewaehlte Integrationsmethode: Crank Nicolson
+Anzahl Zeitschritte M: 456
+Endzeitpunkt T: 1234.560s
+
+Einstellungen fuer den LGS Loeser:
+Ausgewaehlter Loeser: Gauss-Seidel
+Relative Genauigkeit: 1e-05
+Maximale Iterationsanzahl: 485
+
+Einstellungen fuer die Ortsdiskretisierung:
+Anzahl Stuetzstellen N: 456
+
+Einstellungen fuer die IBVs:
+     Anfangswert:   100.00K
+Unterer Randwert:   200.00K
+ Linker Randwert:   300.00K
+ Oberer Randwert:   400.00K
+Rechter Randwert:   500.00K
+        
+Einstellungen fuer die Temperaturleitkoeffizienten:
+Anzahl  Gebiete: 3
+Hintergrundwert: 1.00e-04m^2/s
+Auflistung der Gebiete (Werte in m^2/s):
+
+1.Gebiet:
+Typ: 1
+ID: 1
+Wert: 4.50e-05
+Anzahl Punkte: 7
+0.331|0.874
+0.086|0.612
+0.158|0.472
+0.408|0.485
+0.540|0.767
+0.413|0.889
+0.331|0.874
+
+2.Gebiet:
+Typ: 1
+ID: 2
+Wert: 5.00e-06
+Anzahl Punkte: 5
+0.715|0.494
+0.619|0.312
+0.775|0.229
+0.816|0.324
+0.715|0.494
+
+3.Gebiet:
+Typ: 1
+ID: 3
+Wert: 1.18e-04
+Anzahl Punkte: 4
+0.797|0.858
+0.711|0.702
+0.834|0.696
+0.797|0.858
+
+Einstellungen fuer die Waermequellen:
+Anzahl  Gebiete: 3
+Hintergrundwert: 0K/s
+Auflistung der Gebiete (Werte in K/s):
+
+1.Gebiet:
+Typ: 0
+ID: 1
+Wert: 222
+Anzahl Punkte: 5
+0.132|0.857
+0.050|0.601
+0.382|0.507
+0.322|0.697
+0.132|0.857
+
+2.Gebiet:
+Typ: 0
+ID: 2
+Wert: 333
+Anzahl Punkte: 6
+0.734|0.586
+0.671|0.335
+0.902|0.185
+0.908|0.235
+0.858|0.517
+0.734|0.586
+
+3.Gebiet:
+Typ: 0
+ID: 3
+Wert: 430
+Anzahl Punkte: 4
+0.323|0.356
+0.224|0.230
+0.433|0.159
+0.323|0.356
+
+Optimierungseinstellungen:
+
+Ueberschreiben der Temperaturleitkoeffizienten: Nicht aktiviert
+Nutzen der Waermequellen: Nicht aktiviert

@@ -37,6 +37,7 @@ class Controller;
     private:
         Controller * controller;
         model::Model * model;
+        bool updating;
 
         QGridLayout * layout;
 

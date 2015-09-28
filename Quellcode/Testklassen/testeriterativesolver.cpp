@@ -18,7 +18,7 @@ QLabel* algorithms::TesterIterativeSolver::testSolveGaussSeidel() {
         result[i] = 0;
     }
 
-    algorithms::CRS matrix;
+    algorithms::CRS<double> matrix;
     matrix.size = 3;
     matrix.ptr.resize(matrix.size+1); matrix.index.resize(matrix.size*matrix.size); matrix.value.resize(matrix.size*matrix.size);
     for(int i=0; i<matrix.size*matrix.size; ++i) {
@@ -39,7 +39,7 @@ QLabel* algorithms::TesterIterativeSolver::testSolveGaussSeidel() {
     matrix.ptr[3] = 9;
     rhs = algorithms::addQVectors(last,deltaT * heatSources);
 
-    itSolver = new GaussSeidel;
+    itSolver = new GaussSeidel<double>;
 
     itSolver->solve(result,matrix,rhs);
     testString = algorithms::printQVector(result);
@@ -61,7 +61,7 @@ QLabel* algorithms::TesterIterativeSolver::testSolveJacobi() {
         result[i] = 0;
     }
 
-    algorithms::CRS matrix;
+    algorithms::CRS<double> matrix;
     matrix.ptr.resize(4); matrix.index.resize(9); matrix.value.resize(9);
     for(int i=0; i<9; ++i) {
         matrix.index[i] = i%3;
@@ -82,7 +82,7 @@ QLabel* algorithms::TesterIterativeSolver::testSolveJacobi() {
     matrix.size = 3;
     rhs = algorithms::addQVectors(last,deltaT * heatSources);
 
-    itSolver = new Jacobi;
+    itSolver = new Jacobi<double>;
     itSolver->solve(result,matrix,rhs);
     testString = algorithms::printQVector(result);
     text->setText(testString);
@@ -103,7 +103,7 @@ QLabel* algorithms::TesterIterativeSolver::testSolveLU() {
         result[i] = 0;
     }
 
-    algorithms::CRS matrix;
+    algorithms::CRS<double> matrix;
     matrix.size = 3;
     matrix.ptr.resize(matrix.size+1); matrix.index.resize(matrix.size*matrix.size); matrix.value.resize(matrix.size*matrix.size);
     for(int i=0; i<matrix.size*matrix.size; ++i) {
@@ -124,7 +124,7 @@ QLabel* algorithms::TesterIterativeSolver::testSolveLU() {
     matrix.ptr[3] = 9;
     rhs = algorithms::addQVectors(last,deltaT * heatSources);
 
-    itSolver = new LU;
+    itSolver = new LU<double>;
 
     itSolver->decompose(matrix);
     itSolver->solve(result,matrix,rhs);

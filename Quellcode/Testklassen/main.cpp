@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 
     algorithms::TesterCRS testerCRS;
     algorithms::TesterIterativeSolver testerIterativeSolver;
-    TesterArea testerArea;
+    model::TesterArea testerArea;
 
     int mainTabCount = -1;
 

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QMutex>
 #include "../algorithms/Intmethod.h"
 #include "Simulationsetup.h"
 
@@ -18,6 +19,7 @@ namespace model {
         explicit SimulationWorker(QObject *parent = 0);
         ~SimulationWorker();
 
+        void abortWork();
         QList<QString> const getIntMethodNames() const;
         QList<QString> const getSolverNames() const;
         long getM() const;
@@ -30,9 +32,9 @@ namespace model {
 
     signals:
         void beginningStage(QString stage, int stepCount, bool simulation = true);
-        void finishedOptimization();
+        void finishedOptimization(bool success);
         void finishedReadingData();
-        void finishedSimulation();
+        void finishedSimulation(bool success);
         void finishedStep(int step, bool simulation = true);
         void startedWork();
         void simulationLogUpdate(QString message);
@@ -50,6 +52,8 @@ namespace model {
 
     // Attribute:
     private:
+        bool abort;
+        QMutex accessLock;
         bool busy;
         double * consecutiveArrayObservations;
         double * consecutiveArraySimulation;

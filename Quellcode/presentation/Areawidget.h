@@ -81,6 +81,7 @@ class Controller;
         int selectedAreaID;
         model::SimulationSetup::AreaType type;
         QString const unit;
+        bool updating;
         double const valueShift;
 
         //Qt Widgets:

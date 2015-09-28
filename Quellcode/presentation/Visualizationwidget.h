@@ -51,6 +51,7 @@ class Controller;
         int resultM;
         int resultN;
         double resultT;
+        bool updating;
 
         QGridLayout * layout;
 

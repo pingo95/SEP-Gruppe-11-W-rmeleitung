@@ -1,4 +1,5 @@
 #include "Area.h"
+
 QMap<int, int> model::Area::idCounters;
 
 // Vorbedingung: xKoords und yKoords wurden vorher mit validateArea getestet
@@ -14,7 +15,7 @@ model::Area::Area(QVector<double> const & xKoords,
         idCounters.insert(type,2);
 }
 
-model::Area::Area(const Area & rhs) : id(++idCounters[rhs.type]), type(rhs.type),
+model::Area::Area(const Area & rhs) : id(rhs.id), type(rhs.type),
     value(rhs.value), xKoords(rhs.xKoords), yKoords(rhs.yKoords)
 {
 
@@ -22,6 +23,14 @@ model::Area::Area(const Area & rhs) : id(++idCounters[rhs.type]), type(rhs.type)
 
 model::Area::~Area(){
 //    --idCounters[type];
+}
+
+void model::Area::resetIDs()
+{
+    QList<int> keys = idCounters.keys();
+    QList<int>::const_iterator it = keys.begin();
+    for(; it != keys.end(); ++it)
+        idCounters[(*it)] = 1;
 }
 
 // Testet, ob die Punkte in den Vektoren ein gültiges Gebiet ergeben würden
@@ -219,3 +228,20 @@ bool model::Area::segIntersect(double const pX, double const pY,
     return true;
 }
 
+QTextStream & model::operator<<(QTextStream & out, Area & area)
+{
+    out << "Typ: " << area.type
+        << "\nID: " << area.id
+        << "\nWert: " << area.value
+        << "\nAnzahl Punkte: " << area.xKoords.size()
+        << "\n";
+//        << std::setprecision(3)
+//        << std::fixed;
+    out.setRealNumberNotation(QTextStream::FixedNotation);
+    out.setRealNumberPrecision(3);
+    for(int i = 0; i < area.xKoords.size(); ++i)
+        out << area.xKoords[i] << "|"
+            << area.yKoords[i] << "\n";
+    out << "\n";
+    return out;
+}

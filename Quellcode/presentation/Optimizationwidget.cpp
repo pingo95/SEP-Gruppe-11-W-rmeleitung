@@ -5,7 +5,7 @@
 
 presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     : QTabWidget(parent), activeSubTab(OptimizationWidget::TabConfiguration),
-      controller(NULL), model(NULL), valueShift(1e-6)
+      controller(NULL), model(NULL), updating(false), valueShift(1e-6)
 {
         //Tab Konfig
     configurationTab = new QWidget(this);
@@ -17,7 +17,7 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
                                        "lfe-Tab.",configurationTab);
     topLabelConfiguration->setWordWrap(true);
 
-    loadDataButton = new QPushButton("Laden",configurationTab);
+    loadDataButton = new QPushButton("Messwerte laden",configurationTab);
     startOptimizationButton = new QPushButton("Optimieren starten",configurationTab);
     startOptimizationButton->setEnabled(false);
 
@@ -38,7 +38,7 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     inputInitialValue->setMaximum(model::SimulationSetup::AreaMaxValue[
                                   model::SimulationSetup::AreaThermalDiffusivity]/valueShift);
     inputInitialValue->setDecimals(0);
-    inputInitialValue->setSuffix(" [1e-6 m²/s]");
+    inputInitialValue->setSuffix("\t[1e-6 m²/s]");
     inputInitialValue->setEnabled(false);
     inputInitialValue->setKeyboardTracking(false);
     inputInitialValue->setSingleStep(1);
@@ -81,11 +81,11 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     displaySolver = new QLineEdit(configurationTab);
     displaySolver->setReadOnly(true);
 
-    labelMaxError = new QLabel("Epsilon:",configurationTab);
+    labelMaxError = new QLabel("Relative Genauigkeit:\t\t\t1e-",configurationTab);
     displayMaxError = new QDoubleSpinBox(configurationTab);
-    displayMaxError->setDecimals(10);
-    displayMaxError->setMinimum(1e-10);
-    displayMaxError->setMaximum(1e-5);
+    displayMaxError->setDecimals(0);
+    displayMaxError->setMinimum(2);
+    displayMaxError->setMaximum(10);
     displayMaxError->setReadOnly(true);
     displayMaxError->setButtonSymbols(QAbstractSpinBox::NoButtons);
 
@@ -274,6 +274,9 @@ void presentation::OptimizationWidget::setModel(model::Model *model)
 
 void presentation::OptimizationWidget::update()
 {
+    if(updating)
+        return;
+    updating = true;
     if(activeSubTab == OptimizationWidget::TabConfiguration)
     {
         //Config Tab updaten
@@ -301,25 +304,34 @@ void presentation::OptimizationWidget::update()
                 startOptimizationButton->setEnabled(true);
         }
 
-        //TODO: Override inputs werte aktualisieren temporär:
         inputInitialValue->setValue(model->getOverrideValue()/valueShift);
         if(model->getOverrideThermalDiffusivities())
         {
+            overrideThermalDiffusivities->setChecked(true);
             labelInitialValue->setEnabled(true);
             inputInitialValue->setEnabled(true);
         }
         else
         {
+            overrideThermalDiffusivities->setChecked(false);
             labelInitialValue->setEnabled(false);
             inputInitialValue->setEnabled(false);
         }
+        overrideHeatSources->setChecked(model->getUseHeatSources());
 
         //Übernommene Werte aktualisieren
         displayIntMethod->setText(model->getSimulationSetup()->getSelectedIntMethod());
         displayM->setValue(model->getSimulationSetup()->getM());
         displayT->setValue(model->getSimulationSetup()->getT());
         displaySolver->setText(model->getSimulationSetup()->getSelectedSolver());
-        displayMaxError->setValue(model->getSimulationSetup()->getSolverMaxError());
+        int exp = 1;
+        double tmp = model->getSimulationSetup()->getSolverMaxError();
+        while(tmp < 1e-1)
+        {
+            tmp *= 10;
+            ++exp;
+        }
+        displayMaxError->setValue(exp);
         displayMaxIt->setValue(model->getSimulationSetup()->getSolverMaxIt());
 
         //TODO: Endergebnis oder Anfangswert auf platte darstellen valueShift!!!
@@ -384,6 +396,7 @@ void presentation::OptimizationWidget::update()
 //        solutionTable->setVerticalHeaderLabels(header);
 //        solutionTable->verticalHeader()->setSectionsClickable(false);
     }
+    updating = false;
 }
 
 void presentation::OptimizationWidget::nextStage(QString stage, int maximum)

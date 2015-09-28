@@ -22,7 +22,8 @@ void TestWindow::addSubTab(QWidget *newTab, QString name, int index)
     subTabs[index]->addTab(newTab,name);
 }
 
-QString algorithms::printCRS(algorithms::CRS const &matrix) {
+template<class U>
+QString algorithms::printCRS(const CRS<U> &matrix) {
     QString string;
     int kl, ku, il, iu;
     for(int i=0; i<matrix.size; ++i) {

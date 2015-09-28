@@ -3,7 +3,7 @@
 #include "Controller.h"
 
 presentation::SimulationWidget::SimulationWidget(QWidget *parent)
-    : QWidget(parent), controller(NULL), model(NULL)
+    : QWidget(parent), controller(NULL), model(NULL), updating(false)
 {
         //Top-Label
     topLabel = new QLabel("",this);
@@ -76,7 +76,7 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     labelN->setMaximumWidth(175);
     inputN = new QSpinBox(this);
     inputN->setMaximum(0);
-    inputN->setMaximum(800);
+    inputN->setMaximum(500);
     inputN->setKeyboardTracking(false);
     inputN->setMaximumWidth(50);
     simulateButton = new QPushButton("Simulieren",this);
@@ -96,9 +96,7 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     labelBoxSaveLoad = new QLabel("Simulationseinstellungen", this);
 
     saveButton = new QPushButton("Speichern",this);
-    saveButton->setEnabled(false);
     loadButton = new QPushButton("Laden",this);
-    loadButton->setEnabled(false);
     resetButton = new QPushButton("Zurücksetzen",this);
 
     boxSaveLoad = new QGroupBox(this);
@@ -134,13 +132,16 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     layout->setColumnStretch(2,0);
     layout->setColumnStretch(3,0);
     layout->setColumnStretch(4,1);
+
+    // interne Slots & Signale verbinden
+    connect(inputMaxError,SIGNAL(valueChanged(int)),this,SLOT(transformMaxError(int)));
 }
 
 void presentation::SimulationWidget::setController(Controller *controller)
 {
     this->controller = controller;
 
-    //TODO maxError und MAxIt & save load
+    //TODO save load
     connect(inputIntMethod,SIGNAL(activated(QString)),controller,SLOT(selectIntMethodSlot(QString)));
     connect(inputM,SIGNAL(valueChanged(int)),controller,SLOT(newMSlot(int)));
     connect(inputT,SIGNAL(valueChanged(double)),controller,SLOT(newTSlot(double)));
@@ -151,6 +152,10 @@ void presentation::SimulationWidget::setController(Controller *controller)
 
     connect(inputN,SIGNAL(valueChanged(int)),controller,SLOT(newNSlot(int)));
     connect(simulateButton,SIGNAL(clicked(bool)),controller,SLOT(simulateSlot()));
+    connect(abortButton,SIGNAL(clicked(bool)),controller,SLOT(abortWorkSlot()));
+
+    connect(saveButton,SIGNAL(clicked(bool)),controller,SLOT(saveSimulationSetupSlot()));
+    connect(loadButton,SIGNAL(clicked(bool)),controller,SLOT(loadSetupSlot()));
     connect(resetButton,SIGNAL(clicked(bool)),controller,SLOT(resetSetupSlot()));
 }
 
@@ -169,12 +174,24 @@ void presentation::SimulationWidget::setModel(model::Model *model)
 
 void presentation::SimulationWidget::update()
 {
+    if(updating)
+        return;
+    updating = true;
     inputIntMethod->setCurrentText(model->getSimulationSetup()->getSelectedIntMethod());
     inputM->setValue(model->getSimulationSetup()->getM());
     inputT->setValue(model->getSimulationSetup()->getT());
 
     inputSolver->setCurrentText(model->getSimulationSetup()->getSelectedSolver());
-    inputMaxError->setValue(-1*log(model->getSimulationSetup()->getSolverMaxError()));
+
+    int exp = 1;
+    double tmp = model->getSimulationSetup()->getSolverMaxError();
+    while(tmp < 1e-1)
+    {
+        tmp *= 10;
+        ++exp;
+    }
+    inputMaxError->setValue(exp);
+
     inputMaxIt->setValue(model->getSimulationSetup()->getSolverMaxIt());
 
     inputN->setValue(model->getSimulationSetup()->getN());
@@ -195,6 +212,7 @@ void presentation::SimulationWidget::update()
            labelProgressBar->setText("Simulation beendet");
 
     }
+    updating = false;
 }
 
 void presentation::SimulationWidget::appendToSimulationLog(QString text)

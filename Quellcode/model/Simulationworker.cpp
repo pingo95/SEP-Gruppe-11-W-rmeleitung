@@ -10,7 +10,6 @@
 #include "../algorithms/Impeuler.hpp"
 #include "../algorithms/Cranknicolson.hpp"
 #include <QFile>
-#include <QTextStream>
 #include <QTime>
 
 typedef double AD_TYPE;
@@ -18,7 +17,7 @@ typedef double AD_TYPE;
 //typedef dco::ga1s<double> AD_MODE;
 
 model::SimulationWorker::SimulationWorker(QObject * parent): QObject(parent),
-    busy(false), consecutiveArrayObservations(NULL),
+    abort(false), busy(false), consecutiveArrayObservations(NULL),
     consecutiveArraySimulation(NULL), dataRead(false), m(1),
     mapsInitialized(false), n(3), obsSize(0), optimizationN(1),
     optimized(false),result(NULL), simulated(false), T(1.)
@@ -48,6 +47,13 @@ model::SimulationWorker::~SimulationWorker()
         delete consecutiveArrayObservations;
         delete observations;
     }
+}
+
+void model::SimulationWorker::abortWork()
+{
+    accessLock.lock();
+    abort = true;
+    accessLock.unlock();
 }
 
 QList<QString> const model::SimulationWorker::getIntMethodNames() const
@@ -240,7 +246,8 @@ void model::SimulationWorker::startReadingDataSlot(QString const filename, long 
     emit startedWork();
     emit beginningStage("Messungen einlesen:",obsCount,false);
     QFile file(filename);
-    if (file.open(QFile::ReadOnly | QFile::Truncate)) {
+    if (file.open(QFile::ReadOnly | QFile::Truncate))
+    {
         QTextStream in(&file);
         obsSize = sqrt(obsCount);
         if(obsSize*obsSize != obsCount)
@@ -285,6 +292,9 @@ void model::SimulationWorker::startReadingDataSlot(QString const filename, long 
 void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemplate)
 {
     if(!mapsInitialized || busy) return;
+    accessLock.lock();
+    abort = false;
+    accessLock.unlock();
     busy = true;
     QTime timer;
     timer.start();
@@ -461,51 +471,41 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
             (*step1)[i*n + j] = result[0][i][j];
     QVector<double> * step2 = new QVector<double>(*step1);
 
-    // Berechnen der Zeitschritte
-    emit simulationLogUpdate("Zeitschritte berechnen\n");
-    for(long i = 1; i < m+1; ++i)
+    accessLock.lock();
+    bool tmpAbort = abort;
+    accessLock.unlock();
+
+    if(tmpAbort)
     {
-        selectedIntMethod->calcNextStep(*step1,*step2,heatSourcesGrid);
-        for(long j = 1; j < n-1; ++j)       //<-- Achtung fall Ränder nicht mehr const
-            for(long k = 1; k < n-1; ++k)
-                result[i][j][k] = (*step2)[k+j*n];
-        swapTmp = step1;
-        step1 = step2;
-        step2 = swapTmp;
-        if(reusable)
+       message =  "\nSimulation abgebrochen\n\nAufräumen des Hauptspeichers\n\n";
+       emit simulationLogUpdate(message);
+       emit beginningStage("Simulation abbgebrochen",1);
+    }
+    else
+    {
+        // Berechnen der Zeitschritte
+        emit simulationLogUpdate("Zeitschritte berechnen\n");
+        for(long i = 1; i < m+1; ++i)
         {
-            // Wiederverwertbar -> ring swap rückwärts
-            swapTmp = heatSourcesGrid[neededTimeStepsCount-1];
-            for(int i = neededTimeStepsCount-1; i > 0; --i)
-                heatSourcesGrid[i] = heatSourcesGrid[i-1];
-            heatSourcesGrid[0] = swapTmp;
-
-            // neusten aktualisieren
-            if(simSetup.getAreaCount(SimulationSetup::AreaHeatSource) > 0)
+            selectedIntMethod->calcNextStep(*step1,*step2,heatSourcesGrid);
+            for(long j = 1; j < n-1; ++j)       //<-- Achtung fall Ränder nicht mehr const
+                for(long k = 1; k < n-1; ++k)
+                    result[i][j][k] = (*step2)[k+j*n];
+            swapTmp = step1;
+            step1 = step2;
+            step2 = swapTmp;
+            if(reusable)
             {
-        //        currentT = deltaT * neededTimeSteps[0] + i * deltaT;
-                QList<Area*>::const_iterator it = simSetup.getAreas(SimulationSetup::AreaHeatSource).begin();
-                QList<QList<long> *>::const_iterator it2 = heatSourceIndices.begin();
-                for(; it != simSetup.getAreas(SimulationSetup::AreaHeatSource).end(); ++it,++it2)
-                {
-                    QList<long>::const_iterator it3 = (*it2)->begin();
-                    for(; it3 != (*it2)->end(); ++it3)
-                    {
-                        long pos = (*it3);
-                        (*(heatSourcesGrid[0]))[pos] = (*it)->getValue(); //(*it)->getValue(currentT,(pos % n) * deltaX,((pos - (pos % n)) / n) + deltaX);
-                    }
-                }
+                // Wiederverwertbar -> ring swap rückwärts
+                swapTmp = heatSourcesGrid[neededTimeStepsCount-1];
+                for(int i = neededTimeStepsCount-1; i > 0; --i)
+                    heatSourcesGrid[i] = heatSourcesGrid[i-1];
+                heatSourcesGrid[0] = swapTmp;
 
-            }
-        }
-        else
-        {
-            // nicht wiederverwertbar -> alle neu berechnen
-            if(simSetup.getAreaCount(SimulationSetup::AreaHeatSource) > 0)
-            {
-                for(int k = 0; k < neededTimeStepsCount; ++k)
+                // neusten aktualisieren
+                if(simSetup.getAreaCount(SimulationSetup::AreaHeatSource) > 0)
                 {
-            //        currentT = deltaT * neededTimeSteps[k] + i * deltaT;
+            //        currentT = deltaT * neededTimeSteps[0] + i * deltaT;
                     QList<Area*>::const_iterator it = simSetup.getAreas(SimulationSetup::AreaHeatSource).begin();
                     QList<QList<long> *>::const_iterator it2 = heatSourceIndices.begin();
                     for(; it != simSetup.getAreas(SimulationSetup::AreaHeatSource).end(); ++it,++it2)
@@ -514,20 +514,55 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
                         for(; it3 != (*it2)->end(); ++it3)
                         {
                             long pos = (*it3);
-                            (*(heatSourcesGrid[k]))[pos] = (*it)->getValue(); //(*it)->getValue(currentT,(pos % n) * deltaX,((pos - (pos % n)) / n) + deltaX);
+                            (*(heatSourcesGrid[0]))[pos] = (*it)->getValue(); //(*it)->getValue(currentT,(pos % n) * deltaX,((pos - (pos % n)) / n) + deltaX);
+                        }
+                    }
+
+                }
+            }
+            else
+            {
+                // nicht wiederverwertbar -> alle neu berechnen
+                if(simSetup.getAreaCount(SimulationSetup::AreaHeatSource) > 0)
+                {
+                    for(int k = 0; k < neededTimeStepsCount; ++k)
+                    {
+                //        currentT = deltaT * neededTimeSteps[k] + i * deltaT;
+                        QList<Area*>::const_iterator it = simSetup.getAreas(SimulationSetup::AreaHeatSource).begin();
+                        QList<QList<long> *>::const_iterator it2 = heatSourceIndices.begin();
+                        for(; it != simSetup.getAreas(SimulationSetup::AreaHeatSource).end(); ++it,++it2)
+                        {
+                            QList<long>::const_iterator it3 = (*it2)->begin();
+                            for(; it3 != (*it2)->end(); ++it3)
+                            {
+                                long pos = (*it3);
+                                (*(heatSourcesGrid[k]))[pos] = (*it)->getValue(); //(*it)->getValue(currentT,(pos % n) * deltaX,((pos - (pos % n)) / n) + deltaX);
+                            }
                         }
                     }
                 }
             }
+            emit finishedStep(i);
+            message = QString::number(i) + ". Zeitschritt beendet\nBenötigte Iterationen des Lösers: "
+                    + QString::number(selectedIntMethod->getSolver()->getItCount()) + "\n";
+            emit simulationLogUpdate(message);
+
+            accessLock.lock();
+            tmpAbort = abort;
+            accessLock.unlock();
+            if(tmpAbort)
+                break;
         }
-        emit finishedStep(i);
-        message = QString::number(i) + ". Zeitschritt beendet\nBenötigte Iterationen des Lösers: "
-                + QString::number(selectedIntMethod->getSolver()->getItCount()) + "\n";
+
+        if(tmpAbort)
+        {
+            message = "\nSimulation abgebrochen\n\nAufräumen des Hauptspeichers\n\n";
+            emit beginningStage("Simulation abbgebrochen",1);
+        }
+        else
+            message = "\nBerechnungen beendet\n\nAufräumen des Hauptspeichers\n\n";
         emit simulationLogUpdate(message);
     }
-
-    message = "\nBerechnungen beendet\n\nAufräumen des Hauptspeichers\n\n"; //\nErgebnis:" + printResult()
-    emit simulationLogUpdate(message);
 
     QList<QList<long> *>::iterator it2 = heatSourceIndices.begin();
     for(; it2 != heatSourceIndices.end(); ++it2)
@@ -546,8 +581,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
     simulated = true;
 
     busy = false;
-//    emit beginningStage("Simulation beendet",0);
-    emit finishedSimulation();
+    emit finishedSimulation(!tmpAbort);
 }
 
 //QVector<double> * & model::SimulationWorker::simpleSimulation(SimulationSetup &simSetup, QVector<double> *&step1,

@@ -3,7 +3,6 @@
 
 #include <QLabel>
 
-#include "../algorithms/Crs.h"
 #include "Testwindow.h"
 
 namespace algorithms {
@@ -30,7 +29,7 @@ namespace algorithms {
 
         private:
 
-            CRS testMatrix;
+            CRS<double> testMatrix;
     };
 }
 

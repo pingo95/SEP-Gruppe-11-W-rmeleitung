@@ -19,6 +19,8 @@ namespace model {
         explicit Model();
         ~Model();
 
+        void abortWork();
+
         void addNewArea(QVector<double> const & xKoords,
                         QVector<double> const & yKoords, double value,
                         SimulationSetup::AreaType type);
@@ -44,6 +46,8 @@ namespace model {
 
         bool isWorking() const;
 
+        void loadSetup(QString filename);
+
         void optimize();
 
         void readObservations(QString const filename, long const obsCount);
@@ -53,6 +57,8 @@ namespace model {
                          model::SimulationSetup::AreaType type);
 
         void resetSetup();
+
+        void saveSetup(QString filename);
 
         void selectIntMethod(QString const intMethod);
         void selectSolver(QString const newSolver);
@@ -81,9 +87,9 @@ namespace model {
 
     private slots:
         void startedWorkSlot();
-        void finishedOptimizationSlot();
+        void finishedOptimizationSlot(bool success);
         void finishedReadingDataSlot();
-        void finishedSimulationSlot();
+        void finishedSimulationSlot(bool success);
 
     //Attribute:
     private:

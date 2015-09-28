@@ -4,7 +4,7 @@
 
 presentation::VisualizationWidget::VisualizationWidget(QWidget *parent)
     : QWidget(parent), controller(NULL), model(NULL), result(NULL), resultM(1),
-      resultN(3), resultT(1.)
+      resultN(3), resultT(1.), updating(false)
 {
         //Top-Label
     topLabel = new QLabel("",this);
@@ -135,6 +135,9 @@ void presentation::VisualizationWidget::setModel(model::Model *model)
 
 void presentation::VisualizationWidget::update()
 {
+    if(updating)
+        return;
+    updating = true;
     if (model->getSimulated())
     {
         if(model->isWorking())
@@ -171,6 +174,7 @@ void presentation::VisualizationWidget::update()
         topLabel->setText("Ergebnisse können erst angezeigt werden, "
                           "nachdem eine Simulation durchgeführt wurde.");
     }
+    updating = false;
 }
 
 void presentation::VisualizationWidget::visualizeState(int frame)

@@ -3,6 +3,7 @@
 #include <QVector>
 #include <QString>
 #include <QMap>
+#include <QTextStream>
 
 namespace model {
 
@@ -15,6 +16,7 @@ namespace model {
                       double value, int const type);
         explicit Area(Area const &rhs);
         ~Area();
+        static void resetIDs();
         static bool validateArea(QVector<double> const & xKoords,
                                  QVector<double> const & yKoords);
 
@@ -55,7 +57,10 @@ namespace model {
         QVector<double> const xKoords;
         QVector<double> const yKoords;
 
+        friend class TesterArea;
+        friend QTextStream & operator<<(QTextStream & out, Area & area);
     };
 
+   QTextStream & operator<<(QTextStream & out, Area & area);
 }
 #endif // AREA_H

@@ -7,7 +7,7 @@ presentation::AreaWidget::AreaWidget(QWidget *parent,
                                      QString const name, QString const unit,
                                      double const valueShift)
     : QWidget(parent), controller(NULL), model(NULL), name(name), partialArea(false),
-      selectedAreaID(-1), type(type), unit(unit), valueShift(valueShift)
+      selectedAreaID(-1), type(type), unit(unit), updating(false), valueShift(valueShift)
 {
         //Top-Label
     topLabel = new QLabel("Dies ist der Tab zur Eingabe der " + name + ". \n"
@@ -156,12 +156,14 @@ presentation::AreaWidget::AreaWidget(QWidget *parent,
     inputXValue->setMinimum(0);
     inputXValue->setMaximum(1);
     inputXValue->setSingleStep(0.1);
+    inputXValue->setDecimals(3);
 
     labelYValue = new QLabel("y-Koordinate",this);
     inputYValue = new QDoubleSpinBox(this);
     inputYValue->setMinimum(0);
     inputYValue->setMaximum(1);
     inputYValue->setSingleStep(0.1);
+    inputYValue->setDecimals(3);
 
     confirmButton = new QPushButton("Punkt hinzufügen",this);
 
@@ -323,6 +325,9 @@ void presentation::AreaWidget::setModel(model::Model *model)
 
 void presentation::AreaWidget::update()
 {
+    if(updating)
+        return;
+    updating = true;
     // colorScale Range
     QCPRange range(model::SimulationSetup::AreaMinValue[type]/valueShift,
                     model::SimulationSetup::AreaMaxValue[type]/valueShift);
@@ -412,7 +417,7 @@ void presentation::AreaWidget::update()
         clearAreasButton->setEnabled(false);
     else
         clearAreasButton->setEnabled(true);
-
+    updating = false;
 }
 
 void presentation::AreaWidget::buttonMapperSlot()

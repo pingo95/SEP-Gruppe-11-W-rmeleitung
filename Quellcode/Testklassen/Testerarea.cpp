@@ -1,16 +1,17 @@
 #include "Testerarea.h"
 #include "../model/Area.h"
 
-TesterArea::TesterArea()
+model::TesterArea::TesterArea()
 {
 
 }
-TesterArea::~TesterArea()
+
+model::TesterArea::~TesterArea()
 {
 //    delete ptr;
 }
 
-void TesterArea::rotateKoords(QVector<double> &x, QVector<double> &y, int angle)
+void model::TesterArea::rotateKoords(QVector<double> &x, QVector<double> &y, int angle)
 {
     double s,c;
     switch(angle % 360)
@@ -45,7 +46,7 @@ void TesterArea::rotateKoords(QVector<double> &x, QVector<double> &y, int angle)
     }
 }
 
-QWidget *TesterArea::robustnessWorstCaseTesterInsidePoint()
+QWidget * model::TesterArea::robustnessWorstCaseTesterInsidePoint()
 {
     tabs = new QTabWidget();
     int numberTests = 10;
@@ -162,7 +163,7 @@ QWidget *TesterArea::robustnessWorstCaseTesterInsidePoint()
     return tabs;
 }
 
-QWidget* TesterArea::robustnessWorstCaseTesterOnLine()
+QWidget* model::TesterArea::robustnessWorstCaseTesterOnLine()
 {
     tabs = new QTabWidget();
     int numberTests = 20;

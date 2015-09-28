@@ -22,7 +22,7 @@ namespace algorithms {
         QLabel* testSolveLU();
 
     private:
-        Solver* itSolver;
+        Solver<double>* itSolver;
     };
 
 }

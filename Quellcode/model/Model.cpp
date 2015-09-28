@@ -19,9 +19,9 @@ model::Model::Model() : QWidget(NULL), blocking(false), dataRead(false), optimiz
     connect(this,SIGNAL(startSimulation(SimulationSetup*)),
             simWorker,SLOT(startSimulationSlot(SimulationSetup*)));
     connect(simWorker,SIGNAL(startedWork()),this,SLOT(startedWorkSlot()));
-    connect(simWorker,SIGNAL(finishedOptimization()),this,SLOT(finishedOptimizationSlot()));
+    connect(simWorker,SIGNAL(finishedOptimization(bool)),this,SLOT(finishedOptimizationSlot(bool)));
     connect(simWorker,SIGNAL(finishedReadingData()),this,SLOT(finishedReadingDataSlot()));
-    connect(simWorker,SIGNAL(finishedSimulation()),this,SLOT(finishedSimulationSlot()));
+    connect(simWorker,SIGNAL(finishedSimulation(bool)),this,SLOT(finishedSimulationSlot(bool)));
 
     workerThread.start();
 }
@@ -29,8 +29,15 @@ model::Model::Model() : QWidget(NULL), blocking(false), dataRead(false), optimiz
 model::Model::~Model()
 {
     delete simSetup;
+    simWorker->abortWork();
     workerThread.quit();
     workerThread.wait();
+}
+
+void model::Model::abortWork()
+{
+    assert(!blocking && working);
+    simWorker->abortWork();
 }
 
 // Vorbedingung: Das übergebene Gebiet wurde vorher mit Area::validateArea auf
@@ -140,6 +147,53 @@ bool model::Model::isWorking() const
     return working;
 }
 
+void model::Model::loadSetup(QString filename)
+{
+    assert(!blocking);
+    delete simSetup;
+    simSetup = new SimulationSetup();
+    model::Area::resetIDs();
+    overrideDiffusivities = false;
+    overrideInitialTDvalue = SimulationSetup::AreaMinValue[
+            SimulationSetup::AreaThermalDiffusivity];
+    useHeatSources = false;
+
+    QFile file(filename);
+    if (file.open(QFile::ReadOnly | QFile::Truncate))
+    {
+        QTextStream in(&file);
+        //TODO: korrektes überspringen der Ueberschrift
+        in.readLine();
+
+        in >> *simSetup;
+
+        in.readLine();
+        in.readLine();
+        QString str;
+        for(int i = 0; i < 4; ++i)
+            in >> str;
+        if(str == "Aktiviert")
+        {
+            overrideDiffusivities = true;
+            in >> str;
+            in >> str;
+            in >> overrideInitialTDvalue;
+            in >> str;
+        }
+        else
+            in >> str;
+        for(int i = 0; i < 4; ++i)
+            in >> str;
+        if(str == "Aktiviert")
+            useHeatSources = true;
+        else
+            in >> str;
+    }
+
+    ui->updateNotification();
+}
+
+
 void model::Model::optimize()
 {
     blocking = true;
@@ -175,12 +229,39 @@ void model::Model::resetSetup()
 {
     assert(!blocking);
     delete simSetup;
-    simSetup = new SimulationSetup;
+    simSetup = new SimulationSetup();
+    model::Area::resetIDs();
     overrideDiffusivities = false;
     overrideInitialTDvalue = SimulationSetup::AreaMinValue[
             SimulationSetup::AreaThermalDiffusivity];
     useHeatSources = false;
     ui->updateNotification();
+}
+
+void model::Model::saveSetup(QString filename)
+{
+    assert(!blocking);
+    QFile file(filename);
+    if(file.open(QFile::WriteOnly | QFile::Truncate))
+    {
+        QTextStream out(&file);
+        out << "TODO: Grosse tolle Ueberschrift\n"
+            << *simSetup
+            << "Optimierungseinstellungen:\n\n"
+            << "Ueberschreiben der Temperaturleitkoeffizienten: "
+            << (overrideDiffusivities ? "Aktiviert" : "Nicht aktiviert")
+            << "\n";
+        if(overrideDiffusivities)
+        {
+            out.setRealNumberNotation(QTextStream::ScientificNotation);
+            out.setRealNumberPrecision(2);
+            out << "Manueller Anfangswert: "
+                << overrideInitialTDvalue << "m^2/s" << "\n";
+        }
+        out << "Nutzen der Waermequellen: "
+            << (useHeatSources ? "Aktiviert" : "Nicht aktiviert")
+            << "\n";
+    }
 }
 
 // Updatet die gewählte Integrationsmethode
@@ -300,9 +381,9 @@ void model::Model::startedWorkSlot()
     working = true;
 }
 
-void model::Model::finishedOptimizationSlot()
+void model::Model::finishedOptimizationSlot(bool success)
 {
-    optimized = true;
+    optimized = success;
     working = false;
     ui->updateNotification();
 }
@@ -314,9 +395,9 @@ void model::Model::finishedReadingDataSlot()
     ui->updateNotification();
 }
 
-void model::Model::finishedSimulationSlot()
+void model::Model::finishedSimulationSlot(bool success)
 {
-    simulated = true;
+    simulated = success;
     working = false;
     ui->updateNotification();
 }

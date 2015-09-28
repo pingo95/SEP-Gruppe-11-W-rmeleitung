@@ -11,7 +11,7 @@
 #include <QTabWidget>
 #include <QGridLayout>
 
-#include "../algorithms/Crs.h"
+#include "../algorithms/Crs.hpp"
 
 class TestWindow : public QMainWindow
 {
@@ -34,7 +34,8 @@ private:
 };
 
 namespace algorithms {
-    QString printCRS(CRS const & matrix);
+    template<class U>
+    QString printCRS(CRS<U> const & matrix);
     QString printFull(QVector<QVector<double> > const & matrix);
     QString printQVector(QVector<double> const & vector);
 }

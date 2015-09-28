@@ -26,6 +26,7 @@ namespace presentation {
                             QVector<double> & yKoords) const;
 
     public slots:
+        void abortWorkSlot();
         void areaClickSlot(double xKoord, double yKoord, QSize plateSize,
                            double valueShift, bool mouseClick,
                            model::SimulationSetup::AreaType type);
@@ -35,6 +36,7 @@ namespace presentation {
         void deleteAreaSlot(int pos, model::SimulationSetup::AreaType type);
         void discardAreaSlot(model::SimulationSetup::AreaType type);
         void loadObservationsSlot();
+        void loadSetupSlot();
         void newIBVValueSlot(double newValue, model::SimulationSetup::IBV ibv);
         void newMSlot(int newM);
         void newMaxErrorSlot(double newMaxErrorSlot);
@@ -48,6 +50,7 @@ namespace presentation {
         void redoSlot(model::SimulationSetup::AreaType type);
         void reorderAreaSlot(int pos, int dir, model::SimulationSetup::AreaType type);
         void resetSetupSlot();
+        void saveSimulationSetupSlot();
         void selectIntMethodSlot(QString newIntMethod);
         void selectSolverSlot(QString newIterativeSolver);
         void simulateSlot();

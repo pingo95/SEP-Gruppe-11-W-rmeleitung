@@ -76,10 +76,10 @@ namespace model {
 
     // Attribute:
     private:
-        double iBVs[5];
         QList<Area*> heatSources;
         double heatSourcesBackgroundValue;
         int heatSourcesCount;
+        double iBVs[5];
         long m;
         long n;
         QString selectedIntMethod;
@@ -90,8 +90,13 @@ namespace model {
         QList<Area*> thermalDiffusivities;
         double thermalDiffusivitiesBackgroundValue;
         int thermalDiffusivitiesCount;
+
+        friend QTextStream & operator<<(QTextStream & out, SimulationSetup & simSetup);
+        friend QTextStream & operator>>(QTextStream & in, SimulationSetup & simSetup);
     };
 
+    QTextStream & operator<<(QTextStream & out, SimulationSetup & simSetup);
+    QTextStream & operator>>(QTextStream & in, SimulationSetup & simSetup);
 }
 Q_DECLARE_METATYPE(model::SimulationSetup *)
 #endif // SIMULATIONSETUP_H

@@ -56,6 +56,23 @@ void presentation::Controller::getPartialArea(QVector<double> & xKoords,
     yKoords = partialAreaY;
 }
 
+void presentation::Controller::abortWorkSlot()
+{
+    if(model->isWorking())
+    {
+        model->abortWork();
+    }
+    else
+    {
+        // Fehlermeldung ausgeben:
+        errorMessages->setText("Es wird zurzeit keine Simulation durchgeführt."
+                               " Abbrechen nicht möglich.");
+        errorMessages->setDetailedText("");
+        errorMessages->exec();
+    }
+}
+
+
 // Dieser Slot verwaltet Mausklicks auf die Fläche zum Erstellen neuer
 // Gebiete für Wärmequellen
 void presentation::Controller::areaClickSlot(double xKoord, double yKoord, QSize plateSize,
@@ -216,14 +233,20 @@ void presentation::Controller::loadObservationsSlot()
                 ++obsCount;
             }
             long n = sqrt(obsCount);
-//            if(n*n == obsCount)
+            if(n*n == obsCount)
             {
                 model->readObservations(filename,obsCount);
-                return;
             }
-//            else
+            else
             {
-                //TODO: anfrage an user ob ignorieren oder nicht
+                // Warnunge ausgeben:
+                errorMessages->setIcon(QMessageBox::Warning);
+                errorMessages->setText("Es wurde noch keine Wärmeleitkoeffizienten hinzugefügt, "
+                                       "Überschreiben hat keinen Effekt.");
+                errorMessages->setDetailedText("");
+                errorMessages->exec();
+                errorMessages->setIcon(QMessageBox::Critical);
+                model->readObservations(filename,obsCount);
             }
         }
     }
@@ -235,6 +258,14 @@ void presentation::Controller::loadObservationsSlot()
         errorMessages->setDetailedText("");
         errorMessages->exec();
     }
+}
+
+void presentation::Controller::loadSetupSlot()
+{
+    QString filename = QFileDialog::getOpenFileName(ui,"Datei auswählen",
+                                                    "..","Text files (*.txt)");
+    if(!filename.isEmpty())
+        model->loadSetup(filename);
 }
 
 // Dieser Slot updatet den Wert für den Rand side, falls der neue gültig ist
@@ -278,7 +309,7 @@ void presentation::Controller::newMSlot(int newM)
 
 void presentation::Controller::newMaxErrorSlot(double newMaxError)
 {
-    if ((newMaxError >= 1e-10) && (newMaxError <= 1e-5))
+    if ((newMaxError >= 1e-10) && (newMaxError <= 1e-2))
         // Wert updaten
         model->setSolverMaxError(newMaxError);
     else
@@ -506,6 +537,15 @@ void presentation::Controller::selectIntMethodSlot(QString newIntMethod)
         model->selectIntMethod(newIntMethod);
     }
 }
+
+void presentation::Controller::saveSimulationSetupSlot()
+{
+    QString filename = QFileDialog::getSaveFileName(ui,"Speichern unter",
+                                                    "..","Text files (*.txt)");
+    if(!filename.isEmpty())
+        model->saveSetup(filename);
+}
+
 
 // Dieser Slot updatet den gewählten iterativen Löser, dies ist aber nur
 // möglich falls gerade nicht simuliert wird

@@ -63,6 +63,7 @@ class Controller;
         int activeSubTab;
         Controller * controller;
         model::Model * model;
+        bool updating;
         double const valueShift;
 
         // Config Tab
