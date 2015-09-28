@@ -1,3 +1,6 @@
+#ifndef IMPEULER_HPP
+#define IMPEULER_HPP
+
 #include "Impeuler.h"
 
 template <class T>
@@ -28,3 +31,5 @@ void algorithms::ImpEuler<T>::setUpSpecific(QVector<T> const & thermalDiffusivit
     this->itMatrix = this->deltaT/(this->deltaX*this->deltaX) * diag;
     this->itMatrix = A1 - this->itMatrix;
 }
+
+#endif // IMPEULER_HPP

@@ -1,3 +1,6 @@
+#ifndef LU_HPP
+#define LU_HPP
+
 #include "LU.h"
 
 template <class T>
@@ -48,3 +51,5 @@ void algorithms::LU<T>::solve(QVector<T> & result, CRS<T> const & matrix, QVecto
         result[i] = 1/U[i][i]*(y[i]-sum);
     }
 }
+
+#endif // LU_HPP

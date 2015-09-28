@@ -1,3 +1,6 @@
+#ifndef ITERATIVESOLVER_HPP
+#define ITERATIVESOLVER_HPP
+
 #include "Iterativesolver.h"
 
 template <class T>
@@ -34,3 +37,5 @@ template <class T>
 void algorithms::IterativeSolver<T>::setMaxIt(const int maxIt) {
     this->maxIt = maxIt;
 }
+
+#endif // ITERATIVESOLVER_HPP

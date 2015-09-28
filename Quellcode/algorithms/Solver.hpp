@@ -1,3 +1,6 @@
+#ifndef SOLVER_HPP
+#define SOLVER_HPP
+
 #include "Solver.h"
 
 template <class T>
@@ -59,3 +62,5 @@ double algorithms::normInf(QVector<T> const & vec) {
     }
     return max;
 }
+
+#endif // SOLVER_HPP

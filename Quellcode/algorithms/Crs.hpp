@@ -1,3 +1,6 @@
+#ifndef CRS_HPP
+#define CRS_HPP
+
 #include "Crs.h"
 
 template <class T>
@@ -242,3 +245,5 @@ QVector<T> algorithms::addQVectors(const QVector<T> & lhs, const QVector<T> & rh
     for(int i=0; i<sum.size(); ++i) sum[i] += rhs[i];
     return sum;
 }
+
+#endif // CRS_HPP

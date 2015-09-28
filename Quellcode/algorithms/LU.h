@@ -1,5 +1,5 @@
-#ifndef GAUSS_H
-#define GAUSS_H
+#ifndef LU_H
+#define LU_H
 
 #include "Solver.h"
 
@@ -46,4 +46,4 @@ namespace algorithms {
     };
 }
 
-#endif // GAUSS_H
+#endif // LU_H

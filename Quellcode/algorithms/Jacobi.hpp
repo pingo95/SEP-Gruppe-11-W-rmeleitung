@@ -1,3 +1,6 @@
+#ifndef JACOBI_HPP
+#define JACOBI_HPP
+
 #include "Jacobi.h"
 
 template <class T>
@@ -23,3 +26,5 @@ void algorithms::Jacobi<T>::solve(QVector<T> & result, CRS<T> const & matrix, QV
         ++(this->itCount);
     }
 }
+
+#endif // JACOBI_HPP

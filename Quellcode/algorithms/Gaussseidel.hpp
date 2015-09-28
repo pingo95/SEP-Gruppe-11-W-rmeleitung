@@ -1,3 +1,6 @@
+#ifndef GAUSSSEIDEL_HPP
+#define GAUSSSEIDEL_HPP
+
 #include "Gaussseidel.h"
 
 template <class T>
@@ -20,3 +23,5 @@ void algorithms::GaussSeidel<T>::solve(QVector<T> & result, CRS<T> const & matri
         ++this->itCount;
     }
 }
+
+#endif // GAUSSSEIDEL_HPP

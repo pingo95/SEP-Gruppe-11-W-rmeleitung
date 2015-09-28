@@ -1,3 +1,6 @@
+#ifndef INTMETHOD_HPP
+#define INTMETHOD_HPP
+
 #include "Intmethod.h"
 
 template <class T>
@@ -28,3 +31,5 @@ void algorithms::IntMethod<T>::setUp(int const n, int const m, T const Time, QVe
     setUpSpecific(thermalDiffusivities);
     this->activeSolver->decompose(this->itMatrix);
 }
+
+#endif // INTMETHOD_HPP

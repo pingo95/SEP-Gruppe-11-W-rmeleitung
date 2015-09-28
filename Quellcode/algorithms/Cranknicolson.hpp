@@ -1,3 +1,7 @@
+#ifndef CRANKNICOLSON_HPP
+#define CRANKNICOLSON_HPP
+
+
 #include "Cranknicolson.h"
 
 template <class T>
@@ -30,3 +34,5 @@ void algorithms::CrankNicolson<T>::setUpSpecific(QVector<T> const & thermalDiffu
     this->itMatrix = A1 - diag;
     this->rhsMatrix = A1 + diag;
 }
+
+#endif // CRANKNICOLSON_HPP
