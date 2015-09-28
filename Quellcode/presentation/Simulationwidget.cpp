@@ -134,7 +134,7 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     layout->setColumnStretch(4,1);
 
     // interne Slots & Signale verbinden
-    connect(inputMaxError,SIGNAL(valueChanged(int)),this,SLOT(transformMaxError(int)));
+    connect(inputMaxError,SIGNAL(valueChanged(int)),this,SLOT(transformMaxErrorSlot(int)));
 }
 
 void presentation::SimulationWidget::setController(Controller *controller)
@@ -233,7 +233,7 @@ void presentation::SimulationWidget::updateProgress(int step)
     progressBar->setValue(step);
 }
 
-void presentation::SimulationWidget::transformMaxError(int value)
+void presentation::SimulationWidget::transformMaxErrorSlot(int value)
 {
     emit newMaxErrorValue(pow(10,-1*value));
 }

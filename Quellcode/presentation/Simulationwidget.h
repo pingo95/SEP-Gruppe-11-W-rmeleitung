@@ -40,7 +40,7 @@ class Controller;
         void newMaxErrorValue(double newValue);
 
     private slots:
-        void transformMaxError(int value);
+        void transformMaxErrorSlot(int value);
 
     private:
         explicit SimulationWidget();

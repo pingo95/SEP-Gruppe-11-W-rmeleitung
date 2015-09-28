@@ -265,10 +265,10 @@ void model::Model::saveSetup(QString filename)
 }
 
 // Updatet die gewählte Integrationsmethode
-void model::Model::selectIntMethod(QString intMethod)
+void model::Model::selectIntMethod(QString newIntMethod)
 {
     assert(!blocking);
-    simSetup->selectIntMethod(intMethod);
+    simSetup->selectIntMethod(newIntMethod);
     ui->updateNotification();
 }
 
@@ -280,7 +280,7 @@ void model::Model::selectSolver(QString newSolver)
     ui->updateNotification();
 }
 
-void model::Model::setAreaBackground(const double newValue, SimulationSetup::AreaType type)
+void model::Model::setAreaBackgroundValue(const double newValue, SimulationSetup::AreaType type)
 {
     assert(!blocking);
     simSetup->setAreaBackground(newValue,type);
@@ -315,24 +315,24 @@ void model::Model::setOverrideThermalDiffusivities(bool const override)
     ui->updateNotification();
 }
 
-void model::Model::setOverrideValue(double const value)
+void model::Model::setOverrideValue(double const newValue)
 {
     assert(!blocking);
-    overrideInitialTDvalue = value;
+    overrideInitialTDvalue = newValue;
     ui->updateNotification();
 }
 
-void model::Model::setSolverMaxError(double const maxError)
+void model::Model::setSolverMaxError(double const newMaxError)
 {
     assert(!blocking);
-    simSetup->setSolverMaxError(maxError);
+    simSetup->setSolverMaxError(newMaxError);
     ui->updateNotification();
 }
 
-void model::Model::setSolverMaxIt(double const maxIt)
+void model::Model::setSolverMaxIt(int const newMaxIt)
 {
     assert(!blocking);
-    simSetup->setSolverMaxIt(maxIt);
+    simSetup->setSolverMaxIt(newMaxIt);
     ui->updateNotification();
 }
 
@@ -367,11 +367,11 @@ void model::Model::simulate()
     ui->updateNotification();
 }
 
-void model::Model::updateAreaValue(int const pos, double const value,
+void model::Model::updateAreaValue(int const pos, double const newValue,
                               SimulationSetup::AreaType type)
 {
     assert(!blocking);
-    simSetup->updateAreaValue(pos,value,type);
+    simSetup->updateAreaValue(pos,newValue,type);
     ui->updateNotification();
 }
 

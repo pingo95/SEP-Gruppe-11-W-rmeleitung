@@ -39,6 +39,12 @@ class Controller;
         UI(QWidget *parent = 0);
         ~UI();
 
+        void drawPartialArea(QVector<double> const & partialAreaX,
+                             QVector<double> const & partialAreaY,
+                             model::SimulationSetup::AreaType type);
+
+        int getInitialFrame() const;
+
         void revertTabChange(UI::ActiveTab targetTab);
         void setActiveTab(int targetTab);
 
@@ -47,11 +53,6 @@ class Controller;
 
         void updateNotification();
 
-        // Weiterleitungen
-        void drawPartialArea(QVector<double> const & partialAreaX,
-                             QVector<double> const & partialAreaY,
-                             model::SimulationSetup::AreaType type);
-        int getInitialFrame() const;
         void visualizeState(int const frame);
 
     signals:

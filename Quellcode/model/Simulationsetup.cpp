@@ -233,7 +233,7 @@ void model::SimulationSetup::setSolverMaxError(double const newMaxError)
     solverMaxError = newMaxError;
 }
 
-void model::SimulationSetup::setSolverMaxIt(double const newMaxIt)
+void model::SimulationSetup::setSolverMaxIt(int const newMaxIt)
 {
     solverMaxIt = newMaxIt;
 }

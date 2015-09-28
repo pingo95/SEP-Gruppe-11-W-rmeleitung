@@ -250,7 +250,7 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     // interne Signal & Slots verbinden
     connect(this,SIGNAL(currentChanged(int)),this,SLOT(transformTabIDSlot(int)));
 
-    connect(inputInitialValue,SIGNAL(valueChanged(double)),this,SLOT(shiftInitialValue(double)));
+    connect(inputInitialValue,SIGNAL(valueChanged(double)),this,SLOT(shiftInitialValueSlot(double)));
 }
 
 void presentation::OptimizationWidget::setController(Controller *controller)
@@ -418,7 +418,7 @@ void presentation::OptimizationWidget::transformTabIDSlot(int targetTab)
     emit subTabChange(UI::TabParameterFitting);
 }
 
-void presentation::OptimizationWidget::shiftInitialValue(double newValue)
+void presentation::OptimizationWidget::shiftInitialValueSlot(double newValue)
 {
     emit newInitialValue(newValue*1e-6);
 }

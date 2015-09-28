@@ -67,7 +67,7 @@ namespace model {
         void setM(int const newM);
         void setN(int const newN);
         void setSolverMaxError(double const newMaxError);
-        void setSolverMaxIt(double const newMaxIt);
+        void setSolverMaxIt(int const newMaxIt);
         void setT(double const newT);
 
 

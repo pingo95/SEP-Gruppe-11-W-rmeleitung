@@ -48,7 +48,7 @@ namespace model {
     private:
         QVector<double> * & simpleSimulation(SimulationSetup & simSetup, QVector<double> * & step1,
                               QVector<double> * & step2, QVector<double> &currentCs,
-                              QList<QList<long>*> heatSourceIndices);
+                              QList<QList<long>*> & heatSourcesIndices);
 
     // Attribute:
     private:

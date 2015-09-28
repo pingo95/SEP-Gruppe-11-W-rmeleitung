@@ -586,7 +586,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
 
 //QVector<double> * & model::SimulationWorker::simpleSimulation(SimulationSetup &simSetup, QVector<double> *&step1,
 //                                                              QVector<double> *&step2, QVector<double> &currentCs,
-//                                                              QList<QList<long> *> heatSourceIndices)
+//                                                              QList<QList<long> *> &sheatSourcesIndices)
 //{
 ////    // Deltas
 //////    double deltaX = (double) 1 / (double) (simSetup.getN()-1);

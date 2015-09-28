@@ -155,14 +155,14 @@ presentation::AreaWidget::AreaWidget(QWidget *parent,
     inputXValue = new QDoubleSpinBox(this);
     inputXValue->setMinimum(0);
     inputXValue->setMaximum(1);
-    inputXValue->setSingleStep(0.1);
+    inputXValue->setSingleStep(0.05);
     inputXValue->setDecimals(3);
 
     labelYValue = new QLabel("y-Koordinate",this);
     inputYValue = new QDoubleSpinBox(this);
     inputYValue->setMinimum(0);
     inputYValue->setMaximum(1);
-    inputYValue->setSingleStep(0.1);
+    inputYValue->setSingleStep(0.05);
     inputYValue->setDecimals(3);
 
     confirmButton = new QPushButton("Punkt hinzufügen",this);

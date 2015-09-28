@@ -60,24 +60,25 @@ namespace model {
 
         void saveSetup(QString filename);
 
-        void selectIntMethod(QString const intMethod);
+        void selectIntMethod(QString const newIntMethod);
         void selectSolver(QString const newSolver);
-        void setAreaBackground(double const newValue, SimulationSetup::AreaType type);
+        void setAreaBackgroundValue(double const newValue, SimulationSetup::AreaType type);
         void setIBV(double const newValue, SimulationSetup::IBV ibv);
         void setM(int const newM);
         void setN(int const newN);
         void setOverrideThermalDiffusivities(bool const override);
-        void setOverrideValue(double const value);
-        void setSolverMaxError(double const maxError);
-        void setSolverMaxIt(double const maxIt);
-        void setT(double const T);
+        void setOverrideValue(double const newValue);
+        void setSolverMaxError(double const newMaxError);
+        void setSolverMaxIt(int const newMaxIt);
+        void setT(double const newT);
         void setUI(presentation::UI * ui);
         void setUseHeatSources(bool const useHeatSources);
 
         void simulate();
 
 
-        void updateAreaValue(int const pos, double const value, SimulationSetup::AreaType type);
+        void updateAreaValue(int const pos, double const newValue,
+                             SimulationSetup::AreaType type);
 
     signals:
         void startOptimization(SimulationSetup * simSetup, bool overrideTD,

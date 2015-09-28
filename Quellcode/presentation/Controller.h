@@ -17,13 +17,13 @@ namespace presentation {
         Controller(QObject * parent = 0);
         ~Controller();
 
+        void getPartialArea(QVector<double> & xKoords,
+                            QVector<double> & yKoords) const;
         bool getRedoPossible(model::SimulationSetup::AreaType type) const;
 
         void setModel(model::Model * model);
         void setUI(UI * ui);
 
-        void getPartialArea(QVector<double> & xKoords,
-                            QVector<double> & yKoords) const;
 
     public slots:
         void abortWorkSlot();
@@ -36,13 +36,13 @@ namespace presentation {
         void deleteAreaSlot(int pos, model::SimulationSetup::AreaType type);
         void discardAreaSlot(model::SimulationSetup::AreaType type);
         void loadObservationsSlot();
-        void loadSetupSlot();
+        void loadSimulationSetupSlot();
         void newIBVValueSlot(double newValue, model::SimulationSetup::IBV ibv);
+        void newMaxErrorSlot(double newMaxError);
+        void newMaxItSlot(int newMaxIt);
         void newMSlot(int newM);
-        void newMaxErrorSlot(double newMaxErrorSlot);
-        void newMaxItSlot(int newMaxItSlot);
         void newNSlot(int newN);
-        void newOverrideValue(double newValue);
+        void newOverrideValueSlot(double newValue);
         void newTSlot(double newT);
         void optimizationSlot();
         void overrideThermalDiffusivities(bool override);
@@ -68,9 +68,9 @@ namespace presentation {
         model::Model * model;
         QVector<double> partialAreaX;
         QVector<double> partialAreaY;
-        QList<double> redoPointXStack;
-        QList<double> redoPointYStack;
         bool redoPossible[2];
+        QList<double> redoXStack;
+        QList<double> redoYStack;
         bool started[2];
         UI * ui;
         QInputDialog * userInput;

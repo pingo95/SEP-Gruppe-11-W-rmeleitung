@@ -48,7 +48,7 @@ class Controller;
 
     private slots:
        void transformTabIDSlot(int targetTab);
-       void shiftInitialValue(double newValue);
+       void shiftInitialValueSlot(double newValue);
 
     private:
         explicit OptimizationWidget();

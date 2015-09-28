@@ -23,6 +23,17 @@ presentation::Controller::~Controller()
     delete errorMessages;
 }
 
+// Diese Funktion überprüft, ob ein neues Wärmequellen-Gebiet begonnen wurde und
+// zeichnet diese im UI. (Für den Fall, dass das Modell eine Update-Benachrichtigung
+// an das UI schickt (z.B. aufgrund einer abgeschlossen Simulation), während der
+// Benutzer gerade ein neues Gebiet erstellt)
+void presentation::Controller::getPartialArea(QVector<double> & xKoords,
+                                              QVector<double> & yKoords) const
+{
+    xKoords = partialAreaX;
+    yKoords = partialAreaY;
+}
+
 bool presentation::Controller::getRedoPossible(model::SimulationSetup::AreaType type) const
 {
     return redoPossible[type];
@@ -43,17 +54,6 @@ void presentation::Controller::setUI(UI *ui)
     this->ui = ui;
 //    errorMessages->setParent(ui);
 //    userInput->setParent(ui);
-}
-
-// Diese Funktion überprüft, ob ein neues Wärmequellen-Gebiet begonnen wurde und
-// zeichnet diese im UI. (Für den Fall, dass das Modell eine Update-Benachrichtigung
-// an das UI schickt (z.B. aufgrund einer abgeschlossen Simulation), während der
-// Benutzer gerade ein neues Gebiet erstellt)
-void presentation::Controller::getPartialArea(QVector<double> & xKoords,
-                                              QVector<double> & yKoords) const
-{
-    xKoords = partialAreaX;
-    yKoords = partialAreaY;
 }
 
 void presentation::Controller::abortWorkSlot()
@@ -171,7 +171,7 @@ void presentation::Controller::areaValueChangedSlot(int pos, double newValue, bo
     if(newValue >= model::SimulationSetup::AreaMinValue[type] &&
             newValue <= model::SimulationSetup::AreaMaxValue[type] && ok)
         if(pos == 0)
-            model->setAreaBackground(newValue,type);
+            model->setAreaBackgroundValue(newValue,type);
         else
             // Wert updaten
             model->updateAreaValue(pos-1,newValue,type);
@@ -260,7 +260,7 @@ void presentation::Controller::loadObservationsSlot()
     }
 }
 
-void presentation::Controller::loadSetupSlot()
+void presentation::Controller::loadSimulationSetupSlot()
 {
     QString filename = QFileDialog::getOpenFileName(ui,"Datei auswählen",
                                                     "..","Text files (*.txt)");
@@ -284,25 +284,6 @@ void presentation::Controller::newIBVValueSlot(double newValue, model::Simulatio
         errorMessages->setDetailedText("Das Programm nutzt für Temperaturen"
                                        " die Kelvin Skala, daher sind nur W"
                                        "erte größer gleich null zulässig.");
-        errorMessages->exec();
-    }
-}
-
-// Dieser Slot updatet den Wert für die Zeitdiskretisierung, falls der neue
-// gültig ist
-void presentation::Controller::newMSlot(int newM)
-{
-    if ((newM <= 800) && (newM > 0))
-        // Wert updaten
-        model->setM(newM);
-    else
-    {
-        ui->updateNotification();
-        // Fehlermeldung ausgeben:
-        errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
-                               "ungültig. Bitte versuchen Sie es erneut.");
-        errorMessages->setDetailedText("Der zulässige Wertebereich für die"
-                                       " Zeitdiskretisierungsgröße m ist (1,800].");
         errorMessages->exec();
     }
 }
@@ -343,6 +324,25 @@ void presentation::Controller::newMaxItSlot(int newMaxIt)
     }
 }
 
+// Dieser Slot updatet den Wert für die Zeitdiskretisierung, falls der neue
+// gültig ist
+void presentation::Controller::newMSlot(int newM)
+{
+    if ((newM <= 800) && (newM > 0))
+        // Wert updaten
+        model->setM(newM);
+    else
+    {
+        ui->updateNotification();
+        // Fehlermeldung ausgeben:
+        errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
+                               "ungültig. Bitte versuchen Sie es erneut.");
+        errorMessages->setDetailedText("Der zulässige Wertebereich für die"
+                                       " Zeitdiskretisierungsgröße m ist (1,800].");
+        errorMessages->exec();
+    }
+}
+
 // Dieser Slot updatet den Wert für die Ortdiskretisierung, falls der neue
 // gültig ist
 void presentation::Controller::newNSlot(int newN)
@@ -362,7 +362,7 @@ void presentation::Controller::newNSlot(int newN)
     }
 }
 
-void presentation::Controller::newOverrideValue(double newValue)
+void presentation::Controller::newOverrideValueSlot(double newValue)
 {
     if(model->getOverrideThermalDiffusivities())
     {
@@ -473,10 +473,10 @@ void presentation::Controller::redoSlot(model::SimulationSetup::AreaType type)
 {
     if(redoPossible[type])
     {
-        partialAreaX.append(redoPointXStack.takeLast());
-        partialAreaY.append(redoPointYStack.takeLast());
+        partialAreaX.append(redoXStack.takeLast());
+        partialAreaY.append(redoYStack.takeLast());
         started[type] = true;
-        if(redoPointXStack.size() == 0)
+        if(redoXStack.size() == 0)
             redoPossible[type] = false;
         ui->drawPartialArea(partialAreaX,partialAreaY,type);
     }
@@ -628,8 +628,8 @@ void presentation::Controller::undoSlot(model::SimulationSetup::AreaType type)
 {
     if(started[type])
     {
-        redoPointXStack.append(partialAreaX.takeLast());
-        redoPointYStack.append(partialAreaY.takeLast());
+        redoXStack.append(partialAreaX.takeLast());
+        redoYStack.append(partialAreaY.takeLast());
         redoPossible[type] = true;
         if(partialAreaX.size() == 0)
             started[type] = false;
@@ -686,7 +686,7 @@ void presentation::Controller::clearRedo()
     {
         redoPossible[model::SimulationSetup::AreaHeatSource] = false;
         redoPossible[model::SimulationSetup::AreaThermalDiffusivity] = false;
-        redoPointXStack.clear();
-        redoPointYStack.clear();
+        redoXStack.clear();
+        redoYStack.clear();
     }
 }
