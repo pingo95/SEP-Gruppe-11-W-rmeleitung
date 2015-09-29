@@ -264,7 +264,7 @@ void presentation::OptimizationWidget::setController(Controller *controller)
 
     connect(overrideHeatSources,SIGNAL(clicked(bool)),controller,SLOT(useHeatSourcesSlot(bool)));
     connect(overrideThermalDiffusivities,SIGNAL(clicked(bool)),controller,SLOT(overrideThermalDiffusivities(bool)));
-    connect(this,SIGNAL(newInitialValue(double)),controller,SLOT(newOverrideValue(double)));
+    connect(this,SIGNAL(newInitialValue(double)),controller,SLOT(newOverrideValueSlot(double)));
 }
 
 void presentation::OptimizationWidget::setModel(model::Model *model)

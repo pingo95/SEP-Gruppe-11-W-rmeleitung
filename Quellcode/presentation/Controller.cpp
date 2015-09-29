@@ -510,7 +510,7 @@ void presentation::Controller::reorderAreaSlot(int pos, int dir,
     }
 }
 
-void presentation::Controller::resetSetupSlot()
+void presentation::Controller::resetSimulationSetupSlot()
 {
     model->resetSetup();
 }

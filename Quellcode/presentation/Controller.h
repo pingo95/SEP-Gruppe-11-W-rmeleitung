@@ -49,7 +49,7 @@ namespace presentation {
         void playVideoSlot();
         void redoSlot(model::SimulationSetup::AreaType type);
         void reorderAreaSlot(int pos, int dir, model::SimulationSetup::AreaType type);
-        void resetSetupSlot();
+        void resetSimulationSetupSlot();
         void saveSimulationSetupSlot();
         void selectIntMethodSlot(QString newIntMethod);
         void selectSolverSlot(QString newIterativeSolver);

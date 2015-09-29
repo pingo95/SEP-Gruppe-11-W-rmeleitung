@@ -10,6 +10,7 @@
 #include <QLabel>
 #include <QTableWidget>
 #include <QStringList>
+#include "Doublespinboxdelegate.h"
 #include <QGroupBox>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -92,6 +93,7 @@ class Controller;
 
         QTableWidget * table;
         QStringList tableHeader;
+        DoubleSpinBoxDelegate * delegate;
 
         QGroupBox * boxReorderButtons;
         QVBoxLayout * boxReorderButtonsLayout;

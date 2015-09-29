@@ -39,6 +39,11 @@ presentation::AreaWidget::AreaWidget(QWidget *parent,
     table->horizontalHeader()->setMinimumHeight(45);
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
+    delegate = new DoubleSpinBoxDelegate(this,
+                                         model::SimulationSetup::AreaMinValue[type]/valueShift,
+                                         model::SimulationSetup::AreaMaxValue[type]/valueShift);
+    table->setItemDelegate(delegate);
+
     table->setColumnWidth(0,30);
     table->setColumnWidth(1,85);
 

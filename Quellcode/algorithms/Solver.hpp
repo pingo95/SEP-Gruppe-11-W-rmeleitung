@@ -14,7 +14,7 @@ algorithms::Solver<T>::~Solver() {
 }
 
 template <class T>
-void algorithms::Solver<T>::decompose(CRS<T> const & matrix) {
+void algorithms::Solver<T>::decompose(CRS<T> const & /*matrix*/) {
 
 }
 
@@ -34,12 +34,12 @@ int algorithms::Solver<T>::getMaxIt() const {
 }
 
 template <class T>
-void algorithms::Solver<T>::setEps(double const eps) {
+void algorithms::Solver<T>::setEps(double const /*eps*/) {
 
 }
 
 template <class T>
-void algorithms::Solver<T>::setMaxIt(int const maxIt) {
+void algorithms::Solver<T>::setMaxIt(int const /*maxIt*/) {
 
 }
 

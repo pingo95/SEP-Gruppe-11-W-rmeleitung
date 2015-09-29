@@ -18,6 +18,7 @@ SOURCES += \
     model/Simulationsetup.cpp \
     model/Simulationworker.cpp \
     model/Model.cpp \
+    presentation/Doublespinboxdelegate.cpp \
     presentation/Areawidget.cpp \
     presentation/Ibvswidget.cpp \
     presentation/Simulationwidget.cpp \
@@ -55,6 +56,7 @@ HEADERS  += \
     model/Simulationsetup.h \
     model/Simulationworker.h \
     model/Model.h \
+    presentation/Doublespinboxdelegate.h \
     presentation/Areawidget.h \
     presentation/Ibvswidget.h \
     presentation/Simulationwidget.h \

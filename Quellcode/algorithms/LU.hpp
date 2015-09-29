@@ -32,7 +32,7 @@ void algorithms::LU<T>::decompose(CRS<T> const & matrix) {
 }
 
 template <class T>
-void algorithms::LU<T>::solve(QVector<T> & result, CRS<T> const & matrix, QVector<T> const & rhs) {
+void algorithms::LU<T>::solve(QVector<T> & result, CRS<T> const & /*matrix*/, QVector<T> const & rhs) {
     QVector<T> y;
     y.resize(result.size());
     T sum;

@@ -155,8 +155,8 @@ void presentation::SimulationWidget::setController(Controller *controller)
     connect(abortButton,SIGNAL(clicked(bool)),controller,SLOT(abortWorkSlot()));
 
     connect(saveButton,SIGNAL(clicked(bool)),controller,SLOT(saveSimulationSetupSlot()));
-    connect(loadButton,SIGNAL(clicked(bool)),controller,SLOT(loadSetupSlot()));
-    connect(resetButton,SIGNAL(clicked(bool)),controller,SLOT(resetSetupSlot()));
+    connect(loadButton,SIGNAL(clicked(bool)),controller,SLOT(loadSimulationSetupSlot()));
+    connect(resetButton,SIGNAL(clicked(bool)),controller,SLOT(resetSimulationSetupSlot()));
 }
 
 void presentation::SimulationWidget::setModel(model::Model *model)
