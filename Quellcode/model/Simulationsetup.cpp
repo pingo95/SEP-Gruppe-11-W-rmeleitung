@@ -189,19 +189,17 @@ void model::SimulationSetup::reorderAreas(int const pos, int const dir,
         areas.swap(pos,pos-dir);
 }
 
-// Updatet die gewählte Integrationsmethode
 void model::SimulationSetup::selectIntMethod(QString newIntMethod)
 {
     selectedIntMethod = newIntMethod;
 }
 
-// Updatet den gewählten iterativen Löser
 void model::SimulationSetup::selectSolver(QString newSolver)
 {
     selectedSolver = newSolver;
 }
 
-void model::SimulationSetup::setAreaBackground(const double newValue, SimulationSetup::AreaType type)
+void model::SimulationSetup::setAreaBackgroundValue(const double newValue, SimulationSetup::AreaType type)
 {
     if(type == SimulationSetup::AreaHeatSource)
     {

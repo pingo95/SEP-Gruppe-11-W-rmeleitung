@@ -5,7 +5,7 @@
 
 
 /*!
- *    \brief algorithms enthält alle verwendeten mathematischen Verfahren/grundlegende Datenstrukturen
+ *    \brief Enthält alle verwendeten mathematischen Verfahren/grundlegende Datenstrukturen
  */
 namespace algorithms {
 

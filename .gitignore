@@ -21,3 +21,4 @@ Quellcode/algorithms/dco.hpp
 Quellcode/algorithms/key.txt
 Quellcode/Doxygen/html/*
 *.db
+*.tmp

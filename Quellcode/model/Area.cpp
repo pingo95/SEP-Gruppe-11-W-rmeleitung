@@ -21,10 +21,6 @@ model::Area::Area(const Area & rhs) : id(rhs.id), type(rhs.type),
 
 }
 
-model::Area::~Area(){
-//    --idCounters[type];
-}
-
 void model::Area::resetIDs()
 {
     QList<int> keys = idCounters.keys();
@@ -33,7 +29,6 @@ void model::Area::resetIDs()
         idCounters[(*it)] = 1;
 }
 
-// Testet, ob die Punkte in den Vektoren ein gültiges Gebiet ergeben würden
 bool model::Area::validateArea(QVector<double> const & xKoords,
                                QVector<double> const & yKoords)
 {
@@ -92,7 +87,6 @@ void model::Area::getPoints(QVector<double> & xKoords,
     yKoords = this->yKoords;
 }
 
-// Returned Rechteck, das parallel zur x und y Achse das Gebiet einschließt
 void model::Area::getTransitiveRectangle(double &xMin, double &xMax,
                                      double &yMin, double &yMax) const
 {
@@ -116,7 +110,6 @@ double model::Area::getValue() const
     return this->value;
 }
 
-// Testet, ob der Punkt innerhalb des Gebietes liegt:
 bool model::Area::insidePoint(double const xKoord, double const yKoord) const
 {
     // 1. Testet, ob der Punkt auf einer Kante des Gebietes liegt:
@@ -155,6 +148,7 @@ bool model::Area::insidePoint(double const xKoord, double const yKoord) const
     for(int i = 0; i < xKoords.size()-1; ++i)
         if(segIntersect(xKoords[i],yKoords[i],xKoords[i+1],yKoords[i+1],xKoord,yKoord,xKoord+dX,yKoord+dY))
             ++count;
+    // Falls der Strahl eine ungerade Anzahl Kanten schneidet liegt der Punkt im Inneren
     return count % 2 == 1;
 }
 
@@ -175,11 +169,12 @@ double model::Area::direction(double const pX, double const pY,
                               double const rX, double const rY)
 {
     double d = det(qX-pX,qY-pY,rX-qX,rY-qY);
+    // Runden auf Grund von maschinenungenauigkeit
     d = qAbs(d) < 1e-10 ? 0 : d;
     return d;
 }
 
-//Testet ob x auf pq liegt:
+// Testet ob x auf pq liegt:
 bool model::Area::onLine(double const pX, double const pY,
                          double const qX, double const qY,
                          double const xX, double const xY)
@@ -203,7 +198,7 @@ bool model::Area::onSegment(double const pX, double const pY,
            (xX >= botLeftX)  && (xY >= botLeftY);
 }
 
-//Testet, ob pq und rs sich schneiden:
+// Testet, ob pq und rs sich schneiden:
 bool model::Area::segIntersect(double const pX, double const pY,
                                double const qX, double const qY,
                                double const rX, double const rY,
@@ -235,8 +230,6 @@ QTextStream & model::operator<<(QTextStream & out, Area & area)
         << "\nWert: " << area.value
         << "\nAnzahl Punkte: " << area.xKoords.size()
         << "\n";
-//        << std::setprecision(3)
-//        << std::fixed;
     out.setRealNumberNotation(QTextStream::FixedNotation);
     out.setRealNumberPrecision(3);
     for(int i = 0; i < area.xKoords.size(); ++i)

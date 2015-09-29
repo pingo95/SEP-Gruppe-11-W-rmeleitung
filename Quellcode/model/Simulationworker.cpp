@@ -17,8 +17,7 @@ typedef double AD_TYPE;
 //typedef dco::ga1s<double> AD_MODE;
 
 model::SimulationWorker::SimulationWorker(QObject * parent): QObject(parent),
-    abort(false), busy(false), consecutiveArrayObservations(NULL),
-    consecutiveArraySimulation(NULL), dataRead(false), m(1),
+    abort(false), busy(false), dataRead(false), m(1),
     mapsInitialized(false), n(3), obsSize(0), optimizationN(1),
     optimized(false),result(NULL), simulated(false), T(1.)
 {
@@ -37,14 +36,18 @@ model::SimulationWorker::~SimulationWorker()
         delete (*it3);
     if(simulated)
     {
-        delete consecutiveArraySimulation;
         for(long i = 0; i < m+1; ++i)
+        {
+            for(long j = 0; j < n; ++j)
+                delete result[i][j];
             delete result[i];
+        }
         delete result;
     }
     if(dataRead)
     {
-        delete consecutiveArrayObservations;
+        for(long i = 0; i < obsSize; ++i)
+            delete observations[i];
         delete observations;
     }
 }
@@ -257,14 +260,14 @@ void model::SimulationWorker::startReadingDataSlot(QString const filename, long 
         //alte Werte löschen:
         if(dataRead)
         {
-            delete consecutiveArrayObservations;
+            for(long i = 0; i < obsSize; ++i)
+                delete observations[i];
             delete observations;
         }
-        consecutiveArrayObservations = new double[obsSize*obsSize];
         observations = new double*[obsSize];
         for(long i = 0; i < obsSize; ++i)
         {
-            observations[i] = &(consecutiveArrayObservations[i*obsSize]);
+            observations[i] = new double[obsSize];
             for(long j= 0; j < obsSize; ++j)
                 observations[i][j] = 0.0;
         }
@@ -305,9 +308,12 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
     //altes ergebniss löschen
     if(simulated)
     {
-        delete consecutiveArraySimulation;
         for(long i = 0; i < m+1; ++i)
+        {
+            for(long j = 0; j < n; ++j)
+                delete result[i][j];
             delete result[i];
+        }
         delete result;
     }
 
@@ -325,22 +331,20 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
             + "\n\nAllozieren des benötigten Speichers\n";
     emit simulationLogUpdate(message);
 
-    // konsekutives Anlegen
-    consecutiveArraySimulation = new double [(m+1)*n*n];
-    // umwandeln in die Ergebnismatrix
+    // Anlegen der Ergebnismatrix
     result = new double**[m+1];
     for(long i = 0; i < m+1; ++i)
     {
         result[i] = new double *[n];
 
         // Erste Zeilen mit unterem Randwert
-        result[i][0] = &(consecutiveArraySimulation[i*n*n]);
+        result[i][0] = new double[n];
         for(long k = 0; k < n; ++k)
             result[i][0][k] = simSetup.getIBV(SimulationSetup::BottomBoundary);
 
         for(long j = 1; j < n-1; ++j)
         {
-            result[i][j] = &(consecutiveArraySimulation[i*n*n + j*n]);
+            result[i][j] = new double[n];
 
             // Erste und letzter Punkt mit linkem bzw rechtem Randwert
             result[i][j][0] = simSetup.getIBV(SimulationSetup::LeftBoundary);
@@ -351,7 +355,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
         }
 
         // Letzte Zeilen mit oberem Randwert
-        result[i][n-1] = &(consecutiveArraySimulation[i*n*n + (n-1)*n]);
+        result[i][n-1] = new double[n];
         for(long k = 0; k < n; ++k)
             result[i][n-1][k] = simSetup.getIBV(SimulationSetup::TopBoundary);
     }
@@ -456,7 +460,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
         }
     }
 
-    message = "Wärmequellen abgeschlossen\n\n Initialisieren der Integrationsmethode und des Lösers\n\n";
+    message = "Wärmequellen abgeschlossen\n\nInitialisieren der Integrationsmethode und des Lösers\n\n";
     emit simulationLogUpdate(message);
 
     emit beginningStage("Zeitschritte berechnen:",m);

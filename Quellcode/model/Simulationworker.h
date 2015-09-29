@@ -55,8 +55,6 @@ namespace model {
         bool abort;
         QMutex accessLock;
         bool busy;
-        double * consecutiveArrayObservations;
-        double * consecutiveArraySimulation;
         bool dataRead;
         QMap<QString,algorithms::IntMethod<double>*> intMethods;
         long m;

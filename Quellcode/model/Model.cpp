@@ -283,7 +283,7 @@ void model::Model::selectSolver(QString newSolver)
 void model::Model::setAreaBackgroundValue(const double newValue, SimulationSetup::AreaType type)
 {
     assert(!blocking);
-    simSetup->setAreaBackground(newValue,type);
+    simSetup->setAreaBackgroundValue(newValue,type);
     ui->updateNotification();
 }
 
