@@ -5,7 +5,7 @@ model::Model::Model() : QWidget(NULL), blocking(false), dataRead(false), optimiz
     overrideDiffusivities(false), overrideInitialTDvalue(model::SimulationSetup::AreaMinValue[
                                                          model::SimulationSetup::AreaThermalDiffusivity]),
     simSetup(new SimulationSetup()),
-    simulated(false), simWorker(new SimulationWorker()), ui(NULL), useHeatSources(false),
+    simulated(false), simWorker(new SimulationWorker(NULL)), ui(NULL), useHeatSources(false),
     workerThread(this), working(false)
 {
     simWorker->moveToThread(&workerThread);
@@ -196,6 +196,8 @@ void model::Model::loadSetup(QString filename)
 
 void model::Model::optimize()
 {
+    if(!dataRead)
+        return;
     blocking = true;
     emit startOptimization(simSetup,overrideDiffusivities,overrideInitialTDvalue,useHeatSources);
     working = true;

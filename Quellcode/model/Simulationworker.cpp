@@ -12,7 +12,6 @@
 #include <QFile>
 #include <QTime>
 
-typedef double AD_TYPE;
 //typedef dco::ga1s<double>::type AD_TYPE;
 //typedef dco::ga1s<double> AD_MODE;
 
@@ -61,49 +60,49 @@ void model::SimulationWorker::abortWork()
 
 QList<QString> const model::SimulationWorker::getIntMethodNames() const
 {
-    assert(mapsInitialized);
+//    assert(mapsInitialized);
     return intMethods.keys();
 }
 
 QList<QString> const model::SimulationWorker::getSolverNames() const
 {
-    assert(mapsInitialized);
+//    assert(mapsInitialized);
     return solvers.keys();
 }
 
 long model::SimulationWorker::getM() const
 {
-    assert(!busy && simulated);
+//    assert(!busy && simulated);
     return m;
 }
 
 long model::SimulationWorker::getN() const
 {
-    assert(!busy && simulated);
+//    assert(!busy && simulated);
     return n;
 }
 
 double** const & model::SimulationWorker::getObservations() const
 {
-    assert(!busy && dataRead) ;
+//    assert(!busy && dataRead) ;
     return observations;
 }
 
 int model::SimulationWorker::getObservationsDim() const
 {
-    assert(!busy && dataRead);
+//    assert(!busy && dataRead);
     return obsSize;
 }
 
 double *** const & model::SimulationWorker::getResult() const
 {
-    assert(!busy && simulated);
+//    assert(!busy && simulated);
     return result;
 }
 
 double model::SimulationWorker::getT() const
 {
-    assert(!busy && simulated);
+//    assert(!busy && simulated);
     return T;
 }
 
@@ -114,16 +113,16 @@ void model::SimulationWorker::initializeMaps()
     intMethods.insert("Impliziter Euler",new algorithms::ImpEuler<double>());
     intMethods.insert("Crank Nicolson", new algorithms::CrankNicolson<double>());
 
-    // Registrieren der iterativen Löser
+    // Registrieren der LGS Löser
     solvers.insert("Jacobi", new algorithms::Jacobi<double>());
     solvers.insert("Gauss-Seidel", new algorithms::GaussSeidel<double>());
     solvers.insert("Gauss (LU)",new algorithms::LU<double>());
     mapsInitialized = true;
 }
 
-//void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTemplate, bool overrideTD,
-//                                                double overrideValue, bool useHeatSources)
-//{
+void model::SimulationWorker::startOptimizationSlot(SimulationSetup */*simSetupTemplate*/, bool /*overrideTD*/,
+                                                    double /*overrideValue*/, bool /*useHeatSources*/)
+{
 //    if(busy) return;
 //    busy = true;
 
@@ -136,16 +135,16 @@ void model::SimulationWorker::initializeMaps()
 //    // DeltaX
 //    double deltaX = (double) 1 / (double) (simSetup.getN()-1);
 
-//    // Anlegen des Vektors für zu optimierende Wärmeleitkoeffizienten
+//    // Anlegen des Vektors für zu optimierende Temperaturleitkoeffizienten
 //    QVector<AD_TYPE> optimizedCsAD;
 //    if(overrideTD)
 //        optimizedCsAD.fill(optimizationN,overrideValue);
 //    else
 //    {
 //        optimizedCsAD.fill(optimizationN,simSetup.getAreaBackgroundValue(SimulationSetup::AreaThermalDiffusivity));
-//        // Berechnen welche Punkte von welchem Wärmeleitkoeffizienten-Gebiet
+//        // Berechnen welche Punkte von welchem Temperaturleitkoeffizienten-Gebiet
 //        // abgedeckt werden, dabei überschreiben neure Gebiete ältere
-//        emit beginningStage("Initiale Wärmeleitkoeffizienten:",simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity),false);
+//        emit beginningStage("Initiale Temperaturleitkoeffizienten:",simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity),false);
 //        if(simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity) > 0)
 //        {
 //            QList<Area*>::const_iterator it = simSetup.getAreas(SimulationSetup::AreaThermalDiffusivity).begin();
@@ -239,7 +238,7 @@ void model::SimulationWorker::initializeMaps()
 //    optimized = true;
 //    busy = false;
 //    emit finishedOptimization();
-//}
+}
 
 void model::SimulationWorker::startReadingDataSlot(QString const filename, long const obsCount)
 {
@@ -301,11 +300,12 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
     busy = true;
     QTime timer;
     timer.start();
+    // Kopieren der Simulationseinstellungen
     SimulationSetup  simSetup(*simSetupTemplate);
 
     emit startedWork();
 
-    //altes ergebniss löschen
+    // altes Ergebnis löschen
     if(simulated)
     {
         for(long i = 0; i < m+1; ++i)
@@ -359,22 +359,22 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
         for(long k = 0; k < n; ++k)
             result[i][n-1][k] = simSetup.getIBV(SimulationSetup::TopBoundary);
     }
-    message = "Speicher alloziert.\n\nBerechne Wärmeleitkoeffizienten\nAnzahl Gebiete : "
+    message = "Speicher alloziert.\n\nBerechne Temperaturleitkoeffizienten\nAnzahl Gebiete : "
             + QString::number(simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity)) + "\n";
     emit simulationLogUpdate(message);
 
-    // Anlegen der Vektoren für Wärmeleitkoeffizienten
+    // Anlegen des Vektors für Temperaturleitkoeffizienten
     QVector<double> thermalDiffusivitiesGrid(n*n,simSetup.getAreaBackgroundValue(SimulationSetup::AreaThermalDiffusivity));
 
-    // Berechnen welche Punkte von welchem Wärmeleitkoeffizienten-Gebiet
+    // Berechnen welche Punkte von welchem Temperaturleitkoeffizienten-Gebiet
     // abgedeckt werden, dabei überschreiben neure Gebiete ältere
-    emit beginningStage("Wärmeleitkoeffizienten:",simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity));
+    emit beginningStage("Temperaturleitkoeffizienten:",simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity));
     if(simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity) > 0)
     {
+        int count = 0;
         QList<Area*>::const_iterator it = simSetup.getAreas(SimulationSetup::AreaThermalDiffusivity).begin();
         for(; it != simSetup.getAreas(SimulationSetup::AreaThermalDiffusivity).end(); ++it)
         {
-            int count = 0;
             Area* thermalDiffusivity = *it;
             double diffusivity = thermalDiffusivity->getValue();
             double xMin, xMax, yMin, yMax;
@@ -391,13 +391,14 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
             emit finishedStep(count);
         }
     }
-    message = "Wärmeleitkoeffizienten abgeschlossen\n\nBerechne Wärmequellen\nAnzahl Gebiete: "
+    message = "Temperaturleitkoeffizienten abgeschlossen\n\nBerechne Wärmequellen\nAnzahl Gebiete: "
             + QString::number(simSetup.getAreaCount(SimulationSetup::AreaHeatSource)) + "\n";
     emit simulationLogUpdate(message);
 
     bool reusable;
     QVector<double> neededTimeSteps;
 
+    // Auswählen der Integrationsmethode und des LGS Lösers
     algorithms::IntMethod<double> * selectedIntMethod = intMethods[simSetup.getSelectedIntMethod()];
     selectedIntMethod->selectSolver(solvers[simSetup.getSelectedSolver()]);
     selectedIntMethod->getSolver()->setEps(simSetup.getSolverMaxError());
@@ -440,6 +441,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
         heatSourcesGrid[i] = new QVector<double>(n*n,simSetup.getAreaBackgroundValue(SimulationSetup::AreaHeatSource));
 
     emit simulationLogUpdate("Initiales Auswerten der Wärmequellen\n");
+
     // Initiales Auswerten der Wärmequellenvektoren
     if(simSetup.getAreaCount(SimulationSetup::AreaHeatSource) > 0)
     {
@@ -464,6 +466,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
     emit simulationLogUpdate(message);
 
     emit beginningStage("Zeitschritte berechnen:",m);
+
     // Intialisieren der Int-Methode
     selectedIntMethod->setUp(n,m,T,thermalDiffusivitiesGrid);
 
@@ -492,7 +495,7 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
         for(long i = 1; i < m+1; ++i)
         {
             selectedIntMethod->calcNextStep(*step1,*step2,heatSourcesGrid);
-            for(long j = 1; j < n-1; ++j)       //<-- Achtung fall Ränder nicht mehr const
+            for(long j = 1; j < n-1; ++j)       //<-- Achtung falls Ränder nicht mehr const
                 for(long k = 1; k < n-1; ++k)
                     result[i][j][k] = (*step2)[k+j*n];
             swapTmp = step1;

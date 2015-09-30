@@ -295,7 +295,7 @@ namespace model {
          *
          * Es findet keine Überprüfung der Gültigkeit des neuen Wertes statt, die Klasse
          * SimulationWorker stellt eine Liste der gültigen Integrationsmethoden zur Verfügung, da diese Klasse auch die
-         * Solver (algorthims::Solver) - Objekte verwaltet und das UI (presentation::UI)
+         * Solver (algorithms::Solver) - Objekte verwaltet und das UI (presentation::UI)
          * beschränkt die Eingabemöglichkeiten des Benutzers auf die Elemente dieser Liste.
          * \see getSelectedSolver, SimulationWorker::getSolverNames
          */
