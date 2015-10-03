@@ -51,7 +51,7 @@ class Controller;
         void areaClicked(double xKoord, double yKoord, QSize plateSize,
                          double valueShift, bool mouseClick,
                          model::SimulationSetup::AreaType type);
-        void areaValueChanged(int pos, double newValue, bool ok,
+        void areaValueChanged(int pos, double newValue,
                               model::SimulationSetup::AreaType type);
         void deleteArea(int pos, model::SimulationSetup::AreaType type);
         void clearAreas(model::SimulationSetup::AreaType type);

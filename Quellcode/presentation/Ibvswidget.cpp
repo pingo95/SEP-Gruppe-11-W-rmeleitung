@@ -98,8 +98,8 @@ void presentation::IBVsWidget::update()
     input1InitialValue->setValue(model->getSimulationSetup()->getIBV(model::SimulationSetup::InitialValue));
     input2BottomBoundary->setValue(model->getSimulationSetup()->getIBV(model::SimulationSetup::BottomBoundary));
     input3LeftBoundary->setValue(model->getSimulationSetup()->getIBV(model::SimulationSetup::LeftBoundary));
-    input5RightBoundary->setValue(model->getSimulationSetup()->getIBV(model::SimulationSetup::RightBoundary));
     input4TopBoundary->setValue(model->getSimulationSetup()->getIBV(model::SimulationSetup::TopBoundary));
+    input5RightBoundary->setValue(model->getSimulationSetup()->getIBV(model::SimulationSetup::RightBoundary));
     updating = false;
 }
 

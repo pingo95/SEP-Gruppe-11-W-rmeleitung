@@ -263,7 +263,7 @@ void presentation::OptimizationWidget::setController(Controller *controller)
     connect(startOptimizationButton,SIGNAL(clicked(bool)),controller,SLOT(optimizationSlot()));
 
     connect(overrideHeatSources,SIGNAL(clicked(bool)),controller,SLOT(useHeatSourcesSlot(bool)));
-    connect(overrideThermalDiffusivities,SIGNAL(clicked(bool)),controller,SLOT(overrideThermalDiffusivities(bool)));
+    connect(overrideThermalDiffusivities,SIGNAL(clicked(bool)),controller,SLOT(overrideThermalDiffusivitiesSlot(bool)));
     connect(this,SIGNAL(newInitialValue(double)),controller,SLOT(newOverrideValueSlot(double)));
 }
 

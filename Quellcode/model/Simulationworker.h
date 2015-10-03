@@ -245,10 +245,10 @@ namespace model {
     public slots:
         /*!
          * \brief startOptimizationSlot führt eine Optimierung mit den übergebenen Einstellungen durch.
-         * \param simSetupTemplate
-         * \param overrideTD
-         * \param overrideValue
-         * \param useHeatSources
+         * \param simSetupTemplate die Simulationseinstellungen für die Optimierung
+         * \param overrideTD entscheidet, ob die Gebiete für die Koeffizienten aus simSetupTemplate oder (nur) overrideValue genutzt werden
+         * \param overrideValue wird benutzt, falls overrideTD true ist, und dient als Anfangswert für die Optimierung
+         * \param useHeatSources entscheidet, ob die Gebiete für die Wärmequellen genutzt oder ignoriert werden
          *
          * Es werden die Temperaturleitkoeffizienten mittels eines Steepest Decent Algorithmus
          * an die zuvor eingelesenen Temperatur-Messdaten optimiert. Die Zielfunktion des

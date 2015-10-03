@@ -299,8 +299,8 @@ void presentation::AreaWidget::setController(Controller *controller)
 
     connect(this,SIGNAL(areaClicked(double,double,QSize,double,bool,model::SimulationSetup::AreaType)),
             controller,SLOT(areaClickSlot(double,double,QSize,double,bool,model::SimulationSetup::AreaType)));
-    connect(this,SIGNAL(areaValueChanged(int,double,bool,model::SimulationSetup::AreaType)),
-            controller,SLOT(areaValueChangedSlot(int,double,bool,model::SimulationSetup::AreaType)));
+    connect(this,SIGNAL(areaValueChanged(int,double,model::SimulationSetup::AreaType)),
+            controller,SLOT(areaValueChangedSlot(int,double,model::SimulationSetup::AreaType)));
     connect(this,SIGNAL(clearAreas(model::SimulationSetup::AreaType)),
             controller,SLOT(clearAreasSlot(model::SimulationSetup::AreaType)));
     connect(this,SIGNAL(deleteArea(int,model::SimulationSetup::AreaType)),
@@ -318,14 +318,6 @@ void presentation::AreaWidget::setController(Controller *controller)
 void presentation::AreaWidget::setModel(model::Model *model)
 {
     this->model = model;
-    // colorScale Range
-    QCPRange range(model::SimulationSetup::AreaMinValue[type]/valueShift,
-                    model::SimulationSetup::AreaMaxValue[type]/valueShift);
-
-    // Updaten des Background-Wertes
-    double bgValue = model->getSimulationSetup()->getAreaBackgroundValue(type)/valueShift;
-    table->item(0,AreaWidget::ColumnValue)->setText(QString::number(bgValue));
-    plate->axisRect()->setBackground(QBrush(colorScale->gradient().color(bgValue,range,false)));
 }
 
 void presentation::AreaWidget::update()
@@ -512,9 +504,8 @@ void presentation::AreaWidget::tableItemChangeSlot(QTableWidgetItem *item)
         return;
     int row = table->row(item);
 
-    bool ok;
-    double newValue = table->item(row,AreaWidget::ColumnValue)->text().toDouble(&ok)*valueShift;
-    emit areaValueChanged(row,newValue,ok,type);
+    double newValue = table->item(row,AreaWidget::ColumnValue)->text().toDouble()*valueShift;
+    emit areaValueChanged(row,newValue,type);
 
 }
 

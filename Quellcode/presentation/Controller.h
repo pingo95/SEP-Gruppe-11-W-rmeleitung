@@ -30,7 +30,7 @@ namespace presentation {
         void areaClickSlot(double xKoord, double yKoord, QSize plateSize,
                            double valueShift, bool mouseClick,
                            model::SimulationSetup::AreaType type);
-        void areaValueChangedSlot(int pos, double newValue, bool ok,
+        void areaValueChangedSlot(int pos, double newValue,
                                   model::SimulationSetup::AreaType type);
         void clearAreasSlot(model::SimulationSetup::AreaType type);
         void deleteAreaSlot(int pos, model::SimulationSetup::AreaType type);
@@ -45,7 +45,7 @@ namespace presentation {
         void newOverrideValueSlot(double newValue);
         void newTSlot(double newT);
         void optimizationSlot();
-        void overrideThermalDiffusivities(bool override);
+        void overrideThermalDiffusivitiesSlot(bool override);
         void playVideoSlot();
         void redoSlot(model::SimulationSetup::AreaType type);
         void reorderAreaSlot(int pos, int dir, model::SimulationSetup::AreaType type);

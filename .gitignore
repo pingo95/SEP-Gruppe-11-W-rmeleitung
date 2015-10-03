@@ -22,3 +22,5 @@ Quellcode/algorithms/key.txt
 Quellcode/Doxygen/html/*
 *.db
 *.tmp
+*.gz(busy)
+Dokumentation/build/SEP_Gruppe_11_Analyse-_und_Entwurfsdokument.synctex.gz(busy)

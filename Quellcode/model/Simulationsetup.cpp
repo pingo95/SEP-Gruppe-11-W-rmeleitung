@@ -71,12 +71,12 @@ void model::SimulationSetup::deleteArea(const int pos, SimulationSetup::AreaType
 {
     if(type == SimulationSetup::AreaHeatSource)
     {
-        delete heatSources.takeAt(pos);
+        heatSources.removeAt(pos);
         --heatSourcesCount;
     }
     else
     {
-        delete thermalDiffusivities.takeAt(pos);
+        thermalDiffusivities.removeAt(pos);
         --thermalDiffusivitiesCount;
     }
 }

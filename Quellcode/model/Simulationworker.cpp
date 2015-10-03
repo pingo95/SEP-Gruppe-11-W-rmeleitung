@@ -123,7 +123,8 @@ void model::SimulationWorker::initializeMaps()
 void model::SimulationWorker::startOptimizationSlot(SimulationSetup */*simSetupTemplate*/, bool /*overrideTD*/,
                                                     double /*overrideValue*/, bool /*useHeatSources*/)
 {
-//    if(busy) return;
+//    if(!mapsInitializide || busy)
+//            return;
 //    busy = true;
 
 //    SimulationSetup  simSetup(*simSetupTemplate);

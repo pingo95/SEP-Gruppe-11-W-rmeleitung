@@ -159,7 +159,7 @@ void presentation::Controller::areaClickSlot(double xKoord, double yKoord, QSize
 
 // Dieser Slot updatet den Wert für ein Wärmequellengebiet, falls der neue
 // gültig ist
-void presentation::Controller::areaValueChangedSlot(int pos, double newValue, bool ok,
+void presentation::Controller::areaValueChangedSlot(int pos, double newValue,
                                                     model::SimulationSetup::AreaType type)
 {
     if(loopBack)
@@ -169,7 +169,7 @@ void presentation::Controller::areaValueChangedSlot(int pos, double newValue, bo
     }
     // Temperatur in Kelvin
     if(newValue >= model::SimulationSetup::AreaMinValue[type] &&
-            newValue <= model::SimulationSetup::AreaMaxValue[type] && ok)
+            newValue <= model::SimulationSetup::AreaMaxValue[type])
         if(pos == 0)
             model->setAreaBackgroundValue(newValue,type);
         else
@@ -190,9 +190,14 @@ void presentation::Controller::areaValueChangedSlot(int pos, double newValue, bo
 void presentation::Controller::clearAreasSlot(model::SimulationSetup::AreaType type)
 {
     if(!started[type])
-    {
         while(model->getSimulationSetup()->getAreaCount(type))
             model->removeLastArea(type);
+    else
+    {
+        errorMessages->setText("Es wird zurzeit ein neues Gebiet erstellt. Löschen "
+                               "nicht möglich.");
+        errorMessages->setDetailedText("");
+        errorMessages->exec();
     }
 }
 
@@ -200,6 +205,12 @@ void presentation::Controller::deleteAreaSlot(int pos, model::SimulationSetup::A
 {
     if(pos >= 0 && pos < model->getSimulationSetup()->getAreaCount(type))
         model->deleteArea(pos,type);
+    else
+    {
+        errorMessages->setText("Ungültige Position. Löschen nicht möglich");
+        errorMessages->setDetailedText("");
+        errorMessages->exec();
+    }
 }
 
 void presentation::Controller::discardAreaSlot(model::SimulationSetup::AreaType type)
@@ -211,6 +222,12 @@ void presentation::Controller::discardAreaSlot(model::SimulationSetup::AreaType 
         started[type] = false;
         clearRedo();
         ui->drawPartialArea(partialAreaX,partialAreaY,type);
+    }
+    else
+    {
+        errorMessages->setText("Es wurde noch kein Gebiet angefangen. Abbrechen nicht möglich");
+        errorMessages->setDetailedText("");
+        errorMessages->exec();
     }
 }
 
@@ -233,21 +250,17 @@ void presentation::Controller::loadObservationsSlot()
                 ++obsCount;
             }
             long n = sqrt(obsCount);
-            if(n*n == obsCount)
-            {
-                model->readObservations(filename,obsCount);
-            }
-            else
+            if(n*n != obsCount)
             {
                 // Warnunge ausgeben:
                 errorMessages->setIcon(QMessageBox::Warning);
-                errorMessages->setText("Es wurde noch keine Wärmeleitkoeffizienten hinzugefügt, "
-                                       "Überschreiben hat keinen Effekt.");
+                errorMessages->setText("Datei enthält keine quadratische Anzahl "
+                                       "Messwerte, fehlende Werte werden zu 0 gesetzt.");
                 errorMessages->setDetailedText("");
                 errorMessages->exec();
                 errorMessages->setIcon(QMessageBox::Critical);
-                model->readObservations(filename,obsCount);
             }
+            model->readObservations(filename,obsCount);
         }
     }
     else
@@ -414,7 +427,7 @@ void presentation::Controller::optimizationSlot()
     }
 }
 
-void presentation::Controller::overrideThermalDiffusivities(bool override)
+void presentation::Controller::overrideThermalDiffusivitiesSlot(bool override)
 {
     model->setOverrideThermalDiffusivities(override);
 

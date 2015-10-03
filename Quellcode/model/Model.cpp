@@ -36,14 +36,11 @@ model::Model::~Model()
 
 void model::Model::abortWork()
 {
-    assert(!blocking && working);
-    simWorker->abortWork();
+    assert(!blocking);
+    if(working)
+        simWorker->abortWork();
 }
 
-// Vorbedingung: Das übergebene Gebiet wurde vorher mit Area::validateArea auf
-// Gültigkeit überprüft
-// Diese Funktion fügt dem Modell ein neues Wärmequellen oder Wärmeleitkoeffizienten
-// -Gebiet hinzu
 void model::Model::addNewArea(const QVector<double> &xKoords,
                               const QVector<double> &yKoords, double value,
                               SimulationSetup::AreaType type)
