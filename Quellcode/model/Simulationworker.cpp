@@ -133,6 +133,7 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup */*simSetupT
 
 //    optimizationN = obsSize*obsSize;
 //    simSetup.setN(obsSize);
+    // simsetup.setT(1.0); ??
 //    // DeltaX
 //    double deltaX = (double) 1 / (double) (simSetup.getN()-1);
 

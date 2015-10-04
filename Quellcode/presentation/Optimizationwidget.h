@@ -21,30 +21,81 @@
 
 namespace presentation {
 class Controller;
-
+    /*!
+     * \brief Die Klasse OptimizationWidget implementiert den Tab zum Durchführen einer
+     * Optimierung.
+     *
+     * Der Tab bietet Knöpfe zum Starten einer Optimierung und zum Einlesen von Messdaten.
+     * Anzeigen für eingelesene Daten, aus dem Simulations-Tab übernommene
+     * Simulationseinstellungen und für die Optimierungsergebnisse. Außerdem gibt es auch
+     * Eingabe/Aktivierungsmöglichkeiten für die manuellen Anfangswert und das Nutzen der
+     * Wärmequellen-Gebiete für die Optimierung.
+     */
     class OptimizationWidget : public QTabWidget
     {
         Q_OBJECT
 
     //Funktionen:
     public:
+        /*!
+         * \brief Konstruktor für die Klasse OptimizationWidget.
+         * \param parent parent-Widget
+         */
         explicit OptimizationWidget(QWidget *parent = 0);
 //        ~OptimizationWidget();
 
+        /*!
+         * \brief setController setzt die Referenz auf den Controller und verbindet
+         * Signale und Slots.
+         * \param controller der Controller
+         * \see Controller
+         */
         void setController(Controller * controller);
+        /*!
+         * \brief setModel setzt die Referenz auf das Modell.
+         * \param model das Modell
+         * \see model::Model
+         */
         void setModel(model::Model * model);
 
+        /*!
+         * \brief update aktualisiert den Tab mit den aktuellen Werten aus dem Modell.
+         * \see UI::updateNotification
+         */
         void update();
 
         // Slots in spe
+        /*!
+         * \brief nextStage stellt den Fortschrittsbalken für einen neuen
+         * Optimierungsabschnitt ein.
+         * \param stage Name des neuen Abschnittes
+         * \param maximum Anzahl Teilschritte des neuen Abschnittes
+         * \see UI::nextStageSlot
+         */
         void nextStage(QString stage, int maximum);
+        /*!
+         * \brief updateProgress aktualisiert den Fortschritt der Optimierung auf dem
+         * Fortschrittsbalken.
+         * \param step Teilschritt, der abgeschlossen wurde
+         * \see UI::updateProgressSlot
+         */
         void updateProgress(int step);
 
     signals:
+        /*!
+         * \brief newInitialValue wird ausgesendet, wenn der manuelle Anfangswert geändert
+         * werden soll, das Signal der QSpinBox wird aus Darstellungsgründen
+         * dabei tranformiert.
+         * \param shiftedValue neuer transformierter Wert
+         */
         void newInitialValue(double shiftedValue);
+        /*!
+         * \brief subTabChange wird ausgesendet, wenn einer der untergeordneten Tabs
+         * geändert wird.
+         * \param targetTab neuer aktiver Tab
+         * \see Controller::tabChangedSlot
+         */
         void subTabChange(int targetTab);
-
-    public slots:
 
     private slots:
        void transformTabIDSlot(int targetTab);

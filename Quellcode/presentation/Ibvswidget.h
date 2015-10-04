@@ -13,21 +13,53 @@
 namespace presentation {
 class Controller;
 
+    /*!
+     * \brief Die Klasse IBVsWidget implementiert den Tab zum Einstellen der Einstellen
+     * der Rand- und des Anfangswertes.
+     *
+     * Der Tab besteht u.a. aus fünf QDoubleSpinBoxen zum Ändern der Werte.
+     */
     class IBVsWidget : public QWidget
     {
         Q_OBJECT
 
     //Funktionen:
     public:
+        /*!
+         * \brief Konstruktor für die Klasse IBVsWidget.
+         * \param parent parent-Widget
+         */
         explicit IBVsWidget(QWidget *parent = 0);
 //        ~IBVsWidget();
 
+        /*!
+         * \brief setController setzt die Referenz auf den Controller und verbindet
+         * Signale und Slots.
+         * \param controller der Controller
+         * \see Controller
+         */
         void setController(Controller * controller);
+        /*!
+         * \brief setModel setzt die Referenz auf das Modell.
+         * \param model das Modell
+         * \see model::Model
+         */
         void setModel(model::Model * model);
 
+        /*!
+         * \brief update aktualisiert den Tab mit den aktuellen Werten aus dem Modell.
+         * \see UI::updateNotification
+         */
         void update();
 
     signals:
+        /*!
+         * \brief iBVsValueChange wird ausgesendet, wenn ein Rand- oder der Anfangswert
+         * geändert soll.
+         * \param newValue neuer Wert
+         * \param ibv entscheidet, welcher Wert geändert wird
+         * \see model::SimulationSetup::IBV, Controller::newIBVValueSlot
+         */
         void iBVsValueChange(double newValue, model::SimulationSetup::IBV ibv);
 
     private slots:

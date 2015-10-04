@@ -302,8 +302,8 @@ namespace model {
         void selectSolver(QString const newSolver);
         /*!
          * \brief Setter-Funktion für den Hintergrundwert der Area - Gebiete.
-         * \param newValue Hintergrundwert
-         * \param type Typ der Gebiete, deren Hintergrundwert geänder wird.
+         * \param newValue neuer Hintergrundwert
+         * \param type Typ der Gebiete, deren Hintergrundwert geänder wird
          *
          * Der Hintergrundwert wird bei einer Simulation für alle Gitterpunkte verwendet,
          * die von keinem Area - Gebiet abgedeckt werden.
@@ -315,7 +315,7 @@ namespace model {
         void setAreaBackgroundValue(double const newValue, SimulationSetup::AreaType type);
         /*!
          * \brief Setter-Funktion für die Randwerte und den Anfangswert
-         * \param newValue neuer Rand- bzw Anfangswert
+         * \param newValue neuer Rand- bzw. Anfangswert
          * \param ibv Entscheidet, welcher Wert geändert wird
          * \see IBV, getIBV
          */
