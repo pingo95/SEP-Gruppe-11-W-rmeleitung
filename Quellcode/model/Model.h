@@ -100,7 +100,7 @@ namespace model {
          * SimulationWorker::getObservations.
          * \see getDataRead, loadObservations, SimulationWorker::getObservations
          */
-        double** const & getObservations() const;
+        double **getObservations() const;
         /*!
          * \brief Getter-Funktion für Dimension eingelesener Temperatur-Messdaten.
          * \return die Dimension der Daten
@@ -133,7 +133,7 @@ namespace model {
          * Simulation angefangen und abgebrochen wurde.
          * \see simulate, getSimulated, SimulationWorker::getResult
          */
-        double*** const & getResult() const;
+        double*** getResult() const;
         /*!
          * \brief Getter-Funktion für die Zeitdiskretisierungsgröße m der letzten
          * Simulation.

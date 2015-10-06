@@ -5,7 +5,13 @@
 #include <QMap>
 #include <QMutex>
 #include "../algorithms/Intmethod.h"
+#include "../algorithms/dco.hpp"
 #include "Simulationsetup.h"
+
+/*! \cond */
+typedef dco::ga1s<double>::type AD_TYPE;
+typedef dco::ga1s<double>       AD_MODE;
+/*! \endcond */
 
 namespace model {
     /*!
@@ -316,9 +322,11 @@ namespace model {
     private:
         explicit SimulationWorker();
         explicit SimulationWorker(SimulationWorker const & rhs);
-        QVector<double> * & simpleSimulation(SimulationSetup & simSetup, QVector<double> * & step1,
-                              QVector<double> * & step2, QVector<double> &currentCs,
-                              QList<QList<long>*> & heatSourcesIndices);
+        QVector<AD_TYPE> * & simpleSimulation(SimulationSetup & simSetup,
+                                              QVector<AD_TYPE> *&step1,
+                                              QVector<AD_TYPE> *&step2,
+                                              QVector<AD_TYPE> &currentCs,
+                                              QList<QList<long>*> & heatSourcesIndices);
 
     // Attribute:
     private:
@@ -327,6 +335,7 @@ namespace model {
         bool busy;
         bool dataRead;
         QMap<QString,algorithms::IntMethod<double>*> intMethods;
+        QMap<QString,algorithms::IntMethod<AD_TYPE>*> intMethodsDCO;
         long m;
         bool mapsInitialized;
         long n;
@@ -338,6 +347,7 @@ namespace model {
         double *** result;
         bool simulated;
         QMap<QString,algorithms::Solver<double>*> solvers;
+        QMap<QString,algorithms::Solver<AD_TYPE>*> solversDCO;
         double T;
 
     };

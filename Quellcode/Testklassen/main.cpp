@@ -1,5 +1,3 @@
-#define ___TESTING
-
 #include "Testwindow.h"
 #include <QApplication>
 

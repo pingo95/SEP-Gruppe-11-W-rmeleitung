@@ -44,7 +44,7 @@ void algorithms::Solver<T>::setMaxIt(int const /*maxIt*/) {
 }
 
 template <class T>
-double algorithms::norm2(QVector<T> const & vec) {
+T algorithms::norm2(QVector<T> const & vec) {
     T sum=0;
     for(int i=0; i<vec.size(); ++i) {
         sum += vec[i]*vec[i];
@@ -54,7 +54,7 @@ double algorithms::norm2(QVector<T> const & vec) {
 }
 
 template <class T>
-double algorithms::normInf(QVector<T> const & vec) {
+T algorithms::normInf(QVector<T> const & vec) {
     T max=0;
     for(int i=0; i<vec.size(); ++i) {
         if(max<fabs(vec[i]))

@@ -29,8 +29,6 @@ SOURCES += \
     presentation/Controller.cpp \
     Main.cpp
 
-
-
 HEADERS  += \
     algorithms/Crs.h \
     algorithms/Crs.hpp \
@@ -51,7 +49,7 @@ HEADERS  += \
     algorithms/Cranknicolson.h \
     algorithms/Cranknicolson.hpp \
     presentation/Qcustomplot.h \
-#    algorithms/dco.hpp \
+    algorithms/dco.hpp \
     model/Area.h \
     model/Simulationsetup.h \
     model/Simulationworker.h \
@@ -68,3 +66,11 @@ HEADERS  += \
 
 RESOURCES += \
     presentation/uiicons.qrc
+
+LIBS += -L"$$_PRO_FILE_PWD_/algorithms" -ldco
+unix{
+    runTarget.target = run
+    runTarget.commands = export NAG_KUSARI_FILE=./algorithms/key.txt; $$TARGET;
+    runTarget.depends = first
+    QMAKE_EXTRA_TARGETS += runTarget
+}

@@ -67,7 +67,7 @@ QList<QString> const model::Model::getIntMethodsNames() const
     return simWorker->getIntMethodNames();
 }
 
-double** const & model::Model::getObservations() const
+double** model::Model::getObservations() const
 {
     if(!working && dataRead)
         return simWorker->getObservations();
@@ -91,7 +91,7 @@ double model::Model::getOverrideValue() const
     return overrideInitialTDvalue;
 }
 
-double*** const & model::Model::getResult() const
+double ***model::Model::getResult() const
 {
     if(!working && simulated)
         return simWorker->getResult();

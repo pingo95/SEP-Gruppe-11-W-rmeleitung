@@ -11,7 +11,8 @@ algorithms::CrankNicolson<T>::CrankNicolson() {
 
 template <class T>
 void algorithms::CrankNicolson<T>::calcNextStep(QVector<T> const & last, QVector<T> & next, QVector< QVector<T>* > const & heatSources) const {
-    QVector<T> rhs = algorithms::addQVectors(this->rhsMatrix*last,this->deltaT/2*(algorithms::addQVectors(*(heatSources[1]),*(heatSources[0]))));
+    T tmp = this->deltaT/((T)2);
+    QVector<T> rhs = algorithms::addQVectors(this->rhsMatrix*last,tmp*(algorithms::addQVectors(*(heatSources[1]),*(heatSources[0]))));
     this->activeSolver->solve(next,this->itMatrix,rhs);
 }
 
@@ -30,7 +31,8 @@ void algorithms::CrankNicolson<T>::setUpSpecific(QVector<T> const & thermalDiffu
     diag.diag(thermalDiffusivities);
     diag = diag.multCRSCRS(A1);
     A1.eye(this->n);
-    diag = this->deltaT/(2*this->deltaX*this->deltaX) * diag;
+    T tmp = this->deltaT/((T)2*this->deltaX*this->deltaX);
+    diag = tmp * diag;
     this->itMatrix = A1 - diag;
     this->rhsMatrix = A1 + diag;
 }

@@ -19,7 +19,7 @@ void algorithms::GaussSeidel<T>::solve(QVector<T> & result, CRS<T> const & matri
             sum=matrix.multRowQVector(i,result);
             result[i] += 1./matrix.getValue(i,i)*(rhs[i]-sum);
         }
-        rel = norm2(addQVectors(matrix*result,(-1.)*rhs))/norm2(rhs);
+        rel = norm2(addQVectors(matrix*result,(T)(-1.)*rhs))/norm2(rhs);
         ++this->itCount;
     }
 }

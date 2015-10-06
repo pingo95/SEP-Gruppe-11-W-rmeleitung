@@ -130,7 +130,7 @@ namespace algorithms {
         QVector<int> index;
         QVector<int> ptr;
         int size;
-        QVector<double> value;
+        QVector<T> value;
 
      /*!
       *  \brief Dieser Operator wird als non-member-Function implementiert und mit "friend-Zugriffsrechten" versehen",

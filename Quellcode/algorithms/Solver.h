@@ -45,14 +45,14 @@ namespace algorithms {
      *  \param vec
      */
     template <class T>
-    double norm2(QVector<T> const & vec);
+    T norm2(QVector<T> const & vec);
 
     /*!
      *  \brief normInf berechnet die Maximumsnorm des übergebenen Vektors
      *  \param vec
      */
     template <class T>
-    double normInf(QVector<T> const & vec);
+    T normInf(QVector<T> const & vec);
 
 }
 

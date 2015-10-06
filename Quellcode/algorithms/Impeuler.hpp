@@ -28,7 +28,8 @@ void algorithms::ImpEuler<T>::setUpSpecific(QVector<T> const & thermalDiffusivit
     diag.diag(thermalDiffusivities);
     diag = diag.multCRSCRS(A1);
     A1.eye(this->n);
-    this->itMatrix = this->deltaT/(this->deltaX*this->deltaX) * diag;
+    T tmp = this->deltaT/(this->deltaX*this->deltaX);
+    this->itMatrix = tmp * diag;
     this->itMatrix = A1 - this->itMatrix;
 }
 

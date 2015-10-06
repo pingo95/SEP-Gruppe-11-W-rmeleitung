@@ -22,7 +22,7 @@ void algorithms::Jacobi<T>::solve(QVector<T> & result, CRS<T> const & matrix, QV
         }
         old = result;
 //        rel = norm2(addQVectors(matrix*result,(-1.) * rhs))/norm2(rhs);
-        rel = normInf(addQVectors(matrix*result,(-1.) * rhs))/normInf(rhs);
+        rel = normInf(addQVectors(matrix*result,(T)(-1.) * rhs))/normInf(rhs);
         ++(this->itCount);
     }
 }
