@@ -81,6 +81,18 @@ int model::Model::getObservationsDim() const
    return 1;
 }
 
+bool model::Model::getOptimized() const
+{
+    return optimized;
+}
+
+QVector<double> model::Model::getOptimizedCoeffs() const
+{
+    if(!working && optimized)
+        return simWorker->getOptimizedCoeffs();
+    return QVector<double>();
+}
+
 bool model::Model::getOverrideThermalDiffusivities() const
 {
     return overrideDiffusivities;

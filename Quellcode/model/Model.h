@@ -111,6 +111,21 @@ namespace model {
          */
         int getObservationsDim() const;
         /*!
+         * \brief Abfrage-Funktion, ob schon eine Optimierung durchgeführt wurde.
+         * \return true/false für bereits optimiert
+         * \see optimize
+         */
+        bool getOptimized() const;
+        /*!
+         * \brief Getter-Funktion für optimierte Temperatur-Leifkoeffizienten.
+         * \return optimierte Koeffizienten
+         *
+         * Überprüft, ob bereits optimiert wurde, falls ja Weiterleitung an
+         * SimulationWorker::getOptimizedCoeffs.
+         * \see getOptimzed, optimize, SimulationWorker::getOptimizedCoeffs
+         */
+        QVector<double> getOptimizedCoeffs() const;
+        /*!
          * \brief Abfrage-Funktion, ob der manuelle Anfangswert für die Optimierung
          * aktiviert wurde.
          * \return true/false für manueller Anfangswert aktiviert

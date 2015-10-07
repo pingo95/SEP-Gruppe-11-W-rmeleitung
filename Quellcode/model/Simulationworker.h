@@ -5,12 +5,16 @@
 #include <QMap>
 #include <QMutex>
 #include "../algorithms/Intmethod.h"
-#include "../algorithms/dco.hpp"
 #include "Simulationsetup.h"
 
 /*! \cond */
-typedef dco::ga1s<double>::type AD_TYPE;
-typedef dco::ga1s<double>       AD_MODE;
+#ifdef _WIN32
+    typedef double AD_TYPE;
+#else
+    #include "../algorithms/dco.hpp"
+    typedef dco::ga1s<double>::type AD_TYPE;
+    typedef dco::ga1s<double>       AD_MODE;
+#endif
 /*! \endcond */
 
 namespace model {
@@ -78,17 +82,6 @@ namespace model {
          */
         QList<QString> const getIntMethodNames() const;
         /*!
-         * \brief getSolverNames stellt eine Liste der wählbaren LGS Löser zur Verfügung.
-         * \return Liste aller wählbaren LGS Löser
-         *
-         * Diese Liste wird vom UI (presentation::UI) dazu genutzt die Benutzereingabemöglichkeiten auf
-         * gültige LGS Löser zu beschränken.\n
-         * initializeMaps sollte vorher aufgerufen worden sein, ansonsten wird eine leere Liste
-         * zurückgegeben.
-         * \see initializeMaps, SimulationSetup::selectSolver
-         */
-        QList<QString> const getSolverNames() const;
-        /*!
          * \brief Getter-Funktion für die Zeitdiskretisierungsgröße m.
          * \return die Zeitdiskretisierungsgröße
          *
@@ -133,6 +126,14 @@ namespace model {
          */
         int getObservationsDim() const;
         /*!
+         * \brief Getter-Funktion für optimierte Temperaturleitkoeffizienten.
+         * \return die optimierten Koeffizienten
+         *
+         * Der Fall, dass noch nicht optimiert wurde, wird schon im Modell abgefangen.
+         * \see startOptimizationSlot, Model::getOptimizedCoeffs
+         */
+        QVector<double> getOptimizedCoeffs() const;
+        /*!
          * \brief Getter-Funktion für das Ergebnis der letzten Simulation.
          * \return eine Referenz auf das Ergebnis der letzen Simulation
          *
@@ -140,6 +141,17 @@ namespace model {
          * \see startSimulationSlot, Model::getResult
          */
         double*** const & getResult() const;
+        /*!
+         * \brief getSolverNames stellt eine Liste der wählbaren LGS Löser zur Verfügung.
+         * \return Liste aller wählbaren LGS Löser
+         *
+         * Diese Liste wird vom UI (presentation::UI) dazu genutzt die Benutzereingabemöglichkeiten auf
+         * gültige LGS Löser zu beschränken.\n
+         * initializeMaps sollte vorher aufgerufen worden sein, ansonsten wird eine leere Liste
+         * zurückgegeben.
+         * \see initializeMaps, SimulationSetup::selectSolver
+         */
+        QList<QString> const getSolverNames() const;
         /*!
          * \brief Getter-Funktion für den Endzeitpunkt T.
          * \return der Endzeitpunkt

@@ -192,7 +192,7 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     plate->addPlottable(colorMap);
 
         //Daten-Tabelle
-    labelData = new QLabel("Temperaturverteilung (in Kelvin):",configurationTab);
+    labelData = new QLabel("Eingelesene Messdaten (in Kelvin):",configurationTab);
     dataTable = new QTableWidget(configurationTab);
 
         //Fortschritts-Balken
@@ -237,8 +237,9 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     solutionTab = new QWidget(this);
     this->addTab(solutionTab,"Ergebnis");
 
-    topLabelSolution = new QLabel("Es kann erst ein Ergebnis angezeigt werden, "
-                                  "nachdem eine Optimierung durchgeführt wurde.",solutionTab);
+    topLabelSolution = new QLabel("Dies ist der Tab zum Anzeigen der Optimerungsergebnisse."
+                                  "\nNach einer Optimierung werden die Ergebnisse "
+                                  "automatisch hier angezeigt.",solutionTab);
 
     solutionTable = new QTableWidget(solutionTab);
 
@@ -251,6 +252,20 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     connect(this,SIGNAL(currentChanged(int)),this,SLOT(transformTabIDSlot(int)));
 
     connect(inputInitialValue,SIGNAL(valueChanged(double)),this,SLOT(shiftInitialValueSlot(double)));
+#ifdef _WIN32
+ topLabelConfiguration->setText("Dies ist der Tab zur Optimierung der Temperaturleitkoeffizienten."
+                                "\nDie Optimierung der Temperaturleitkoeffizienten ist unter "
+                                "Windows nicht möglich, um diese Funktionalität nutzen zu "
+                                "können, muss ein Linux-System genutzt werden.");
+ loadDataButton->setEnabled(false);
+ startOptimizationButton->setEnabled(false);
+ topLabelSolution->setText("Dies ist der Tab zum Anzeigen der Optimerungsergebnisse."
+                           "\nDie Optimierung der Temperaturleitkoeffizienten ist unter "
+                           "Windows nicht möglich, um diese Funktionalität nutzen zu "
+                           "können, muss ein Linux-System genutzt werden.");
+ overrideHeatSources->setEnabled(false);
+ overrideThermalDiffusivities->setEnabled(false);
+#endif
 }
 
 void presentation::OptimizationWidget::setController(Controller *controller)
@@ -280,6 +295,7 @@ void presentation::OptimizationWidget::update()
     if(activeSubTab == OptimizationWidget::TabConfiguration)
     {
         //Config Tab updaten
+#ifndef _WIN32
         //überprüfen ob gerade optimiert wird: i.e. model->getOptimizing()
         if(model->isWorking())
         {
@@ -303,6 +319,7 @@ void presentation::OptimizationWidget::update()
             if(model->getDataRead())
                 startOptimizationButton->setEnabled(true);
         }
+#endif
 
         inputInitialValue->setValue(model->getOverrideValue()/valueShift);
         if(model->getOverrideThermalDiffusivities())
@@ -335,10 +352,23 @@ void presentation::OptimizationWidget::update()
         displayMaxIt->setValue(model->getSimulationSetup()->getSolverMaxIt());
 
         //TODO: Endergebnis oder Anfangswert auf platte darstellen valueShift!!!
-        colorMap->data()->setSize(1,1);
-        colorMap->data()->setCell(0,0,model->getOverrideValue()/valueShift);
-        colorScale->setLabel("(Initiale) Temperaturleitkoeffizienten\n[1e-6 m²/s]");
-        plate->replot();
+        if(model->getOverrideThermalDiffusivities())
+        {
+            QCPRange range(model::SimulationSetup::AreaMinValue[
+                                model::SimulationSetup::AreaThermalDiffusivity]/valueShift,
+                           model::SimulationSetup::AreaMaxValue[
+                                model::SimulationSetup::AreaThermalDiffusivity]/valueShift);
+            colorScale->axis()->setRange(range);
+            colorMap->data()->setSize(1,1);
+            colorMap->data()->setCell(0,0,model->getOverrideValue()/valueShift);
+            colorScale->setLabel("(Initiale) Temperaturleitkoeffizienten\n[1e-6 m²/s]");
+            plate->replot();
+        }
+        else
+        {
+            colorMap->setVisible(false);
+            plate->replot();
+        }
 
         //TODO: Falls geladen, Messungen in Tabelle darstellen
         if(model->getDataRead())
@@ -349,21 +379,18 @@ void presentation::OptimizationWidget::update()
             dataTable->clear();
             dataTable->setColumnCount(count);
             dataTable->setRowCount(count);
-            QStringList header;
-            for(int i = 0; i < count; ++i)
+            for(int i = count-1; i >= 0; --i)
             {
-                header << QString::number((double) i * 1./(double)(count-1));
-                for(int j = 0; j < count; ++ j)
+                dataTable->setColumnWidth(count-1-i,70);
+                for(int j = 0; j < count; ++j)
                 {
                     QTableWidgetItem * tmpItemPtr = new QTableWidgetItem(QString::number(observations[i][j]));
                     tmpItemPtr->setFlags(Qt::ItemIsEnabled);
                     tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-                    dataTable->setItem(i,j,tmpItemPtr);
+                    dataTable->setItem(count-1-i,j,tmpItemPtr);
                 }
             }
-            dataTable->setHorizontalHeaderLabels(header);
             dataTable->horizontalHeader()->setSectionsClickable(false);
-            dataTable->setVerticalHeaderLabels(header);
             dataTable->verticalHeader()->setSectionsClickable(false);
         }
 
@@ -371,30 +398,38 @@ void presentation::OptimizationWidget::update()
     }
     else
     {
-        // Ergebnis Tab updaten
-        // 1.Schritt Test ob schon optimiert wurde, i.e. if(model->getOptimized())
-        // 2.Schritt Ergegnis n holen, i.e. int n = model->getOptimizationN();
-        // 3.Schritt Ergebnis Referenz holen, i.e. double ** & result = model->getOptimizationResult();
-        // 4.Schritt Ergebnis in Tabelle einfügen:
-//        solutionTable->clear();
-//        solutionTable->setRowCount(n);
-//        solutionTable->setColumnCount(n);
-//        QStringList header;
-//        for(int i = 0; i < n; ++i)
-//        {
-//            header << QString::number((double) i * 1./(double)(n-1));
-//            for(int j = 0; j < n; ++ j)
-//            {
-//                QTableWidgetItem * tmpItemPtr = new QTableWidgetItem(QString::number(result[i][j]/valueShift));
-//                tmpItemPtr->setFlags(Qt::ItemIsEnabled);
-//                tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-//                solutionTable->setItem(i,j,tmpItemPtr);
-//            }
-//        }
-//        solutionTable->setHorizontalHeaderLabels(header);
-//        solutionTable->horizontalHeader()->setSectionsClickable(false);
-//        solutionTable->setVerticalHeaderLabels(header);
-//        solutionTable->verticalHeader()->setSectionsClickable(false);
+        // Ergebnis Tab updaten plus ColorMap im anderen Tab
+        if(!model->isWorking() && model->getOptimized())
+        {
+            int n = model->getObservationsDim();
+            QVector<double> result(model->getOptimizedCoeffs());
+            solutionTable->clear();
+            solutionTable->setRowCount(n);
+            solutionTable->setColumnCount(n);
+
+            colorMap->data()->setSize(n,n);
+            colorScale->setLabel("Optimierte Temperaturleitkoeffizienten\n[1e-6 m²/s]");
+
+            for(int i = n-1; i >= 0; --i)
+            {
+                solutionTable->setColumnWidth(n-1-i,70);
+                for(int j = 0; j < n; ++ j)
+                {
+                    QTableWidgetItem * tmpItemPtr = new QTableWidgetItem(QString::number(result[n*i+j]/valueShift));
+                    tmpItemPtr->setFlags(Qt::ItemIsEnabled);
+                    tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+                    solutionTable->setItem(n-1-i,j,tmpItemPtr);
+                    colorMap->data()->setCell(i,j,result[n*i+j]/valueShift);
+                }
+            }
+
+            solutionTable->horizontalHeader()->setSectionsClickable(false);
+            solutionTable->verticalHeader()->setSectionsClickable(false);
+
+            colorMap->setVisible(true);
+            colorMap->rescaleDataRange(true);
+            plate->replot();
+        }
     }
     updating = false;
 }

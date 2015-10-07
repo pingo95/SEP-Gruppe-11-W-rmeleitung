@@ -70,12 +70,6 @@ QList<QString> const model::SimulationWorker::getIntMethodNames() const
     return intMethods.keys();
 }
 
-QList<QString> const model::SimulationWorker::getSolverNames() const
-{
-//    assert(mapsInitialized);
-    return solvers.keys();
-}
-
 long model::SimulationWorker::getM() const
 {
 //    assert(!busy && simulated);
@@ -100,10 +94,22 @@ int model::SimulationWorker::getObservationsDim() const
     return obsSize;
 }
 
+QVector<double> model::SimulationWorker::getOptimizedCoeffs() const
+{
+//    assert(!busy && dataRead);
+    return optimizedCs;
+}
+
 double *** const & model::SimulationWorker::getResult() const
 {
 //    assert(!busy && simulated);
     return result;
+}
+
+QList<QString> const model::SimulationWorker::getSolverNames() const
+{
+//    assert(mapsInitialized);
+    return solvers.keys();
 }
 
 double model::SimulationWorker::getT() const
@@ -218,37 +224,59 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
     QVector<AD_TYPE> * step1 = new QVector<AD_TYPE>(optimizationN,simSetup.getIBV(SimulationSetup::InitialValue));
     QVector<AD_TYPE> * step2 = new QVector<AD_TYPE>(optimizationN,simSetup.getIBV(SimulationSetup::InitialValue));
 
+    bool tmpAbort = false;
 
-    //TODO: dco steepest decent algorithm:
-    AD_MODE::global_tape = AD_MODE::tape_t::create();
-    AD_TYPE norm;
-    do
+#ifndef _WIN32
+    accessLock.lock();
+    tmpAbort = abort;
+    accessLock.unlock();
+
+    if(tmpAbort)
     {
-        AD_MODE::global_tape->register_variable(optimizedCsAD.data(),optimizationN);
-
-        QVector<AD_TYPE> * result = simpleSimulation(simSetup,step1,step2,optimizedCsAD,heatSourceIndices);
-
-        AD_TYPE J = 0;
-        for(int i = 0; i < obsSize; ++i)
-            for(int j = 0; j < obsSize; ++j)
-                J += ((*result)[i*obsSize + j] * observations[i][j])
-                        *((*result)[i*obsSize + j] * observations[i][j]);
-
-        dco::derivative(J) = 1;
-        AD_MODE::global_tape->interpret_adjoint();
-
-        QVector<AD_TYPE> grad(optimizedCsAD);
-        for(int i = 0; i < optimizationN; ++i)
-            grad[i] = dco::derivative(optimizedCsAD[i]);
-
-        AD_TYPE s = 0.0001;
-        for(int i = 0; i < optimizationN; ++i)
-            optimizedCsAD[i]  -= s * grad[i];
-
-        AD_MODE::global_tape->reset();
-        norm = algorithms::norm2(grad);
+       emit beginningStage("Optimierung abbgebrochen",1,false);
     }
-    while(norm-simSetup.getSolverMaxError() > 0);
+    else
+    {
+        //TODO: dco steepest decent algorithm:
+        AD_MODE::global_tape = AD_MODE::tape_t::create();
+        AD_TYPE norm;
+        do
+        {
+            AD_MODE::global_tape->register_variable(optimizedCsAD.data(),optimizationN);
+
+            QVector<AD_TYPE> * result = simpleSimulation(simSetup,step1,step2,optimizedCsAD,heatSourceIndices);
+
+            AD_TYPE J = 0;
+            for(int i = 0; i < obsSize; ++i)
+                for(int j = 0; j < obsSize; ++j)
+                    J += ((*result)[i*obsSize + j] * observations[i][j])
+                            *((*result)[i*obsSize + j] * observations[i][j]);
+
+            dco::derivative(J) = 1;
+            AD_MODE::global_tape->interpret_adjoint();
+
+            QVector<AD_TYPE> grad(optimizedCsAD);
+            for(int i = 0; i < optimizationN; ++i)
+                grad[i] = dco::derivative(optimizedCsAD[i]);
+
+            AD_TYPE s = 0.0001;
+            for(int i = 0; i < optimizationN; ++i)
+                optimizedCsAD[i]  -= s * grad[i];
+
+            AD_MODE::global_tape->reset();
+            norm = algorithms::norm2(grad);
+
+            accessLock.lock();
+            tmpAbort = abort;
+            accessLock.unlock();
+            if(tmpAbort)
+                break;
+        }
+        while(norm-simSetup.getSolverMaxError() > 0);
+        if(tmpAbort)
+            emit beginningStage("Optimierung abbgebrochen",1,false);
+    }
+#endif
 
 
 
@@ -261,7 +289,7 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
 
     optimized = true;
     busy = false;
-    emit finishedOptimization(true);
+    emit finishedOptimization(!tmpAbort);
 }
 
 void model::SimulationWorker::startReadingDataSlot(QString const filename, long const obsCount)
