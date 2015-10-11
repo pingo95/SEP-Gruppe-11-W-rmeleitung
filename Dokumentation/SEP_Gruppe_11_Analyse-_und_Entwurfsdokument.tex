@@ -35,6 +35,27 @@
 \restylefloat{figure}
 %\restylefloat{table}
 
+
+\definecolor{dkblue}{rgb}{0,0,1}
+\definecolor{dkred}{rgb}{1,0,0}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+
+\lstdefinestyle{customc}{
+ belowcaptionskip=1\baselineskip,
+ breaklines=true,
+ frame=L,
+ xleftmargin=\parindent,
+ language=C++,
+ showstringspaces=false,
+ basicstyle=\footnotesize\ttfamily,
+ %keywordstyle=\bfseries\color{dkblue},
+ commentstyle=\itshape\color{dkgreen},
+ %identifierstyle=\color{dkred},
+ stringstyle=\color{dkred},
+  morecomment  = [l][\nullfont]{//},
+  morecomment  = [is]{/*!}{*/},
+}
+
 %\includeonly{Kapitel/Kapitel_3}
 
 \begin{document}
@@ -48,6 +69,7 @@
 \include{Kapitel/Kapitel_3}
 \include{Kapitel/Kapitel_4}
 \include{Kapitel/Kapitel_5}
+\include{Kapitel/Anhang}
 
 \listoffigures
 \addcontentsline{toc}{chapter}{\listfigurename}

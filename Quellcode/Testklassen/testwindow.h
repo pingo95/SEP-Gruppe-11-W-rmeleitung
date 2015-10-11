@@ -18,7 +18,7 @@ class TestWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    TestWindow(QWidget *parent = 0);
+    explicit TestWindow(QWidget *parent = 0);
     ~TestWindow();
 
     void addMainTab(QString name);

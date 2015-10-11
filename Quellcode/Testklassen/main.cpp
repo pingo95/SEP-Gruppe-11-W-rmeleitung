@@ -64,9 +64,11 @@ int main(int argc, char *argv[])
 
     QWidget * areaTest1 = testerArea.robustnessWorstCaseTesterInsidePoint();
     QWidget * areaTest2 = testerArea.robustnessWorstCaseTesterOnLine();
+    QWidget * areaTest3 = testerArea.specialSegIntersectTester();
 
     w.addSubTab(areaTest1,"InsidePointTest1",mainTabCount);
     w.addSubTab(areaTest2,"OnLineTest1",mainTabCount);
+    w.addSubTab(areaTest3,"SegIntersectTest1",mainTabCount);
 
     w.show();
 

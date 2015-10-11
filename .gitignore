@@ -9,6 +9,7 @@ Dokumentation/SEP_Gruppe_11_Analyse-_und_Entwurfsdokument.pdf
 *.out
 *.vpp~*
 *.user
+*.user.*
 *.autosave
 Quellcode/build-*/
 build-*/
@@ -24,3 +25,5 @@ Quellcode/Doxygen/html/*
 *.tmp
 *.gz(busy)
 Dokumentation/build/SEP_Gruppe_11_Analyse-_und_Entwurfsdokument.synctex.gz(busy)
+Quellcode/ObservationsTest.txt
+Quellcode/SpeicherTest.txt

@@ -20,6 +20,7 @@ namespace model {
         void rotateKoords(QVector<double> & x, QVector<double> & y, int angle);
         QWidget *robustnessWorstCaseTesterInsidePoint();
         QWidget *robustnessWorstCaseTesterOnLine();
+        QWidget *specialSegIntersectTester();
     private :
         QTabWidget * tabs;
         QVector<QWidget *> ptr;

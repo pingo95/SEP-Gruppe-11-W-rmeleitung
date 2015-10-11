@@ -25,29 +25,29 @@ void TestWindow::addSubTab(QWidget *newTab, QString name, int index)
 template<class U>
 QString algorithms::printCRS(const CRS<U> &matrix) {
     QString string;
-    int kl, ku, il, iu;
-    for(int i=0; i<matrix.size; ++i) {
-        kl = matrix.getRowsNumElem(i);
-        ku = matrix.getRowsNumElem(i+1);
-        if(kl==ku) {
-            for(int j=0; j<matrix.size; ++j) string.append(QString::number(0)+"\t");
-        }
-        else {
-            il = matrix.index[kl];
-            iu = matrix.index[ku-1];
-            for(int j=0; j<matrix.size; ++j) {
-                if(j >= il && j <= iu) {
-                    if(j==matrix.index[kl]) {
-                        string.append(QString::number(matrix.value[kl])+"\t");
-                        ++kl;
-                    }
-                    else string.append(QString::number(0)+"\t");
-                }
-                else string.append(QString::number(0)+"\t");
-            }
-        }
-        string.append("\n");
-    }
+//    int kl, ku, il, iu;
+//    for(int i=0; i<matrix.size; ++i) {
+//        kl = matrix.getRowsNumElem(i);
+//        ku = matrix.getRowsNumElem(i+1);
+//        if(kl==ku) {
+//            for(int j=0; j<matrix.size; ++j) string.append(QString::number(0)+"\t");
+//        }
+//        else {
+//            il = matrix.index[kl];
+//            iu = matrix.index[ku-1];
+//            for(int j=0; j<matrix.size; ++j) {
+//                if(j >= il && j <= iu) {
+//                    if(j==matrix.index[kl]) {
+//                        string.append(QString::number(matrix.value[kl])+"\t");
+//                        ++kl;
+//                    }
+//                    else string.append(QString::number(0)+"\t");
+//                }
+//                else string.append(QString::number(0)+"\t");
+//            }
+//        }
+//        string.append("\n");
+//    }
     return string;
 }
 

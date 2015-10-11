@@ -1,13 +1,24 @@
 \chapter{Entwicklerdokumentation}
 \section{Codestruktur}
+Das Programm wurde im Stil eines Model-View-Controller-Architekturmusters entwickelt. Daher besteht es vor allem aus den drei Hauptklassen \emph{Model}, \emph{Controller} und \emph{UI}. \\
+Die Klasse \emph{UI} implementiert das User Interface und stellt jeweils abhängig vom aktiven Tab einen gewissen Teil des Modells dar. Von diesem UI gelangen die Benutzerinteraktionen in Form von Qt-Signalen an den Controller, der diese verarbeitet, d.h. insbesondere z.B. Werte auf Gültigkeit überprüft, und dann entweder im Erfolgsfall an des Modell weiterleitet oder im Fehlerfall das UI informiert, sodass sich dieses zurücksetzt. Das Modell sendet immer sobald sich etwas an seinem Zustand ändert, d.h. insbesondere sich Simulationseinstellungen ändern eine Update-Nachricht nach dem Beobachter-Entwurfsmuster an das UI, worauf dieses die angezeigten Informationen aus dem Modell aktualisiert. Des Weiteren enthält das Modell die "`Modell-Logik"', d.h. die Funktionalität zum Durchführen von Simulationen der Wärmeleitungsgleichung und von Optimierungen der Temperaturleitkoeffizienten.\\
+Die Aufteilung der Klassen in Pakete ist in Kapitel \ref{Kapitel 3} dargestellt, das Paket \emph{presentation} enthält die \emph{Cotroller}-Klasse und die \emph{UI}- und alle dazugehörenden Widget-Klassen, das Paket \emph{model} enthält die \emph{Model}- und dazugehörige Klassen und das Paket \emph{algorithms} enthält alle mathematischen/numerischen Algorithmen, d.h. insbesondere die Integrationsmethoden und LGS Löser.
 
 \section{Detaillierte Dokumentation des Codes}
+Kurzbeschreibungen der Funktionen aller Klassen finden Sie in Kapitel \ref{Kapitel 3 Klassen} bei den Sequenzdiagrammen der jeweiligen Funktion. Eine ausführlichere Dokumentation der ganzen Klassen ist in der Doxygen-Dokumentation enthalten, in Kapitel \ref{Installation Doxygen} wird erklärt wie diese erstellt werden kann.
 
 \section{Software Tests}
 
-Zur Verifikation der Software haben wir verschiedene Testmethoden verwendet. Im Folgenden werden diese Tests nach Code-Zugehörigkeit sortiert aufgelistet:
+Zur Verifikation der Software haben wir verschiedene Testmethoden verwendet. Im Folgenden werden diese Tests nach Code-Zugehörigkeit sortiert aufgelistet. Im mitgelieferten Projekt \emph{Testklassen} sind ein Teil der im folgenden genannten Tests implementiert.
 
-Die Simulationsergebnisse der Software wurden unter Auswahl der Kombination "Impliziter Euler - Jacobi" gegen einen im Zuge der Veranstaltung "Mathematische Grundlagen IV" verifizierten Matlab-Simulationscode getestet, der zugehörige Code wird im Anhang präsentiert. Die weiteren numerischen Methoden wurden anschließend gegen dieses Referenzergebnis getestet.
+\subsection{presentation}
+Die Funktionalität des UI und des Controllers, d.h. insbesondere die Benutzerinteraktion, wurde durch manuelle Use-Case-basierte Tests nach den Use Case von \ref{Kapitel 2 Use Case Analyse} getestet. 
+
+\subsection{model}
+Die Simulationsergebnisse der Software wurden unter Auswahl der Kombination  "`Impliziter Euler - Jacobi"' gegen einen im Zuge der Veranstaltung "`Mathematische Grundlagen IV"' verifizierten Matlab-Simulationscode getestet, der zugehörige Code wird im Anhang \ref{Matlab-Code} präsentiert. Die weiteren numerischen Methoden wurden anschließend gegen dieses Referenzergebnis getestet.
+
+\subsubsection{Area}
+Die Funktionen \emph{insidePoint} und \emph{onLine} und dadurch von diesen benutzte Funktionen wurden durch eine Robustness-Worst-Case-Teststrategie (nach der Vorlesung "`Software Engineering"') mit zufällig generierten Geraden bzw. Quadraten. Des Weiteren wurde die Funktion \emph{segIntersect} mit einem weiterem speziellen Fall getestet, der vom ursprünglichem Algorithmus nicht abgedeckt wurde.
 
 \subsection{algorithms}
 \subsubsection{CRS}
@@ -29,7 +40,7 @@ Die folgenden Funktionalitäten wurden vom Programmierer per Ausgabe (Vergleich 
 	\item sumQVector
 \end{enumerate}
 
-\subsection{Solver}
+\subsubsection{Solver}
 
 Die folgenden Löser per Ausgabe (Vergleich Zahlenwerte) anhand von Beispielsystemen verifiziert:
 \begin{enumerate}
