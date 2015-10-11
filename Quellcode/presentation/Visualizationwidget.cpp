@@ -115,9 +115,16 @@ presentation::VisualizationWidget::VisualizationWidget(QWidget *parent)
     layout->setRowStretch(3,0);
 }
 
-int presentation::VisualizationWidget::getInitialFrame() const
+void presentation::VisualizationWidget::playVideo()
 {
-    return slider->value();
+    for(int frame = slider->value(); frame < resultM+1; ++frame)
+    {
+        for(int i = 0; i < resultN; ++i)
+            for(int j = 0; j < resultN; ++j)
+                colorMap->data()->setCell(i,j,result[frame][i][j]);
+        plate->replot();
+        updateLcdSlot(frame);
+    }
 }
 
 void presentation::VisualizationWidget::setController(Controller *controller)
@@ -166,7 +173,7 @@ void presentation::VisualizationWidget::update()
 
             colorMap->data()->setSize(resultN,resultN);
 
-            visualizeState(0);
+            visualizeState();
         }
     }
     else
@@ -177,8 +184,9 @@ void presentation::VisualizationWidget::update()
     updating = false;
 }
 
-void presentation::VisualizationWidget::visualizeState(int frame)
+void presentation::VisualizationWidget::visualizeState()
 {
+    int frame = slider->value();
     for(int i = 0; i < resultN; ++i)
         for(int j = 0; j < resultN; ++j)
             colorMap->data()->setCell(i,j,result[frame][i][j]);

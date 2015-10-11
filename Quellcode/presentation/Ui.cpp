@@ -42,7 +42,7 @@ presentation::UI::UI(QWidget *parent)
     connect(tabWidgetSub,SIGNAL(currentChanged(int)),this,SLOT(transformTabIDSlot(int)));
 
         //minimale Fenstergröße
-    this->setMinimumSize(1360,765);
+    this->setMinimumSize(1360,800);
 }
 
 presentation::UI::~UI()
@@ -60,9 +60,9 @@ void presentation::UI::drawPartialArea(QVector<double> const & partialAreaX,
         thermalDiffusivitiesTab->drawPartialArea(partialAreaX,partialAreaY);
 }
 
-int presentation::UI::getInitialFrame() const
+void presentation::UI::playVideo()
 {
-    return visualizationTab->getInitialFrame();
+    visualizationTab->playVideo();
 }
 
 void presentation::UI::revertTabChange(UI::ActiveTab targetTab)
@@ -146,9 +146,9 @@ void presentation::UI::updateNotification()
     }
 }
 
-void presentation::UI::visualizeState(int frame)
+void presentation::UI::visualizeState()
 {
-  visualizationTab->visualizeState(frame);
+  visualizationTab->visualizeState();
 }
 
 void presentation::UI::appendToSimulationLogSlot(QString text)

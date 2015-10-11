@@ -296,7 +296,6 @@ void presentation::OptimizationWidget::update()
     {
         //Config Tab updaten
 #ifndef _WIN32
-        //überprüfen ob gerade optimiert wird: i.e. model->getOptimizing()
         if(model->isWorking())
         {
             //label ändern:
@@ -371,7 +370,7 @@ void presentation::OptimizationWidget::update()
         }
 
         //TODO: Falls geladen, Messungen in Tabelle darstellen
-        if(model->getDataRead())
+        if(!model->isWorking() && model->getDataRead())
         {
             int count = model->getObservationsDim();
             double ** observations = model->getObservations();

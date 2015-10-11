@@ -208,6 +208,7 @@ void model::Model::optimize()
     if(!dataRead)
         return;
     blocking = true;
+    optimized = false;
     emit startOptimization(simSetup,overrideDiffusivities,overrideInitialTDvalue,useHeatSources);
     working = true;
     ui->updateNotification();
@@ -216,6 +217,7 @@ void model::Model::optimize()
 void model::Model::readObservations(QString const filename, long const obsCount)
 {
     blocking = true;
+    dataRead = false;
     emit startReadingData(filename,obsCount);
     working = true;
     ui->updateNotification();
@@ -373,6 +375,7 @@ void model::Model::setUseHeatSources(bool const useHeatSources)
 void model::Model::simulate()
 {
     blocking = true;
+//    simulated = false;
     emit startSimulation(simSetup);
     working = true;
     ui->updateNotification();

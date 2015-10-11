@@ -21,7 +21,7 @@ presentation::AreaWidget::AreaWidget(QWidget *parent,
     table->setShowGrid(true);
     table->setRowCount(1);
     table->setColumnCount(2);
-    table->setFixedWidth(117);
+    table->setFixedWidth(122);
 //    table->horizontalScrollBar()->setVisible(false);
 
 
@@ -45,7 +45,7 @@ presentation::AreaWidget::AreaWidget(QWidget *parent,
     table->setItemDelegate(delegate);
 
     table->setColumnWidth(0,30);
-    table->setColumnWidth(1,85);
+    table->setColumnWidth(1,90);
 
     QTableWidgetItem * tmpItemPtr = new QTableWidgetItem("0");
     tmpItemPtr->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
@@ -269,6 +269,7 @@ void presentation::AreaWidget::drawPartialArea(QVector<double> const & partialAr
     plate->graph(plate->graphCount()-1)->setScatterStyle(myScatter);
     myPen.setWidth(2* myPen.width());
     plate->graph(plate->graphCount()-1)->setPen(myPen);
+    plate->graph(plate->graphCount()-1)->setBrush(Qt::NoBrush);
     plate->graph(plate->graphCount()-1)->setVisible(true);
     plate->replot();
 

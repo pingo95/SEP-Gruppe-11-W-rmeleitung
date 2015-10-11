@@ -210,7 +210,7 @@ bool model::Area::segIntersect(double const pX, double const pY,
     if(d1 == 0 && onSegment(pX,pY,qX,qY,rX,rY)) return true;
     if(d2 == 0 && onSegment(pX,pY,qX,qY,sX,sY)) return true;
     // Testet, ob r und s auf der selben Seite von pq liegen:
-    if((d1 > 0 && d2 > 0) || (d1 < 0 && d2 < 0)) return false;
+    if((d1 >= 0 && d2 >= 0) || (d1 <= 0 && d2 <= 0)) return false;
 
     double d3 = direction(rX,rY,sX,sY,pX,pY),
            d4 = direction(rX,rY,sX,sY,qX,qY);

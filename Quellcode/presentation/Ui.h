@@ -81,14 +81,11 @@ class Controller;
         void drawPartialArea(QVector<double> const & partialAreaX,
                              QVector<double> const & partialAreaY,
                              model::SimulationSetup::AreaType type);
-
         /*!
-         * \brief Weiterleitung an den Visualisierungs-Tab
-         * \return die aktuelle Position des Schiebereglers
-         * \see VisualizationWidget::getInitialFrame
+         * \brief Weiterleitung an den Visualisierungs-Tab.
+         * \see VisualizationWidget::playVideo
          */
-        int getInitialFrame() const;
-
+        void playVideo();
         /*!
          * \brief revertTabChange macht einen Tab-Wechsel rückgängig.
          * \param targetTab Tab, zu dem zurückgewechselt wird
@@ -142,10 +139,9 @@ class Controller;
 
         /*!
          * \brief Weiterleitung an den Visualisierungs-Tab.
-         * \param frame Zustand, der dargestellt wird
          * \see VisualizationWidget::visualizeState
          */
-        void visualizeState(int const frame);
+        void visualizeState();
 
     signals:
         /*!

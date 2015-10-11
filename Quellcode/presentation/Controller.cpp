@@ -341,7 +341,8 @@ void presentation::Controller::newMaxItSlot(int newMaxIt)
 // gültig ist
 void presentation::Controller::newMSlot(int newM)
 {
-    if ((newM <= 800) && (newM > 0))
+    long n = model->getSimulationSetup()->getN();
+    if (((long)newM * n * n <= 1.5e8) && (newM > 0))
         // Wert updaten
         model->setM(newM);
     else
@@ -349,9 +350,13 @@ void presentation::Controller::newMSlot(int newM)
         ui->updateNotification();
         // Fehlermeldung ausgeben:
         errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
-                               "ungültig. Bitte versuchen Sie es erneut.");
-        errorMessages->setDetailedText("Der zulässige Wertebereich für die"
-                                       " Zeitdiskretisierungsgröße m ist (1,800].");
+                               "ungültig. Es kann nicht genug Speicher alloziert werden."
+                               " Bitte versuchen Sie es erneut.");
+        errorMessages->setDetailedText("Mit der aktuellen Einstellung für die Ortsdiskre"
+                                       "tisierung n (" + QString::number(n) + ") ist der "
+                                       "gültige Wertebereich für die Zeitdiskretisierungs"
+                                       "größe m:\n\t(0,"
+                                       + QString::number(qMin(2500,(int)(1.5e8/n/n))) + "].");
         errorMessages->exec();
     }
 }
@@ -360,7 +365,8 @@ void presentation::Controller::newMSlot(int newM)
 // gültig ist
 void presentation::Controller::newNSlot(int newN)
 {
-    if ((newN <= 500) && (newN > 2))
+    long m = model->getSimulationSetup()->getM();
+    if (((long)newN * (long)newN * m  <= 1.5e8) && (newN > 2))
         // Wert updaten
         model->setN(newN);
     else
@@ -368,9 +374,13 @@ void presentation::Controller::newNSlot(int newN)
         ui->updateNotification();
         // Fehlermeldung ausgeben:
         errorMessages->setText("Der Wert, den Sie eingegeben haben ist "
-                               "ungültig. Bitte versuchen Sie es erneut.");
-        errorMessages->setDetailedText("Der zulässige Wertebereich für die"
-                                       " Ortsdiskretisierungsgröße n ist (2,500].");
+                               "ungültig. Es kann nicht genug Speicher alloziert werden."
+                               " Bitte versuchen Sie es erneut.");
+        errorMessages->setDetailedText("Mit der aktuellen Einstellung für die Zeitdiskre"
+                                       "tisierung m (" + QString::number(m) + ") ist der "
+                                       "gültige Wertebereich für die Ortsdiskretisierungs"
+                                       "größe n:\n\t(0,"
+                                       + QString::number(qMin(900,(int)qSqrt(1.5e8/m))) + "].");
         errorMessages->exec();
     }
 }
@@ -437,7 +447,7 @@ void presentation::Controller::overrideThermalDiffusivitiesSlot(bool override)
         // Warnunge ausgeben:
         errorMessages->setIcon(QMessageBox::Warning);
         errorMessages->setText("Es wurde noch keine Wärmeleitkoeffizienten hinzugefügt, "
-                               "Überschreiben hat keinen Effekt.");
+                               "Nur der Hintergrundwert wird überschrieben.");
         errorMessages->setDetailedText("");
         errorMessages->exec();
         errorMessages->setIcon(QMessageBox::Critical);
@@ -461,15 +471,7 @@ void presentation::Controller::playVideoSlot()
             errorMessages->exec();
         }
         else
-        {
-            // Startbild Nr. aus dem UI
-            int start = ui->getInitialFrame();
-            // Schrittanzahl aus dem Modell
-            int end = model->getResultM();
-            // Video als Serie von einzel Bildern visualisieren
-            for(int i = start; i < end+1; ++i)
-                ui->visualizeState(i);
-        }
+            ui->playVideo();
     }
     else
     {
@@ -680,7 +682,7 @@ void presentation::Controller::useHeatSourcesSlot(bool use)
 void presentation::Controller::visualizeStateSlot()
 {
     if(model->getSimulated())
-        ui->visualizeState(ui->getInitialFrame());
+        ui->visualizeState();
     else
     {
         // Fehlermeldung ausgeben:

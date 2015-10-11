@@ -10,6 +10,7 @@
 #include "../algorithms/Cranknicolson.hpp"
 #include <QFile>
 #include <QTime>
+//#include <vector>
 
 model::SimulationWorker::SimulationWorker(QObject * parent): QObject(parent),
     abort(false), busy(false), dataRead(false), m(1),
@@ -150,6 +151,9 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
     if(!mapsInitialized || busy)
             return;
     busy = true;
+    accessLock.lock();
+    abort = false;
+    accessLock.unlock();
 
     SimulationSetup  simSetup(*simSetupTemplate);
 
@@ -345,11 +349,12 @@ void model::SimulationWorker::startReadingDataSlot(QString const filename, long 
 
 void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemplate)
 {
-    if(!mapsInitialized || busy) return;
+    if(!mapsInitialized || busy)
+        return;
+    busy = true;
     accessLock.lock();
     abort = false;
     accessLock.unlock();
-    busy = true;
     QTime timer;
     timer.start();
     // Kopieren der Simulationseinstellungen
@@ -638,7 +643,6 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
                              + QString::number(round(time%(60*1000)/1000))  + " s "
                              + QString::number(time%(60*1000)%1000)         + " ms\n\n");
     simulated = true;
-
     busy = false;
     emit finishedSimulation(!tmpAbort);
 }

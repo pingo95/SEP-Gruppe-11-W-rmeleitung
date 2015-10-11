@@ -35,15 +35,12 @@ class Controller;
         explicit VisualizationWidget(QWidget *parent = 0);
 
         /*!
-         * \brief Getter-Funktion für die aktuelle Position des Schiebereglers.
-         * \return die aktuelle Position
+         * \brief playVideo visualisiert das Ergebnis einer Simulation als ein Video.
          *
-         * Die Position des Schiebereglers entspricht dem Zeitschritt der letzten
-         * Simulation, der als Einzelbild visualisiert wird und beim Abspielen des Videos
-         * der Startzustand ist.
-         * \see visualizeState, Controller::visualizeStateSlot, Controller::playVideoSlot
+         * Der aktuellen Stand des Schiebereglers definiert dabei den Startzeitpunkt.
+         * \see Controller::visualizeStateSlot, Controller::playVideoSlot
          */
-        int getInitialFrame() const;
+        void playVideo();
 
         /*!
          * \brief setController setzt die Referenz auf den Controller und verbindet
@@ -70,10 +67,12 @@ class Controller;
 
         /*!
          * \brief visualizeState visualisiert einen einzelnen Zeitpunkt einer Simulation.
-         * \param frame Zustand, der visualisiert wird.
-         * \see getInitialFrame, Controller::visualizeStateSlot, Controller::playVideoSlot
+         *
+         * Es wird der Zeipunkt dargestellt, der dem aktuellem Stand des Schiebereglers
+         * entspricht.
+         * \see Controller::visualizeStateSlot, Controller::playVideoSlot
          */
-        void visualizeState(int const frame);
+        void visualizeState();
 
     private slots:
         void updateLcdSlot(int value);

@@ -17,8 +17,8 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
 
     labelM = new QLabel("Zeitschritte M eingeben",this);
     inputM = new QSpinBox(this);
-    inputM->setMinimum(0);
-    inputM->setMaximum(800);
+    inputM->setMinimum(1);
+    inputM->setMaximum(2500);
     inputM->setKeyboardTracking(false);
 
     labelT = new QLabel("Endzeitpunkt T eingeben",this);
@@ -75,8 +75,8 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     labelN = new QLabel("Stützstellen N eingeben",this);
     labelN->setMaximumWidth(175);
     inputN = new QSpinBox(this);
-    inputN->setMaximum(0);
-    inputN->setMaximum(500);
+    inputN->setMinimum(3);
+    inputN->setMaximum(900);
     inputN->setKeyboardTracking(false);
     inputN->setMaximumWidth(50);
     simulateButton = new QPushButton("Simulieren",this);
