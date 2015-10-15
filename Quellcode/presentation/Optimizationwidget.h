@@ -66,20 +66,35 @@ class Controller;
 
         // Slots in spe
         /*!
-         * \brief nextStage stellt den Fortschrittsbalken für einen neuen
+         * \brief nextMainStage stellt den Fortschrittsbalken für einen neuen
          * Optimierungsabschnitt ein.
+         * \param stage Name des neuen Abschnittes
+         * \param maximum Anzahl Teilschritte des neuen Abschnittes
+         * \see UI::nextOptimizationStageSlot
+         */
+        void nextMainStage(QString stage, int maximum);
+        /*!
+         * \brief nextSubStage stellt den Fortschrittsbalken für einen neuen
+         * Simulationsabschnitt während eines Optimierungsschrittes ein.
          * \param stage Name des neuen Abschnittes
          * \param maximum Anzahl Teilschritte des neuen Abschnittes
          * \see UI::nextStageSlot
          */
-        void nextStage(QString stage, int maximum);
+        void nextSubStage(QString stage, int maximum);
         /*!
-         * \brief updateProgress aktualisiert den Fortschritt der Optimierung auf dem
+         * \brief updateMainrogress aktualisiert den Fortschritt der Optimierung auf dem
          * Fortschrittsbalken.
+         * \param step Teilschritt, der abgeschlossen wurde
+         * \see UI::updateOptimizationProgressSlot
+         */
+        void updateMainProgress(int step);
+        /*!
+         * \brief updateProgress aktualisiert den Fortschritt der Simulation während
+         * eines Optimierungsschrittes auf dem Fortschrittsbalken.
          * \param step Teilschritt, der abgeschlossen wurde
          * \see UI::updateProgressSlot
          */
-        void updateProgress(int step);
+        void updateSubProgress(int step);
 
     signals:
         /*!
@@ -157,8 +172,10 @@ class Controller;
         QLabel * labelData;
         QTableWidget * dataTable;
 
-        QLabel * labelProgressBar;
-        QProgressBar * progressBar;
+        QLabel * labelMainProgressBar;
+        QProgressBar * mainProgressBar;
+        QLabel * labelSubProgressBar;
+        QProgressBar * subProgressBar;
 
         QSpacerItem * spacerItem;
 

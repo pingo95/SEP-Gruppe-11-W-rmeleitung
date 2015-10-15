@@ -185,8 +185,21 @@ namespace model {
 
     signals:
         /*!
-         * \brief beginningStage wird ausgesendet, wenn ein neuer Abschnitt einer Simulation oder
-         * Optimierung angefangen wird.
+         * \brief beginningOptimizationStage wird ausgesendet, wenn ein neuer Abschnitt einer Optimierung
+         * angefangen wird.
+         * \param stage Name des neuen Abschnittes
+         * \param stepCount Anzahl der Teilschritte des neuen Abschnittes
+         *
+         * Dieses Signal dient zur Visualisierung des Fortschritts einer Optimierung
+         * auf einem Fortschrittsbalken.
+         *
+         * Verbunden wird dieses Signal im Konstruktor des Modells.
+         * \see finishedOptimizationStep, startOptimizationSlot, Model::Model
+         */
+        void beginningOptimizationStage(QString stage, int stepCount);
+        /*!
+         * \brief beginningStage wird ausgesendet, wenn ein neuer Abschnitt einer Simulation
+         * angefangen wird.
          * \param stage Name des neuen Abschnittes
          * \param stepCount Anzahl der Teilschritte des neuen Abschnittes
          * \param simulation gibt an, ob eine Simulation oder eine Optimierung das Signal ausgelöst hat
@@ -207,6 +220,18 @@ namespace model {
          */
         void finishedOptimization(bool success);
         /*!
+         * \brief finishedOptimizationStep wird ausgesendet, wenn ein Teilschritt eines Abschnittes einer
+         * Optimierung beendet wurde.
+         * \param step Nummer des beendeten Schrittes
+         *
+         * Dieses Signal dient zur Visualisierung des Fortschritts einer Optimierung
+         * auf einem Fortschrittsbalken. Zuvor muss ein Aufruf von beginningOptimizationStage erfolgt sein.
+         *
+         * Verbunden wird dieses Signal im Konstruktor des Modells.
+         * \see beginningOptimizationStage, startOptimizationSlot, Model::Model
+         */
+        void finishedOptimizationStep(int step);
+        /*!
          * \brief finishedReadingData wird ausgesendet, wenn das Einlesen von Temperatur-Messdaten
          * beendet wurde.
          *
@@ -224,7 +249,7 @@ namespace model {
         void finishedSimulation(bool success);
         /*!
          * \brief finishedStep wird ausgesendet, wenn ein Teilschritt eines Abschnittes einer
-         * Simulation oder Optimierung beendet wurde.
+         * Simulation beendet wurde.
          * \param step Nummer des beendeten Schrittes
          * \param simulation gibt an, ob eine Simulation oder eine Optimierung das Signal ausgelöst hat
          *

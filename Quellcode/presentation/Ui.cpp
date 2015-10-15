@@ -156,12 +156,22 @@ void presentation::UI::appendToSimulationLogSlot(QString text)
     simulationTab->appendToSimulationLog(text);
 }
 
+void presentation::UI::nextOptimizationStageSlot(QString stage, int maximum)
+{
+    optimizationTab->nextMainStage(stage,maximum);
+}
+
 void presentation::UI::nextStageSlot(QString stage, int maximum, bool simulation)
 {
     if(simulation)
         simulationTab->nextStage(stage,maximum);
     else
-        optimizationTab->nextStage(stage,maximum);
+        optimizationTab->nextSubStage(stage,maximum);
+}
+
+void presentation::UI::updateOptimizationProgressSlot(int step)
+{
+    optimizationTab->updateMainProgress(step);
 }
 
 void presentation::UI::updateProgressSlot(int step, bool simulation)
@@ -169,7 +179,7 @@ void presentation::UI::updateProgressSlot(int step, bool simulation)
     if(simulation)
         simulationTab->updateProgress(step);
     else
-        optimizationTab->updateProgress(step);
+        optimizationTab->updateSubProgress(step);
 }
 
 void presentation::UI::transformTabIDSlot(int targetTab)

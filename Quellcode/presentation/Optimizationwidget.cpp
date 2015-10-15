@@ -196,8 +196,10 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     dataTable = new QTableWidget(configurationTab);
 
         //Fortschritts-Balken
-    labelProgressBar = new QLabel("Fortschrittsbalken:",configurationTab);
-    progressBar = new QProgressBar(configurationTab);
+    labelMainProgressBar = new QLabel("Fortschrittsbalken:",configurationTab);
+    mainProgressBar = new QProgressBar(configurationTab);
+    labelSubProgressBar = new QLabel("",configurationTab);
+    subProgressBar = new QProgressBar(configurationTab);
 
         //Platzhalter
     spacerItem = new QSpacerItem(0,0,QSizePolicy::Ignored,QSizePolicy::MinimumExpanding);
@@ -212,10 +214,12 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     configurationTabLayout->addWidget(boxOverride,2,0,1,2);
     configurationTabLayout->addWidget(dataTable,2,2,3,2);
     configurationTabLayout->addWidget(boxSettings,3,0,1,2);
-    configurationTabLayout->addWidget(plate,4,0,2,2);
-    configurationTabLayout->addWidget(labelProgressBar,5,2);
-    configurationTabLayout->addWidget(progressBar,5,3);
-    configurationTabLayout->addItem(spacerItem,6,0);
+    configurationTabLayout->addWidget(plate,4,0,3,2);
+    configurationTabLayout->addWidget(labelMainProgressBar,5,2);
+    configurationTabLayout->addWidget(mainProgressBar,5,3);
+    configurationTabLayout->addWidget(labelSubProgressBar,6,2);
+    configurationTabLayout->addWidget(subProgressBar,6,3);
+    configurationTabLayout->addItem(spacerItem,7,0);
 
     configurationTabLayout->setColumnStretch(0,0);
     configurationTabLayout->setColumnStretch(1,0);
@@ -228,7 +232,8 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     configurationTabLayout->setRowStretch(3,0);
     configurationTabLayout->setRowStretch(4,0);
     configurationTabLayout->setRowStretch(5,0);
-    configurationTabLayout->setRowStretch(6,1);
+    configurationTabLayout->setRowStretch(6,0);
+    configurationTabLayout->setRowStretch(7,1);
 
 //    configurationTabLayout->setColumnMinimumWidth(0,200);
 //    configurationTabLayout->setColumnMinimumWidth(1,200);
@@ -239,7 +244,7 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
 
     topLabelSolution = new QLabel("Dies ist der Tab zum Anzeigen der Optimerungsergebnisse."
                                   "\nNach einer Optimierung werden die Ergebnisse "
-                                  "automatisch hier angezeigt.",solutionTab);
+                                  "automatisch hier angezeigt (in 1e-6 m²/s).",solutionTab);
 
     solutionTable = new QTableWidget(solutionTab);
 
@@ -433,17 +438,30 @@ void presentation::OptimizationWidget::update()
     updating = false;
 }
 
-void presentation::OptimizationWidget::nextStage(QString stage, int maximum)
+void presentation::OptimizationWidget::nextMainStage(QString stage, int maximum)
 {
-    progressBar->setMaximum(maximum);
-    progressBar->setMinimum(0);
-    progressBar->setValue(0);
-    labelProgressBar->setText(stage);
+    mainProgressBar->setMaximum(maximum);
+    mainProgressBar->setMinimum(0);
+    mainProgressBar->setValue(0);
+    labelMainProgressBar->setText(stage);
 }
 
-void presentation::OptimizationWidget::updateProgress(int step)
+void presentation::OptimizationWidget::nextSubStage(QString stage, int maximum)
 {
-    progressBar->setValue(step);
+    subProgressBar->setMaximum(maximum);
+    subProgressBar->setMinimum(0);
+    subProgressBar->setValue(0);
+    labelSubProgressBar->setText(stage);
+}
+
+void presentation::OptimizationWidget::updateMainProgress(int step)
+{
+    mainProgressBar->setValue(step);
+}
+
+void presentation::OptimizationWidget::updateSubProgress(int step)
+{
+    subProgressBar->setValue(step);
 }
 
 void presentation::OptimizationWidget::transformTabIDSlot(int targetTab)

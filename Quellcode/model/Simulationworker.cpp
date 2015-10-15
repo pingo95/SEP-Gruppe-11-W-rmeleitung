@@ -10,7 +10,7 @@
 #include "../algorithms/Cranknicolson.hpp"
 #include <QFile>
 #include <QTime>
-//#include <vector>
+#include <vector>
 
 model::SimulationWorker::SimulationWorker(QObject * parent): QObject(parent),
     abort(false), busy(false), dataRead(false), m(1),
@@ -166,15 +166,15 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
     double deltaX = (double) 1 / (double) (simSetup.getN()-1);
 
     // Anlegen des Vektors für zu optimierende Temperaturleitkoeffizienten
-    QVector<AD_TYPE> optimizedCsAD;
+    std::vector<AD_TYPE> optimizedCsAD;
     if(overrideTD)
-        optimizedCsAD.fill(optimizationN,overrideValue);
+        optimizedCsAD.resize(optimizationN,overrideValue);
     else
     {
-        optimizedCsAD.fill(optimizationN,simSetup.getAreaBackgroundValue(SimulationSetup::AreaThermalDiffusivity));
+        optimizedCsAD.resize(optimizationN,simSetup.getAreaBackgroundValue(SimulationSetup::AreaThermalDiffusivity));
         // Berechnen welche Punkte von welchem Temperaturleitkoeffizienten-Gebiet
         // abgedeckt werden, dabei überschreiben neure Gebiete ältere
-        emit beginningStage("Initiale Temperaturleitkoeffizienten:",simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity),false);
+        emit beginningOptimizationStage("Initiale Temperaturleitkoeffizienten:",simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity));
         if(simSetup.getAreaCount(SimulationSetup::AreaThermalDiffusivity) > 0)
         {
             QList<Area*>::const_iterator it = simSetup.getAreas(SimulationSetup::AreaThermalDiffusivity).begin();
@@ -193,17 +193,21 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
                     for(long j = yLBound; j <= yUBound; ++j)
                         if(thermalDiffusivity->insidePoint(i*deltaX,j*deltaX))
                             optimizedCsAD[i+j*n] = diffusivity;    //thermalDiffusivity.getValue(i*deltaX,j*deltaX);
-                emit finishedStep(++count,false);
+                emit finishedOptimizationStep(++count);
             }
         }
     }
 
+    if(!useHeatSources)
+        while(simSetup.getAreaCount(SimulationSetup::AreaHeatSource) > 0)
+            simSetup.removeLastArea(SimulationSetup::AreaHeatSource);
+
     // Berechnen welche Punkte von welcher Wärmequelle abgedeckt werden,
     // zwischenspeichern als Indizes
     QList<QList<long> *> heatSourceIndices;
-    if(useHeatSources && simSetup.getAreaCount(SimulationSetup::AreaHeatSource) > 0)
+    if(simSetup.getAreaCount(SimulationSetup::AreaHeatSource) > 0)
     {
-        emit beginningStage("Wärmequellen", simSetup.getAreaCount(SimulationSetup::AreaHeatSource),false);
+        emit beginningOptimizationStage("Wärmequellen", simSetup.getAreaCount(SimulationSetup::AreaHeatSource));
         int count = 0;
         QList<Area*>::const_iterator it = simSetup.getAreas(SimulationSetup::AreaHeatSource).begin();
         for(; it != simSetup.getAreas(SimulationSetup::AreaHeatSource).end(); ++it)
@@ -221,7 +225,7 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
                     if(heatSource->insidePoint(i*deltaX,j*deltaX))
                         tmpListPtr->append(i+j*n);
             heatSourceIndices.append(tmpListPtr);
-            emit finishedStep(++count,false);
+            emit finishedOptimizationStep(++count);
         }
     }
 
@@ -237,10 +241,12 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
 
     if(tmpAbort)
     {
-       emit beginningStage("Optimierung abbgebrochen",1,false);
+       emit beginningOptimizationStage("Optimierung abbgebrochen",1);
     }
     else
     {
+        emit beginningOptimizationStage("Optimierungschritt berechnen",simSetup.getSolverMaxIt());
+        int count = 0;
         //TODO: dco steepest decent algorithm:
         AD_MODE::global_tape = AD_MODE::tape_t::create();
         AD_TYPE norm;
@@ -248,7 +254,9 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
         {
             AD_MODE::global_tape->register_variable(optimizedCsAD.data(),optimizationN);
 
-            QVector<AD_TYPE> * result = simpleSimulation(simSetup,step1,step2,optimizedCsAD,heatSourceIndices);
+            QVector<AD_TYPE> tmpCs (QVector<AD_TYPE>::fromStdVector(optimizedCsAD));
+            QVector<AD_TYPE> * result = simpleSimulation(simSetup,step1,step2,tmpCs,
+                                                         heatSourceIndices);
 
             AD_TYPE J = 0;
             for(int i = 0; i < obsSize; ++i)
@@ -259,11 +267,11 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
             dco::derivative(J) = 1;
             AD_MODE::global_tape->interpret_adjoint();
 
-            QVector<AD_TYPE> grad(optimizedCsAD);
+            QVector<AD_TYPE> grad(tmpCs);
             for(int i = 0; i < optimizationN; ++i)
                 grad[i] = dco::derivative(optimizedCsAD[i]);
 
-            AD_TYPE s = 0.0001;
+            AD_TYPE s = 0.001;
             for(int i = 0; i < optimizationN; ++i)
                 optimizedCsAD[i]  -= s * grad[i];
 
@@ -275,11 +283,21 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
             accessLock.unlock();
             if(tmpAbort)
                 break;
+            emit finishedOptimizationStep(++count);
         }
-        while(norm-simSetup.getSolverMaxError() > 0);
+        while(count <= simSetup.getSolverMaxIt() && norm-simSetup.getSolverMaxError() > 0);
         if(tmpAbort)
-            emit beginningStage("Optimierung abbgebrochen",1,false);
+            emit beginningOptimizationStage("Optimierung abgebrochen",1);
+        else
+        {
+            optimizedCs.resize(optimizationN);
+            for(int i = 0; i < optimizationN; ++i)
+                optimizedCs[i] = dco::value(optimizedCsAD[i]);
+            emit beginningOptimizationStage("Optimierung abgeschlossen",1);
+            emit finishedOptimizationStep(1);
+        }
     }
+
 #endif
 
 
@@ -664,12 +682,12 @@ QVector<AD_TYPE> *&model::SimulationWorker::simpleSimulation(SimulationSetup &si
     {
         (*step1)[k] = simSetup.getIBV(SimulationSetup::BottomBoundary);
         (*step1)[(simSetup.getN()-1)*k] = simSetup.getIBV(SimulationSetup::LeftBoundary);
-        (*step1)[(simSetup.getN()-1)*k + n-1] = simSetup.getIBV(SimulationSetup::RightBoundary);
+        (*step1)[(simSetup.getN()-1)*k + simSetup.getN()-1] = simSetup.getIBV(SimulationSetup::RightBoundary);
         (*step1)[(simSetup.getN()-1)*simSetup.getN() + k] = simSetup.getIBV(SimulationSetup::TopBoundary);
 
         (*step2)[k] = simSetup.getIBV(SimulationSetup::BottomBoundary);
         (*step2)[(simSetup.getN()-1)*k] = simSetup.getIBV(SimulationSetup::LeftBoundary);
-        (*step2)[(simSetup.getN()-1)*k + n-1] = simSetup.getIBV(SimulationSetup::RightBoundary);
+        (*step2)[(simSetup.getN()-1)*k + simSetup.getN()-1] = simSetup.getIBV(SimulationSetup::RightBoundary);
         (*step2)[(simSetup.getN()-1)*simSetup.getN() + k] = simSetup.getIBV(SimulationSetup::TopBoundary);
     }
 
@@ -687,7 +705,7 @@ QVector<AD_TYPE> *&model::SimulationWorker::simpleSimulation(SimulationSetup &si
     QVector<QVector<AD_TYPE> *> heatSourcesGrid(neededTimeStepsCount,NULL);
 
     for(int i = 0; i < neededTimeStepsCount; ++i)
-        heatSourcesGrid[i] = new QVector<AD_TYPE>(n*n,simSetup.getAreaBackgroundValue(SimulationSetup::AreaHeatSource));
+        heatSourcesGrid[i] = new QVector<AD_TYPE>(simSetup.getN()*simSetup.getN(),simSetup.getAreaBackgroundValue(SimulationSetup::AreaHeatSource));
 
     // Initiales Auswerten der Wärmequellenvektoren
     if(simSetup.getAreaCount(SimulationSetup::AreaHeatSource) > 0)

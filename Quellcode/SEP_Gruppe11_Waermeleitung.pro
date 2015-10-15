@@ -69,8 +69,13 @@ RESOURCES += \
 
 LIBS += -L"$$_PRO_FILE_PWD_/algorithms" -ldco
 unix{
+    licenseTarget.target = license
+    licenseTarget.commands = export NAG_KUSARI_FILE=$$_PRO_FILE_PWD_/algorithms/key.txt;
+    licenseTarget.depends = first
+
     runTarget.target = run
-    runTarget.commands = export NAG_KUSARI_FILE=./algorithms/key.txt; $$TARGET;
+    runTarget.commands =  export NAG_KUSARI_FILE=$$_PRO_FILE_PWD_/algorithms/key.txt; ./$$TARGET;
     runTarget.depends = first
-    QMAKE_EXTRA_TARGETS += runTarget
+
+    QMAKE_EXTRA_TARGETS += licenseTarget runTarget
 }

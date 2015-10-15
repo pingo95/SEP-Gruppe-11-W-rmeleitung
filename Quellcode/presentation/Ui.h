@@ -161,6 +161,13 @@ class Controller;
          */
         void appendToSimulationLogSlot(QString text);
         /*!
+         * \brief Weiterleitung an den Optimierungs-Tab.
+         * \param stage Name des neuen Abschnittes
+         * \param maximum Anzahl Teilschritte des neuen Abschnittes
+         * \see OptimizationWidget::nextMainStage
+         */
+        void nextOptimizationStageSlot(QString stage, int maximum);
+        /*!
          * \brief Weiterleitung an den Simulations- bzw. Optimierungs-Tab.
          * \param stage Name des neuen Abschnittes
          * \param maximum Anzahl Teilschritte des neuen Abschnittes
@@ -168,6 +175,12 @@ class Controller;
          * \see SimulationWidget::nextStage, OptimizationWidget::nextStage
          */
         void nextStageSlot(QString stage, int maximum, bool simulation);
+        /*!
+         * \brief Weiterleitung an den Optimierungs-Tab.
+         * \param step Teilschritt, der abgeschlossen wurde
+         * \see OptimizationWidget::updateMainProgress
+         */
+        void updateOptimizationProgressSlot(int step);
         /*!
          * \brief Weiterleitung an den Simulations- bzw. Optimierungs-Tab.
          * \param step Teilschritt, der abgeschlossen wurde

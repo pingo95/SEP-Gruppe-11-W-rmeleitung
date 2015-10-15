@@ -361,6 +361,8 @@ void model::Model::setUI(presentation::UI *ui)
     this->ui = ui;
 
     connect(simWorker,SIGNAL(beginningStage(QString,int,bool)),ui,SLOT(nextStageSlot(QString,int,bool)));
+    connect(simWorker,SIGNAL(beginningOptimizationStage(QString,int)),ui,SLOT(nextOptimizationStageSlot(QString,int)));
+    connect(simWorker,SIGNAL(finishedOptimizationStep(int)),ui,SLOT(updateOptimizationProgressSlot(int)));
     connect(simWorker,SIGNAL(finishedStep(int,bool)),ui,SLOT(updateProgressSlot(int,bool)));
     connect(simWorker,SIGNAL(simulationLogUpdate(QString)),ui,SLOT(appendToSimulationLogSlot(QString)));
 }
@@ -375,7 +377,7 @@ void model::Model::setUseHeatSources(bool const useHeatSources)
 void model::Model::simulate()
 {
     blocking = true;
-//    simulated = false;
+    simulated = false;
     emit startSimulation(simSetup);
     working = true;
     ui->updateNotification();
