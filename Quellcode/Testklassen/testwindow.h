@@ -34,8 +34,6 @@ private:
 };
 
 namespace algorithms {
-    template<class U>
-    QString printCRS(CRS<U> const & matrix);
     QString printFull(QVector<QVector<double> > const & matrix);
     QString printQVector(QVector<double> const & vector);
 }
