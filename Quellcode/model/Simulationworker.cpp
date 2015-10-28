@@ -45,16 +45,16 @@ model::SimulationWorker::~SimulationWorker()
         for(long i = 0; i < m+1; ++i)
         {
             for(long j = 0; j < n; ++j)
-                delete result[i][j];
-            delete result[i];
+                delete [] result[i][j];
+            delete [] result[i];
         }
-        delete result;
+        delete [] result;
     }
     if(dataRead)
     {
         for(long i = 0; i < obsSize; ++i)
-            delete observations[i];
-        delete observations;
+            delete [] observations[i];
+        delete [] observations;
     }
 }
 
@@ -257,7 +257,6 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
             QVector<AD_TYPE> tmpCs (QVector<AD_TYPE>::fromStdVector(optimizedCsAD));
             QVector<AD_TYPE> * result = simpleSimulation(simSetup,step1,step2,tmpCs,
                                                          heatSourceIndices);
-
             AD_TYPE J = 0;
             for(int i = 0; i < obsSize; ++i)
                 for(int j = 0; j < obsSize; ++j)
@@ -276,6 +275,7 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
                 optimizedCsAD[i]  -= s * grad[i];
 
             AD_MODE::global_tape->reset();
+            //AD_MODE::tape_t::remove(AD_MODE::global_tape);
             norm = algorithms::norm2(grad);
 
             accessLock.lock();
@@ -286,6 +286,7 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
             emit finishedOptimizationStep(++count);
         }
         while(count <= simSetup.getSolverMaxIt() && norm-simSetup.getSolverMaxError() > 0);
+        AD_MODE::tape_t::remove(AD_MODE::global_tape);
         if(tmpAbort)
             emit beginningOptimizationStage("Optimierung abgebrochen",1);
         else
@@ -299,7 +300,6 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
     }
 
 #endif
-
 
 
     //Aufräumen des Speichers
@@ -334,8 +334,8 @@ void model::SimulationWorker::startReadingDataSlot(QString const filename, long 
         if(dataRead)
         {
             for(long i = 0; i < obsSize; ++i)
-                delete observations[i];
-            delete observations;
+                delete [] observations[i];
+            delete [] observations;
         }
         observations = new double*[obsSize];
         for(long i = 0; i < obsSize; ++i)
@@ -344,6 +344,7 @@ void model::SimulationWorker::startReadingDataSlot(QString const filename, long 
             for(long j= 0; j < obsSize; ++j)
                 observations[i][j] = 0.0;
         }
+        in.skipWhiteSpace();
         for(long i = 0; i < obsSize; ++i)
         {
             for(long j = 0; j < obsSize; ++j)
@@ -351,6 +352,7 @@ void model::SimulationWorker::startReadingDataSlot(QString const filename, long 
                 if(count == obsCount)
                     break;
                 in >> observations[i][j];
+                in.skipWhiteSpace();
                 ++count;
                 emit finishedStep(i*obsSize+j+1,false);
             }
@@ -386,10 +388,10 @@ void model::SimulationWorker::startSimulationSlot(SimulationSetup * simSetupTemp
         for(long i = 0; i < m+1; ++i)
         {
             for(long j = 0; j < n; ++j)
-                delete result[i][j];
-            delete result[i];
+                delete [] result[i][j];
+            delete [] result[i];
         }
-        delete result;
+        delete [] result;
     }
 
     this->m = simSetup.getM();
@@ -787,5 +789,9 @@ QVector<AD_TYPE> *&model::SimulationWorker::simpleSimulation(SimulationSetup &si
         }
         emit finishedStep(i,false);
     }
+
+    while(heatSourcesGrid.size() > 0)
+        delete heatSourcesGrid.takeFirst();
+
     return simSetup.getM() % 2 == 0 ? step1 : step2;
 }

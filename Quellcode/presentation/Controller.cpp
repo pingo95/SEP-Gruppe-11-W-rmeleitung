@@ -243,10 +243,12 @@ void presentation::Controller::loadObservationsSlot()
         if (file.open(QFile::ReadOnly | QFile::Truncate)) {
             QTextStream in(&file);
             long int obsCount = 0;
+            in.skipWhiteSpace();
             while(!in.atEnd())
             {
                 double tmp;
                 in >> tmp;
+                in.skipWhiteSpace();
                 ++obsCount;
             }
             long n = sqrt(obsCount);

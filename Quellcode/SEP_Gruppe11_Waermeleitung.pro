@@ -64,6 +64,8 @@ HEADERS  += \
     presentation/Ui.h \
     presentation/Controller.h
 
+win32:RC_FILE = icon.qrc
+
 RESOURCES += \
     presentation/uiicons.qrc
 
