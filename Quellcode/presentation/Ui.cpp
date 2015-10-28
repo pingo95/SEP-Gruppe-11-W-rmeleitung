@@ -42,7 +42,7 @@ presentation::UI::UI(QWidget *parent)
     connect(tabWidgetSub,SIGNAL(currentChanged(int)),this,SLOT(transformTabIDSlot(int)));
 
         //minimale Fenstergröße
-    this->setMinimumSize(1360,800);
+    this->setMinimumSize(1360,765);
 }
 
 presentation::UI::~UI()

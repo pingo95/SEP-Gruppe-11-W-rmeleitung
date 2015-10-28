@@ -236,7 +236,7 @@ void presentation::Controller::loadObservationsSlot()
     if(!model->isWorking())
     {
         QString filename = QFileDialog::getOpenFileName(ui,"Datei auswählen",
-                                                        "..","Text files (*.txt)");
+                                                        ".","Text files (*.txt)");
         if(filename.isEmpty())
             return;
         QFile file(filename);
@@ -278,7 +278,7 @@ void presentation::Controller::loadObservationsSlot()
 void presentation::Controller::loadSimulationSetupSlot()
 {
     QString filename = QFileDialog::getOpenFileName(ui,"Datei auswählen",
-                                                    "..","Text files (*.txt)");
+                                                    ".","Text files (*.txt)");
     if(!filename.isEmpty())
         model->loadSetup(filename);
 }
@@ -558,7 +558,7 @@ void presentation::Controller::selectIntMethodSlot(QString newIntMethod)
 void presentation::Controller::saveSimulationSetupSlot()
 {
     QString filename = QFileDialog::getSaveFileName(ui,"Speichern unter",
-                                                    "..","Text files (*.txt)");
+                                                    ".","Text files (*.txt)");
     if(!filename.isEmpty())
         model->saveSetup(filename);
 }

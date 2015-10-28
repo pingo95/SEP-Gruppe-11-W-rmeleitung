@@ -53,12 +53,12 @@ presentation::IBVsWidget::IBVsWidget(QWidget *parent) : QWidget(parent),
 
         //Layout
     layout = new QGridLayout(this);
-    layout->addWidget(topLabel,0,0,1,2);
+    layout->addWidget(topLabel,0,0,1,3);
     layout->addWidget(labelInitialValue,1,0);
     layout->addWidget(input1InitialValue,1,1);
-    layout->addItem(spacerVertical,1,2,5,1);
     layout->addWidget(labelBottomBoundary,2,0);
     layout->addWidget(input2BottomBoundary,2,1);
+    layout->addItem(spacerVertical,2,2,5,1);
     layout->addWidget(labelLeftBoundary,3,0);
     layout->addWidget(input3LeftBoundary,3,1);
     layout->addWidget(labelTopBoundary,4,0);

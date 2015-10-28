@@ -75,6 +75,7 @@ presentation::SimulationWidget::SimulationWidget(QWidget *parent)
     labelN = new QLabel("Stützstellen N eingeben",this);
     labelN->setMaximumWidth(175);
     inputN = new QSpinBox(this);
+    inputN->setMinimumWidth(55);
     inputN->setMinimum(3);
     inputN->setMaximum(900);
     inputN->setKeyboardTracking(false);

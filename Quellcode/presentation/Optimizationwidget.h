@@ -6,7 +6,6 @@
 #include "../model/Model.h"
 
 #include <QCheckBox>
-#include "Qcustomplot.h"
 #include <QDoubleSpinBox>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -164,10 +163,6 @@ class Controller;
         QDoubleSpinBox * displayMaxError;
         QLabel * labelMaxIt;
         QSpinBox * displayMaxIt;
-
-        QCustomPlot * plate;
-        QCPColorMap * colorMap;
-        QCPColorScale * colorScale;
 
         QLabel * labelData;
         QTableWidget * dataTable;

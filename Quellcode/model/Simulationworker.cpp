@@ -275,7 +275,6 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
                 optimizedCsAD[i]  -= s * grad[i];
 
             AD_MODE::global_tape->reset();
-            //AD_MODE::tape_t::remove(AD_MODE::global_tape);
             norm = algorithms::norm2(grad);
 
             accessLock.lock();
@@ -285,7 +284,7 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
                 break;
             emit finishedOptimizationStep(++count);
         }
-        while(count <= simSetup.getSolverMaxIt() && norm-simSetup.getSolverMaxError() > 0);
+        while(count <= simSetup.getSolverMaxIt() ); //&& norm-simSetup.getSolverMaxError() > 0
         AD_MODE::tape_t::remove(AD_MODE::global_tape);
         if(tmpAbort)
             emit beginningOptimizationStage("Optimierung abgebrochen",1);

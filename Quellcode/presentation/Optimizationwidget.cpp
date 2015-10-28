@@ -113,84 +113,6 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     boxSettingsLayout->addWidget(displayMaxIt,6,1);
     boxSettings->setLayout(boxSettingsLayout);
 
-        //Für Platte
-    QVector<double> ticks,ticksColorBar;
-    QVector<QString> tickLabels,tickLabelsColorBar;
-    double valueSpan = model::SimulationSetup::AreaMaxValue[
-            model::SimulationSetup::AreaThermalDiffusivity] -
-            model::SimulationSetup::AreaMinValue[
-            model::SimulationSetup::AreaThermalDiffusivity];
-    for(int i = 0; i < 11; ++i)
-    {
-        ticks << (double) i / 10;
-        tickLabels << QString::number(ticks[i]);
-
-        ticksColorBar << round((valueSpan * ticks[i] +
-                                model::SimulationSetup::AreaMinValue[
-                                model::SimulationSetup::AreaThermalDiffusivity])/valueShift);
-        tickLabelsColorBar << QString::number(ticksColorBar[i]);
-    }
-
-        //Platte
-    plate = new QCustomPlot(configurationTab,false);
-    plate->setMinimumWidth(300);
-    plate->setMinimumHeight(300);
-            //Platte xAchse unten
-    plate->xAxis->setAutoTicks(false);
-    plate->xAxis->setAutoTickLabels(false);
-    plate->xAxis->setTickVector(ticks);
-    plate->xAxis->setTickVectorLabels(tickLabels);
-    plate->xAxis->setRange(0,1);
-    plate->xAxis->grid()->setSubGridVisible(true);
-            //Platte yAchse links
-    plate->yAxis->setAutoTicks(false);
-    plate->yAxis->setAutoTickLabels(false);
-    plate->yAxis->setTickVector(ticks);
-    plate->yAxis->setTickVectorLabels(tickLabels);
-    plate->yAxis->setRange(0,1);
-    plate->yAxis->grid()->setSubGridVisible(true);
-            //Platte xAchse oben
-    plate->xAxis2->setVisible(true);
-    plate->xAxis2->setAutoTicks(false);
-    plate->xAxis2->setAutoTickLabels(false);
-    plate->xAxis2->setTickVector(ticks);
-    plate->xAxis2->setTickVectorLabels(tickLabels);
-    plate->xAxis2->setRange(0,1);
-    plate->xAxis2->grid()->setSubGridVisible(true);
-            //Platte yAchse rechts
-    plate->yAxis2->setVisible(true);
-    plate->yAxis2->setAutoTicks(false);
-    plate->yAxis2->setAutoTickLabels(false);
-    plate->yAxis2->setTickVector(ticks);
-    plate->yAxis2->setTickVectorLabels(tickLabels);
-    plate->yAxis2->setRange(0,1);
-    plate->yAxis2->grid()->setSubGridVisible(true);
-
-            //ColorScale
-    colorScale = new QCPColorScale(plate);
-    plate->plotLayout()->addElement(0,1,colorScale);
-    colorScale->setLabel("Temperaturleitkoeffizienten\n[1e-6 m²/s]");
-
-    QCPMarginGroup * group = new QCPMarginGroup(plate);
-    plate->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, group);
-    colorScale->setMarginGroup(QCP::msBottom | QCP::msTop, group);
-    colorScale->setGradient(QCPColorGradient::gpThermal);
-    QCPRange range(model::SimulationSetup::AreaMinValue[
-                        model::SimulationSetup::AreaThermalDiffusivity]/valueShift,
-                   model::SimulationSetup::AreaMaxValue[
-                        model::SimulationSetup::AreaThermalDiffusivity]/valueShift);
-    colorScale->setDataRange(range);
-    colorScale->axis()->setAutoTicks(false);
-    colorScale->axis()->setAutoTickLabels(false);
-    colorScale->axis()->setTickVector(ticksColorBar);
-    colorScale->axis()->setTickVectorLabels(tickLabelsColorBar);
-    colorScale->axis()->setRange(range);
-
-    colorMap = new QCPColorMap(plate->yAxis,plate->xAxis);
-    colorMap->data()->setRange(QCPRange(0,1),QCPRange(0,1));
-    colorMap->setColorScale(colorScale);
-    plate->addPlottable(colorMap);
-
         //Daten-Tabelle
     labelData = new QLabel("Eingelesene Messdaten (in Kelvin):",configurationTab);
     dataTable = new QTableWidget(configurationTab);
@@ -212,14 +134,14 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     configurationTabLayout->addWidget(startOptimizationButton,1,1);
     configurationTabLayout->addWidget(labelData,1,2);
     configurationTabLayout->addWidget(boxOverride,2,0,1,2);
-    configurationTabLayout->addWidget(dataTable,2,2,3,2);
+    configurationTabLayout->addWidget(dataTable,2,2,4,2);
     configurationTabLayout->addWidget(boxSettings,3,0,1,2);
-    configurationTabLayout->addWidget(plate,4,0,3,2);
-    configurationTabLayout->addWidget(labelMainProgressBar,5,2);
-    configurationTabLayout->addWidget(mainProgressBar,5,3);
-    configurationTabLayout->addWidget(labelSubProgressBar,6,2);
-    configurationTabLayout->addWidget(subProgressBar,6,3);
-    configurationTabLayout->addItem(spacerItem,7,0);
+//    configurationTabLayout->addWidget(plate,4,0,3,2);
+    configurationTabLayout->addWidget(labelMainProgressBar,4,0);
+    configurationTabLayout->addWidget(mainProgressBar,4,1);
+    configurationTabLayout->addWidget(labelSubProgressBar,5,0);
+    configurationTabLayout->addWidget(subProgressBar,5,1);
+    configurationTabLayout->addItem(spacerItem,6,0);
 
     configurationTabLayout->setColumnStretch(0,0);
     configurationTabLayout->setColumnStretch(1,0);
@@ -232,8 +154,8 @@ presentation::OptimizationWidget::OptimizationWidget(QWidget *parent)
     configurationTabLayout->setRowStretch(3,0);
     configurationTabLayout->setRowStretch(4,0);
     configurationTabLayout->setRowStretch(5,0);
-    configurationTabLayout->setRowStretch(6,0);
-    configurationTabLayout->setRowStretch(7,1);
+    configurationTabLayout->setRowStretch(6,1);
+//    configurationTabLayout->setRowStretch(7,1);
 
 //    configurationTabLayout->setColumnMinimumWidth(0,200);
 //    configurationTabLayout->setColumnMinimumWidth(1,200);
@@ -355,25 +277,6 @@ void presentation::OptimizationWidget::update()
         displayMaxError->setValue(exp);
         displayMaxIt->setValue(model->getSimulationSetup()->getSolverMaxIt());
 
-        //TODO: Endergebnis oder Anfangswert auf platte darstellen valueShift!!!
-        if(model->getOverrideThermalDiffusivities())
-        {
-            QCPRange range(model::SimulationSetup::AreaMinValue[
-                                model::SimulationSetup::AreaThermalDiffusivity]/valueShift,
-                           model::SimulationSetup::AreaMaxValue[
-                                model::SimulationSetup::AreaThermalDiffusivity]/valueShift);
-            colorScale->axis()->setRange(range);
-            colorMap->data()->setSize(1,1);
-            colorMap->data()->setCell(0,0,model->getOverrideValue()/valueShift);
-            colorScale->setLabel("(Initiale) Temperaturleitkoeffizienten\n[1e-6 m²/s]");
-            plate->replot();
-        }
-        else
-        {
-            colorMap->setVisible(false);
-            plate->replot();
-        }
-
         //TODO: Falls geladen, Messungen in Tabelle darstellen
         if(!model->isWorking() && model->getDataRead())
         {
@@ -411,9 +314,6 @@ void presentation::OptimizationWidget::update()
             solutionTable->setRowCount(n);
             solutionTable->setColumnCount(n);
 
-            colorMap->data()->setSize(n,n);
-            colorScale->setLabel("Optimierte Temperaturleitkoeffizienten\n[1e-6 m²/s]");
-
             for(int i = n-1; i >= 0; --i)
             {
                 solutionTable->setColumnWidth(n-1-i,70);
@@ -423,16 +323,12 @@ void presentation::OptimizationWidget::update()
                     tmpItemPtr->setFlags(Qt::ItemIsEnabled);
                     tmpItemPtr->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
                     solutionTable->setItem(n-1-i,j,tmpItemPtr);
-                    colorMap->data()->setCell(i,j,result[n*i+j]/valueShift);
                 }
             }
 
             solutionTable->horizontalHeader()->setSectionsClickable(false);
             solutionTable->verticalHeader()->setSectionsClickable(false);
 
-            colorMap->setVisible(true);
-            colorMap->rescaleDataRange(true);
-            plate->replot();
         }
     }
     updating = false;
