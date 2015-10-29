@@ -270,7 +270,7 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
             for(int i = 0; i < optimizationN; ++i)
                 grad[i] = dco::derivative(optimizedCsAD[i]);
 
-            AD_TYPE s = 0.001;
+            AD_TYPE s = 1e-6;
             for(int i = 0; i < optimizationN; ++i)
                 optimizedCsAD[i]  -= s * grad[i];
 
@@ -284,7 +284,7 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
                 break;
             emit finishedOptimizationStep(++count);
         }
-        while(count <= simSetup.getSolverMaxIt() ); //&& norm-simSetup.getSolverMaxError() > 0
+        while(count <= simSetup.getSolverMaxIt() && norm-simSetup.getSolverMaxError() > 0);
         AD_MODE::tape_t::remove(AD_MODE::global_tape);
         if(tmpAbort)
             emit beginningOptimizationStage("Optimierung abgebrochen",1);
