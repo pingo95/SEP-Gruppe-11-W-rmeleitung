@@ -316,7 +316,7 @@ void presentation::OptimizationWidget::update()
 
             for(int i = n-1; i >= 0; --i)
             {
-                solutionTable->setColumnWidth(n-1-i,70);
+                //solutionTable->setColumnWidth(n-1-i,70);
                 for(int j = 0; j < n; ++ j)
                 {
                     QTableWidgetItem * tmpItemPtr = new QTableWidgetItem(QString::number(result[n*i+j]/valueShift));

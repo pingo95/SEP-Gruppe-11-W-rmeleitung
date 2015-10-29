@@ -11,6 +11,7 @@
 #include <QFile>
 #include <QTime>
 #include <vector>
+#include <iostream>
 
 model::SimulationWorker::SimulationWorker(QObject * parent): QObject(parent),
     abort(false), busy(false), dataRead(false), m(1),
@@ -260,7 +261,7 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
             AD_TYPE J = 0;
             for(int i = 0; i < obsSize; ++i)
                 for(int j = 0; j < obsSize; ++j)
-                    J += ((*result)[i*obsSize + j] * observations[i][j])
+                    J += 1./((obsSize-1)*(obsSize-1))*((*result)[i*obsSize + j] * observations[i][j])
                             *((*result)[i*obsSize + j] * observations[i][j]);
 
             dco::derivative(J) = 1;
@@ -268,9 +269,13 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
 
             QVector<AD_TYPE> grad(tmpCs);
             for(int i = 0; i < optimizationN; ++i)
+            {
                 grad[i] = dco::derivative(optimizedCsAD[i]);
+                std::cout << grad[i] << "\t";
+            }
+            std::cout << std::endl<< std::endl;
 
-            AD_TYPE s = 1e-6;
+            AD_TYPE s = 1e-15;
             for(int i = 0; i < optimizationN; ++i)
                 optimizedCsAD[i]  -= s * grad[i];
 
