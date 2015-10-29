@@ -162,7 +162,9 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
 
     optimizationN = obsSize*obsSize;
     simSetup.setN(obsSize);
-    simSetup.setT(1.0);
+
+    std::cout << simSetup.getT() << std::endl << std::endl;
+
     // DeltaX
     double deltaX = (double) 1 / (double) (simSetup.getN()-1);
 
@@ -264,10 +266,12 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
                     J += 1./((obsSize-1)*(obsSize-1))*((*result)[i*obsSize + j] * observations[i][j])
                             *((*result)[i*obsSize + j] * observations[i][j]);
 
+            std::cout << J << std::endl<< std::endl;
+
             dco::derivative(J) = 1;
             AD_MODE::global_tape->interpret_adjoint();
 
-            QVector<AD_TYPE> grad(tmpCs);
+            QVector<AD_TYPE> grad(QVector<AD_TYPE>::fromStdVector(optimizedCsAD));
             for(int i = 0; i < optimizationN; ++i)
             {
                 grad[i] = dco::derivative(optimizedCsAD[i]);
@@ -275,12 +279,12 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
             }
             std::cout << std::endl<< std::endl;
 
-            AD_TYPE s = 1e-15;
+            AD_TYPE s = 1e-16;
             for(int i = 0; i < optimizationN; ++i)
                 optimizedCsAD[i]  -= s * grad[i];
 
-            AD_MODE::global_tape->reset();
             norm = algorithms::norm2(grad);
+            std::cout << norm << std::endl << std::endl;
 
             accessLock.lock();
             tmpAbort = abort;
@@ -288,6 +292,7 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
             if(tmpAbort)
                 break;
             emit finishedOptimizationStep(++count);
+            AD_MODE::global_tape->reset();
         }
         while(count <= simSetup.getSolverMaxIt() && norm-simSetup.getSolverMaxError() > 0);
         AD_MODE::tape_t::remove(AD_MODE::global_tape);
