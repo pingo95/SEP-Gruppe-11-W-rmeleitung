@@ -9,7 +9,7 @@ Endzeitpunkt T: 360.000s
 Einstellungen fuer den LGS Loeser:
 Ausgewaehlter Loeser: Jacobi
 Relative Genauigkeit: 1e-05
-Maximale Iterationsanzahl: 50
+Maximale Iterationsanzahl: 500
 
 Einstellungen fuer die Ortsdiskretisierung:
 Anzahl Stuetzstellen N: 10

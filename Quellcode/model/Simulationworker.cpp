@@ -163,8 +163,6 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
     optimizationN = obsSize*obsSize;
     simSetup.setN(obsSize);
 
-    std::cout << simSetup.getT() << std::endl << std::endl;
-
     // DeltaX
     double deltaX = (double) 1 / (double) (simSetup.getN()-1);
 
@@ -261,12 +259,15 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
             QVector<AD_TYPE> * result = simpleSimulation(simSetup,step1,step2,tmpCs,
                                                          heatSourceIndices);
             AD_TYPE J = 0;
-            for(int i = 0; i < obsSize; ++i)
-                for(int j = 0; j < obsSize; ++j)
-                    J += 1./((obsSize-1)*(obsSize-1))*((*result)[i*obsSize + j] * observations[i][j])
-                            *((*result)[i*obsSize + j] * observations[i][j]);
+            for(int i = 0; i < obsSize; ++i) {
+                for(int j = 0; j < obsSize; ++j) {
+                    J += ((*result)[i*obsSize + j] - observations[i][j])
+                            *((*result)[i*obsSize + j] - observations[i][j]);
+                }
+            }
+            J *= 1./((obsSize-1)*(obsSize-1));
 
-            std::cout << J << std::endl<< std::endl;
+            std::cout << "J" << count << ": " << J << std::endl<< std::endl;
 
             dco::derivative(J) = 1;
             AD_MODE::global_tape->interpret_adjoint();
@@ -275,16 +276,13 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
             for(int i = 0; i < optimizationN; ++i)
             {
                 grad[i] = dco::derivative(optimizedCsAD[i]);
-                std::cout << grad[i] << "\t";
             }
-            std::cout << std::endl<< std::endl;
 
-            AD_TYPE s = 1e-16;
+            AD_TYPE s = 1e-11;
             for(int i = 0; i < optimizationN; ++i)
                 optimizedCsAD[i]  -= s * grad[i];
 
             norm = algorithms::norm2(grad);
-            std::cout << norm << std::endl << std::endl;
 
             accessLock.lock();
             tmpAbort = abort;
@@ -294,7 +292,7 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
             emit finishedOptimizationStep(++count);
             AD_MODE::global_tape->reset();
         }
-        while(count <= simSetup.getSolverMaxIt() && norm-simSetup.getSolverMaxError() > 0);
+        while(count < simSetup.getSolverMaxIt() && norm-simSetup.getSolverMaxError() > 0);
         AD_MODE::tape_t::remove(AD_MODE::global_tape);
         if(tmpAbort)
             emit beginningOptimizationStage("Optimierung abgebrochen",1);
@@ -692,13 +690,13 @@ QVector<AD_TYPE> *&model::SimulationWorker::simpleSimulation(SimulationSetup &si
     for(long k = 0; k < simSetup.getN(); ++k)
     {
         (*step1)[k] = simSetup.getIBV(SimulationSetup::BottomBoundary);
-        (*step1)[(simSetup.getN()-1)*k] = simSetup.getIBV(SimulationSetup::LeftBoundary);
-        (*step1)[(simSetup.getN()-1)*k + simSetup.getN()-1] = simSetup.getIBV(SimulationSetup::RightBoundary);
+        (*step1)[(simSetup.getN())*k] = simSetup.getIBV(SimulationSetup::LeftBoundary);
+        (*step1)[(simSetup.getN())*(k+1)-1] = simSetup.getIBV(SimulationSetup::RightBoundary);
         (*step1)[(simSetup.getN()-1)*simSetup.getN() + k] = simSetup.getIBV(SimulationSetup::TopBoundary);
 
         (*step2)[k] = simSetup.getIBV(SimulationSetup::BottomBoundary);
-        (*step2)[(simSetup.getN()-1)*k] = simSetup.getIBV(SimulationSetup::LeftBoundary);
-        (*step2)[(simSetup.getN()-1)*k + simSetup.getN()-1] = simSetup.getIBV(SimulationSetup::RightBoundary);
+        (*step2)[(simSetup.getN())*k] = simSetup.getIBV(SimulationSetup::LeftBoundary);
+        (*step2)[(simSetup.getN())*(k+1)-1] = simSetup.getIBV(SimulationSetup::RightBoundary);
         (*step2)[(simSetup.getN()-1)*simSetup.getN() + k] = simSetup.getIBV(SimulationSetup::TopBoundary);
     }
 
