@@ -171,32 +171,48 @@ void model::Model::loadSetup(QString filename)
     if (file.open(QFile::ReadOnly | QFile::Truncate))
     {
         QTextStream in(&file);
-        //TODO: korrektes überspringen der Ueberschrift
+        in.skipWhiteSpace();
         in.readLine();
 
         in >> *simSetup;
 
         in.readLine();
-        in.readLine();
+        in.skipWhiteSpace();
         QString str;
         for(int i = 0; i < 4; ++i)
+        {
             in >> str;
+            in.skipWhiteSpace();
+        }
         if(str == "Aktiviert")
         {
             overrideDiffusivities = true;
             in >> str;
+            in.skipWhiteSpace();
             in >> str;
+            in.skipWhiteSpace();
             in >> overrideInitialTDvalue;
+            in.skipWhiteSpace();
             in >> str;
+            in.skipWhiteSpace();
         }
         else
+        {
             in >> str;
+            in.skipWhiteSpace();
+        }
         for(int i = 0; i < 4; ++i)
+        {
             in >> str;
+            in.skipWhiteSpace();
+        }
         if(str == "Aktiviert")
             useHeatSources = true;
         else
+        {
             in >> str;
+            in.skipWhiteSpace();
+        }
     }
 
     ui->updateNotification();
@@ -258,7 +274,7 @@ void model::Model::saveSetup(QString filename)
     if(file.open(QFile::WriteOnly | QFile::Truncate))
     {
         QTextStream out(&file);
-        out << "TODO: Grosse tolle Ueberschrift\n"
+        out << "Simulationseinstellungen für SEP_Gruppe11_Waermeleitung\n"
             << *simSetup
             << "Optimierungseinstellungen:\n\n"
             << "Ueberschreiben der Temperaturleitkoeffizienten: "

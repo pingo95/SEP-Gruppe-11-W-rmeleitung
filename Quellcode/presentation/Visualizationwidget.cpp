@@ -117,6 +117,38 @@ presentation::VisualizationWidget::VisualizationWidget(QWidget *parent)
 
 void presentation::VisualizationWidget::playVideo()
 {
+#ifndef _WIN32
+    if(resultM > 600 && resultN*resultM >= 250000)
+    {
+        int frame = slider->value();
+        for(; frame < resultM+1; ++++frame)
+        {
+            for(int i = 0; i < resultN; ++i)
+                for(int j = 0; j < resultN; ++j)
+                    colorMap->data()->setCell(i,j,result[frame][i][j]);
+            plate->replot();
+            updateLcdSlot(frame);
+        }
+        if(frame != resultM)
+        {
+            for(int i = 0; i < resultN; ++i)
+                for(int j = 0; j < resultN; ++j)
+                    colorMap->data()->setCell(i,j,result[resultM][i][j]);
+            plate->replot();
+            updateLcdSlot(resultM);
+        }
+    }
+    else
+        for(int frame = slider->value(); frame < resultM+1; ++frame)
+        {
+            for(int i = 0; i < resultN; ++i)
+                for(int j = 0; j < resultN; ++j)
+                    colorMap->data()->setCell(i,j,result[frame][i][j]);
+            plate->replot();
+            updateLcdSlot(frame);
+        }
+
+#else
     for(int frame = slider->value(); frame < resultM+1; ++frame)
     {
         for(int i = 0; i < resultN; ++i)
@@ -125,6 +157,7 @@ void presentation::VisualizationWidget::playVideo()
         plate->replot();
         updateLcdSlot(frame);
     }
+#endif
 }
 
 void presentation::VisualizationWidget::setController(Controller *controller)
@@ -145,19 +178,19 @@ void presentation::VisualizationWidget::update()
     if(updating)
         return;
     updating = true;
-    if (model->getSimulated())
+    if(model->isWorking())
     {
-        if(model->isWorking())
-        {
-            slider->setEnabled(false);
-            playButton->setEnabled(false);
-            topLabel->setText("Es wird zurzeit simuliert, "
-                              "Ergebnisse können erst nach Ende "
-                              "der Simulation angezeigt werden.");
-            colorMap->data()->setSize(1,1);
-            colorMap->data()->setCell(0,0,0);
-        }
-        else
+        slider->setEnabled(false);
+        playButton->setEnabled(false);
+        topLabel->setText("Es wird zurzeit simuliert, "
+                          "Ergebnisse können erst nach Ende "
+                          "der Simulation angezeigt werden.");
+        colorMap->data()->setSize(1,1);
+        colorMap->data()->setCell(0,0,0);
+    }
+    else
+    {
+        if (model->getSimulated())
         {
             slider->setEnabled(true);
             playButton->setEnabled(true);
@@ -175,11 +208,11 @@ void presentation::VisualizationWidget::update()
 
             visualizeState();
         }
-    }
-    else
-    {
-        topLabel->setText("Ergebnisse können erst angezeigt werden, "
-                          "nachdem eine Simulation durchgeführt wurde.");
+        else
+        {
+            topLabel->setText("Ergebnisse können erst angezeigt werden, "
+                              "nachdem eine Simulation durchgeführt wurde.");
+        }
     }
     updating = false;
 }

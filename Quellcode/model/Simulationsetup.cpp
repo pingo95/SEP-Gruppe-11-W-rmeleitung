@@ -345,176 +345,248 @@ QTextStream & model::operator<<(QTextStream & out, SimulationSetup & simSetup)
 QTextStream & model::operator>>(QTextStream & in, SimulationSetup & simSetup)
 {
     in.readLine();
-    in.readLine();
+    in.skipWhiteSpace();
     in.readLine();
 
+    in.skipWhiteSpace();
     QString str;
     in >> str;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.selectedIntMethod;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     simSetup.selectedIntMethod += " " + str;
 
     in >> str;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.m;
+    in.skipWhiteSpace();
 
     in >> str;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.T;
-//    in >> str;
+    in >> str;
+    in.skipWhiteSpace();
 
+
+    in.skipWhiteSpace();
     in.readLine();
-    in.readLine();
-    in.readLine();
+    in.skipWhiteSpace();
 
     in >> str;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.selectedSolver;
+    in.skipWhiteSpace();
     if(simSetup.selectedSolver == "Gauss")
     {
         in >> str;
         simSetup.selectedSolver += " " + str;
     }
+    in.skipWhiteSpace();
 
     in >> str;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.solverMaxError;
+    in.skipWhiteSpace();
 
     in >> str;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.solverMaxIt;
+    in.skipWhiteSpace();
 
     in.readLine();
-    in.readLine();
-    in.readLine();
+    in.skipWhiteSpace();
 
     in >> str;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.n;
+    in.skipWhiteSpace();
 
     in.readLine();
-    in.readLine();
-    in.readLine();
+    in.skipWhiteSpace();
 
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.iBVs[SimulationSetup::InitialValue];
-    in.readLine();
+    in >> str;
+    in.skipWhiteSpace();
 
     in >> str;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.iBVs[SimulationSetup::BottomBoundary];
-    in.readLine();
+    in >> str;
+    in.skipWhiteSpace();
 
     in >> str;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.iBVs[SimulationSetup::LeftBoundary];
-    in.readLine();
+    in >> str;
+    in.skipWhiteSpace();
 
     in >> str;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.iBVs[SimulationSetup::TopBoundary];
-    in.readLine();
+    in >> str;
+    in.skipWhiteSpace();
 
     in >> str;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.iBVs[SimulationSetup::RightBoundary];
-    in.readLine();
+    in >> str;
+    in.skipWhiteSpace();
 
     in.readLine();
-    in.readLine();
+    in.skipWhiteSpace();
 
     in >> str;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.thermalDiffusivitiesCount;
+    in.skipWhiteSpace();
 
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.thermalDiffusivitiesBackgroundValue;
-    in.readLine();
+    in >> str;
+    in.skipWhiteSpace();
 
     if(simSetup.thermalDiffusivitiesCount > 0)
     {
         in.readLine();
-        in.readLine();
+        in.skipWhiteSpace();
         int type, id, count;
         double value, tmp;
         QVector<double> x,y;
         for(int i = 0; i < simSetup.thermalDiffusivitiesCount; ++i)
         {
             in.readLine();
+            in.skipWhiteSpace();
             in >> str;
+            in.skipWhiteSpace();
             in >> type;
+            in.skipWhiteSpace();
             in >> str;
+            in.skipWhiteSpace();
             in >> id;
+            in.skipWhiteSpace();
             in >> str;
+            in.skipWhiteSpace();
             in >> value;
+            in.skipWhiteSpace();
             in >> str;
+            in.skipWhiteSpace();
             in >> str;
+            in.skipWhiteSpace();
             in >> count;
+            in.skipWhiteSpace();
             x.resize(count);
             y.resize(count);
             for(int j = 0; j < count; ++j)
             {
                 in >> tmp;
+                in.skipWhiteSpace();
                 x[j] = tmp;
                 in.read(1);
                 in >> tmp;
+                in.skipWhiteSpace();
                 y[j] = tmp;
             }
-            in.readLine();
-            in.readLine();
+            in.skipWhiteSpace();
             simSetup.thermalDiffusivities.append(new Area(x,y,value,type));
         }
     }
 
     in.readLine();
+    in.skipWhiteSpace();
 
     in >> str;
+    in.skipWhiteSpace();
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.heatSourcesCount;
+    in.skipWhiteSpace();
 
     in >> str;
+    in.skipWhiteSpace();
     in >> simSetup.heatSourcesBackgroundValue;
-    in.readLine();
+    in >> str;
+    in.skipWhiteSpace();
 
     if(simSetup.heatSourcesCount > 0)
     {
         in.readLine();
-        in.readLine();
+        in.skipWhiteSpace();
         int type, id, count;
         double value, tmp;
         QVector<double> x,y;
         for(int i = 0; i < simSetup.heatSourcesCount; ++i)
         {
             in.readLine();
+            in.skipWhiteSpace();
             in >> str;
+            in.skipWhiteSpace();
             in >> type;
+            in.skipWhiteSpace();
             in >> str;
+            in.skipWhiteSpace();
             in >> id;
+            in.skipWhiteSpace();
             in >> str;
+            in.skipWhiteSpace();
             in >> value;
+            in.skipWhiteSpace();
             in >> str;
+            in.skipWhiteSpace();
             in >> str;
+            in.skipWhiteSpace();
             in >> count;
+            in.skipWhiteSpace();
             x.resize(count);
             y.resize(count);
             for(int j = 0; j < count; ++j)
             {
                 in >> tmp;
+                in.skipWhiteSpace();
                 x[j] = tmp;
                 in.read(1);
                 in >> tmp;
+                in.skipWhiteSpace();
                 y[j] = tmp;
             }
-            in.readLine();
-            in.readLine();
+            in.skipWhiteSpace();
             simSetup.heatSources.append(new Area(x,y,value,type));
         }
     }
 
-    in.readLine();
+    in.skipWhiteSpace();
 
     return in;
 }
