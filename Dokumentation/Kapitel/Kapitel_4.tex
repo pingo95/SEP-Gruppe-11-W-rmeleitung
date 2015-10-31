@@ -3,12 +3,14 @@
 \section{Installation}
 Die Software wird als SEPGruppe11.zip ausgeliefert. Der erste Schritt ist die zip-Datei zu entpacken. Abhängig davon wo die zip-Datei entpackt wird, ist sicherzustellen, dass man sich im Ordner befindet,der den Ordner \emph{Quellcode} und die vier \emph{sh}-Dateien enthält.
 Die Voraussetzung, dass die Software installiert werden kann, ist ein QT5 fähiger Compiler.
-Die Voraussetzung, dass die Doxygen Dokumentation erstellt werden kann, muss Doxygen installiert sein.
+Um die Doxygen-Dokumentation erstellen zu können, muss Doxygen installiert sein.
+
 \subsection{Linux}
 \subsubsection{Installation}
 Zur Installation unter Linux muss das Skript \emph{install.sh} ausgeführt werden. Gegebenenfalls muss das Skript mit den entsprechenden Rechten versehen werden, dies geschieht über den Befehl \emph{chmod 755 install.sh}. Danach kann man dann das fertige Programm mit dem Befehl \emph{make run} ausgeführt werden.
 \subsubsection{Deinstallation}
 Zur Deinstallation unter Linux muss das Skript \emph{deinstall.sh} ausgeführt werden. Gegebenenfalls muss das Skript mit den entsprechenden Rechten versehen werden, dies geschieht über den Befehl \emph{chmod 755 deinstall.sh}.
+
 \subsection{Windows}
 Zur Installation unter Windows muss die \emph{SEP\_WLeitung.pro} Datei im Ordner Code über Qt-creator geöffnet werden und dort compiliert werden.
 
@@ -22,7 +24,7 @@ Zur Erstellung muss im Doxy-Wizard die Konfigurationsdatei \emph{doxygen-config}
 \newpage
 \section{Beispielsitzung}
 
-Bevor der Benutzer eine Simulation startet, legt er die folgenden Einstellungen fest:
+Bevor der Benutzer eine Simulation startet, kann er die folgenden Einstellungen festlegen, um ein Simulationsexperiment zu spezifizieren:
 \begin{itemize}
 \item Temperaturleitkoeffizienten
 \item Wärmequellen
@@ -34,7 +36,7 @@ Nach Start des Programms wird die graphische Benutzeroberfläche angezeigt.
 \begin{figure}[H]
 \centering
 %\hspace{-1.75cm}
-\includegraphics[scale=.5]{Benutzerdokumentation/StartAnzeige.png}\\
+\includegraphics[scale=.5]{Bilder/StartAnzeige.png}\\
 \caption{graphische Benutzeroberfläche}
 \label{graphische Benutzeroberfläche}
 \end{figure}
@@ -50,7 +52,7 @@ Klicken Sie entweder mit der linken Maustaste an die gewünschte Stelle auf der 
 \begin{figure}[H]
 \centering
 %\hspace{-1.75cm}
-\includegraphics[scale=.25]{Benutzerdokumentation/GebietHinzufuegen.png}\\
+\includegraphics[scale=.25]{Bilder/GebietHinzufuegen.png}\\
 \caption{Gebiet hinzufügen}
 \label{Ein neues Gebiet hinzufügen}
 \end{figure}
@@ -62,7 +64,7 @@ Um während der Eingabe eines neuen Gebietes einen Punkt rückgängig zu machen,
 \begin{figure}[H]
 \centering
 %\hspace{-1.75cm}
-\includegraphics[scale=.25]{Benutzerdokumentation/PunktRueckgaengig.png}\\
+\includegraphics[scale=.25]{Bilder/PunktRueckgaengig.png}\\
 \caption{Einen Punkt rückgängig machen}
 \label{PunktRueckgaengig}
 \end{figure}
@@ -72,7 +74,7 @@ Ein Gebiet abbrechen: Um das aktuell begonnene Gebiet zu löschen, klcken Sie au
 \begin{figure}[H]
 \centering
 %\hspace{-1.75cm}
-\includegraphics[scale=.25]{Benutzerdokumentation/GebietAbbrechen.png}\\
+\includegraphics[scale=.25]{Bilder/GebietAbbrechen.png}\\
 \caption{Ein Gebiet abbrechen}
 \label{GebietAbbrechen}
 \end{figure}
@@ -82,7 +84,7 @@ Ein Gebiet löschen: Um ein beliebiges Gebiet zu löschen muss der Radio-Button 
 \begin{figure}[H]
 \centering
 %\hspace{-1.75cm}
-\includegraphics[scale=.25]{Benutzerdokumentation/GebietLoeschen.png}\\
+\includegraphics[scale=.25]{Bilder/GebietLoeschen.png}\\
 \caption{Ein Gebiet löschen}
 \label{GebietLoeschen}
 \end{figure}
@@ -93,7 +95,7 @@ Alle Gebiete löschen: Um alle Gebiete zu löschen, klicken Sie auf den Knopf 'A
 \begin{figure}[H]
 \centering
 %\hspace{-1.75cm}
-\includegraphics[scale=.25]{Benutzerdokumentation/AlleGebieteLoeschen.png}\\
+\includegraphics[scale=.25]{Bilder/AlleGebieteLoeschen.png}\\
 \caption{Alle Gebiete löschen}
 \label{AlleGebieteLoeschen}
 \end{figure}
@@ -103,7 +105,7 @@ Reihenfolge der Gebiet tauschen: Sie können die Reihenfolge der eingegebenen Ge
 \begin{figure}[H]
 \centering
 %\hspace{-1.75cm}
-\includegraphics[scale=.25]{Benutzerdokumentation/ReihenfolgeAendern.png}\\
+\includegraphics[scale=.25]{Bilder/ReihenfolgeAendern.png}\\
 \caption{Reihenfolge ändern}
 \label{ReihenfolgeAendern}
 \end{figure}
@@ -114,7 +116,7 @@ Wert eines Gebietes ändern: Um den Temperaturleitkoeffizienten bzw den Wert der
 \begin{figure}[H]
 \centering
 %\hspace{-1.75cm}
-\includegraphics[scale=.25]{Benutzerdokumentation/WertAendern.png}\\
+\includegraphics[scale=.25]{Bilder/WertAendern.png}\\
 \caption{Wert eines Gebiets ändern}
 \label{WertAendern}
 \end{figure}
@@ -126,7 +128,7 @@ Um die Anfangswerte und Randwerte zu ändern, ändern Sie den gewünschten Wert 
 \begin{figure}[H]
 \centering
 %\hspace{-1.75cm}
-\includegraphics[scale=.25]{Benutzerdokumentation/IBVWerteAendern.png}\\
+\includegraphics[scale=.25]{Bilder/IBVWerteAendern.png}\\
 \caption{Anfangs- und Randwerte ändern}
 \label{IBVWerteAendern}
 \end{figure}
@@ -147,7 +149,7 @@ In der Box 'Simulationseinstellungen' können Sie durch Klick auf den Knopf 'Spe
 \begin{figure}[H]
 \centering
 %\hspace{-1.75cm}
-\includegraphics[scale=.25]{Benutzerdokumentation/SimulationStarten.png}\\
+\includegraphics[scale=.25]{Bilder/SimulationStarten.png}\\
 \caption{Start einer beliebigen Simulation}
 \label{SimulationStarten}
 \end{figure}
@@ -165,7 +167,7 @@ Nachdem eine Simulation erfolgreich angeschlossen worden ist, können Sie sich d
 \begin{figure}[H]
 \centering
 %\hspace{-1.75cm}
-\includegraphics[scale=.25]{Benutzerdokumentation/Visualisieren.png}\\
+\includegraphics[scale=.25]{Bilder/Visualisieren.png}\\
 \caption{Visualisierung eines beliebigen Zustands}
 \label{Visualisieren}
 \end{figure}
@@ -186,7 +188,7 @@ Der Konfigurations-Tab bietet Ihnen folgende Funktionalitäten:\\
 \begin{figure}[H]
 \centering
 %\hspace{-1.75cm}
-\includegraphics[scale=.25]{Benutzerdokumentation/OptimierungStarten.png}\\
+\includegraphics[scale=.25]{Bilder/OptimierungStarten.png}\\
 \caption{Optimierung starten}
 \label{OptimierungStarten}
 \end{figure}
@@ -195,7 +197,7 @@ Der Ergebnis-Tab zeigt die gefitteten Temperaturleitkoeffizienten in Form einer 
 \begin{figure}[H]
 \centering
 %\hspace{-1.75cm}
-\includegraphics[scale=.25]{Benutzerdokumentation/ErgebnisAnzeigen.png}\\
+\includegraphics[scale=.25]{Bilder/ErgebnisAnzeigen.png}\\
 \caption{gefitteten Temperaturleitkoeffizienten}
 \label{ErgebnisAnzeigen}
 \end{figure}
@@ -209,7 +211,7 @@ Während der Benutzer ein Gebiet eingibt, darf er den Tab nicht wechseln.
 \begin{figure}[H]
 \centering
 %\hspace{-1.75cm}
-\includegraphics[scale=.25]{Benutzerdokumentation/FehlerTabWechseln.png}\\
+\includegraphics[scale=.25]{Bilder/FehlerTabWechseln.png}\\
 \caption{Fehler Tab Wechseln}
 \label{FehlerTabWechseln}
 \end{figure}
@@ -219,7 +221,7 @@ Ein korrektes Gebiet muss einfach wegzusammenhängend sein, d.h. Kanten dürfen 
 \begin{figure}[H]
 \centering
 %\hspace{-1.75cm}
-\includegraphics[scale=.25]{Benutzerdokumentation/FehlerGebietEingeben.png}\\
+\includegraphics[scale=.25]{Bilder/FehlerGebietEingeben.png}\\
 \caption{Fehler Gebiet eingeben}
 \label{FehlerGebietEingeben}
 \end{figure}

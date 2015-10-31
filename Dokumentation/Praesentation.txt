@@ -1,6 +1,0 @@
-Titelfolie: Startanzeige Benutzerdoku, Gruppenname, Projektname
-Zwei Folien Problemstellung: Auftrag (klitzeklein), slidesWärmeleit. Folie 5 + Optimierung
-UCD: Bild + Aktivitätsdiagramm Simulieren
-Paketdiagramm + Klassendiagramme algorithms
-Sequenzdiagramme:Update Notification + Update Visualization
-LIVE-DEMO
