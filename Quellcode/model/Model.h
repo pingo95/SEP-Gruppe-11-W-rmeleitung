@@ -68,6 +68,15 @@ namespace model {
         void addNewArea(QVector<double> const & xKoords,
                         QVector<double> const & yKoords, double value,
                         SimulationSetup::AreaType type);
+
+        /*!
+         * \brief applyFitted überträgt das Ergebnis einer Optimierung in
+         * Gebiete, die für Simulationen genutzt werden können.
+         *
+         * \see optimize, simulate
+         */
+        void applyFitted();
+
         /*!
          * \brief deleteArea löscht ein Gebiet aus den Simulationseinstellungen
          * und informiert das UI.
@@ -110,6 +119,13 @@ namespace model {
          * \see getDataRead, readObservations, SimulationWorker::getObservationsDim
          */
         int getObservationsDim() const;
+        /*!
+         * \brief Getter-Funktion für die Dimension der optimierten Werte der letzten
+         * Optimierung.
+         * \return die Dimension
+         * \see getOptimzed, optimize, SimulationWorker::getOptimizationDim
+         */
+        int getOptimizationDim() const;
         /*!
          * \brief Abfrage-Funktion, ob schon eine Optimierung durchgeführt wurde.
          * \return true/false für bereits optimiert

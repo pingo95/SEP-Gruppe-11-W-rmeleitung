@@ -50,6 +50,32 @@ void model::Model::addNewArea(const QVector<double> &xKoords,
     ui->updateNotification();
 }
 
+void model::Model::applyFitted()
+{
+    assert(!blocking);
+    if(working || !optimized)
+        return;
+    while(simSetup->getAreaCount(
+              SimulationSetup::AreaThermalDiffusivity) > 0)
+        simSetup->removeLastArea(SimulationSetup::AreaThermalDiffusivity);
+    QVector<double> coeffs = simWorker->getOptimizedCoeffs();
+    simSetup->setAreaBackgroundValue(coeffs[0],SimulationSetup::AreaThermalDiffusivity);
+    int n = simWorker->getOptimizationDim();
+    double deltaX = 1./((double)n-1);
+    QVector<double> x(5),y(5);
+    for(int i = 1; i < n-1; ++i)
+        for(int j = 1; j < n-1; ++j)
+        {
+            x[0] = ((double)j-0.5) * deltaX; y[0] = ((double)i-0.5) * deltaX;
+            x[1] = ((double)j+0.5) * deltaX; y[1] = ((double)i-0.5) * deltaX;
+            x[2] = ((double)j+0.5) * deltaX; y[2] = ((double)i+0.5) * deltaX;
+            x[3] = ((double)j-0.5) * deltaX; y[3] = ((double)i+0.5) * deltaX;
+            x[4] = ((double)j-0.5) * deltaX; y[4] = ((double)i-0.5) * deltaX;
+            simSetup->addNewArea(x,y,coeffs[i*n+j],SimulationSetup::AreaThermalDiffusivity);
+        }
+    ui->updateNotification();
+}
+
 void model::Model::deleteArea(const int pos, SimulationSetup::AreaType type)
 {
     assert(!blocking);
@@ -79,6 +105,13 @@ int model::Model::getObservationsDim() const
    if(!working && dataRead)
        return simWorker->getObservationsDim();
    return 1;
+}
+
+int model::Model::getOptimizationDim() const
+{
+    if(!working && optimized)
+        return simWorker->getOptimizationDim();
+    return 1;
 }
 
 bool model::Model::getOptimized() const

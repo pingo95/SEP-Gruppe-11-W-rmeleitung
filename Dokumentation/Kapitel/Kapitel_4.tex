@@ -1,25 +1,23 @@
 \chapter{Benutzerdokumentation}
 
 \section{Installation}
-Die Software wird als SEPGruppe11.zip ausgeliefert. Der erste Schritt ist die zip-Datei zu entpacken. Abhängig davon wo die zip-Datei entpackt wird, ist sicherzustellen, dass man sich im Ordner befindet,der den Ordner \emph{Quellcode} und die vier \emph{sh}-Dateien enthält.
+Die Software wird als SEPGruppe11.zip ausgeliefert. Der erste Schritt ist die zip-Datei zu entpacken. Nach dem Entpacken befinden sich im Zielordner ein Unterordner \emph{Quellcode} und diese Dokument.
 Die Voraussetzung, dass die Software installiert werden kann, ist ein QT5 fähiger Compiler.
 Um die Doxygen-Dokumentation erstellen zu können, muss Doxygen installiert sein.
 
 \subsection{Linux}
-\subsubsection{Installation}
-Zur Installation unter Linux muss das Skript \emph{install.sh} ausgeführt werden. Gegebenenfalls muss das Skript mit den entsprechenden Rechten versehen werden, dies geschieht über den Befehl \emph{chmod 755 install.sh}. Danach kann man dann das fertige Programm mit dem Befehl \emph{make run} ausgeführt werden.
-\subsubsection{Deinstallation}
-Zur Deinstallation unter Linux muss das Skript \emph{deinstall.sh} ausgeführt werden. Gegebenenfalls muss das Skript mit den entsprechenden Rechten versehen werden, dies geschieht über den Befehl \emph{chmod 755 deinstall.sh}.
+Zur Installation unter Windows muss im Ordner \emph{Quellcode} das Projekt zunächst mit QMake bearbeitet werden, auf dem RWTH-Cluster lautet der entsprechenden Befehlt hierzu \emph{qmake-qt5}.
+Danach muss dann das Projekt mit dem Befehl \emph{make} compiliert werden und danach kann es mit dem Befehl \emph{make run} ausgeführt werden. Alternativ kann auch direkt der Befehl \emph{make run} ausgeführt werden, dann wird das Projekt kompiliert und direkt ausgeführt. Mit dem Befehl \emph{make clean} kann das Programm wieder deinstalliert werden.
 
 \subsection{Windows}
-Zur Installation unter Windows muss die \emph{SEP\_WLeitung.pro} Datei im Ordner Code über Qt-creator geöffnet werden und dort compiliert werden.
+Zur Installation unter Windows muss die \emph{SEP\_WLeitung.pro} Datei im Ordner \emph{Quellcode} über Qt-creator geöffnet werden und dort compiliert werden.
 
 \subsection{Doxygen} \label{Installation Doxygen}
 \subsubsection{Linux}
-Zur Estellung der Doxygen Dokumentation muss das Skript \emph{makeDoxygen.sh} ausgeführt werden. Anschließend muss die \emph{starteDoxygen}-Datei ausgeführt werden, um die Doxygen Dokumentation zu starten. Zur Bereinigung der Doxygen Dokumentation muss das Skript \emph{cleanDoxygen.sh} ausgeführt werden. Gegebenenfalls müssen die beiden Skripte mit den entsprechenden Rechten versehen werden, dies geschieht über die Befehle \emph{chmod 755 makedoxygen.sh} oder \emph{chmod 755 cleanDoxygen.sh}. 
+Zum Erstellen der Doxygen-Dokumentation muss in den Unterordner \emph{Quellcode\\Doxygen} gewechselt werden und dort shell-Befehl \emph{doxygen doxygen-config} ausgeführt werden. Voraussetzung ist, dass Doxygen installiert und für die Nutzung per Konsole konfiguriert wurde.
 
 \subsubsection{Windows}
-Zur Erstellung muss im Doxy-Wizard die Konfigurationsdatei \emph{doxygen-config} geladen werden und dann der \emph{run}-Button betätigt werden.
+Zum Erstellen der Dokumentation muss im Doxy-Wizard die Konfigurationsdatei \emph{doxygen-config} geladen werden und dann der \emph{run}-Button betätigt werden.
 
 \newpage
 \section{Beispielsitzung}

@@ -126,6 +126,13 @@ namespace model {
          */
         int getObservationsDim() const;
         /*!
+         * \brief Getter-Funktion für die Dimension der optimierten Werte der letzten
+         * Optimierung.
+         * \return die Dimension
+         * \see startOptimizationSlot, getOptimizedCoeffs, Model::getOptimizationDim()
+         */
+        long getOptimizationDim() const;
+        /*!
          * \brief Getter-Funktion für optimierte Temperaturleitkoeffizienten.
          * \return die optimierten Koeffizienten
          *

@@ -30,7 +30,9 @@ SOURCES += \
     Testerarea.cpp \
     Testercrs.cpp \
     Testeriterativesolver.cpp \
+    Testergrid.cpp \
     Testwindow.cpp \
+    Testerdco.cpp \
     Main.cpp
 
 HEADERS  += \
@@ -70,7 +72,9 @@ HEADERS  += \
     Testerarea.h \
     Testercrs.h \
     Testeriterativesolver.h \
-    Testwindow.h
+    Testergrid.h \
+    Testerdco.h \
+    Testwindow.h \
 
 RESOURCES += \
     ../presentation/uiicons.qrc

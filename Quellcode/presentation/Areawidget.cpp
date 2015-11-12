@@ -21,7 +21,7 @@ presentation::AreaWidget::AreaWidget(QWidget *parent,
     table->setShowGrid(true);
     table->setRowCount(1);
     table->setColumnCount(2);
-    table->setFixedWidth(122);
+    table->setFixedWidth(127);
 //    table->horizontalScrollBar()->setVisible(false);
 
 
@@ -44,7 +44,7 @@ presentation::AreaWidget::AreaWidget(QWidget *parent,
                                          model::SimulationSetup::AreaMaxValue[type]/valueShift);
     table->setItemDelegate(delegate);
 
-    table->setColumnWidth(0,30);
+    table->setColumnWidth(0,35);
     table->setColumnWidth(1,90);
 
     QTableWidgetItem * tmpItemPtr = new QTableWidgetItem("0");

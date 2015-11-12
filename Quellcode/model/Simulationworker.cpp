@@ -96,6 +96,12 @@ int model::SimulationWorker::getObservationsDim() const
     return obsSize;
 }
 
+long model::SimulationWorker::getOptimizationDim() const
+{
+//    assert(!busy && dataRead);
+    return sqrt(optimizationN);
+}
+
 QVector<double> model::SimulationWorker::getOptimizedCoeffs() const
 {
 //    assert(!busy && dataRead);
@@ -248,7 +254,6 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
     {
         emit beginningOptimizationStage("Optimierungschritt berechnen",simSetup.getSolverMaxIt());
         int count = 0;
-        //TODO: dco steepest decent algorithm:
         AD_MODE::global_tape = AD_MODE::tape_t::create();
         AD_TYPE norm;
         do
@@ -267,20 +272,19 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
             }
             J *= 1./((obsSize-1)*(obsSize-1));
 
-            std::cout << "J" << count << ": " << J << std::endl<< std::endl;
+            std::cout << "J" << count+1 << ": " << J << std::endl<< std::endl;
 
             dco::derivative(J) = 1;
             AD_MODE::global_tape->interpret_adjoint();
 
             QVector<AD_TYPE> grad(QVector<AD_TYPE>::fromStdVector(optimizedCsAD));
             for(int i = 0; i < optimizationN; ++i)
-            {
                 grad[i] = dco::derivative(optimizedCsAD[i]);
-            }
 
             AD_TYPE s = 1e-11;
-            for(int i = 0; i < optimizationN; ++i)
-                optimizedCsAD[i]  -= s * grad[i];
+            for(int i = 1; i < obsSize-1; ++i)
+                for(int j = 1; j < obsSize-1; ++j)
+                    optimizedCsAD[i*obsSize+j]  -= s * grad[i*obsSize+j];
 
             norm = algorithms::norm2(grad);
 
@@ -308,7 +312,6 @@ void model::SimulationWorker::startOptimizationSlot(SimulationSetup *simSetupTem
 
 #endif
 
-
     //Aufräumen des Speichers
     QList<QList<long> *>::iterator it = heatSourceIndices.begin();
     for(; it != heatSourceIndices.end(); ++it)
@@ -331,12 +334,6 @@ void model::SimulationWorker::startReadingDataSlot(QString const filename, long 
     QFile file(filename);
     if (file.open(QFile::ReadOnly | QFile::Truncate))
     {
-        QTextStream in(&file);
-        obsSize = sqrt(obsCount);
-        if(obsSize*obsSize != obsCount)
-            obsSize += 1;
-        long count = 0;
-
         //alte Werte löschen:
         if(dataRead)
         {
@@ -344,6 +341,12 @@ void model::SimulationWorker::startReadingDataSlot(QString const filename, long 
                 delete [] observations[i];
             delete [] observations;
         }
+        QTextStream in(&file);
+        obsSize = sqrt(obsCount);
+        if(obsSize*obsSize != obsCount)
+            obsSize += 1;
+        long count = 0;
+
         observations = new double*[obsSize];
         for(long i = 0; i < obsSize; ++i)
         {

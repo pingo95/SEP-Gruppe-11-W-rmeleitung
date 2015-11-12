@@ -65,7 +65,7 @@ void presentation::Controller::abortWorkSlot()
     else
     {
         // Fehlermeldung ausgeben:
-        errorMessages->setText("Es wird zurzeit keine Simulation durchgeführt."
+        errorMessages->setText("Es wird zurzeit keine Simulation oder Optimierung durchgeführt."
                                " Abbrechen nicht möglich.");
         errorMessages->setDetailedText("");
         errorMessages->exec();
@@ -187,10 +187,39 @@ void presentation::Controller::areaValueChangedSlot(int pos, double newValue,
     }
 }
 
+void presentation::Controller::applyFittedCoefficientsSlot()
+{
+    if(model->isWorking())
+    {
+        // Fehlermeldung ausgeben:
+        errorMessages->setText("Es wird gerade eine Simulation oder Optimierung "
+                               "durchgeführt. Bitte versuchen Sie es später erneut.");
+        errorMessages->setDetailedText("");
+        errorMessages->exec();
+    }
+    else
+    {
+        if(model->getOptimized())
+        {
+            //TODO: Warnung mit Abbruchmöglichkeit
+            model->applyFitted();
+        }
+        else
+        {
+            // Fehlermeldung ausgeben:
+            errorMessages->setText("Es wurde noch keine Optimierung durchgeführt. "
+                                   "Übertragen nicht möglich.");
+            errorMessages->setDetailedText("");
+            errorMessages->exec();
+        }
+    }
+
+}
+
 void presentation::Controller::clearAreasSlot(model::SimulationSetup::AreaType type)
 {
     if(!started[type])
-        while(model->getSimulationSetup()->getAreaCount(type))
+        while(model->getSimulationSetup()->getAreaCount(type) > 0)
             model->removeLastArea(type);
     else
     {
@@ -443,17 +472,17 @@ void presentation::Controller::overrideThermalDiffusivitiesSlot(bool override)
 {
     model->setOverrideThermalDiffusivities(override);
 
-    if(override && model->getSimulationSetup()->getAreaCount(
-                    model::SimulationSetup::AreaThermalDiffusivity) == 0)
-    {
-        // Warnunge ausgeben:
-        errorMessages->setIcon(QMessageBox::Warning);
-        errorMessages->setText("Es wurde noch keine Wärmeleitkoeffizienten hinzugefügt, "
-                               "Nur der Hintergrundwert wird überschrieben.");
-        errorMessages->setDetailedText("");
-        errorMessages->exec();
-        errorMessages->setIcon(QMessageBox::Critical);
-    }
+//    if(override && model->getSimulationSetup()->getAreaCount(
+//                    model::SimulationSetup::AreaThermalDiffusivity) == 0)
+//    {
+//        // Warnunge ausgeben:
+//        errorMessages->setIcon(QMessageBox::Warning);
+//        errorMessages->setText("Es wurde noch keine Wärmeleitkoeffizienten hinzugefügt, "
+//                               "Nur der Hintergrundwert wird überschrieben.");
+//        errorMessages->setDetailedText("");
+//        errorMessages->exec();
+//        errorMessages->setIcon(QMessageBox::Critical);
+//    }
 }
 
 // Dieser Slot spielt, falls bereits eine Simulation durchgeführt wurde,
@@ -536,23 +565,24 @@ void presentation::Controller::resetSimulationSetupSlot()
 // möglich falls gerade nicht simuliert wird
 void presentation::Controller::selectIntMethodSlot(QString newIntMethod)
 {
-    if(model->isWorking())
-    {
-        // Es wird gerade simuliert, UI muss den Wert zurücksetzen
-        ui->updateNotification();
+    //Veraltet: Einstellungen können auch während der Sim geändert werden
+//    if(model->isWorking())
+//    {
+//        // Es wird gerade simuliert, UI muss den Wert zurücksetzen
+//        ui->updateNotification();
 
-        // Fehlermeldung ausgeben:
-        errorMessages->setText("Es wird gerade eine Simulation durchgeführt,"
-                               " bitte versuchen Sie es nach Ende der Simulation erneut.");
-        errorMessages->setDetailedText("");
-        errorMessages->exec();
+//        // Fehlermeldung ausgeben:
+//        errorMessages->setText("Es wird gerade eine Simulation durchgeführt,"
+//                               " bitte versuchen Sie es nach Ende der Simulation erneut.");
+//        errorMessages->setDetailedText("");
+//        errorMessages->exec();
 
-    }
-    else
-    {
+//    }
+//    else
+//    {
         // Keine Simulation, Update des Wertes
         model->selectIntMethod(newIntMethod);
-    }
+ //  }
 }
 
 void presentation::Controller::saveSimulationSetupSlot()
@@ -568,22 +598,23 @@ void presentation::Controller::saveSimulationSetupSlot()
 // möglich falls gerade nicht simuliert wird
 void presentation::Controller::selectSolverSlot(QString newSolver)
 {
-    if(model->isWorking())
-    {
-        // Es wird gerade simuliert, UI muss den Wert zurücksetzen
-        ui->updateNotification();
+    //Veraltet: Einstellungen können auch während der Sim geändert werden
+//    if(model->isWorking())
+//    {
+//        // Es wird gerade simuliert, UI muss den Wert zurücksetzen
+//        ui->updateNotification();
 
-        // Fehlermeldung ausgeben:
-        errorMessages->setText("Es wird gerade eine Simulation durchgeführt,"
-                               " bitte versuchen Sie es nach Ende der Simulation erneut.");
-        errorMessages->setDetailedText("");
-        errorMessages->exec();
-    }
-    else
-    {
-        // Keine Simulation, Update des Wertes
+//        // Fehlermeldung ausgeben:
+//        errorMessages->setText("Es wird gerade eine Simulation durchgeführt,"
+//                               " bitte versuchen Sie es nach Ende der Simulation erneut.");
+//        errorMessages->setDetailedText("");
+//        errorMessages->exec();
+//    }
+//    else
+//    {
+//        // Keine Simulation, Update des Wertes
         model->selectSolver(newSolver);
-    }
+//    }
 }
 
 // Dieser Slot startet die Simulation, falls diese nicht schon läuft
@@ -665,17 +696,17 @@ void presentation::Controller::useHeatSourcesSlot(bool use)
 {
     model->setUseHeatSources(use);
 
-    if(use && model->getSimulationSetup()->getAreaCount(
-                    model::SimulationSetup::AreaHeatSource) == 0)
-    {
-        // Warnunge ausgeben:
-        errorMessages->setIcon(QMessageBox::Warning);
-        errorMessages->setText("Es wurde noch keine Wärmequellen hinzugefügt, "
-                               "Überschreiben hat keinen Effekt.");
-        errorMessages->setDetailedText("");
-        errorMessages->exec();
-        errorMessages->setIcon(QMessageBox::Critical);
-    }
+//    if(use && model->getSimulationSetup()->getAreaCount(
+//                    model::SimulationSetup::AreaHeatSource) == 0)
+//    {
+//        // Warnunge ausgeben:
+//        errorMessages->setIcon(QMessageBox::Warning);
+//        errorMessages->setText("Es wurde noch keine Wärmequellen hinzugefügt, "
+//                               "Überschreiben hat keinen Effekt.");
+//        errorMessages->setDetailedText("");
+//        errorMessages->exec();
+//        errorMessages->setIcon(QMessageBox::Critical);
+//    }
 }
 
 

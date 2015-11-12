@@ -50,22 +50,22 @@ QWidget * model::TesterArea::robustnessWorstCaseTesterInsidePoint()
 {
     tabs = new QTabWidget();
     int numberTests = 10;
-    ptr.resize(numberTests);
-    grid.resize(numberTests);
-    plot.resize(numberTests);
-    log.resize(numberTests);
+    ptrs.resize(numberTests);
+    grids.resize(numberTests);
+    plots.resize(numberTests);
+    logs.resize(numberTests);
     for(int t = 0; t < numberTests; ++t)
     {
-        ptr[t] = new QWidget();
-        grid[t] = new QGridLayout(ptr[t]);
-        plot[t] = new QCustomPlot(ptr[t],false);
-        log[t] = new QTextEdit(ptr[t]);
-        grid[t]->addWidget(plot[t],0,0);
-        grid[t]->addWidget(log[t],1,0);
+        ptrs[t] = new QWidget();
+        grids[t] = new QGridLayout(ptrs[t]);
+        plots[t] = new QCustomPlot(ptrs[t],false);
+        logs[t] = new QTextEdit(ptrs[t]);
+        grids[t]->addWidget(plots[t],0,0);
+        grids[t]->addWidget(logs[t],1,0);
 
-        plot[t]->setMinimumSize(500,500);
-        log[t]->setMinimumSize(500,200);
-        log[t]->setReadOnly(true);
+        plots[t]->setMinimumSize(500,500);
+        logs[t]->setMinimumSize(500,200);
+        logs[t]->setReadOnly(true);
         double tmp = (double) qrand() / RAND_MAX;
         double tmp2 = (double) qrand() /RAND_MAX;
         double max,min;
@@ -108,24 +108,24 @@ QWidget * model::TesterArea::robustnessWorstCaseTesterInsidePoint()
 //        rotateKoords(x,y,angle);
 //        rotateKoords(xTest,yTest,angle);
 
-        plot[t]->xAxis->setRange(min-2*offset,max+2*offset);
-        plot[t]->yAxis->setRange(min-2*offset,max+2*offset);
-        plot[t]->addGraph();
-        plot[t]->graph(0)->setData(x,y);
+        plots[t]->xAxis->setRange(min-2*offset,max+2*offset);
+        plots[t]->yAxis->setRange(min-2*offset,max+2*offset);
+        plots[t]->addGraph();
+        plots[t]->graph(0)->setData(x,y);
         QPen myPen(Qt::red);
         myPen.setWidth(2*myPen.width());
-        plot[t]->graph(0)->setPen(myPen);
-        plot[t]->addGraph();
-        plot[t]->graph(1)->setData(xTest,yTest);
+        plots[t]->graph(0)->setPen(myPen);
+        plots[t]->addGraph();
+        plots[t]->graph(1)->setData(xTest,yTest);
         QCPScatterStyle myScatter;
         myScatter.setShape(QCPScatterStyle::ssCircle);
         QPen myPen2(Qt::green);
         myScatter.setPen(myPen2);
         myScatter.setBrush(Qt::green);
         myScatter.setSize(5);
-        plot[t]->graph(1)->setScatterStyle(myScatter);
-        plot[t]->graph(1)->setPen(Qt::NoPen);
-        plot[t]->replot();
+        plots[t]->graph(1)->setScatterStyle(myScatter);
+        plots[t]->graph(1)->setPen(Qt::NoPen);
+        plots[t]->replot();
 
         QString logText = "Robustness Worse Case Test der InsidePoint-Funktion der Area-Klasse:\n"
                           "Generierte Werte: \n\tmax = " + QString::number(max) + "\n\tmin = "
@@ -157,8 +157,8 @@ QWidget * model::TesterArea::robustnessWorstCaseTesterInsidePoint()
         {
             logText += "Nicht erfolgreich\n\nAbbruch";
         }
-        log[t]->setText(logText);
-        tabs->addTab(ptr[t],"Testserie Nr. " + QString::number(t+1));
+        logs[t]->setText(logText);
+        tabs->addTab(ptrs[t],"Testserie Nr. " + QString::number(t+1));
     }
     return tabs;
 }
@@ -167,22 +167,22 @@ QWidget* model::TesterArea::robustnessWorstCaseTesterOnLine()
 {
     tabs = new QTabWidget();
     int numberTests = 10;
-    ptr.resize(numberTests);
-    grid.resize(numberTests);
-    plot.resize(numberTests);
-    log.resize(numberTests);
+    ptrs.resize(numberTests);
+    grids.resize(numberTests);
+    plots.resize(numberTests);
+    logs.resize(numberTests);
     for(int t = 0; t < numberTests; ++t)
     {
-        ptr[t] = new QWidget();
-        grid[t] = new QGridLayout(ptr[t]);
-        plot[t] = new QCustomPlot(ptr[t],false);
-        log[t] = new QTextEdit(ptr[t]);
-        grid[t]->addWidget(plot[t],0,0);
-        grid[t]->addWidget(log[t],1,0);
+        ptrs[t] = new QWidget();
+        grids[t] = new QGridLayout(ptrs[t]);
+        plots[t] = new QCustomPlot(ptrs[t],false);
+        logs[t] = new QTextEdit(ptrs[t]);
+        grids[t]->addWidget(plots[t],0,0);
+        grids[t]->addWidget(logs[t],1,0);
 
-        plot[t]->setMinimumSize(500,500);
-        log[t]->setMinimumSize(500,200);
-        log[t]->setReadOnly(true);
+        plots[t]->setMinimumSize(500,500);
+        logs[t]->setMinimumSize(500,200);
+        logs[t]->setReadOnly(true);
 
 
         QVector<double> x, y, xTest, yTest;
@@ -203,24 +203,24 @@ QWidget* model::TesterArea::robustnessWorstCaseTesterOnLine()
 //        rotateKoords(x,y,angle);
 //        rotateKoords(xTest,yTest,angle);
 
-        plot[t]->xAxis->setRange(x[0] - deltaX/4,x[1] + deltaX/4);
-        plot[t]->yAxis->setRange(y[0] - deltaY/4,y[1] + deltaY/4);
-        plot[t]->addGraph();
-        plot[t]->graph(0)->setData(x,y);
+        plots[t]->xAxis->setRange(x[0] - deltaX/4,x[1] + deltaX/4);
+        plots[t]->yAxis->setRange(y[0] - deltaY/4,y[1] + deltaY/4);
+        plots[t]->addGraph();
+        plots[t]->graph(0)->setData(x,y);
         QPen myPen(Qt::red);
         myPen.setWidth(2*myPen.width());
-        plot[t]->graph(0)->setPen(myPen);
-        plot[t]->addGraph();
-        plot[t]->graph(1)->setData(xTest,yTest);
+        plots[t]->graph(0)->setPen(myPen);
+        plots[t]->addGraph();
+        plots[t]->graph(1)->setData(xTest,yTest);
         QCPScatterStyle myScatter;
         myScatter.setShape(QCPScatterStyle::ssCircle);
         QPen myPen2(Qt::green);
         myScatter.setPen(myPen2);
         myScatter.setBrush(Qt::green);
         myScatter.setSize(5);
-        plot[t]->graph(1)->setScatterStyle(myScatter);
-        plot[t]->graph(1)->setPen(Qt::NoPen);
-        plot[t]->replot();
+        plots[t]->graph(1)->setScatterStyle(myScatter);
+        plots[t]->graph(1)->setPen(Qt::NoPen);
+        plots[t]->replot();
 
         QString logText = "Robustness Worse Case Test der OnLine-Funktion der Area-Klasse:\n"
                           "Generierte Werte: \n\tx[0] = " + QString::number(x[0]) + "\n\tx[1] = "
@@ -244,8 +244,8 @@ QWidget* model::TesterArea::robustnessWorstCaseTesterOnLine()
         }
         logText += "Zusammenfassung: " + QString::number(count) + " von 7 Tests erfolgreich.";
 
-        log[t]->setText(logText);
-        tabs->addTab(ptr[t],"Testserie Nr. " + QString::number(t+1));
+        logs[t]->setText(logText);
+        tabs->addTab(ptrs[t],"Testserie Nr. " + QString::number(t+1));
     }
     return tabs;
 }
@@ -254,22 +254,22 @@ QWidget * model::TesterArea::specialSegIntersectTester()
 {
     tabs = new QTabWidget();
     int numberTests = 10;
-    ptr.resize(numberTests);
-    grid.resize(numberTests);
-    plot.resize(numberTests);
-    log.resize(numberTests);
+    ptrs.resize(numberTests);
+    grids.resize(numberTests);
+    plots.resize(numberTests);
+    logs.resize(numberTests);
     for(int t = 0; t < numberTests; ++t)
     {
-        ptr[t] = new QWidget();
-        grid[t] = new QGridLayout(ptr[t]);
-        plot[t] = new QCustomPlot(ptr[t],false);
-        log[t] = new QTextEdit(ptr[t]);
-        grid[t]->addWidget(plot[t],0,0);
-        grid[t]->addWidget(log[t],1,0);
+        ptrs[t] = new QWidget();
+        grids[t] = new QGridLayout(ptrs[t]);
+        plots[t] = new QCustomPlot(ptrs[t],false);
+        logs[t] = new QTextEdit(ptrs[t]);
+        grids[t]->addWidget(plots[t],0,0);
+        grids[t]->addWidget(logs[t],1,0);
 
-        plot[t]->setMinimumSize(500,500);
-        log[t]->setMinimumSize(500,200);
-        log[t]->setReadOnly(true);
+        plots[t]->setMinimumSize(500,500);
+        logs[t]->setMinimumSize(500,200);
+        logs[t]->setReadOnly(true);
 
         double x1,x2,y1,y2,pct1,pct2;
         if(t==0)
@@ -294,29 +294,29 @@ QWidget * model::TesterArea::specialSegIntersectTester()
         double deltaX = x2-x1;
         double deltaY = y2-y1;
 
-        plot[t]->xAxis->setRange(qMin(x1,x2) - qAbs(deltaX/4),qMax(x1,x2) + qAbs(deltaX/4));
-        plot[t]->yAxis->setRange(qMin(y1,y2) - qAbs(deltaY/4),qMax(y1,y2) + qAbs(deltaY/4));
+        plots[t]->xAxis->setRange(qMin(x1,x2) - qAbs(deltaX/4),qMax(x1,x2) + qAbs(deltaX/4));
+        plots[t]->yAxis->setRange(qMin(y1,y2) - qAbs(deltaY/4),qMax(y1,y2) + qAbs(deltaY/4));
 
         QVector<double> xV1,yV1;
         xV1 << x1 << x1+deltaX*pct1;
         yV1 << y1 << y1+deltaY*pct1;
-        plot[t]->addGraph();
-        plot[t]->graph(0)->setData(xV1,yV1);
+        plots[t]->addGraph();
+        plots[t]->graph(0)->setData(xV1,yV1);
         QCPScatterStyle myScatter;
         myScatter.setShape(QCPScatterStyle::ssCircle);
         QPen myPen2(Qt::green);
         myScatter.setPen(myPen2);
         myScatter.setBrush(Qt::green);
         myScatter.setSize(5);
-        plot[t]->graph(0)->setScatterStyle(myScatter);
+        plots[t]->graph(0)->setScatterStyle(myScatter);
 
         QVector<double> xV2,yV2;
         xV2 << x1+deltaX*pct2 << x2;
         yV2 << y1+deltaY*pct2 << y2;
-        plot[t]->addGraph();
-        plot[t]->graph(1)->setData(xV2,yV2);
-        plot[t]->graph(1)->setScatterStyle(myScatter);
-        plot[t]->replot();
+        plots[t]->addGraph();
+        plots[t]->graph(1)->setData(xV2,yV2);
+        plots[t]->graph(1)->setScatterStyle(myScatter);
+        plots[t]->replot();
 
         QString logText = "Spezieller Einzel-Test der SegIntersect-Funktion der Area-Klasse:\n"
                           "Generierte Werte: \n\tx[0] = " + QString::number(xV1[0]) + "\n\tx[1] = "
@@ -329,8 +329,8 @@ QWidget * model::TesterArea::specialSegIntersectTester()
         else
             logText += "Test nicht erfolgreich.";
 
-        log[t]->setText(logText);
-        tabs->addTab(ptr[t],"Testserie Nr. " + QString::number(t+1));
+        logs[t]->setText(logText);
+        tabs->addTab(ptrs[t],"Testserie Nr. " + QString::number(t+1));
     }
     return tabs;
 }

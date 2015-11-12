@@ -1,9 +1,10 @@
-#ifndef TESTERAREA_H
-#define TESTERAREA_H
+#ifndef TESTERGRID_H
+#define TESTERGRID_H
 #include <QWidget>
 #include <QTabWidget>
 #include <QVector>
 #include <QGridLayout>
+#include <QTableWidget>
 #include <QTextEdit>
 
 #include "../presentation/Qcustomplot.h"
@@ -11,24 +12,23 @@
 
 namespace model {
 
-    class TesterArea
+    class TesterGrid
     {
     public:
-        TesterArea();
-        ~TesterArea();
+        TesterGrid();
+        ~TesterGrid();
 
-        void rotateKoords(QVector<double> & x, QVector<double> & y, int angle);
-        QWidget *robustnessWorstCaseTesterInsidePoint();
-        QWidget *robustnessWorstCaseTesterOnLine();
-        QWidget *specialSegIntersectTester();
-    private :
+        QWidget * areasToGridTest1();
+    private:
         QTabWidget * tabs;
         QVector<QWidget *> ptrs;
         QVector<QGridLayout *> grids;
         QVector<QCustomPlot *> plots;
+        QVector<QTableWidget *> tables;
         QVector<QTextEdit *> logs;
+        QVector<QCPColorScale *> scales;
     };
 
 }
 
-#endif // TESTERAREA_H
+#endif // TESTERGRID_H

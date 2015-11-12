@@ -117,47 +117,27 @@ presentation::VisualizationWidget::VisualizationWidget(QWidget *parent)
 
 void presentation::VisualizationWidget::playVideo()
 {
-#ifndef _WIN32
-    if(resultM > 600 && resultN*resultM >= 250000)
+    int frame = slider->value();
+    //Randwerte setzen
+    for(int j = 0; j < resultN; ++j)
     {
-        int frame = slider->value();
-        for(; frame < resultM+1; ++++frame)
-        {
-            for(int i = 0; i < resultN; ++i)
-                for(int j = 0; j < resultN; ++j)
-                    colorMap->data()->setCell(i,j,result[frame][i][j]);
-            plate->replot();
-            updateLcdSlot(frame);
-        }
-        if(frame != resultM)
-        {
-            for(int i = 0; i < resultN; ++i)
-                for(int j = 0; j < resultN; ++j)
-                    colorMap->data()->setCell(i,j,result[resultM][i][j]);
-            plate->replot();
-            updateLcdSlot(resultM);
-        }
+        colorMap->data()->setCell(0,j,result[frame][0][j]);
+        colorMap->data()->setCell(resultN-1,j,result[frame][resultN-1][j]);
     }
-    else
-        for(int frame = slider->value(); frame < resultM+1; ++frame)
-        {
-            for(int i = 0; i < resultN; ++i)
-                for(int j = 0; j < resultN; ++j)
-                    colorMap->data()->setCell(i,j,result[frame][i][j]);
-            plate->replot();
-            updateLcdSlot(frame);
-        }
-
-#else
-    for(int frame = slider->value(); frame < resultM+1; ++frame)
+    for(int i = 1; i < resultN-1; ++i)
     {
-        for(int i = 0; i < resultN; ++i)
-            for(int j = 0; j < resultN; ++j)
+        colorMap->data()->setCell(i,0,result[frame][i][0]);
+        colorMap->data()->setCell(i,resultN-1,result[frame][i][resultN-1]);
+    }
+
+    for(; frame < resultM+1; ++frame)
+    {
+        for(int i = 1; i < resultN-1; ++i)
+            for(int j = 1; j < resultN-1; ++j)
                 colorMap->data()->setCell(i,j,result[frame][i][j]);
         plate->replot();
         updateLcdSlot(frame);
     }
-#endif
 }
 
 void presentation::VisualizationWidget::setController(Controller *controller)

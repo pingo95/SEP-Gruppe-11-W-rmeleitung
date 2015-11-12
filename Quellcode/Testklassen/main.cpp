@@ -1,9 +1,10 @@
 #include "Testwindow.h"
 #include <QApplication>
-
 #include "Testercrs.h"
 #include "Testeriterativesolver.h"
 #include "Testerarea.h"
+#include "Testergrid.h"
+#include "Testerdco.h"
 
 int main(int argc, char *argv[])
 {
@@ -13,6 +14,8 @@ int main(int argc, char *argv[])
     algorithms::TesterCRS testerCRS;
     algorithms::TesterIterativeSolver testerIterativeSolver;
     model::TesterArea testerArea;
+    model::TesterGrid testerGrid;
+    model::TesterDCO testerDCO;
 
     int mainTabCount = -1;
 
@@ -70,23 +73,23 @@ int main(int argc, char *argv[])
     w.addSubTab(areaTest2,"OnLineTest1",mainTabCount);
     w.addSubTab(areaTest3,"SegIntersectTest1",mainTabCount);
 
+    w.addMainTab("Grid Tests");
+    ++mainTabCount;
+
+    QWidget * gridTest1 = testerGrid.areasToGridTest1();
+
+    w.addSubTab(gridTest1,"AreasToGridTest1",mainTabCount);
+
+    //w.addMainTab("DCO Tests");
+    //++mainTabCount;
+
+   // QWidget * dcoTest1 = testerDCO.constantLenghtTest();
+   // QWidget * dcoTest2 = testerDCO.GoldsteinArmijoTest();
+
+    //w.addSubTab(dcoTest1,"Konstante Schrittweite",mainTabCount);
+    //w.addSubTab(dcoTest2,"Goldstein-Armijo",mainTabCount);
+
     w.show();
 
-    int ret = a.exec();
-
-//    delete crsTest1;
-//    delete crsTest2;
-//    delete crsTest3;
-//    delete crsTest4;
-//    delete crsTest5;
-//    delete crsTest6;
-//    delete crsTest7;
-//    delete crsTest8;
-//    delete crsTest9;
-//    delete crsTest10;
-//    delete solverTest1;
-//    delete solverTest2;
-//    delete areaTest1;
-
-    return ret;
+    return a.exec();
 }

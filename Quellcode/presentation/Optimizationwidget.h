@@ -5,17 +5,18 @@
 
 #include "../model/Model.h"
 
+#include <QGridLayout>
+#include <QLabel>
+#include <QGroupBox>
+#include <QPushButton>
 #include <QCheckBox>
 #include <QDoubleSpinBox>
-#include <QGridLayout>
-#include <QGroupBox>
-#include <QLabel>
-#include <QProgressBar>
-#include <QPushButton>
 #include <QSpinBox>
+#include <QProgressBar>
 #include <QTableWidget>
 #include <QVBoxLayout>
 #include <QLineEdit>
+#include "Qcustomplot.h"
 
 
 namespace presentation {
@@ -122,7 +123,8 @@ class Controller;
     private:
         enum SubTab{
             TabConfiguration = 0,
-            TabSolution = 1
+            TabSolution = 1,
+            TabVisualization = 2
         };
 
         int activeSubTab;
@@ -138,8 +140,12 @@ class Controller;
 
         QLabel * topLabelConfiguration;
 
-        QPushButton * loadDataButton;
+        QGroupBox * boxButtons;
+        QGridLayout * boxButtonsLayout;
         QPushButton * startOptimizationButton;
+        QPushButton * abortOptimizationButton;
+        QPushButton * loadDataButton;
+        QPushButton * applyFittedButton;
 
         QGroupBox * boxOverride;
         QGridLayout * boxOverrideLayout;
@@ -179,6 +185,15 @@ class Controller;
         QVBoxLayout * solutionTabLayout;
         QLabel * topLabelSolution;
         QTableWidget * solutionTable;
+
+        // Visualization Tab
+        QWidget * visualizationTab;
+        QVBoxLayout * visualizationTabLayout;
+        QLabel * topLabelVisualization;
+
+        QCustomPlot * plate;
+        QCPColorScale * colorScale;
+        QCPColorMap * colorMap;
     };
 
 }

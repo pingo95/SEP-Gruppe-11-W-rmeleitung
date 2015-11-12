@@ -103,6 +103,17 @@ namespace presentation {
         void areaValueChangedSlot(int pos, double newValue,
                                   model::SimulationSetup::AreaType type);
         /*!
+         * \brief Slot zum Übernehmen von Temperaturleitkoeffizienten.
+         *
+         * Wenn zum Zeitpunkt des Aufrufs keine Simulation oder Optimierung
+         * durchgeführt wird und bereits eine Optimierung erfolgreich
+         * abgeschlossen wurde, werden die resultierenden Temperaturleit
+         * koeffizienten in Gebiete umgewandelt, die dann für Simulationen
+         * genutzt werden können.
+         * \see model::Model::applyFitted
+         */
+        void applyFittedCoefficientsSlot();
+        /*!
          * \brief Slot zum Löschen aller Gebiete.
          * \param type Gebietstyp, für den Aktion durchgeführt wird
          * \see model::Model::removeLastArea
